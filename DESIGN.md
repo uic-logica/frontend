@@ -41,11 +41,12 @@ This gets checked, not assumed:
 - Compress every Lottie/SVG/image asset before committing it. No multi-megabyte PNGs.
 - Rough bar: Lighthouse performance ≥ 90 on the landing page, LCP under 2.5s on a throttled connection. Check the Lighthouse panel before calling a page done.
 
-## Build order: functional first, polished second
+## Build order: design first, then build it for real
 
-Ship a working version before a polished one. Standard incremental delivery: something complete and usable at every stage, not a finished piece you only get at the very end.
+Design happens before code, not alongside it. The old approach here was "ship a rough functional draft, polish it later" — that's gone. Instead:
 
-1. **First:** real page structure, real content hierarchy, Tailwind tokens in place, one interaction proven working end to end. Not polished. Functional.
-2. **Then:** the actual visual treatment described above — real motion, real illustration — built on top of the structure from step 1, not replacing it.
+1. **Research** — the art/color/interaction reference doc (multiple Latin American countries, specific pieces, real colors pulled from them — see "Reference points" above). No code, no visual design tool yet.
+2. **Design** — turn that research into an actual visual mockup (Figma or equivalent): layout, color, type, key interactions, all of it. This has to be genuinely good and complete before moving on — not a placeholder to refine later, it's what gets built. Share the link via a short `.md` file in this repo, with a preview screenshot so it's reviewable without opening Figma.
+3. **Build** — implement the page directly from the finished design in step 2. This isn't a rough skeleton to be polished afterward — the visual work already happened in step 2, so the code should already look right from the first PR.
 
-Don't skip to step 2. A polished animation on a page with no real structure under it is a worse deliverable than a plain page that's actually there.
+Don't start coding a page before step 2 is actually done. Performance and accessibility bars above still apply once you're building.
