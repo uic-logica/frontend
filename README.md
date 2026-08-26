@@ -4,7 +4,7 @@ Public site: landing, team, calendar, events, member spotlight, forms. Talks to 
 
 ## Stack
 
-Next.js 16 (App Router) + Tailwind.
+Next.js 16 (App Router) + Tailwind + GSAP (motion) + Lottie (vector animation). See [DESIGN.md](DESIGN.md) for the visual direction and the performance/motion bar every page is held to.
 
 ## Local setup
 
