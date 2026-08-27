@@ -74,4 +74,73 @@ Visitors should be able to:
 If there are no upcoming events or featured content, the page should
 still display LOGICA's basic information, mission, and navigation.
 
----
+## 2. Team / roles page
+
+### Purpose
+The goal is Introduce new users who is are on team and learn about are team postions within the club
+
+### Sections
+
+The Meet the Team page should contain the following sections in order:
+
+1. Meet the Team
+2. Pictures of Board 
+
+### Content
+
+#### Meet The team
+
+- Title Meet the team
+- Pictures of the Board Members
+- Information about each board Members role/position.
+- Link to Linkedin 
+
+
+### User Actions
+
+Visitors should be able to:
+
+- Learn about LOGICA Board Members
+- Navigate to other pages
+
+### Empty State
+
+....
+
+## 6. Calendar + event pages
+
+### Purpose
+The goal is display a Event Calendar thats shows all events from LOGCIA where its show where its located and what time is it at. 
+
+### Sections
+
+The Calendar + events pages should contain the following sections in order:
+
+1. Google Calendar 
+
+### Content
+
+#### Calendar
+
+- Events
+- times and location
+
+
+### User Actions
+
+Visitors should be able to:
+
+- Find all upcoming LOGICA events 
+- Navigate to other pages
+- Be able to Register for the event
+- Read the desrpiction of the events 
+
+### Empty State
+
+....
+
+
+
+## 7. Attendance check-in + history
+
+### Purpose
