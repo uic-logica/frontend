@@ -1,0 +1,59 @@
+## LOGICA Website QA Checklist
+
+## Accessibility and Keyboard navigation
+- [ ] The pages should be traversed in order using 'Tab' and 'Shift+Tab'.
+- [ ] Every can be focused using keyboard navigation.
+- [ ] Images such as board member profiles should include meaningful 'alt' text, default images should also have its appropiate text.
+
+## 1. Landing Page
+- [ ] Page header displays their associated content.
+- [ ] Navigation elements take the visitor to other sections of the page.
+- [ ] Event and other links takes the visitor to the relevent page.
+- [ ] Event calendar displays upcoming events to the visitor.
+    - Empty state: if there is no events or content to be shown, it displays basic information, mission, and navigation.
+- [ ] Loading state: Display a loading indicator if the content is being updated and shown to the visitor from the backend.
+- [ ] Error State: Clear error message and retry if data fails to fetch from `NEXT_PUBLIC_API_URL`.
+
+## 2. Team/Role Pages
+- [ ] Board member cards display the member's photo along with their name and role.
+- [ ] Page header displays their associated content.
+- [ ] Content links such as Linkedin, should take the visitor to the relevant page.
+- [ ] Board member cards display photo, name, and role.
+    - Empty state: If there is no content to be shown for the board member. Display a message indicating that the content and information will come soon, along with default profile placeholder. 
+- [ ] The visitor can navigate to other pages using the navigation element.
+
+## 3. Sign-in screen + session/role check
+- [ ] Email fields should only accept @email inputs.
+- [ ] Visitor should be able to request a new verification code that is acceptable to verify.
+- [ ] Verification should be able to render invalid if the code is invalid or expired.
+- [ ] User's membership corresponds to their current role.
+- [ ] Members have access to member-only content.
+- [ ] Other roles should see their own content appropiate to their role.
+- [ ] Signing out required the user to log in again.
+- [ ] Empty State: If user is not signed in, do not display members-only content and request authentication.
+- [ ] Error State:
+    - [ ] Email input accepts only @email type and @uic.edu.
+    - [ ] Verification should display invalid and expired code seperately.
+    - [ ] User is able to fail authentication.
+    - [ ] Sign in sessions should expire if left idle for a certain amount of time.
+    - [ ] Unauthorized access should display a message for members who don't have access.
+
+## 4. Not Finished
+
+## 5. Not Finished
+
+## 6. Calendar + Event Pages
+- [ ] Event cards should be visible to the user.
+- [ ] Google Calendar should be visible to the user.
+- [ ] Date, time, location, and description are visible to the user.
+- [ ] User is able to export/add calendar events to other compatible applications.
+- [ ] User is able to RSVP and access links to their relevant pages.
+- [ ] Functional option to add event to user's calendar.
+- [ ] Navigation to other pages is available to user.
+- [ ] RSVP is available given the time before the event, RSVP should be unavailable after the event/
+- [ ] User registration status is visible and shown either "pending", "accepted", or "declined".
+- [ ] Additional event information is visible only if the user's status is "accepted".
+- [ ] User is able to share a link to the event.
+- [ ] Emnpty State: If there are no upcoming events, then display message stating to check back soon for upcoming events and activities.
+
+## 7. Not Finished
