@@ -41,12 +41,13 @@ This gets checked, not assumed:
 - Compress every Lottie/SVG/image asset before committing it. No multi-megabyte PNGs.
 - Rough bar: Lighthouse performance ≥ 90 on the landing page, LCP under 2.5s on a throttled connection. Check the Lighthouse panel before calling a page done.
 
-## Build order: design first, then build it for real
+## Build order: skeleton against the real backend, then design, then polish
 
-Design happens before code, not alongside it. The old approach here was "ship a rough functional draft, polish it later" — that's gone. Instead:
+Reversed from the earlier design-first plan — backend is shipping faster than frontend right now, so we need working pages hitting the real API to know what we're actually designing for, instead of a mockup built on guesses about response shape. Sequence:
 
-1. **Research** — the art/color/interaction reference doc (multiple Latin American countries, specific pieces, real colors pulled from them — see "Reference points" above). No code, no visual design tool yet.
-2. **Design** — turn that research into an actual visual mockup (Figma or equivalent): layout, color, type, key interactions, all of it. This has to be genuinely good and complete before moving on — not a placeholder to refine later, it's what gets built. Share the link via a short `.md` file in this repo, with a preview screenshot so it's reviewable without opening Figma.
-3. **Build** — implement the page directly from the finished design in step 2. This isn't a rough skeleton to be polished afterward — the visual work already happened in step 2, so the code should already look right from the first PR.
+1. **Research** — the art/color/interaction reference doc (multiple Latin American countries, specific pieces, real colors pulled from them — see "Reference points" above). Done, see `Eddie_DESIGN.md`.
+2. **Skeleton** — a functional page wired to the real backend (`NEXT_PUBLIC_API_URL`): real data, real loading/empty/error states, unstyled or minimally styled. This is what proves out the data before any visual decision gets locked in.
+3. **Design** — once the skeleton's data shape is proven live, turn the research into an actual visual mockup (Figma, pencil.dev, or equivalent): layout, color, type, key interactions. Share the link via a short `.md` file in this repo, with a preview screenshot so it's reviewable without opening the tool.
+4. **Polish** — tune the skeleton in place to match the mockup from step 3: the full Latin American art-influenced treatment (grid, palette, motion).
 
-Don't start coding a page before step 2 is actually done. Performance and accessibility bars above still apply once you're building.
+Performance and accessibility bars above still apply from step 2 onward, not just at the end.
