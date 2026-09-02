@@ -59943,6 +59943,4776 @@
           "fontWeight": "normal"
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "qRgzz",
+      "name": "Row Label broadside",
+      "x": 0,
+      "y": 18660,
+      "theme": {
+        "palette": "broadside"
+      },
+      "width": 1440,
+      "layout": "vertical",
+      "gap": 6,
+      "children": [
+        {
+          "type": "text",
+          "id": "qPgzz",
+          "name": "Row Title",
+          "content": "F — BROADSIDE  ·  proposed: paper, ink, one vermillion, one ochre",
+          "fill": "#14110F",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "fontFamily": "Archivo Black",
+          "fontSize": 44,
+          "fontWeight": "normal",
+          "letterSpacing": -1
+        },
+        {
+          "type": "text",
+          "id": "qQgzz",
+          "name": "Row Sub",
+          "content": "Relief-print register (TGP, Rayo). Two values do the structure; colour is the node, never the plane. Display = Archivo Expanded, labels = Chivo Mono. Events are a printed ledger, not cards.",
+          "fill": "#14110F",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "fontFamily": "Chivo",
+          "fontSize": 20,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "qSjzz",
+      "name": "F1 Landing — Broadside",
+      "x": 0,
+      "y": 18800,
+      "theme": {
+        "palette": "broadside"
+      },
+      "clip": true,
+      "width": 1440,
+      "fill": "$surface",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "qVgzz",
+          "name": "Masthead",
+          "fill": "$bar",
+          "width": "fill_container",
+          "padding": [
+            11,
+            120
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qSgzz",
+              "name": "Org",
+              "content": "LOGICA @ UIC",
+              "fill": "$on-bar",
+              "fontFamily": "$font-code",
+              "fontSize": 12,
+              "fontWeight": "700",
+              "letterSpacing": 2.2
+            },
+            {
+              "type": "text",
+              "id": "qTgzz",
+              "name": "Expansion",
+              "content": "LATINOS ORGANIZED FOR IDEAS, CULTURE & ADVANCEMENT",
+              "fill": "$on-bar",
+              "fontFamily": "$font-code",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "letterSpacing": 2.2
+            },
+            {
+              "type": "text",
+              "id": "qUgzz",
+              "name": "Place",
+              "content": "CHICAGO, IL",
+              "fill": "$on-bar",
+              "fontFamily": "$font-code",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "letterSpacing": 2.2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qphzz",
+          "name": "Nav",
+          "fill": "$surface",
+          "width": "fill_container",
+          "stroke": "$ink",
+          "strokeWidth": {
+            "bottom": 2
+          },
+          "strokeAlignment": "inner",
+          "padding": [
+            20,
+            120
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "q6gzz",
+              "name": "Lockup",
+              "gap": 13,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "q4gzz",
+                  "name": "Mark",
+                  "width": 38,
+                  "height": 38,
+                  "cornerRadius": 9999,
+                  "stroke": "$ink",
+                  "strokeWidth": 2,
+                  "strokeAlignment": "inner",
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "qWgzz",
+                      "name": "Trunk",
+                      "fill": "$ink",
+                      "x": 18,
+                      "y": 12,
+                      "width": 2,
+                      "height": 20
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "qXgzz",
+                      "name": "Branch up",
+                      "fill": "$ink",
+                      "x": 10,
+                      "y": 12,
+                      "width": 10,
+                      "height": 2
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "qYgzz",
+                      "name": "Branch dn",
+                      "fill": "$ink",
+                      "x": 18,
+                      "y": 22,
+                      "width": 9,
+                      "height": 2
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "qZgzz",
+                      "name": "Riser L",
+                      "fill": "$ink",
+                      "x": 10,
+                      "y": 8,
+                      "width": 2,
+                      "height": 6
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "q0gzz",
+                      "name": "Riser R",
+                      "fill": "$ink",
+                      "x": 25,
+                      "y": 16,
+                      "width": 2,
+                      "height": 8
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q1gzz",
+                      "name": "Node",
+                      "width": 6,
+                      "height": 6,
+                      "cornerRadius": 9999,
+                      "fill": "$ink",
+                      "children": [],
+                      "x": 8,
+                      "y": 5
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q2gzz",
+                      "name": "Node",
+                      "width": 6,
+                      "height": 6,
+                      "cornerRadius": 9999,
+                      "fill": "$ink",
+                      "children": [],
+                      "x": 23,
+                      "y": 13
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q3gzz",
+                      "name": "Node",
+                      "width": 5,
+                      "height": 5,
+                      "cornerRadius": 9999,
+                      "fill": "$ink",
+                      "children": [],
+                      "x": 15,
+                      "y": 8
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "q5gzz",
+                  "name": "Wordmark",
+                  "content": "LOGICA",
+                  "fill": "$ink",
+                  "fontFamily": "$font-wide",
+                  "fontSize": 23,
+                  "fontWeight": "normal",
+                  "letterSpacing": 1.6
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qmhzz",
+              "name": "Links",
+              "gap": 30,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "q9gzz",
+                  "name": "Nav Home",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "q7gzz",
+                      "name": "Node",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "fill": "$naranja",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "q8gzz",
+                      "name": "Label",
+                      "content": "HOME",
+                      "fill": "$ink",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qchzz",
+                  "name": "Nav Team",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qahzz",
+                      "name": "Node open",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "stroke": "$rule",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qbhzz",
+                      "name": "Label",
+                      "content": "TEAM",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qfhzz",
+                  "name": "Nav Calendar",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qdhzz",
+                      "name": "Node open",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "stroke": "$rule",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qehzz",
+                      "name": "Label",
+                      "content": "CALENDAR",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qihzz",
+                  "name": "Nav Feed",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qghzz",
+                      "name": "Node open",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "stroke": "$rule",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qhhzz",
+                      "name": "Label",
+                      "content": "FEED",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qlhzz",
+                  "name": "Nav Forms",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qjhzz",
+                      "name": "Node open",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "stroke": "$rule",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qkhzz",
+                      "name": "Label",
+                      "content": "FORMS",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qohzz",
+              "name": "Btn Sign in",
+              "fill": "$ink",
+              "cornerRadius": "$radius-sm",
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "$naranja",
+                "offset": {
+                  "x": 4,
+                  "y": 4
+                }
+              },
+              "padding": [
+                12,
+                20
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qnhzz",
+                  "name": "Label",
+                  "content": "SIGN IN",
+                  "fill": "$on-noche",
+                  "fontFamily": "$font-code",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 1.5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qaizz",
+          "name": "Hero",
+          "fill": "$surface",
+          "width": "fill_container",
+          "padding": [
+            80,
+            120,
+            68,
+            120
+          ],
+          "layout": "vertical",
+          "gap": 30,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qshzz",
+              "name": "Eyebrow row",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qqhzz",
+                  "name": "Section no",
+                  "content": "01 - WHO WE ARE",
+                  "fill": "$naranja",
+                  "fontFamily": "$font-code",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "qrhzz",
+                  "name": "Meta",
+                  "content": "STUDENT ORG  ·  UNIVERSITY OF ILLINOIS CHICAGO",
+                  "fill": "$ink-muted",
+                  "fontFamily": "$font-code",
+                  "fontSize": 12,
+                  "fontWeight": "normal",
+                  "letterSpacing": 1.8
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "qthzz",
+              "name": "Headline",
+              "content": "LATINOS WHO BUILD THINGS AT UIC.",
+              "fill": "$ink",
+              "fontFamily": "$font-wide",
+              "fontSize": 88,
+              "fontWeight": "normal",
+              "letterSpacing": -3.2,
+              "lineHeight": 0.9,
+              "textGrowth": "fixed-width",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "qxhzz",
+              "name": "Corner rule",
+              "layout": "none",
+              "width": "fill_container",
+              "height": 48,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "quhzz",
+                  "name": "Run",
+                  "fill": "$ink",
+                  "x": 0,
+                  "y": 0,
+                  "width": 620,
+                  "height": 2
+                },
+                {
+                  "type": "rectangle",
+                  "id": "qvhzz",
+                  "name": "Turn",
+                  "fill": "$ink",
+                  "x": 618,
+                  "y": 0,
+                  "width": 2,
+                  "height": 34
+                },
+                {
+                  "type": "frame",
+                  "id": "qwhzz",
+                  "name": "Terminal pad",
+                  "width": 14,
+                  "height": 14,
+                  "cornerRadius": 9999,
+                  "fill": "$naranja",
+                  "children": [],
+                  "x": 612,
+                  "y": 34
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "q9hzz",
+              "name": "Hero body",
+              "width": "fill_container",
+              "gap": 64,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qHhzz",
+                  "name": "Copy",
+                  "width": 600,
+                  "layout": "vertical",
+                  "gap": 26,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qyhzz",
+                      "name": "Deck",
+                      "content": "LOGICA is the Latino computing organization at the University of Illinois Chicago. Workshops, company visits, project teams, and a room where you already belong.",
+                      "fill": "$ink",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-body-lg",
+                      "fontWeight": "normal",
+                      "lineHeight": 1.55,
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qDhzz",
+                      "name": "CTAs",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qAhzz",
+                          "name": "Btn Join LOGICA",
+                          "fill": "$naranja",
+                          "cornerRadius": "$radius-sm",
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "$ink",
+                            "offset": {
+                              "x": 4,
+                              "y": 4
+                            }
+                          },
+                          "padding": [
+                            16,
+                            28
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qzhzz",
+                              "name": "Label",
+                              "content": "JOIN LOGICA",
+                              "fill": "$on-naranja",
+                              "fontFamily": "$font-code",
+                              "fontSize": 15,
+                              "fontWeight": "700",
+                              "letterSpacing": 1.5
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qChzz",
+                          "name": "Btn See the calendar",
+                          "fill": "$surface",
+                          "cornerRadius": "$radius-sm",
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "$ink",
+                            "offset": {
+                              "x": 4,
+                              "y": 4
+                            }
+                          },
+                          "padding": [
+                            16,
+                            28
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qBhzz",
+                              "name": "Label",
+                              "content": "SEE THE CALENDAR",
+                              "fill": "$ink",
+                              "fontFamily": "$font-code",
+                              "fontSize": 15,
+                              "fontWeight": "700",
+                              "letterSpacing": 1.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qGhzz",
+                      "name": "Note",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "qEhzz",
+                          "name": "Note rule",
+                          "fill": "$naranja",
+                          "width": 3,
+                          "height": 52
+                        },
+                        {
+                          "type": "text",
+                          "id": "qFhzz",
+                          "name": "Note copy",
+                          "content": "Open to every UIC student in computing. You do not have to be Latino to join — you do have to show up.",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55,
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q8hzz",
+                  "name": "Plate wrap",
+                  "width": 500,
+                  "layout": "vertical",
+                  "gap": 0,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "q4hzz",
+                      "name": "Plate",
+                      "width": 500,
+                      "height": 380,
+                      "fill": "$surface-raised",
+                      "stroke": "$ink",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "layout": "none",
+                      "clip": true,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "qIhzz",
+                          "name": "Trace H",
+                          "fill": "$ink",
+                          "x": 40,
+                          "y": 59,
+                          "width": 260,
+                          "height": 2
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qJhzz",
+                          "name": "Trace H",
+                          "fill": "$ink",
+                          "x": 150,
+                          "y": 119,
+                          "width": 310,
+                          "height": 2
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qKhzz",
+                          "name": "Trace H",
+                          "fill": "$ink",
+                          "x": 40,
+                          "y": 199,
+                          "width": 200,
+                          "height": 2
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qLhzz",
+                          "name": "Trace H",
+                          "fill": "$ink",
+                          "x": 320,
+                          "y": 199,
+                          "width": 140,
+                          "height": 2
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qMhzz",
+                          "name": "Trace H",
+                          "fill": "$ink",
+                          "x": 110,
+                          "y": 269,
+                          "width": 290,
+                          "height": 2
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qNhzz",
+                          "name": "Trace H",
+                          "fill": "$ink",
+                          "x": 40,
+                          "y": 329,
+                          "width": 160,
+                          "height": 2
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qOhzz",
+                          "name": "Trace V",
+                          "fill": "$ink",
+                          "x": 149,
+                          "y": 60,
+                          "width": 2,
+                          "height": 140
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qPhzz",
+                          "name": "Trace V",
+                          "fill": "$ink",
+                          "x": 299,
+                          "y": 60,
+                          "width": 2,
+                          "height": 60
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qQhzz",
+                          "name": "Trace V",
+                          "fill": "$ink",
+                          "x": 239,
+                          "y": 120,
+                          "width": 2,
+                          "height": 150
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qRhzz",
+                          "name": "Trace V",
+                          "fill": "$ink",
+                          "x": 399,
+                          "y": 120,
+                          "width": 2,
+                          "height": 210
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qShzz",
+                          "name": "Trace V",
+                          "fill": "$ink",
+                          "x": 109,
+                          "y": 200,
+                          "width": 2,
+                          "height": 70
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qThzz",
+                          "name": "Trace V",
+                          "fill": "$ink",
+                          "x": 459,
+                          "y": 120,
+                          "width": 2,
+                          "height": 80
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qUhzz",
+                          "name": "Trace V",
+                          "fill": "$ink",
+                          "x": 199,
+                          "y": 270,
+                          "width": 2,
+                          "height": 60
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qVhzz",
+                          "name": "Node open",
+                          "width": 12,
+                          "height": 12,
+                          "cornerRadius": 9999,
+                          "stroke": "$ink",
+                          "strokeWidth": 2,
+                          "strokeAlignment": "inner",
+                          "children": [],
+                          "x": 34,
+                          "y": 194
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qWhzz",
+                          "name": "Node open",
+                          "width": 12,
+                          "height": 12,
+                          "cornerRadius": 9999,
+                          "stroke": "$ink",
+                          "strokeWidth": 2,
+                          "strokeAlignment": "inner",
+                          "children": [],
+                          "x": 454,
+                          "y": 194
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qXhzz",
+                          "name": "Node",
+                          "width": 14,
+                          "height": 14,
+                          "cornerRadius": 9999,
+                          "fill": "$ink",
+                          "children": [],
+                          "x": 143,
+                          "y": 53
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qYhzz",
+                          "name": "Node",
+                          "width": 12,
+                          "height": 12,
+                          "cornerRadius": 9999,
+                          "fill": "$ink",
+                          "children": [],
+                          "x": 294,
+                          "y": 54
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qZhzz",
+                          "name": "Node",
+                          "width": 14,
+                          "height": 14,
+                          "cornerRadius": 9999,
+                          "fill": "$ink",
+                          "children": [],
+                          "x": 233,
+                          "y": 113
+                        },
+                        {
+                          "type": "frame",
+                          "id": "q0hzz",
+                          "name": "Node",
+                          "width": 12,
+                          "height": 12,
+                          "cornerRadius": 9999,
+                          "fill": "$ink",
+                          "children": [],
+                          "x": 454,
+                          "y": 114
+                        },
+                        {
+                          "type": "frame",
+                          "id": "q1hzz",
+                          "name": "Node",
+                          "width": 16,
+                          "height": 16,
+                          "cornerRadius": 9999,
+                          "fill": "$ink",
+                          "children": [],
+                          "x": 102,
+                          "y": 192
+                        },
+                        {
+                          "type": "frame",
+                          "id": "q2hzz",
+                          "name": "Node",
+                          "width": 12,
+                          "height": 12,
+                          "cornerRadius": 9999,
+                          "fill": "$ink",
+                          "children": [],
+                          "x": 394,
+                          "y": 264
+                        },
+                        {
+                          "type": "frame",
+                          "id": "q3hzz",
+                          "name": "Node",
+                          "width": 14,
+                          "height": 14,
+                          "cornerRadius": 9999,
+                          "fill": "$ink",
+                          "children": [],
+                          "x": 193,
+                          "y": 323
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q7hzz",
+                      "name": "Caption bar",
+                      "fill": "$bar",
+                      "width": "fill_container",
+                      "padding": [
+                        7,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "q5hzz",
+                          "name": "Caption L",
+                          "content": "ROUTED FIELD",
+                          "fill": "$on-bar",
+                          "fontFamily": "$font-code",
+                          "fontSize": 11,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.2
+                        },
+                        {
+                          "type": "text",
+                          "id": "q6hzz",
+                          "name": "Caption R",
+                          "content": "AFTER GEGO · RETICULÁREA · CARACAS 1969",
+                          "fill": "$on-bar",
+                          "fontFamily": "$font-code",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.2
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qvizz",
+          "name": "Mission",
+          "fill": "$ink",
+          "width": "fill_container",
+          "padding": [
+            88,
+            120
+          ],
+          "layout": "vertical",
+          "gap": 40,
+          "children": [
+            {
+              "type": "text",
+              "id": "qbizz",
+              "name": "Section no",
+              "content": "02 - MISSION",
+              "fill": "$oro",
+              "fontFamily": "$font-code",
+              "fontSize": 13,
+              "fontWeight": "700",
+              "letterSpacing": 2
+            },
+            {
+              "type": "text",
+              "id": "qcizz",
+              "name": "Statement",
+              "content": "We make computing at UIC a place Latino students don’t have to walk into alone.",
+              "fill": "$surface",
+              "fontFamily": "$font-wide",
+              "fontSize": 54,
+              "fontWeight": "normal",
+              "letterSpacing": -1.6,
+              "lineHeight": 1.0,
+              "textGrowth": "fixed-width",
+              "width": 1020
+            },
+            {
+              "type": "frame",
+              "id": "qhizz",
+              "name": "Goal trace",
+              "layout": "none",
+              "width": "fill_container",
+              "height": 26,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "qdizz",
+                  "name": "Run",
+                  "fill": "$oro",
+                  "x": 0,
+                  "y": 12,
+                  "width": 1160,
+                  "height": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "qeizz",
+                  "name": "Node",
+                  "width": 14,
+                  "height": 14,
+                  "cornerRadius": 9999,
+                  "fill": "$oro",
+                  "children": [],
+                  "x": 0,
+                  "y": 6
+                },
+                {
+                  "type": "frame",
+                  "id": "qfizz",
+                  "name": "Node",
+                  "width": 14,
+                  "height": 14,
+                  "cornerRadius": 9999,
+                  "fill": "$oro",
+                  "children": [],
+                  "x": 573,
+                  "y": 6
+                },
+                {
+                  "type": "frame",
+                  "id": "qgizz",
+                  "name": "Node",
+                  "width": 14,
+                  "height": 14,
+                  "cornerRadius": 9999,
+                  "fill": "$oro",
+                  "children": [],
+                  "x": 1146,
+                  "y": 6
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qrizz",
+              "name": "Goals",
+              "width": "fill_container",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qkizz",
+                  "name": "Goal Get people in the room",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qiizz",
+                      "name": "Title",
+                      "content": "Get people in the room",
+                      "fill": "$surface",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-h4",
+                      "fontWeight": "700",
+                      "lineHeight": 1.55
+                    },
+                    {
+                      "type": "text",
+                      "id": "qjizz",
+                      "name": "Body",
+                      "content": "Weekly meetings in SEO, no experience bar. First-years sit next to seniors, and nobody is quizzed at the door.",
+                      "fill": "$surface",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-body-sm",
+                      "fontWeight": "normal",
+                      "lineHeight": 1.55,
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "opacity": 0.88
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qnizz",
+                  "name": "Goal Get people ready",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qlizz",
+                      "name": "Title",
+                      "content": "Get people ready",
+                      "fill": "$surface",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-h4",
+                      "fontWeight": "700",
+                      "lineHeight": 1.55
+                    },
+                    {
+                      "type": "text",
+                      "id": "qmizz",
+                      "name": "Body",
+                      "content": "Resume reads, mock interviews, and company visits to Chicago firms that actually hire out of this room.",
+                      "fill": "$surface",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-body-sm",
+                      "fontWeight": "normal",
+                      "lineHeight": 1.55,
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "opacity": 0.88
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qqizz",
+                  "name": "Goal Get people building",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qoizz",
+                      "name": "Title",
+                      "content": "Get people building",
+                      "fill": "$surface",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-h4",
+                      "fontWeight": "700",
+                      "lineHeight": 1.55
+                    },
+                    {
+                      "type": "text",
+                      "id": "qpizz",
+                      "name": "Body",
+                      "content": "Project teams that ship real software for real users — including the site you are reading right now.",
+                      "fill": "$surface",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-body-sm",
+                      "fontWeight": "normal",
+                      "lineHeight": 1.55,
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "opacity": 0.88
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "quizz",
+              "name": "Caption bar",
+              "fill": "$oro",
+              "width": "fill_container",
+              "padding": [
+                7,
+                12
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qsizz",
+                  "name": "Caption L",
+                  "content": "PLANE INVERSION",
+                  "fill": "$on-oro",
+                  "fontFamily": "$font-code",
+                  "fontSize": 11,
+                  "fontWeight": "700",
+                  "letterSpacing": 1.2
+                },
+                {
+                  "type": "text",
+                  "id": "qtizz",
+                  "name": "Caption R",
+                  "content": "THE MARK SHIPS IN EXACTLY TWO VALUES — SO DOES THE PAGE",
+                  "fill": "$on-oro",
+                  "fontFamily": "$font-code",
+                  "fontSize": 11,
+                  "fontWeight": "normal",
+                  "letterSpacing": 1.2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qajzz",
+          "name": "Events",
+          "fill": "$surface",
+          "width": "fill_container",
+          "padding": [
+            88,
+            120
+          ],
+          "layout": "vertical",
+          "gap": 26,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qAizz",
+              "name": "Head",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qyizz",
+                  "name": "Head copy",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qwizz",
+                      "name": "Section no",
+                      "content": "03 - WHAT IS NEXT",
+                      "fill": "$naranja",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "qxizz",
+                      "name": "Title",
+                      "content": "Upcoming events",
+                      "fill": "$ink",
+                      "fontFamily": "$font-wide",
+                      "fontSize": 42,
+                      "fontWeight": "normal",
+                      "letterSpacing": -1.2,
+                      "lineHeight": 1.02
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "qzizz",
+                  "name": "All",
+                  "content": "VIEW FULL CALENDAR →",
+                  "fill": "$naranja",
+                  "fontFamily": "$font-code",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 1.6
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "qBizz",
+              "name": "Top rule",
+              "fill": "$ink",
+              "width": "fill_container",
+              "height": 2
+            },
+            {
+              "type": "frame",
+              "id": "qMizz",
+              "name": "Event SEP 18",
+              "width": "fill_container",
+              "padding": [
+                24,
+                0
+              ],
+              "gap": 36,
+              "alignItems": "center",
+              "stroke": "$rule",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "strokeAlignment": "inner",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qFizz",
+                  "name": "Date",
+                  "width": 140,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qCizz",
+                      "name": "Dow",
+                      "content": "THU",
+                      "fill": "$naranja",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "qDizz",
+                      "name": "Date",
+                      "content": "SEP 18",
+                      "fill": "$ink",
+                      "fontFamily": "$font-wide",
+                      "fontSize": 30,
+                      "fontWeight": "normal",
+                      "letterSpacing": -0.8,
+                      "lineHeight": 1.05
+                    },
+                    {
+                      "type": "text",
+                      "id": "qEizz",
+                      "name": "Time",
+                      "content": "6:00 PM",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qIizz",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qGizz",
+                      "name": "Title",
+                      "content": "Fall Kickoff & Member Mixer",
+                      "fill": "$ink",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-h4",
+                      "fontWeight": "700",
+                      "lineHeight": 1.55
+                    },
+                    {
+                      "type": "text",
+                      "id": "qHizz",
+                      "name": "Meta",
+                      "content": "SEO 1000  ·  Meet the board, meet the room. Food, no pitch deck.",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-body-sm",
+                      "fontWeight": "normal",
+                      "lineHeight": 1.55
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qLizz",
+                  "name": "State",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qJizz",
+                      "name": "Node",
+                      "width": 12,
+                      "height": 12,
+                      "cornerRadius": 9999,
+                      "fill": "$naranja",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qKizz",
+                      "name": "State",
+                      "content": "RSVP OPEN",
+                      "fill": "$ink",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qXizz",
+              "name": "Event SEP 30",
+              "width": "fill_container",
+              "padding": [
+                24,
+                0
+              ],
+              "gap": 36,
+              "alignItems": "center",
+              "stroke": "$rule",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "strokeAlignment": "inner",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qQizz",
+                  "name": "Date",
+                  "width": 140,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qNizz",
+                      "name": "Dow",
+                      "content": "TUE",
+                      "fill": "$naranja",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "qOizz",
+                      "name": "Date",
+                      "content": "SEP 30",
+                      "fill": "$ink",
+                      "fontFamily": "$font-wide",
+                      "fontSize": 30,
+                      "fontWeight": "normal",
+                      "letterSpacing": -0.8,
+                      "lineHeight": 1.05
+                    },
+                    {
+                      "type": "text",
+                      "id": "qPizz",
+                      "name": "Time",
+                      "content": "5:30 PM",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qTizz",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qRizz",
+                      "name": "Title",
+                      "content": "Resume reads + mock interviews",
+                      "fill": "$ink",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-h4",
+                      "fontWeight": "700",
+                      "lineHeight": 1.55
+                    },
+                    {
+                      "type": "text",
+                      "id": "qSizz",
+                      "name": "Meta",
+                      "content": "SELE 2249  ·  Bring a draft. Leave with it marked up.",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-body-sm",
+                      "fontWeight": "normal",
+                      "lineHeight": 1.55
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qWizz",
+                  "name": "State",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qUizz",
+                      "name": "Node",
+                      "width": 12,
+                      "height": 12,
+                      "cornerRadius": 9999,
+                      "fill": "$naranja",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qVizz",
+                      "name": "State",
+                      "content": "RSVP OPEN",
+                      "fill": "$ink",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "q8izz",
+              "name": "Event OCT 10",
+              "width": "fill_container",
+              "padding": [
+                24,
+                0
+              ],
+              "gap": 36,
+              "alignItems": "center",
+              "stroke": "$rule",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "strokeAlignment": "inner",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "q1izz",
+                  "name": "Date",
+                  "width": 140,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qYizz",
+                      "name": "Dow",
+                      "content": "FRI",
+                      "fill": "$naranja",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "qZizz",
+                      "name": "Date",
+                      "content": "OCT 10",
+                      "fill": "$ink",
+                      "fontFamily": "$font-wide",
+                      "fontSize": 30,
+                      "fontWeight": "normal",
+                      "letterSpacing": -0.8,
+                      "lineHeight": 1.05
+                    },
+                    {
+                      "type": "text",
+                      "id": "q0izz",
+                      "name": "Time",
+                      "content": "1:00 PM",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q4izz",
+                  "name": "Body",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 5,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "q2izz",
+                      "name": "Title",
+                      "content": "Company visit — Chicago fintech",
+                      "fill": "$ink",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-h4",
+                      "fontWeight": "700",
+                      "lineHeight": 1.55
+                    },
+                    {
+                      "type": "text",
+                      "id": "q3izz",
+                      "name": "Meta",
+                      "content": "Off campus  ·  20 seats, members first, transit covered.",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-sans",
+                      "fontSize": "$t-body-sm",
+                      "fontWeight": "normal",
+                      "lineHeight": 1.55
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q7izz",
+                  "name": "State",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "q5izz",
+                      "name": "Node",
+                      "width": 12,
+                      "height": 12,
+                      "cornerRadius": 9999,
+                      "fill": "$naranja",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "q6izz",
+                      "name": "State",
+                      "content": "12 SEATS",
+                      "fill": "$ink",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "q9izz",
+              "name": "Close rule",
+              "fill": "$ink",
+              "width": "fill_container",
+              "height": 2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qsjzz",
+          "name": "Featured",
+          "fill": "$surface-sunken",
+          "width": "fill_container",
+          "padding": [
+            80,
+            120
+          ],
+          "gap": 64,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qqjzz",
+              "name": "Intro",
+              "width": 330,
+              "layout": "vertical",
+              "gap": 14,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qnjzz",
+                  "name": "Section no",
+                  "content": "04 - FROM THE COMMUNITY",
+                  "fill": "$naranja",
+                  "fontFamily": "$font-code",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "qojzz",
+                  "name": "Title",
+                  "content": "Featured work",
+                  "fill": "$ink",
+                  "fontFamily": "$font-wide",
+                  "fontSize": 40,
+                  "fontWeight": "normal",
+                  "letterSpacing": -1.2,
+                  "lineHeight": 1.02,
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "text",
+                  "id": "qpjzz",
+                  "name": "Copy",
+                  "content": "Announcements, member projects, and the work moving LOGICA forward.",
+                  "fill": "$ink-muted",
+                  "fontFamily": "$font-sans",
+                  "fontSize": "$t-body-sm",
+                  "fontWeight": "normal",
+                  "lineHeight": 1.55,
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qrjzz",
+              "name": "Entries",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qgjzz",
+                  "name": "Entry 01",
+                  "width": "fill_container",
+                  "padding": [
+                    22,
+                    0
+                  ],
+                  "gap": 28,
+                  "alignItems": "center",
+                  "stroke": "$rule",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qbjzz",
+                      "name": "Num",
+                      "content": "01",
+                      "fill": "$naranja",
+                      "fontFamily": "$font-wide",
+                      "fontSize": 34,
+                      "fontWeight": "normal",
+                      "letterSpacing": -0.5,
+                      "lineHeight": 1.0
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qejzz",
+                      "name": "Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qcjzz",
+                          "name": "Title",
+                          "content": "Barrio Data Map",
+                          "fill": "$ink",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-h4",
+                          "fontWeight": "700",
+                          "lineHeight": 1.55
+                        },
+                        {
+                          "type": "text",
+                          "id": "qdjzz",
+                          "name": "Blurb",
+                          "content": "A member team mapping small-business density across Pilsen and Little Village. Open data, open repo.",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55,
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "qfjzz",
+                      "name": "Read",
+                      "content": "READ →",
+                      "fill": "$ink",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.6
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qmjzz",
+                  "name": "Entry 02",
+                  "width": "fill_container",
+                  "padding": [
+                    22,
+                    0
+                  ],
+                  "gap": 28,
+                  "alignItems": "center",
+                  "stroke": "$rule",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qhjzz",
+                      "name": "Num",
+                      "content": "02",
+                      "fill": "$naranja",
+                      "fontFamily": "$font-wide",
+                      "fontSize": 34,
+                      "fontWeight": "normal",
+                      "letterSpacing": -0.5,
+                      "lineHeight": 1.0
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qkjzz",
+                      "name": "Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qijzz",
+                          "name": "Title",
+                          "content": "Mentor hours are open",
+                          "fill": "$ink",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-h4",
+                          "fontWeight": "700",
+                          "lineHeight": 1.55
+                        },
+                        {
+                          "type": "text",
+                          "id": "qjjzz",
+                          "name": "Blurb",
+                          "content": "Twelve board members and alumni signed up. Fifteen minutes, no agenda required, sign-up in the feed.",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55,
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "qljzz",
+                      "name": "Read",
+                      "content": "READ →",
+                      "fill": "$ink",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.6
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qAjzz",
+          "name": "CTA",
+          "fill": "$plane-cta",
+          "width": "fill_container",
+          "padding": [
+            80,
+            120
+          ],
+          "gap": 64,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "qvjzz",
+              "name": "Copy",
+              "width": 740,
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qtjzz",
+                  "name": "Section no",
+                  "content": "05 - GET INVOLVED",
+                  "fill": "$cta-display",
+                  "fontFamily": "$font-code",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "qujzz",
+                  "name": "Title",
+                  "content": "SHOW UP ONCE. THAT IS THE WHOLE ASK.",
+                  "fill": "$cta-display",
+                  "fontFamily": "$font-wide",
+                  "fontSize": 52,
+                  "fontWeight": "normal",
+                  "letterSpacing": -2,
+                  "lineHeight": 0.96,
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qzjzz",
+              "name": "Actions",
+              "width": 300,
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qxjzz",
+                  "name": "Btn Sign in with UIC email",
+                  "fill": "$cta-btn",
+                  "cornerRadius": "$radius-sm",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "$ink",
+                    "offset": {
+                      "x": 4,
+                      "y": 4
+                    }
+                  },
+                  "padding": [
+                    18,
+                    26
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qwjzz",
+                      "name": "Label",
+                      "content": "SIGN IN WITH UIC EMAIL",
+                      "fill": "$on-cta-btn",
+                      "fontFamily": "$font-code",
+                      "fontSize": 14,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.5
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "qyjzz",
+                  "name": "Secondary",
+                  "content": "MEET THE TEAM  ·  VIEW CALENDAR",
+                  "fill": "$cta-display",
+                  "fontFamily": "$font-code",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                  "letterSpacing": 1.6
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qRjzz",
+          "name": "Footer",
+          "fill": "$bar",
+          "width": "fill_container",
+          "padding": [
+            48,
+            120
+          ],
+          "layout": "vertical",
+          "gap": 22,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qOjzz",
+              "name": "Row",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qHjzz",
+                  "name": "Lockup",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qFjzz",
+                      "name": "Mark",
+                      "width": 30,
+                      "height": 30,
+                      "cornerRadius": 9999,
+                      "stroke": "$on-bar",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "qBjzz",
+                          "name": "Trunk",
+                          "fill": "$on-bar",
+                          "x": 14,
+                          "y": 9,
+                          "width": 2,
+                          "height": 16
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qCjzz",
+                          "name": "Branch",
+                          "fill": "$on-bar",
+                          "x": 8,
+                          "y": 9,
+                          "width": 8,
+                          "height": 2
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qDjzz",
+                          "name": "Node",
+                          "width": 5,
+                          "height": 5,
+                          "cornerRadius": 9999,
+                          "fill": "$on-bar",
+                          "children": [],
+                          "x": 6,
+                          "y": 6
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qEjzz",
+                          "name": "Node",
+                          "width": 5,
+                          "height": 5,
+                          "cornerRadius": 9999,
+                          "fill": "$on-bar",
+                          "children": [],
+                          "x": 18,
+                          "y": 11
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "qGjzz",
+                      "name": "Wordmark",
+                      "content": "LOGICA",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-wide",
+                      "fontSize": 19,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.4
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qNjzz",
+                  "name": "Links",
+                  "gap": 28,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qIjzz",
+                      "name": "L1",
+                      "content": "TEAM",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "qJjzz",
+                      "name": "L2",
+                      "content": "CALENDAR",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "qKjzz",
+                      "name": "L3",
+                      "content": "FEED",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "qLjzz",
+                      "name": "L4",
+                      "content": "FORMS",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "qMjzz",
+                      "name": "L5",
+                      "content": "INSTAGRAM",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "qPjzz",
+              "name": "Rule",
+              "fill": "$oro",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "text",
+              "id": "qQjzz",
+              "name": "Credits",
+              "content": "REFERENCES  ·  GEGO, RETICULÁREA (CARACAS 1969)  ·  TALLER DE GRÁFICA POPULAR (MÉXICO 1937)  ·  OMAR RAYO (COLOMBIA)  ·  TORRES-GARCÍA, AMÉRICA INVERTIDA (1943, PEN AND INK)",
+              "fill": "$oro",
+              "fontFamily": "$font-code",
+              "fontSize": 11,
+              "fontWeight": "normal",
+              "letterSpacing": 1.4,
+              "textGrowth": "fixed-width",
+              "width": "fill_container"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "qVjzz",
+      "name": "Row Label board",
+      "x": 0,
+      "y": 23060,
+      "theme": {
+        "palette": "board"
+      },
+      "width": 1440,
+      "layout": "vertical",
+      "gap": 6,
+      "children": [
+        {
+          "type": "text",
+          "id": "qTjzz",
+          "name": "Row Title",
+          "content": "G — BOARD  ·  proposed: the same page, inverted, on a spine",
+          "fill": "#F2F0EA",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "fontFamily": "Archivo Black",
+          "fontSize": 44,
+          "fontWeight": "normal",
+          "letterSpacing": -1
+        },
+        {
+          "type": "text",
+          "id": "qUjzz",
+          "name": "Row Sub",
+          "content": "The routing diagram becomes the page structure: a trace runs the left margin and each section is a node on it. One paper plane (Mission) and one amber plane (CTA) are the only interruptions.",
+          "fill": "#F2F0EA",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "fontFamily": "Chivo",
+          "fontSize": 20,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "qsnzz",
+      "name": "G1 Landing — Board",
+      "x": 0,
+      "y": 23200,
+      "theme": {
+        "palette": "board"
+      },
+      "clip": true,
+      "width": 1440,
+      "fill": "$surface",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "qZjzz",
+          "name": "Masthead",
+          "fill": "$bar",
+          "width": "fill_container",
+          "padding": [
+            11,
+            120,
+            11,
+            56
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qWjzz",
+              "name": "Org",
+              "content": "LOGICA @ UIC",
+              "fill": "$on-bar",
+              "fontFamily": "$font-code",
+              "fontSize": 12,
+              "fontWeight": "700",
+              "letterSpacing": 2.2
+            },
+            {
+              "type": "text",
+              "id": "qXjzz",
+              "name": "Expansion",
+              "content": "LATINOS ORGANIZED FOR IDEAS, CULTURE & ADVANCEMENT",
+              "fill": "$on-bar",
+              "fontFamily": "$font-code",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "letterSpacing": 2.2
+            },
+            {
+              "type": "text",
+              "id": "qYjzz",
+              "name": "Place",
+              "content": "CHICAGO, IL",
+              "fill": "$on-bar",
+              "fontFamily": "$font-code",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "letterSpacing": 2.2
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qtkzz",
+          "name": "Nav",
+          "fill": "$surface",
+          "width": "fill_container",
+          "stroke": "$rule",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "strokeAlignment": "inner",
+          "padding": [
+            20,
+            120,
+            20,
+            56
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "qakzz",
+              "name": "Lockup",
+              "gap": 13,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "q8jzz",
+                  "name": "Mark",
+                  "width": 38,
+                  "height": 38,
+                  "cornerRadius": 9999,
+                  "stroke": "$ink",
+                  "strokeWidth": 2,
+                  "strokeAlignment": "inner",
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "q0jzz",
+                      "name": "Trunk",
+                      "fill": "$ink",
+                      "x": 18,
+                      "y": 12,
+                      "width": 2,
+                      "height": 20
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "q1jzz",
+                      "name": "Branch up",
+                      "fill": "$ink",
+                      "x": 10,
+                      "y": 12,
+                      "width": 10,
+                      "height": 2
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "q2jzz",
+                      "name": "Branch dn",
+                      "fill": "$ink",
+                      "x": 18,
+                      "y": 22,
+                      "width": 9,
+                      "height": 2
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "q3jzz",
+                      "name": "Riser L",
+                      "fill": "$ink",
+                      "x": 10,
+                      "y": 8,
+                      "width": 2,
+                      "height": 6
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "q4jzz",
+                      "name": "Riser R",
+                      "fill": "$ink",
+                      "x": 25,
+                      "y": 16,
+                      "width": 2,
+                      "height": 8
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q5jzz",
+                      "name": "Node",
+                      "width": 6,
+                      "height": 6,
+                      "cornerRadius": 9999,
+                      "fill": "$oro",
+                      "children": [],
+                      "x": 8,
+                      "y": 5
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q6jzz",
+                      "name": "Node",
+                      "width": 6,
+                      "height": 6,
+                      "cornerRadius": 9999,
+                      "fill": "$ink",
+                      "children": [],
+                      "x": 23,
+                      "y": 13
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q7jzz",
+                      "name": "Node",
+                      "width": 5,
+                      "height": 5,
+                      "cornerRadius": 9999,
+                      "fill": "$ink",
+                      "children": [],
+                      "x": 15,
+                      "y": 8
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "q9jzz",
+                  "name": "Wordmark",
+                  "content": "LOGICA",
+                  "fill": "$ink",
+                  "fontFamily": "$font-wide",
+                  "fontSize": 23,
+                  "fontWeight": "normal",
+                  "letterSpacing": 1.6
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qqkzz",
+              "name": "Links",
+              "gap": 30,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qdkzz",
+                  "name": "Nav Home",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qbkzz",
+                      "name": "Node",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "fill": "$oro",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qckzz",
+                      "name": "Label",
+                      "content": "HOME",
+                      "fill": "$ink",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qgkzz",
+                  "name": "Nav Team",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qekzz",
+                      "name": "Node open",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "stroke": "$rule",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qfkzz",
+                      "name": "Label",
+                      "content": "TEAM",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qjkzz",
+                  "name": "Nav Calendar",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qhkzz",
+                      "name": "Node open",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "stroke": "$rule",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qikzz",
+                      "name": "Label",
+                      "content": "CALENDAR",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qmkzz",
+                  "name": "Nav Feed",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qkkzz",
+                      "name": "Node open",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "stroke": "$rule",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qlkzz",
+                      "name": "Label",
+                      "content": "FEED",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qpkzz",
+                  "name": "Nav Forms",
+                  "gap": 9,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qnkzz",
+                      "name": "Node open",
+                      "width": 8,
+                      "height": 8,
+                      "cornerRadius": 9999,
+                      "stroke": "$rule",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "children": []
+                    },
+                    {
+                      "type": "text",
+                      "id": "qokzz",
+                      "name": "Label",
+                      "content": "FORMS",
+                      "fill": "$ink-muted",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qskzz",
+              "name": "Btn Sign in",
+              "fill": "$oro",
+              "cornerRadius": "$radius-sm",
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "$ink",
+                "offset": {
+                  "x": 4,
+                  "y": 4
+                }
+              },
+              "padding": [
+                12,
+                20
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qrkzz",
+                  "name": "Label",
+                  "content": "SIGN IN",
+                  "fill": "$on-oro",
+                  "fontFamily": "$font-code",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 1.5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qplzz",
+          "name": "Hero",
+          "fill": "$surface",
+          "width": "fill_container",
+          "padding": [
+            0,
+            120,
+            0,
+            56
+          ],
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qnlzz",
+              "name": "Spine",
+              "width": 72,
+              "height": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "qklzz",
+                  "name": "Trace in",
+                  "fill": "$rule",
+                  "width": 2,
+                  "height": 106
+                },
+                {
+                  "type": "frame",
+                  "id": "qllzz",
+                  "name": "Node lit",
+                  "width": 20,
+                  "height": 20,
+                  "cornerRadius": 9999,
+                  "fill": "$oro",
+                  "children": []
+                },
+                {
+                  "type": "rectangle",
+                  "id": "qmlzz",
+                  "name": "Trace out",
+                  "fill": "$rule",
+                  "width": 2,
+                  "height": "fill_container"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qolzz",
+              "name": "Hero body",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "padding": [
+                76,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qukzz",
+                  "name": "Section no",
+                  "content": "01 - WHO WE ARE",
+                  "fill": "$oro",
+                  "fontFamily": "$font-code",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "qykzz",
+                  "name": "Arrival",
+                  "layout": "none",
+                  "width": "fill_container",
+                  "height": 30,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "qvkzz",
+                      "name": "Riser",
+                      "fill": "$oro",
+                      "x": 0,
+                      "y": 0,
+                      "width": 2,
+                      "height": 15
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "qwkzz",
+                      "name": "Run",
+                      "fill": "$oro",
+                      "x": 0,
+                      "y": 14,
+                      "width": 360,
+                      "height": 2
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qxkzz",
+                      "name": "Terminal pad",
+                      "width": 12,
+                      "height": 12,
+                      "cornerRadius": 9999,
+                      "fill": "$oro",
+                      "children": [],
+                      "x": 354,
+                      "y": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "qzkzz",
+                  "name": "Headline",
+                  "content": "LATINOS WHO BUILD THINGS AT UIC.",
+                  "fill": "$ink",
+                  "fontFamily": "$font-wide",
+                  "fontSize": 88,
+                  "fontWeight": "normal",
+                  "letterSpacing": -3.2,
+                  "lineHeight": 0.9,
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "frame",
+                  "id": "qjlzz",
+                  "name": "Hero body",
+                  "width": "fill_container",
+                  "gap": 56,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qJkzz",
+                      "name": "Copy",
+                      "width": 540,
+                      "layout": "vertical",
+                      "gap": 26,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qAkzz",
+                          "name": "Deck",
+                          "content": "LOGICA is the Latino computing organization at the University of Illinois Chicago. Workshops, company visits, project teams, and a room where you already belong.",
+                          "fill": "$ink",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-lg",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55,
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qFkzz",
+                          "name": "CTAs",
+                          "gap": 14,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "qCkzz",
+                              "name": "Btn Join LOGICA",
+                              "fill": "$oro",
+                              "cornerRadius": "$radius-sm",
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "$ink",
+                                "offset": {
+                                  "x": 4,
+                                  "y": 4
+                                }
+                              },
+                              "padding": [
+                                16,
+                                28
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "qBkzz",
+                                  "name": "Label",
+                                  "content": "JOIN LOGICA",
+                                  "fill": "$on-oro",
+                                  "fontFamily": "$font-code",
+                                  "fontSize": 15,
+                                  "fontWeight": "700",
+                                  "letterSpacing": 1.5
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qEkzz",
+                              "name": "Btn See the calendar",
+                              "fill": "$surface",
+                              "cornerRadius": "$radius-sm",
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "$rule",
+                                "offset": {
+                                  "x": 4,
+                                  "y": 4
+                                }
+                              },
+                              "padding": [
+                                16,
+                                28
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "qDkzz",
+                                  "name": "Label",
+                                  "content": "SEE THE CALENDAR",
+                                  "fill": "$ink",
+                                  "fontFamily": "$font-code",
+                                  "fontSize": 15,
+                                  "fontWeight": "700",
+                                  "letterSpacing": 1.5
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qIkzz",
+                          "name": "Note",
+                          "gap": 12,
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "qGkzz",
+                              "name": "Note rule",
+                              "fill": "$oro",
+                              "width": 3,
+                              "height": 52
+                            },
+                            {
+                              "type": "text",
+                              "id": "qHkzz",
+                              "name": "Note copy",
+                              "content": "Open to every UIC student in computing. You do not have to be Latino to join — you do have to show up.",
+                              "fill": "$ink-muted",
+                              "fontFamily": "$font-sans",
+                              "fontSize": "$t-body-sm",
+                              "fontWeight": "normal",
+                              "lineHeight": 1.55,
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qilzz",
+                      "name": "Plate wrap",
+                      "width": 560,
+                      "layout": "vertical",
+                      "gap": 0,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qelzz",
+                          "name": "Plate",
+                          "width": 560,
+                          "height": 440,
+                          "fill": "$surface-sunken",
+                          "stroke": "$rule",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "none",
+                          "clip": true,
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "qKkzz",
+                              "name": "Trace H",
+                              "fill": "$rule",
+                              "x": 48,
+                              "y": 55,
+                              "width": 292,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qLkzz",
+                              "name": "Trace H",
+                              "fill": "$rule",
+                              "x": 200,
+                              "y": 109,
+                              "width": 312,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qMkzz",
+                              "name": "Trace H",
+                              "fill": "$rule",
+                              "x": 48,
+                              "y": 169,
+                              "width": 252,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qNkzz",
+                              "name": "Trace H",
+                              "fill": "$rule",
+                              "x": 380,
+                              "y": 169,
+                              "width": 132,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qOkzz",
+                              "name": "Trace H",
+                              "fill": "$rule",
+                              "x": 120,
+                              "y": 239,
+                              "width": 340,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qPkzz",
+                              "name": "Trace H",
+                              "fill": "$rule",
+                              "x": 48,
+                              "y": 299,
+                              "width": 212,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qQkzz",
+                              "name": "Trace H",
+                              "fill": "$rule",
+                              "x": 260,
+                              "y": 359,
+                              "width": 252,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qRkzz",
+                              "name": "Trace H",
+                              "fill": "$rule",
+                              "x": 48,
+                              "y": 399,
+                              "width": 152,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qSkzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 119,
+                              "y": 56,
+                              "width": 2,
+                              "height": 244
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qTkzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 199,
+                              "y": 110,
+                              "width": 2,
+                              "height": 130
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qUkzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 339,
+                              "y": 56,
+                              "width": 2,
+                              "height": 54
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qVkzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 259,
+                              "y": 240,
+                              "width": 2,
+                              "height": 120
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qWkzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 459,
+                              "y": 110,
+                              "width": 2,
+                              "height": 130
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qXkzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 511,
+                              "y": 110,
+                              "width": 2,
+                              "height": 60
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qYkzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 299,
+                              "y": 170,
+                              "width": 2,
+                              "height": 70
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "qZkzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 379,
+                              "y": 170,
+                              "width": 2,
+                              "height": 190
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "q0kzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 47,
+                              "y": 170,
+                              "width": 2,
+                              "height": 130
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "q1kzz",
+                              "name": "Trace V",
+                              "fill": "$rule",
+                              "x": 199,
+                              "y": 300,
+                              "width": 2,
+                              "height": 100
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "q2kzz",
+                              "name": "Trace H active",
+                              "fill": "$ink",
+                              "x": 120,
+                              "y": 299,
+                              "width": 140,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "q3kzz",
+                              "name": "Trace H active",
+                              "fill": "$ink",
+                              "x": 260,
+                              "y": 359,
+                              "width": 252,
+                              "height": 2
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "q4kzz",
+                              "name": "Trace V active",
+                              "fill": "$ink",
+                              "x": 119,
+                              "y": 56,
+                              "width": 2,
+                              "height": 244
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "q5kzz",
+                              "name": "Trace V active",
+                              "fill": "$ink",
+                              "x": 259,
+                              "y": 300,
+                              "width": 2,
+                              "height": 60
+                            },
+                            {
+                              "type": "frame",
+                              "id": "q6kzz",
+                              "name": "Node",
+                              "width": 12,
+                              "height": 12,
+                              "cornerRadius": 9999,
+                              "fill": "$oro",
+                              "children": [],
+                              "x": 194,
+                              "y": 104
+                            },
+                            {
+                              "type": "frame",
+                              "id": "q7kzz",
+                              "name": "Node",
+                              "width": 12,
+                              "height": 12,
+                              "cornerRadius": 9999,
+                              "fill": "$oro",
+                              "children": [],
+                              "x": 334,
+                              "y": 50
+                            },
+                            {
+                              "type": "frame",
+                              "id": "q8kzz",
+                              "name": "Node",
+                              "width": 12,
+                              "height": 12,
+                              "cornerRadius": 9999,
+                              "fill": "$oro",
+                              "children": [],
+                              "x": 454,
+                              "y": 234
+                            },
+                            {
+                              "type": "frame",
+                              "id": "q9kzz",
+                              "name": "Node",
+                              "width": 12,
+                              "height": 12,
+                              "cornerRadius": 9999,
+                              "fill": "$oro",
+                              "children": [],
+                              "x": 42,
+                              "y": 294
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qalzz",
+                              "name": "Node",
+                              "width": 12,
+                              "height": 12,
+                              "cornerRadius": 9999,
+                              "fill": "$oro",
+                              "children": [],
+                              "x": 194,
+                              "y": 394
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qblzz",
+                              "name": "Node",
+                              "width": 12,
+                              "height": 12,
+                              "cornerRadius": 9999,
+                              "fill": "$oro",
+                              "children": [],
+                              "x": 506,
+                              "y": 164
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qclzz",
+                              "name": "Node active",
+                              "width": 16,
+                              "height": 16,
+                              "cornerRadius": 9999,
+                              "fill": "$ink",
+                              "children": [],
+                              "x": 112,
+                              "y": 48
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qdlzz",
+                              "name": "Node active",
+                              "width": 20,
+                              "height": 20,
+                              "cornerRadius": 9999,
+                              "fill": "$ink",
+                              "children": [],
+                              "x": 502,
+                              "y": 350
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qhlzz",
+                          "name": "Caption bar",
+                          "fill": "$surface-raised",
+                          "width": "fill_container",
+                          "padding": [
+                            7,
+                            12
+                          ],
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qflzz",
+                              "name": "Caption L",
+                              "content": "LIVE ROUTE",
+                              "fill": "$oro",
+                              "fontFamily": "$font-code",
+                              "fontSize": 11,
+                              "fontWeight": "700",
+                              "letterSpacing": 1.2
+                            },
+                            {
+                              "type": "text",
+                              "id": "qglzz",
+                              "name": "Caption R",
+                              "content": "AFTER GEGO · RETICULÁREA · CARACAS 1969",
+                              "fill": "$ink-muted",
+                              "fontFamily": "$font-code",
+                              "fontSize": 11,
+                              "fontWeight": "normal",
+                              "letterSpacing": 1.2
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qPlzz",
+          "name": "Mission",
+          "fill": "$ink",
+          "width": "fill_container",
+          "padding": [
+            0,
+            120,
+            0,
+            56
+          ],
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qNlzz",
+              "name": "Spine",
+              "width": 72,
+              "height": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "qKlzz",
+                  "name": "Trace in",
+                  "fill": "$surface",
+                  "width": 2,
+                  "height": 122
+                },
+                {
+                  "type": "frame",
+                  "id": "qLlzz",
+                  "name": "Node lit",
+                  "width": 20,
+                  "height": 20,
+                  "cornerRadius": 9999,
+                  "fill": "$surface",
+                  "children": []
+                },
+                {
+                  "type": "rectangle",
+                  "id": "qMlzz",
+                  "name": "Trace out",
+                  "fill": "$surface",
+                  "width": 2,
+                  "height": "fill_container"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qOlzz",
+              "name": "Mission body",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "padding": [
+                88,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qqlzz",
+                  "name": "Section no",
+                  "content": "02 - MISSION",
+                  "fill": "$surface",
+                  "fontFamily": "$font-code",
+                  "fontSize": 13,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "qrlzz",
+                  "name": "Statement",
+                  "content": "We make computing at UIC a place Latino students don’t have to walk into alone.",
+                  "fill": "$surface",
+                  "fontFamily": "$font-wide",
+                  "fontSize": 54,
+                  "fontWeight": "normal",
+                  "letterSpacing": -1.6,
+                  "lineHeight": 1.0,
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "frame",
+                  "id": "qwlzz",
+                  "name": "Goal trace",
+                  "layout": "none",
+                  "width": "fill_container",
+                  "height": 26,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "qslzz",
+                      "name": "Run",
+                      "fill": "$surface",
+                      "x": 0,
+                      "y": 12,
+                      "width": 1050,
+                      "height": 2
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qtlzz",
+                      "name": "Node",
+                      "width": 14,
+                      "height": 14,
+                      "cornerRadius": 9999,
+                      "fill": "$surface",
+                      "children": [],
+                      "x": 0,
+                      "y": 6
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qulzz",
+                      "name": "Node",
+                      "width": 14,
+                      "height": 14,
+                      "cornerRadius": 9999,
+                      "fill": "$surface",
+                      "children": [],
+                      "x": 518,
+                      "y": 6
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qvlzz",
+                      "name": "Node",
+                      "width": 14,
+                      "height": 14,
+                      "cornerRadius": 9999,
+                      "fill": "$surface",
+                      "children": [],
+                      "x": 1036,
+                      "y": 6
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qGlzz",
+                  "name": "Goals",
+                  "width": "fill_container",
+                  "gap": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qzlzz",
+                      "name": "Goal Get people in the room",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qxlzz",
+                          "name": "Title",
+                          "content": "Get people in the room",
+                          "fill": "$surface",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-h4",
+                          "fontWeight": "700",
+                          "lineHeight": 1.55
+                        },
+                        {
+                          "type": "text",
+                          "id": "qylzz",
+                          "name": "Body",
+                          "content": "Weekly meetings in SEO, no experience bar. First-years sit next to seniors, and nobody is quizzed at the door.",
+                          "fill": "$surface",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55,
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "opacity": 0.8
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qClzz",
+                      "name": "Goal Get people ready",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qAlzz",
+                          "name": "Title",
+                          "content": "Get people ready",
+                          "fill": "$surface",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-h4",
+                          "fontWeight": "700",
+                          "lineHeight": 1.55
+                        },
+                        {
+                          "type": "text",
+                          "id": "qBlzz",
+                          "name": "Body",
+                          "content": "Resume reads, mock interviews, and company visits to Chicago firms that actually hire out of this room.",
+                          "fill": "$surface",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55,
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "opacity": 0.8
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qFlzz",
+                      "name": "Goal Get people building",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qDlzz",
+                          "name": "Title",
+                          "content": "Get people building",
+                          "fill": "$surface",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-h4",
+                          "fontWeight": "700",
+                          "lineHeight": 1.55
+                        },
+                        {
+                          "type": "text",
+                          "id": "qElzz",
+                          "name": "Body",
+                          "content": "Project teams that ship real software for real users — including the site you are reading right now.",
+                          "fill": "$surface",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55,
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "opacity": 0.8
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qJlzz",
+                  "name": "Caption bar",
+                  "fill": "$surface",
+                  "width": "fill_container",
+                  "padding": [
+                    7,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qHlzz",
+                      "name": "Caption L",
+                      "content": "PLANE INVERSION",
+                      "fill": "$oro",
+                      "fontFamily": "$font-code",
+                      "fontSize": 11,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.2
+                    },
+                    {
+                      "type": "text",
+                      "id": "qIlzz",
+                      "name": "Caption R",
+                      "content": "THE MARK SHIPS IN EXACTLY TWO VALUES — SO DOES THE PAGE",
+                      "fill": "$ink",
+                      "fontFamily": "$font-code",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qymzz",
+          "name": "Events",
+          "fill": "$surface",
+          "width": "fill_container",
+          "padding": [
+            0,
+            120,
+            0,
+            56
+          ],
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qwmzz",
+              "name": "Spine",
+              "width": 72,
+              "height": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "qtmzz",
+                  "name": "Trace in",
+                  "fill": "$rule",
+                  "width": 2,
+                  "height": 122
+                },
+                {
+                  "type": "frame",
+                  "id": "qumzz",
+                  "name": "Node",
+                  "width": 20,
+                  "height": 20,
+                  "cornerRadius": 9999,
+                  "stroke": "$rule",
+                  "strokeWidth": 2,
+                  "strokeAlignment": "inner",
+                  "children": []
+                },
+                {
+                  "type": "rectangle",
+                  "id": "qvmzz",
+                  "name": "Trace out",
+                  "fill": "$rule",
+                  "width": 2,
+                  "height": "fill_container"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qxmzz",
+              "name": "Events body",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "padding": [
+                88,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qUlzz",
+                  "name": "Head",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qSlzz",
+                      "name": "Head copy",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qQlzz",
+                          "name": "Section no",
+                          "content": "03 - WHAT IS NEXT",
+                          "fill": "$oro",
+                          "fontFamily": "$font-code",
+                          "fontSize": 13,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "qRlzz",
+                          "name": "Title",
+                          "content": "Upcoming events",
+                          "fill": "$ink",
+                          "fontFamily": "$font-wide",
+                          "fontSize": 42,
+                          "fontWeight": "normal",
+                          "letterSpacing": -1.2,
+                          "lineHeight": 1.02
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "qTlzz",
+                      "name": "All",
+                      "content": "VIEW FULL CALENDAR →",
+                      "fill": "$oro",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.6
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "qVlzz",
+                  "name": "Top rule",
+                  "fill": "$ink",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "q6lzz",
+                  "name": "Event SEP 18",
+                  "width": "fill_container",
+                  "padding": [
+                    24,
+                    0
+                  ],
+                  "gap": 36,
+                  "alignItems": "center",
+                  "stroke": "$rule",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qZlzz",
+                      "name": "Date",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qWlzz",
+                          "name": "Dow",
+                          "content": "THU",
+                          "fill": "$oro",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "qXlzz",
+                          "name": "Date",
+                          "content": "SEP 18",
+                          "fill": "$ink",
+                          "fontFamily": "$font-wide",
+                          "fontSize": 30,
+                          "fontWeight": "normal",
+                          "letterSpacing": -0.8,
+                          "lineHeight": 1.05
+                        },
+                        {
+                          "type": "text",
+                          "id": "qYlzz",
+                          "name": "Time",
+                          "content": "6:00 PM",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q2lzz",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "q0lzz",
+                          "name": "Title",
+                          "content": "Fall Kickoff & Member Mixer",
+                          "fill": "$ink",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-h4",
+                          "fontWeight": "700",
+                          "lineHeight": 1.55
+                        },
+                        {
+                          "type": "text",
+                          "id": "q1lzz",
+                          "name": "Meta",
+                          "content": "SEO 1000  ·  Meet the board, meet the room. Food, no pitch deck.",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q5lzz",
+                      "name": "State",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "q3lzz",
+                          "name": "Node",
+                          "width": 12,
+                          "height": 12,
+                          "cornerRadius": 9999,
+                          "fill": "$oro",
+                          "children": []
+                        },
+                        {
+                          "type": "text",
+                          "id": "q4lzz",
+                          "name": "State",
+                          "content": "RSVP OPEN",
+                          "fill": "$ink",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.6
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qhmzz",
+                  "name": "Event SEP 30",
+                  "width": "fill_container",
+                  "padding": [
+                    24,
+                    0
+                  ],
+                  "gap": 36,
+                  "alignItems": "center",
+                  "stroke": "$rule",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qamzz",
+                      "name": "Date",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "q7lzz",
+                          "name": "Dow",
+                          "content": "TUE",
+                          "fill": "$oro",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "q8lzz",
+                          "name": "Date",
+                          "content": "SEP 30",
+                          "fill": "$ink",
+                          "fontFamily": "$font-wide",
+                          "fontSize": 30,
+                          "fontWeight": "normal",
+                          "letterSpacing": -0.8,
+                          "lineHeight": 1.05
+                        },
+                        {
+                          "type": "text",
+                          "id": "q9lzz",
+                          "name": "Time",
+                          "content": "5:30 PM",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qdmzz",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qbmzz",
+                          "name": "Title",
+                          "content": "Resume reads + mock interviews",
+                          "fill": "$ink",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-h4",
+                          "fontWeight": "700",
+                          "lineHeight": 1.55
+                        },
+                        {
+                          "type": "text",
+                          "id": "qcmzz",
+                          "name": "Meta",
+                          "content": "SELE 2249  ·  Bring a draft. Leave with it marked up.",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qgmzz",
+                      "name": "State",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qemzz",
+                          "name": "Node",
+                          "width": 12,
+                          "height": 12,
+                          "cornerRadius": 9999,
+                          "fill": "$oro",
+                          "children": []
+                        },
+                        {
+                          "type": "text",
+                          "id": "qfmzz",
+                          "name": "State",
+                          "content": "RSVP OPEN",
+                          "fill": "$ink",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.6
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qsmzz",
+                  "name": "Event OCT 10",
+                  "width": "fill_container",
+                  "padding": [
+                    24,
+                    0
+                  ],
+                  "gap": 36,
+                  "alignItems": "center",
+                  "stroke": "$rule",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qlmzz",
+                      "name": "Date",
+                      "width": 140,
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qimzz",
+                          "name": "Dow",
+                          "content": "FRI",
+                          "fill": "$oro",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "qjmzz",
+                          "name": "Date",
+                          "content": "OCT 10",
+                          "fill": "$ink",
+                          "fontFamily": "$font-wide",
+                          "fontSize": 30,
+                          "fontWeight": "normal",
+                          "letterSpacing": -0.8,
+                          "lineHeight": 1.05
+                        },
+                        {
+                          "type": "text",
+                          "id": "qkmzz",
+                          "name": "Time",
+                          "content": "1:00 PM",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1.2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qomzz",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qmmzz",
+                          "name": "Title",
+                          "content": "Company visit — Chicago fintech",
+                          "fill": "$ink",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-h4",
+                          "fontWeight": "700",
+                          "lineHeight": 1.55
+                        },
+                        {
+                          "type": "text",
+                          "id": "qnmzz",
+                          "name": "Meta",
+                          "content": "Off campus  ·  20 seats, members first, transit covered.",
+                          "fill": "$ink-muted",
+                          "fontFamily": "$font-sans",
+                          "fontSize": "$t-body-sm",
+                          "fontWeight": "normal",
+                          "lineHeight": 1.55
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qrmzz",
+                      "name": "State",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qpmzz",
+                          "name": "Node",
+                          "width": 12,
+                          "height": 12,
+                          "cornerRadius": 9999,
+                          "fill": "$oro",
+                          "children": []
+                        },
+                        {
+                          "type": "text",
+                          "id": "qqmzz",
+                          "name": "State",
+                          "content": "12 SEATS",
+                          "fill": "$ink",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.6
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qWmzz",
+          "name": "Featured",
+          "fill": "$surface-raised",
+          "width": "fill_container",
+          "padding": [
+            0,
+            120,
+            0,
+            56
+          ],
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qUmzz",
+              "name": "Spine",
+              "width": 72,
+              "height": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "qRmzz",
+                  "name": "Trace in",
+                  "fill": "$rule",
+                  "width": 2,
+                  "height": 110
+                },
+                {
+                  "type": "frame",
+                  "id": "qSmzz",
+                  "name": "Node",
+                  "width": 20,
+                  "height": 20,
+                  "cornerRadius": 9999,
+                  "stroke": "$rule",
+                  "strokeWidth": 2,
+                  "strokeAlignment": "inner",
+                  "children": []
+                },
+                {
+                  "type": "rectangle",
+                  "id": "qTmzz",
+                  "name": "Trace out",
+                  "fill": "$rule",
+                  "width": 2,
+                  "height": "fill_container"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qVmzz",
+              "name": "Featured body",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "padding": [
+                76,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qPmzz",
+                  "name": "Head",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qNmzz",
+                      "name": "Head copy",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qLmzz",
+                          "name": "Section no",
+                          "content": "04 - FROM THE COMMUNITY",
+                          "fill": "$oro",
+                          "fontFamily": "$font-code",
+                          "fontSize": 13,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "qMmzz",
+                          "name": "Title",
+                          "content": "Featured work",
+                          "fill": "$ink",
+                          "fontFamily": "$font-wide",
+                          "fontSize": 42,
+                          "fontWeight": "normal",
+                          "letterSpacing": -1.2,
+                          "lineHeight": 1.02
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "qOmzz",
+                      "name": "All",
+                      "content": "OPEN THE FEED →",
+                      "fill": "$oro",
+                      "fontFamily": "$font-code",
+                      "fontSize": 13,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.6
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qQmzz",
+                  "name": "Entries",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 0,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qEmzz",
+                      "name": "Entry 01",
+                      "width": "fill_container",
+                      "padding": [
+                        22,
+                        0
+                      ],
+                      "gap": 28,
+                      "alignItems": "center",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "strokeAlignment": "inner",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qzmzz",
+                          "name": "Num",
+                          "content": "01",
+                          "fill": "$oro",
+                          "fontFamily": "$font-wide",
+                          "fontSize": 34,
+                          "fontWeight": "normal",
+                          "letterSpacing": -0.5,
+                          "lineHeight": 1.0
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qCmzz",
+                          "name": "Copy",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qAmzz",
+                              "name": "Title",
+                              "content": "Barrio Data Map",
+                              "fill": "$ink",
+                              "fontFamily": "$font-sans",
+                              "fontSize": "$t-h4",
+                              "fontWeight": "700",
+                              "lineHeight": 1.55
+                            },
+                            {
+                              "type": "text",
+                              "id": "qBmzz",
+                              "name": "Blurb",
+                              "content": "A member team mapping small-business density across Pilsen and Little Village. Open data, open repo.",
+                              "fill": "$ink-muted",
+                              "fontFamily": "$font-sans",
+                              "fontSize": "$t-body-sm",
+                              "fontWeight": "normal",
+                              "lineHeight": 1.55,
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "qDmzz",
+                          "name": "Read",
+                          "content": "READ →",
+                          "fill": "$ink",
+                          "fontFamily": "$font-code",
+                          "fontSize": 13,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.6
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qKmzz",
+                      "name": "Entry 02",
+                      "width": "fill_container",
+                      "padding": [
+                        22,
+                        0
+                      ],
+                      "gap": 28,
+                      "alignItems": "center",
+                      "stroke": "$rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "strokeAlignment": "inner",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qFmzz",
+                          "name": "Num",
+                          "content": "02",
+                          "fill": "$oro",
+                          "fontFamily": "$font-wide",
+                          "fontSize": 34,
+                          "fontWeight": "normal",
+                          "letterSpacing": -0.5,
+                          "lineHeight": 1.0
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qImzz",
+                          "name": "Copy",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qGmzz",
+                              "name": "Title",
+                              "content": "Mentor hours are open",
+                              "fill": "$ink",
+                              "fontFamily": "$font-sans",
+                              "fontSize": "$t-h4",
+                              "fontWeight": "700",
+                              "lineHeight": 1.55
+                            },
+                            {
+                              "type": "text",
+                              "id": "qHmzz",
+                              "name": "Blurb",
+                              "content": "Twelve board members and alumni signed up. Fifteen minutes, no agenda required, sign-up in the feed.",
+                              "fill": "$ink-muted",
+                              "fontFamily": "$font-sans",
+                              "fontSize": "$t-body-sm",
+                              "fontWeight": "normal",
+                              "lineHeight": 1.55,
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "qJmzz",
+                          "name": "Read",
+                          "content": "READ →",
+                          "fill": "$ink",
+                          "fontFamily": "$font-code",
+                          "fontSize": 13,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.6
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qanzz",
+          "name": "CTA",
+          "fill": "$plane-cta",
+          "width": "fill_container",
+          "padding": [
+            0,
+            120,
+            0,
+            56
+          ],
+          "gap": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "q8mzz",
+              "name": "Spine",
+              "width": 72,
+              "height": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "q5mzz",
+                  "name": "Trace in",
+                  "fill": "$cta-display",
+                  "width": 2,
+                  "height": 110
+                },
+                {
+                  "type": "frame",
+                  "id": "q6mzz",
+                  "name": "Node lit",
+                  "width": 20,
+                  "height": 20,
+                  "cornerRadius": 9999,
+                  "fill": "$cta-display",
+                  "children": []
+                },
+                {
+                  "type": "rectangle",
+                  "id": "q7mzz",
+                  "name": "Trace out",
+                  "fill": "$cta-display",
+                  "width": 2,
+                  "height": "fill_container"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "q9mzz",
+              "name": "CTA body",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "padding": [
+                76,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "q4mzz",
+                  "name": "Row",
+                  "width": "fill_container",
+                  "gap": 64,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qZmzz",
+                      "name": "Copy",
+                      "width": 700,
+                      "layout": "vertical",
+                      "gap": 18,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qXmzz",
+                          "name": "Section no",
+                          "content": "05 - GET INVOLVED",
+                          "fill": "$cta-display",
+                          "fontFamily": "$font-code",
+                          "fontSize": 13,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "qYmzz",
+                          "name": "Title",
+                          "content": "SHOW UP ONCE. THAT IS THE WHOLE ASK.",
+                          "fill": "$cta-display",
+                          "fontFamily": "$font-wide",
+                          "fontSize": 52,
+                          "fontWeight": "normal",
+                          "letterSpacing": -2,
+                          "lineHeight": 0.96,
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q3mzz",
+                      "name": "Actions",
+                      "width": 300,
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "q1mzz",
+                          "name": "Btn Sign in with UIC email",
+                          "fill": "$cta-btn",
+                          "cornerRadius": "$radius-sm",
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "$cta-display",
+                            "offset": {
+                              "x": 4,
+                              "y": 4
+                            }
+                          },
+                          "padding": [
+                            18,
+                            26
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "q0mzz",
+                              "name": "Label",
+                              "content": "SIGN IN WITH UIC EMAIL",
+                              "fill": "$on-cta-btn",
+                              "fontFamily": "$font-code",
+                              "fontSize": 14,
+                              "fontWeight": "700",
+                              "letterSpacing": 1.5
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "q2mzz",
+                          "name": "Secondary",
+                          "content": "MEET THE TEAM  ·  VIEW CALENDAR",
+                          "fill": "$cta-display",
+                          "fontFamily": "$font-code",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.6
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qrnzz",
+          "name": "Footer",
+          "fill": "$bar",
+          "width": "fill_container",
+          "padding": [
+            48,
+            120,
+            48,
+            56
+          ],
+          "layout": "vertical",
+          "gap": 22,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qonzz",
+              "name": "Row",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qhnzz",
+                  "name": "Lockup",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qfnzz",
+                      "name": "Mark",
+                      "width": 30,
+                      "height": 30,
+                      "cornerRadius": 9999,
+                      "stroke": "$on-bar",
+                      "strokeWidth": 2,
+                      "strokeAlignment": "inner",
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "qbnzz",
+                          "name": "Trunk",
+                          "fill": "$on-bar",
+                          "x": 14,
+                          "y": 9,
+                          "width": 2,
+                          "height": 16
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qcnzz",
+                          "name": "Branch",
+                          "fill": "$on-bar",
+                          "x": 8,
+                          "y": 9,
+                          "width": 8,
+                          "height": 2
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qdnzz",
+                          "name": "Node",
+                          "width": 5,
+                          "height": 5,
+                          "cornerRadius": 9999,
+                          "fill": "$oro",
+                          "children": [],
+                          "x": 6,
+                          "y": 6
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qenzz",
+                          "name": "Node",
+                          "width": 5,
+                          "height": 5,
+                          "cornerRadius": 9999,
+                          "fill": "$on-bar",
+                          "children": [],
+                          "x": 18,
+                          "y": 11
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "qgnzz",
+                      "name": "Wordmark",
+                      "content": "LOGICA",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-wide",
+                      "fontSize": 19,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.4
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qnnzz",
+                  "name": "Links",
+                  "gap": 28,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qinzz",
+                      "name": "L1",
+                      "content": "TEAM",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "qjnzz",
+                      "name": "L2",
+                      "content": "CALENDAR",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "qknzz",
+                      "name": "L3",
+                      "content": "FEED",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "qlnzz",
+                      "name": "L4",
+                      "content": "FORMS",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "qmnzz",
+                      "name": "L5",
+                      "content": "INSTAGRAM",
+                      "fill": "$on-bar",
+                      "fontFamily": "$font-code",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "qpnzz",
+              "name": "Rule",
+              "fill": "$oro",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "text",
+              "id": "qqnzz",
+              "name": "Credits",
+              "content": "REFERENCES  ·  GEGO, RETICULÁREA (CARACAS 1969)  ·  LYGIA PAPE, TECELARES (1952-60)  ·  OMAR RAYO — BLACK, WHITE, RED, YELLOW  ·  TORRES-GARCÍA, AMÉRICA INVERTIDA (1943, PEN AND INK)",
+              "fill": "$oro",
+              "fontFamily": "$font-code",
+              "fontSize": 11,
+              "fontWeight": "normal",
+              "letterSpacing": 1.4,
+              "textGrowth": "fixed-width",
+              "width": "fill_container"
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {
@@ -59951,7 +64721,9 @@
       "trace",
       "physichromie",
       "ember",
-      "adobe"
+      "adobe",
+      "broadside",
+      "board"
     ]
   },
   "variables": {
@@ -59986,6 +64758,18 @@
           "value": "#EDE3D5",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#14110F",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#F2F0EA",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60022,6 +64806,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#57514B",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#8E8B84",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60056,6 +64852,18 @@
           "value": "#14110F",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#ECE8DE",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#0A0A0B",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60092,6 +64900,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#F7F4ED",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#141416",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60126,6 +64946,18 @@
           "value": "#0A0908",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#DBD5C7",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#000000",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60162,6 +64994,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#4A433D",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#676560",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60196,6 +65040,18 @@
           "value": "#4E8FB5",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#1B3A6B",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#3A6FD8",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60232,6 +65088,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#B82D0C",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#E8451A",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60266,6 +65134,18 @@
           "value": "#D2A45B",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#D9A125",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#F5B72E",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60302,6 +65182,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#2E5E3A",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#2FA35E",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60336,6 +65228,18 @@
           "value": "#BC6D8C",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#8C2050",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#D6407F",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60372,6 +65276,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#14110F",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#141416",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60406,6 +65322,18 @@
           "value": "#10100E",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60442,6 +65370,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#0A0A0B",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60476,6 +65416,18 @@
           "value": "#14110F",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#14110F",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#0A0A0B",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60512,6 +65464,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#0A0A0B",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60546,6 +65510,18 @@
           "value": "#14110F",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#0A0A0B",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60582,6 +65558,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#ECE8DE",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#F2F0EA",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60617,6 +65605,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#B82D0C",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#F5B72E",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60651,6 +65651,18 @@
           "value": "#D2A45B",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#14110F",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#F5B72E",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60799,6 +65811,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#B82D0C",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#F5B72E",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60833,6 +65857,18 @@
           "value": "#14110F",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#0A0A0B",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60869,6 +65905,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#FFFFFF",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#0A0A0B",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60903,6 +65951,18 @@
           "value": "#14110F",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#ECE8DE",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#0A0A0B",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -60939,6 +65999,18 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#14110F",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#F5B72E",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
     },
@@ -60973,6 +66045,18 @@
           "value": "#2B2622",
           "theme": {
             "palette": "adobe"
+          }
+        },
+        {
+          "value": "#14110F",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#000000",
+          "theme": {
+            "palette": "board"
           }
         }
       ]
@@ -61009,8 +66093,28 @@
           "theme": {
             "palette": "adobe"
           }
+        },
+        {
+          "value": "#ECE8DE",
+          "theme": {
+            "palette": "broadside"
+          }
+        },
+        {
+          "value": "#F2F0EA",
+          "theme": {
+            "palette": "board"
+          }
         }
       ]
+    },
+    "font-wide": {
+      "type": "string",
+      "value": "Archivo Expanded"
+    },
+    "font-code": {
+      "type": "string",
+      "value": "Chivo Mono"
     }
   },
   "fileToken": "ae5cb815-7fa5-416d-9b17-53e853765170"
