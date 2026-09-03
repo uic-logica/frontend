@@ -25,8 +25,13 @@ export default function SignInPage() {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ email, csrfToken, json: "true" }),
+        // Auth.js always 302s this endpoint to its own HTML "check your email"
+        // page, which we don't want or need — `redirect: "manual"` stops the
+        // browser from loading it. That redirect (an opaque, unreadable
+        // response) is what "sent" looks like; anything else is a real failure.
+        redirect: "manual",
       });
-      if (!res.ok) throw new Error("Could not send a code.");
+      if (res.type !== "opaqueredirect" && !res.ok) throw new Error("Could not send a code.");
       setStep("code");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
