@@ -10,6 +10,14 @@ No examples here on purpose. Research and pick your own — specific artists, mo
 
 Document what you land on — the specific pieces, why each one fits, what it contributes (color, pattern, motion, composition) — in the detailed reference doc (see `frontend#18`/`#19`), not here.
 
+## Motif Pivot: The Circuit as a Paracas Border
+
+While the initial design relied on a zig-zag *greca* to signal Latin American influence, the final direction replaces filled planes with **routed line structures (chamfered traces and nodes) resembling a motherboard.** 
+This is not an abandonment of the Latin American theme, but a direct translation of it:
+- **Andean Textile Arts:** In Paracas textiles, the structural device is the edge, not the fill. Specifically, they use non-contiguous reversed-L borders that wrap fields without enclosing them.
+- ***Ñawi awapa* (Eye Borders) & *Chinka chinka*:** These traditional Andean edging techniques translate to "dots or dashes of color" and "eye borders" — a line that runs, turns, and terminates in a node.
+- **The Synthesis:** A circuit board and an Andean eye-border share the exact same visual grammar. By using 45° chamfered traces on a dark ground (`ink`), we maintain the precision of logic (LOGICA's tech identity) while strictly adhering to documented Latin American structural rules.
+
 ## Color and type
 
 - A saturated palette pulled from the specific pieces documented in the reference doc — not desaturated corporate blue-and-gray, and not invented independently of the actual art. Pick 2-3 as primary plus neutrals; don't use all of them at once on one screen.
@@ -45,7 +53,7 @@ This gets checked, not assumed:
 
 Reversed from the earlier design-first plan — backend is shipping faster than frontend right now, so we need working pages hitting the real API to know what we're actually designing for, instead of a mockup built on guesses about response shape. Sequence:
 
-1. **Research** — the art/color/interaction reference doc (multiple Latin American countries, specific pieces, real colors pulled from them — see "Reference points" above). Done, see `Eddie_DESIGN.md`.
+1. **Research** — the art/color/interaction reference doc (multiple Latin American countries, specific pieces, real colors pulled from them — see "Reference points" above). Done, see `logica_DESIGN.md`.
 2. **Skeleton** — a functional page wired to the real backend (`NEXT_PUBLIC_API_URL`): real data, real loading/empty/error states, unstyled or minimally styled. This is what proves out the data before any visual decision gets locked in.
 3. **Design** — once the skeleton's data shape is proven live, turn the research into an actual visual mockup (Figma, pencil.dev, or equivalent): layout, color, type, key interactions. Share the link via a short `.md` file in this repo, with a preview screenshot so it's reviewable without opening the tool.
 4. **Polish** — tune the skeleton in place to match the mockup from step 3: the full Latin American art-influenced treatment (grid, palette, motion).

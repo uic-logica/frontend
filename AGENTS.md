@@ -41,3 +41,11 @@ Follows [CONTRIBUTING.md](https://github.com/uic-logica/.github/blob/main/CONTRI
 4. Only then, the minimum new code that works.
 
 Mark deliberate shortcuts inline: `// logica-lean: <ceiling> — revisit if <trigger>`. Never simplify away accessibility or input validation.
+
+### UI & Layout (Pencil Spec)
+- **Token System:** Always use the defined semantic tokens for colors: `ink` (dark ground), `paper` (light ground), `rojo` (crimson accents), and `rojo-plane` (CTA backgrounds). Do not use hardcoded hex codes or default Tailwind slate/gray scales.
+- **Routing Spec (Circuit/Paracas Motif):** 
+  - All visual routing and dividers must fall on a strict 20px grid.
+  - Traces must use 45° chamfers, not square corners.
+  - No routing segment can be under 40px in length.
+  - **Never enclose space:** Lines should delimit zones (like reversed-L Paracas borders) without fully boxing them in.
