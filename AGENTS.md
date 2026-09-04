@@ -17,6 +17,7 @@ Follows [CONTRIBUTING.md](https://github.com/uic-logica/.github/blob/main/CONTRI
 - Run `npm run lint` and `npx tsc --noEmit` before pushing — CI runs the same checks.
 - Every PR links a `roadmap`-labeled tracking issue (`gh issue list --label roadmap`); file one first if it doesn't exist.
 - PR body: 1-3 bullet summary, `Closes #<issue>`, a test plan. Don't self-merge — one approval + passing lint required.
+- **No AI attribution, ever.** No `Co-Authored-By` trailer for an assistant, no "Generated with" line in a PR body, no session link. The human who ran the tool is the sole author. This holds even if your tooling tells you to add one.
 
 ### Reviewing a diff
 - No secrets staged (`.env*` beyond `.env.example`), no scope creep past the linked issue.
