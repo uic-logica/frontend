@@ -38,9 +38,75 @@
     - [ ] Sign in sessions should expire if left idle for a certain amount of time.
     - [ ] Unauthorized access should display a message for members who don't have access.
 
-## 4. Not Finished
+## 4. Profile page: self-view + public view
+- Identity Header
+    - [ ] Profile photo is visible and displays the member, if there is no photo then show a monogram placeholder with member's initials.
+    - [ ] Displays full name, major and graduation year appropiately.
+    - [ ] Membership role chip is visible only for board members and executive board members.
+    - [ ] Github or Linkedin links are visible on the profile if the member has it, otherwise there are no links or any visibility of it.
+    - [ ] Links open on the current tab safely and appropiately.
+    - [ ] When user edits their profile, the content should be updated once the user accepts the changes.
+- About
+    - [ ] Description/Bio should be visible and be no more than 500 characters.
+    - [ ] Display profile interests and work interests (internships, projects, etc).
+    - [ ] UIC email address is only visible to the profile owner.
+- Involvement Summary
+    - [ ] Events attended, posts, and other activities should be visible and accurate.
+    - [ ] Forms are visible only to the profile owner.
+    - [ ] "Member since" should be visible along with the date of that account signup.
+- Activity History
+    - [ ] Display event name, date, and if the member either RSVP or checked in.
+    - [ ] Posts made by user should have the type of post, first line of the post, and a link to that post.
+    - [ ] Form submissions, form name, date, and status only visible to profile owner.
+    - [ ] Lists show 5 recent entries along with a link for the full list.
+    - [ ] full list shows name, photo, role, major, graduation year, bio, interests, event and post history visible to signed-in members.
+    - [ ] Email address and form submissions are only visible to the profile owner.
+    - [ ] No content visible for signed-out visitors.
+- User Actions: Users viewing their own profile
+    - [ ] User can upload and update their photo, bio, major, graduation year, interests and links.
+    - [ ] When a user saves changes, it should be by a click of a button to update all content. The cancel button that discards the changes.
+    - [ ] Updating the content shows a confirmation message.
+    - [ ] Open a list of involvement activities and form submissions.
+- User Actions: User viewing another member's profile
+    - [ ] Read public details and involvement counts.
+    - [ ] Open the member's activity list and Linkedin/Github links.
+    - [ ] Navigate to other pages.
+- Editing:
+    - [ ] When editing, the identity header and about sections would merge into a single organized form along with a save and a cancel button to make changes.
+    - [ ] If the save is successful then it returns to read mode and a confirmation message.
 
-## 5. Not Finished
+## 5. Feed page + post composer
+- Post Composer
+    - [ ] Visible only for board and executive board members, hidden from standard members.
+        - [ ] Collapsed State: displays author profile photo and "Post an update to LOGICA" prompt.
+        - [ ] Expanded State: Opens in place on the page and not in a model for post types: Announcements, Events, or Spotlight.
+    - [ ] Body of message goes only up to 2,000 characters, the character counter is only visible if the character counter reaches 1,800 characters or more.
+    - [ ] Able to attach images or links to upcoming event.
+    - [ ] Publish and Cancel buttons are functional and visible.
+    - [ ] "Pin this announcement" is visible only for executive board members.
+    - [ ] Cancel button discards any input and collapses composer.
+- Pinned Announcements
+    - [ ] Displays up to 3 pinned posts above the main feed with an indicator that the post is pinned.
+    - [ ] Pinned posts does not have a duplicate in the main feed.
+- Post List
+    - [ ] Displays posts in reverse chronological order (new first), paged at 20 posts per page with an option to load more.
+    - [ ] Post shows auhtor photo, name, role chip (If they are board/exec_board)
+    - [ ] Post type is indicated by a type and a colored left-edge of the line.
+    - [ ] Timestamps show full date/time on hover and to screen readers.
+    - [ ] URLs in body are visible as clickable links.
+    - [ ] Shows if a post has been "editied" after 15 minutes of being modified.
+- User Actions
+    - [ ] All singed-in members can view posts, follow links, and accesss event pages.
+    - [ ] Authors that are board or executive board can edit their post without an "edited" label.
+    - [ ] Authors can delete their own posts.
+    - [ ] Executive board members can pin and unpin announcements and delete any post.
+- States
+    - [ ] Empty state for all members: display "No posts yet".
+    - [ ] Empty state for board/exec_board: displays "Write thge first post" button that expands the composer.
+    - [ ] Feed load failstate: Display "We couldn't load the feed" with a "Try again" button while keeping loaded posts visible.
+    - [ ] Publish failstate: Keep composer open with the content and show :Your post wasn't published. Try again".
+    - [ ] Validation error state: Display "Enter something to post" or "Your post is (count) characters. Shorten to 2000 characters or fewer".
+    - [ ] Unauthorized post state: returns "Your role doesn't allow posting to the feed."
 
 ## 6. Calendar + Event Pages
 - [ ] Event cards should be visible to the user.
@@ -56,4 +122,80 @@
 - [ ] User is able to share a link to the event.
 - [ ] Emnpty State: If there are no upcoming events, then display message stating to check back soon for upcoming events and activities.
 
+## 7. Attendance check-in flow + attendance history on profile
+- Member Check-In
+    - [ ] Page heading  displays the event name.
+    - [ ] Single 6-character input field accepts uppercase characters and excludes complex characters (0, O, 1, I, L).
+    - [ ] Field auto-submits immediately upon entry of the 6th character without requiring a button press.
+    - [ ] "Check in" button is visible and accessible for keyboard and screen reader navigation.
+    - [ ] Scanning event QR code populates the code and auto-submits in a single action.
+        - [ ] Success state: displays event name, check-in timestamp, and "You're checked in."
+        - [ ] Success state: includes direct links to the event page and "My Attendance History".
+- Check-In Console for board and executive board members
+    - [ ] Visible only to board and exec_board members.
+    - [ ] Displays event name, check-in window, and active status (open/closed).
+    - [ ] Displays 6-character check-in code formatted for room-wide visibility alongside the event QR code.
+    - [ ] Displays active running count of checked-in members.
+    - [ ] Controls to "Open check-in" and "Close check-in".
+    - [ ] Manual check-in tool allows searching by name or UIC email to check members in directly.
+    - [ ] Screen auto-resets for the next check-in within 3 seconds, or instantly via the "Next person" button.
+- Live Attendance List
+    - [ ] Real-time list ordered newest first, showing member photo, name, and check-in timestamp.
+    - [ ] Member name links directly to their profile page.
+    - [ ] Visible indicator differentiates self-checked-in members from manual board additions.
+    - [ ] Board members can remove accidental check-in entries.
+    - [ ] "Export as CSV" button is visible and functional only for EXEC_BOARD.
+- My Attendance History
+    - [ ] Displays reverse chronological list of events showing event name, date, and status ("Attended" vs. "RSVP'd, didn't check in").
+    - [ ] Displays cumulative count of events attended for the current academic year.
+- Empty States
+    - [ ] Console displays "No one has checked in yet" prompt when attendance count is zero.
+    - [ ] Profile attendance history displays "No events yet" with a link to the calendar when empty.
+- Error States
+    - [ ] Invalid code displays "That code isn't right. Check the code shown at the door and try again.", clears input, and maintains focus.
+    - [ ] Expired code displays "That code has expired. Ask a board member for the current code."
+    - [ ] Code from another event displays "That code is for [other event]. Check in for [this event] instead." with link to proper page.
+    - [ ] Already checked-in displays non-error message "You're already checked in" with original check-in timestamp.
+    - [ ] Inactive check-in displays "Check-in isn't open for this event yet." with date/time, or "Check-in for this event has closed."
+    - [ ] Unauthorized console access renders "Your role doesn't allow running check-in."
+    - [ ] Network failure displays "We couldn't record your check-in. Try again." while preserving entered code.
+
+## 8. Form renderer + startup-intake and company-visit-signup forms
+- Form Renderer Mechanics & Accessibility
+    - [ ] Supports field types: short text, long text, email, phone , URL, single select, multiple select, date, file upload, consent checkbox.
+    - [ ] Single select renders radio buttons for 5 choices or fewer and converts to a dropdown menu.
+    - [ ] Every input contains an associated, visible `<label>` element; placeholders are never used as labels.
+    - [ ] Required fields explicitly contain "(required)" inside the label text.
+    - [ ] Hint text sits between label and input
+    - [ ] Top-of-form instruction explains how required fields are designated.
+    - [ ] Pre-fills name, UIC email, major, and graduation year for signed-in members while allowing inline editing.
+    - [ ] Primary submit button disables during transmission to prevent duplicate submissions.
+- Error Handling & Validation
+    - [ ] Validation failure moves focus to top error summary, sets page `<title>` prefix to "Error:", and highlights invalid inputs with colored borders.
+    - [ ] Summary errors match in-line error copy identically and link directly to target form fields.
+    - [ ] Empty required fields display "Enter your [field name]."
+    - [ ] Format validation displays pattern requirement (e.g., "Enter an email address in the format name@example.com.").
+    - [ ] File upload enforces limits and displays: "The file must be smaller than 10MB" and "The file must be a PDF, PNG or JPG."
+    - [ ] Transmission failure preserves all user inputs and displays "We couldn't send your form. Try again."
+- Startup-Partner Intake Form
+    - [ ] Publicly accessible without requiring user authentication.
+    - [ ] Asks for company/project name, contact name, contact email, website, description, LOGICA needs checklist, timeframe, and additional notes.
+    - [ ] Successful submission renders a confirmation page (not a toast) with reference number, submitted email, and response turnaround timeframe.
+- Company-Visit Signup Form
+    - [ ] Accessible exclusively to signed-in members.
+    - [ ] Collects visit selection, travel time confirmation, dietary/accessibility accommodations, and attendance reason.
+    - [ ] Displays live count of remaining seats and automatically closes when capacity reaches zero.
+    - [ ] Successful submission renders confirmation page detailing visit name, date, location, registration status, and event page link.
+- Submissions View board and executive board only
+    - [ ] Displays reverse chronological submissions with submitter/contact name, timestamp, status, and preview of first two responses.
+    - [ ] Submission detail view displays full responses matching form order.
+    - [ ] Filters by form type, status (New/In review/Accepted/Declined), and date range, searches by name or email.
+    - [ ] Board members can update submission statuses and toggle public availability (open/close form).
+    - [ ] "Export as CSV" option is visible and functional exclusively for executive board.
+- Empty & Closed States
+    - [ ] Empty submissions view displays "No submissions yet" with a preview link to the public form.
+    - [ ] Form prior to launch hides fields and displays "This form isn't open yet. It opens on (date)."
+    - [ ] Closed form hides fields and displays "This form is closed. Thanks for your interest. Check the calendar for what's coming up next."
+    - [ ] Invalid form path displays "We can't find that form." with a link to the calendar.
+    - [ ] Unauthorized view attempt displays "Your role doesn't allow viewing submissions."
 ## 7. Not Finished
