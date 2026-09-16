@@ -85,6 +85,7 @@ function DraftPanel() {
   const [email, setEmail] = useState("");
   const [organization, setOrganization] = useState("");
   const [referredBy, setReferredBy] = useState("");
+  const [note, setNote] = useState("");
   const [link, setLink] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -101,6 +102,7 @@ function DraftPanel() {
           email: email.trim() || undefined,
           organization: organization.trim() || undefined,
           referredBy: referredBy.trim() || undefined,
+          note: note.trim() || undefined,
         }),
       });
       setLink(`${window.location.origin}/speak/${draft.id}`);
@@ -139,6 +141,7 @@ function DraftPanel() {
               setEmail("");
               setOrganization("");
               setReferredBy("");
+              setNote("");
             }}
           >
             Create another
@@ -170,6 +173,13 @@ function DraftPanel() {
             value={referredBy}
             onChange={(e) => setReferredBy(e.target.value)}
             className={darkInputClass}
+          />
+          <textarea
+            placeholder="Note to yourself — not shown to the speaker (optional)"
+            rows={2}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className={`${darkInputClass} min-h-[3.5rem] py-3`}
           />
           <button type="submit" disabled={busy} className={darkButtonClass}>
             {busy ? "Creating…" : "Create link"}
