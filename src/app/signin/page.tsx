@@ -3,19 +3,21 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  AppShell,
-  Field,
-  RoleChip,
-  buttonClass,
-  inputClass,
-  inputErrorClass,
-} from "@/components/shell/AppShell";
+import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { api } from "@/lib/api";
 
 type Profile = { id: string; name: string | null; email: string; role: string };
 
 type Step = "email" | "code" | "role";
+
+const darkInputClass =
+  "min-h-12 w-full rounded-sm border-2 border-white/20 bg-transparent px-3.5 text-body text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-signal";
+
+const darkInputErrorClass =
+  "min-h-12 w-full rounded-sm border-2 border-signal bg-transparent px-3.5 text-body text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-signal";
+
+const primaryButtonClass =
+  "inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-white px-6 text-lg font-semibold text-black transition-transform duration-300 enabled:hover:-translate-y-0.5 disabled:opacity-60";
 
 function roleCopy(role: string) {
   if (role === "EXEC_BOARD") return "Exec Board — you can run check-in and moderate.";
@@ -23,9 +25,24 @@ function roleCopy(role: string) {
   return "Member — standard member access.";
 }
 
+function RoleBadge({ role }: { role: string }) {
+  if (role === "MEMBER" || !role) return null;
+  const exec = role === "EXEC_BOARD";
+  return (
+    <span
+      className={`type-label inline-flex h-6 items-center rounded-full px-2.5 ${
+        exec ? "bg-signal text-white" : "bg-white/10 text-white"
+      }`}
+    >
+      {exec ? "Exec board" : "Board"}
+    </span>
+  );
+}
+
 /**
- * Sign-in — CONTENT.md §3 (Welcome → Email → Verification → Session/Role check)
- * + Eddie ICAIC panel.
+ * Sign-in — CONTENT.md §3 (Welcome → Email → Verification → Session/Role check).
+ * Same black/white/red club theme as the rest of the public site, not a stray
+ * white modal — this page still lives inside ClubShell (nav, canvas, footer).
  */
 export default function SignInPage() {
   const router = useRouter();
@@ -99,25 +116,32 @@ export default function SignInPage() {
   }
 
   return (
-    <AppShell>
-      <div className="grid min-h-[calc(100svh-8rem)]">
-        <section className="flex items-center justify-center bg-paper px-6 py-12 md:px-12">
-          <div className="card mx-auto w-full max-w-md border-ink p-6 shadow-block md:p-8">
+    <ClubShell>
+      <PageContainer>
+        <SectionContainer className="max-w-2xl">
+          <h1 className="type-h1 text-white">
+            {step === "role" && profile ? "You're signed in" : "Sign in to LOGICA"}
+          </h1>
+          <p className="mt-3 text-xl text-signal md:text-2xl">
+            {step === "role" && profile
+              ? "Session and role check"
+              : "Passwordless — only .edu addresses are accepted."}
+          </p>
+
+          <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
             {step === "role" && profile ? (
               <>
-                <h2 className="type-h2">You&apos;re signed in</h2>
-                <p className="mt-2 text-body-sm text-ink-muted">Session and role check</p>
-                <div className="mt-6 border border-rule bg-paper px-4 py-5">
-                  <p className="type-h3">{profile.name?.trim() || profile.email}</p>
-                  <p className="mt-1 text-body-sm text-ink-muted">{profile.email}</p>
+                <div className="border border-white/15 bg-black px-5 py-6">
+                  <p className="type-h3 text-white">{profile.name?.trim() || profile.email}</p>
+                  <p className="mt-1 text-body-sm text-white/60">{profile.email}</p>
                   <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <RoleChip role={profile.role} />
-                    <span className="text-body-sm text-ink-muted">{roleCopy(profile.role)}</span>
+                    <RoleBadge role={profile.role} />
+                    <span className="text-body-sm text-white/60">{roleCopy(profile.role)}</span>
                   </div>
                 </div>
                 <button
                   type="button"
-                  className={`${buttonClass} mt-6 w-full`}
+                  className={`${primaryButtonClass} mt-6`}
                   onClick={() => router.push("/members")}
                 >
                   Continue to member hub
@@ -125,18 +149,15 @@ export default function SignInPage() {
               </>
             ) : (
               <>
-                <h2 className="type-h2">
-                  {step === "email" ? "Sign in to LOGICA" : "Enter your code"}
-                </h2>
-                <p className="mt-2 text-body-sm text-ink-muted">
+                <p className="text-body text-white/70">
                   {step === "email"
-                    ? "Passwordless. Only .edu addresses are accepted."
+                    ? "We'll email you a one-time code — no password to remember."
                     : `We sent a one-time code to ${email}.`}
                 </p>
 
                 {error && (
                   <div
-                    className="mt-4 border-2 border-signal bg-paper px-3 py-2 text-body-sm text-signal"
+                    className="mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
                     role="alert"
                   >
                     {error}
@@ -144,8 +165,12 @@ export default function SignInPage() {
                 )}
 
                 {step === "email" ? (
-                  <form onSubmit={requestCode} className="mt-6 flex flex-col gap-4" noValidate>
-                    <Field id="email" label="UIC email" hint="Example: netid@uic.edu">
+                  <form onSubmit={requestCode} className="mt-6 flex flex-col gap-5" noValidate>
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor="email" className="type-label text-white/70">
+                        UIC email
+                      </label>
+                      <p className="text-caption text-white/40">Example: netid@uic.edu</p>
                       <input
                         id="email"
                         type="email"
@@ -153,18 +178,21 @@ export default function SignInPage() {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={error ? inputErrorClass : inputClass}
+                        className={error ? darkInputErrorClass : darkInputClass}
                         placeholder="netid@uic.edu"
                         aria-invalid={Boolean(error)}
                       />
-                    </Field>
-                    <button type="submit" disabled={busy} className={buttonClass}>
+                    </div>
+                    <button type="submit" disabled={busy} className={primaryButtonClass}>
                       {busy ? "Sending…" : "Continue"}
                     </button>
                   </form>
                 ) : (
-                  <form onSubmit={verifyCode} className="mt-6 flex flex-col gap-4">
-                    <Field id="code" label="Verification code">
+                  <form onSubmit={verifyCode} className="mt-6 flex flex-col gap-5">
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor="code" className="type-label text-white/70">
+                        Verification code
+                      </label>
                       <input
                         id="code"
                         inputMode="numeric"
@@ -172,11 +200,11 @@ export default function SignInPage() {
                         required
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
-                        className={error ? inputErrorClass : inputClass}
+                        className={error ? darkInputErrorClass : darkInputClass}
                         placeholder="123456"
                       />
-                    </Field>
-                    <button type="submit" disabled={busy} className={buttonClass}>
+                    </div>
+                    <button type="submit" disabled={busy} className={primaryButtonClass}>
                       {busy ? "Verifying…" : "Verify & continue"}
                     </button>
                     <button
@@ -194,16 +222,16 @@ export default function SignInPage() {
                 )}
               </>
             )}
-
-            <p className="mt-8 text-caption text-ink-muted">
-              Need the public site?{" "}
-              <Link href="/" className="font-bold text-signal underline-offset-2 hover:underline">
-                Back home
-              </Link>
-            </p>
           </div>
-        </section>
-      </div>
-    </AppShell>
+
+          <p className="mt-8 text-caption text-white/50">
+            Need the public site?{" "}
+            <Link href="/" className="font-bold text-signal underline-offset-2 hover:underline">
+              Back home
+            </Link>
+          </p>
+        </SectionContainer>
+      </PageContainer>
+    </ClubShell>
   );
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { ClubShell, Section } from "@/components/club/ClubShell";
+import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { PinkLink } from "@/components/club/Typewriter";
 
 type Event = {
@@ -36,15 +36,15 @@ export default function EventsPage() {
 
   return (
     <ClubShell>
-      <div className="mb-20 pt-16 sm:pt-20 lg:pt-24">
-        <Section>
-          <h1 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Events</h1>
-          <p className="mt-4 max-w-3xl text-lg text-white/80">
+      <PageContainer>
+        <SectionContainer>
+          <h1 className="type-h1 text-white">Events</h1>
+          <p className="mt-4 max-w-3xl text-body-lg text-white/80">
             From workshops to socials, hack nights to tech talks — we host events each semester.
           </p>
-        </Section>
+        </SectionContainer>
 
-        <Section>
+        <SectionContainer>
           <div className="mb-8 flex flex-wrap items-center gap-4">
             {(["upcoming", "past"] as const).map((t) => (
               <button
@@ -62,15 +62,15 @@ export default function EventsPage() {
             <span className="text-white/50">Add to Calendar (soon)</span>
           </div>
 
-          {error && <p className="mb-4 text-signal">{error}</p>}
-          {events === null && <p className="text-white/60">Loading…</p>}
+          {error && <p className="mb-4 text-body text-signal">{error}</p>}
+          {events === null && <p className="text-body text-white/60">Loading…</p>}
 
           {events && list.length === 0 && (
             <div className="border border-white/20 p-8">
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="type-h3 text-white">
                 {tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}
               </h2>
-              <p className="mt-3 max-w-xl text-white/70">
+              <p className="mt-3 max-w-xl text-body text-white/70">
                 We&apos;re currently planning our next round of events. Check back soon or join
                 the newsletter to be notified.
               </p>
@@ -87,37 +87,37 @@ export default function EventsPage() {
                 id={e.id}
                 className="border border-white/20 p-6 transition-all hover:translate-y-[-4px] hover:border-signal"
               >
-                <h2 className="text-2xl font-bold text-white">{e.title}</h2>
-                <p className="mt-2 text-white/60">
+                <h2 className="type-h3 text-white">{e.title}</h2>
+                <p className="mt-2 text-body-sm text-white/60">
                   {new Date(e.startsAt).toLocaleString()}
                   {e.location ? ` · ${e.location}` : ""}
                 </p>
-                {e.description && <p className="mt-3 text-white/75">{e.description}</p>}
+                {e.description && <p className="mt-3 text-body text-white/75">{e.description}</p>}
                 <Link href="/signin" className="mt-4 inline-block font-semibold text-signal hover:underline">
                   RSVP (members)
                 </Link>
               </li>
             ))}
           </ul>
-        </Section>
+        </SectionContainer>
 
-        <Section>
+        <SectionContainer>
           <div id="speakers" className="mb-12 border-b border-zinc-800 pb-4">
-            <h2 className="text-3xl font-bold text-white md:text-4xl">Upcoming Speakers</h2>
-            <p className="mt-2 text-lg text-zinc-400">
+            <h2 className="type-h2 text-white">Upcoming Speakers</h2>
+            <p className="mt-2 text-body-lg text-zinc-400">
               People presenting at upcoming LOGICA talks and workshops
             </p>
           </div>
           <div className="border border-white/20 p-8">
-            <h3 className="text-xl font-bold text-white">To be announced</h3>
-            <p className="mt-3 text-white/70">Check back soon for our speaker lineup this semester.</p>
+            <h3 className="type-h4 text-white">To be announced</h3>
+            <p className="mt-3 text-body text-white/70">Check back soon for our speaker lineup this semester.</p>
           </div>
-        </Section>
+        </SectionContainer>
 
-        <Section>
+        <SectionContainer>
           <div className="border border-white/20 p-8">
-            <h2 className="text-2xl font-bold text-white">Stay Updated</h2>
-            <p className="mt-3 text-white/70">
+            <h2 className="type-h3 text-white">Stay Updated</h2>
+            <p className="mt-3 text-body text-white/70">
               Sign up interest via Join to receive updates about upcoming events and opportunities.
             </p>
             <Link
@@ -127,8 +127,8 @@ export default function EventsPage() {
               Subscribe
             </Link>
           </div>
-        </Section>
-      </div>
+        </SectionContainer>
+      </PageContainer>
     </ClubShell>
   );
 }

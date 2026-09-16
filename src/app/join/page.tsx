@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ClubShell, Section } from "@/components/club/ClubShell";
+import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 
 const roles = [
   {
@@ -53,60 +53,60 @@ const faqs = [
 export default function JoinPage() {
   return (
     <ClubShell>
-      <div className="mb-20 pt-16 sm:pt-20 lg:pt-24">
-        <Section>
-          <h1 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Join LOGICA</h1>
-          <p className="mt-4 max-w-3xl text-lg text-white/80">
+      <PageContainer>
+        <SectionContainer>
+          <h1 className="type-h1 text-white">Join LOGICA</h1>
+          <p className="mt-4 max-w-3xl text-body-lg text-white/80">
             We are UIC&apos;s collective of Latinx developers, designers, and computing enthusiasts.
           </p>
           <p className="mt-6 font-semibold text-signal">
             Apply for general membership — interest forms open on a rolling basis.
           </p>
-        </Section>
+        </SectionContainer>
 
-        <Section>
-          <h2 className="mb-8 text-3xl font-bold text-white md:text-4xl">Available Roles</h2>
+        <SectionContainer>
+          <h2 className="type-h2 mb-8 text-white">Available Roles</h2>
           <div className="grid gap-6 md:grid-cols-3">
             {roles.map((r) => (
               <article key={r.title} className="border border-white/20 p-6">
-                <h3 className="text-xl font-bold text-white">{r.title}</h3>
-                <p className="mt-3 text-white/70">{r.body}</p>
+                <h3 className="type-h4 text-white">{r.title}</h3>
+                <p className="mt-3 text-body text-white/70">{r.body}</p>
               </article>
             ))}
           </div>
-        </Section>
+        </SectionContainer>
 
-        <Section>
-          <h2 className="mb-8 text-3xl font-bold text-white md:text-4xl">Application Process</h2>
+        <SectionContainer>
+          <h2 className="type-h2 mb-8 text-white">Application Process</h2>
           <ol className="space-y-8">
             {steps.map((s, i) => (
               <li key={s.title} className="grid gap-2 md:grid-cols-[3rem_1fr]">
                 <span className="type-label text-signal">{String(i + 1).padStart(2, "0")}</span>
                 <div>
-                  <h3 className="text-xl font-bold text-white">{s.title}</h3>
-                  <p className="mt-2 text-white/70">{s.body}</p>
+                  <h3 className="type-h4 text-white">{s.title}</h3>
+                  <p className="mt-2 text-body text-white/70">{s.body}</p>
                 </div>
               </li>
             ))}
           </ol>
-        </Section>
+        </SectionContainer>
 
-        <Section>
-          <h2 className="mb-8 text-3xl font-bold text-white md:text-4xl">Frequently Asked Questions</h2>
+        <SectionContainer>
+          <h2 className="type-h2 mb-8 text-white">Frequently Asked Questions</h2>
           <div className="space-y-6">
             {faqs.map((f) => (
               <div key={f.q}>
-                <h3 className="text-xl font-semibold text-white">{f.q}</h3>
-                <p className="mt-2 text-white/70">{f.a}</p>
+                <h3 className="type-h4 text-white">{f.q}</h3>
+                <p className="mt-2 text-body text-white/70">{f.a}</p>
               </div>
             ))}
           </div>
-        </Section>
+        </SectionContainer>
 
-        <Section>
+        <SectionContainer>
           <div className="border border-signal/40 p-8 md:p-12">
-            <h2 className="text-2xl font-bold text-white">Interested in joining?</h2>
-            <p className="mt-3 max-w-2xl text-white/75">
+            <h2 className="type-h3 text-white">Interested in joining?</h2>
+            <p className="mt-3 max-w-2xl text-body text-white/75">
               Join our community of passionate developers, designers, and tech enthusiasts.
             </p>
             <a
@@ -121,8 +121,8 @@ export default function JoinPage() {
               </Link>
             </p>
           </div>
-        </Section>
-      </div>
+        </SectionContainer>
+      </PageContainer>
     </ClubShell>
   );
 }
