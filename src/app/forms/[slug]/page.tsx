@@ -1,52 +1,195 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import Link from "next/link";
+import { use, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
+import {
+  AppShell,
+  EmptyState,
+  Field,
+  PageHeader,
+  buttonClass,
+  inputClass,
+  inputErrorClass,
+} from "@/components/shell/AppShell";
 
-type Field = { id: string; label: string; type: string };
-type Form = { id: string; title: string; fields: Field[] };
+type FieldDef = { id: string; label: string; type: string };
+type Form = { id: string; title: string; fields: FieldDef[] };
 
+/** Forms — BRP flat fills; CONTENT #8 error summary takes focus + Error: title. */
 export default function FormPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const [form, setForm] = useState<Form | null>(null);
   const [values, setValues] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    api<Form>(`/api/forms/${slug}`).then(setForm).catch((e) => setError(e.message));
+    api<Form>(`/api/forms/${slug}`)
+      .then(setForm)
+      .catch((e: Error) => setError(e.message));
   }, [slug]);
+
+  useEffect(() => {
+    if (error || Object.keys(fieldErrors).length) {
+      document.title = form
+        ? `Error: ${form.title} · LOGICA @ UIC`
+        : "Error: Form · LOGICA @ UIC";
+      summaryRef.current?.focus();
+    } else if (form) {
+      document.title = `${form.title} · LOGICA @ UIC`;
+    }
+  }, [error, fieldErrors, form]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!form) return;
+    setBusy(true);
+    setError(null);
+
+    const next: Record<string, string> = {};
+    for (const f of form.fields) {
+      if (!(values[f.label] ?? "").trim()) {
+        next[f.label] = `${f.label} is required.`;
+      }
+    }
+    if (Object.keys(next).length) {
+      setFieldErrors(next);
+      setError("Fix the problems below before submitting.");
+      setBusy(false);
+      return;
+    }
+    setFieldErrors({});
+
     try {
-      await api(`/api/forms/${slug}/submit`, { method: "POST", body: JSON.stringify({ data: values }) });
+      await api(`/api/forms/${slug}/submit`, {
+        method: "POST",
+        body: JSON.stringify({ data: values }),
+      });
       setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setBusy(false);
     }
   }
 
-  if (error) return <main className="p-8 text-sm text-red-600">{error}</main>;
-  if (!form) return <main className="p-8">Loading…</main>;
-  if (submitted) return <main className="p-8">Submitted. Thanks!</main>;
+  if (error && !form) {
+    return (
+      <AppShell>
+        <PageHeader eyebrow="Forms" title="Form unavailable" />
+        <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
+          <EmptyState
+            title="Couldn't load this form"
+            body={error}
+            action={
+              <Link href="/" className="type-label text-signal underline-offset-4 hover:underline">
+                Home →
+              </Link>
+            }
+          />
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (!form) {
+    return (
+      <AppShell>
+        <PageHeader eyebrow="Forms" title="Loading…" />
+        <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
+          <p className="text-body text-ink-muted">Loading form…</p>
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <AppShell>
+        <PageHeader eyebrow="Forms" title={form.title} />
+        <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
+          <div className="max-w-lg border border-ink bg-paper-dim p-8 text-ink shadow-block">
+            <h2 className="type-h2">Submitted. Thanks!</h2>
+            <p className="mt-3 text-body">
+              We got your response for <strong>{form.title}</strong>.
+            </p>
+            <Link href="/" className={`${buttonClass} mt-6 bg-ink`}>
+              Back home
+            </Link>
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
-    <main className="mx-auto max-w-sm p-8">
-      <h1 className="text-xl font-semibold">{form.title} [scaffold]</h1>
-      <form onSubmit={submit} className="mt-4 flex flex-col gap-3">
-        {form.fields.map((f) => (
-          <label key={f.id} className="flex flex-col gap-1 text-sm">
-            {f.label}
-            <input
-              value={values[f.label] ?? ""}
-              onChange={(e) => setValues({ ...values, [f.label]: e.target.value })}
-              className="border px-3 py-2"
-            />
-          </label>
-        ))}
-        <button type="submit" className="border px-3 py-2">Submit</button>
-      </form>
-    </main>
+    <AppShell>
+      <PageHeader
+        eyebrow={`Form · ${slug}`}
+        title={form.title}
+        description="Flat fills and hard outlines — readable on first contact."
+      />
+
+      <div className="mx-auto max-w-shell px-4 py-14 md:px-6 md:py-24">
+        <form
+          onSubmit={submit}
+          className="card max-w-lg border-ink p-6 shadow-block md:p-8"
+          noValidate
+        >
+          {error && (
+            <div
+              ref={summaryRef}
+              tabIndex={-1}
+              className="mb-5 border-2 border-signal bg-paper px-4 py-3 text-body-sm text-signal outline-none"
+              role="alert"
+            >
+              <p className="font-bold">Error</p>
+              <p className="mt-1">{error}</p>
+              {Object.keys(fieldErrors).length > 0 && (
+                <ul className="mt-2 list-disc pl-5">
+                  {Object.values(fieldErrors).map((msg) => (
+                    <li key={msg}>{msg}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-5">
+            {form.fields.map((f) => (
+              <Field key={f.id} id={f.id} label={f.label} error={fieldErrors[f.label]}>
+                <input
+                  id={f.id}
+                  value={values[f.label] ?? ""}
+                  onChange={(e) => setValues({ ...values, [f.label]: e.target.value })}
+                  className={fieldErrors[f.label] ? inputErrorClass : inputClass}
+                  aria-invalid={Boolean(fieldErrors[f.label])}
+                  aria-describedby={fieldErrors[f.label] ? `${f.id}-error` : undefined}
+                />
+              </Field>
+            ))}
+          </div>
+
+          <button type="submit" disabled={busy} className={`${buttonClass} mt-8`}>
+            {busy ? "Submitting…" : "Submit"}
+          </button>
+        </form>
+
+        <p className="mt-8 text-caption text-ink-muted">
+          Other forms:{" "}
+          <Link href="/forms/startup-intake" className="font-bold text-signal hover:underline">
+            startup intake
+          </Link>
+          {" · "}
+          <Link href="/forms/company-visit-signup" className="font-bold text-signal hover:underline">
+            company visit
+          </Link>
+        </p>
+      </div>
+    </AppShell>
   );
 }

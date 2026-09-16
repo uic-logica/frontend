@@ -1,26 +1,208 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* DESIGN.md — black · white · red (Villela / Elenco) + YCS spacing/type rhythm */
+@theme {
+  --color-ink: #000000;
+  --color-ink-muted: #8a8a8a;
+  --color-paper: #ffffff;
+  --color-paper-dim: #f2f2f2;
+  --color-rule: #1a1a1a;
+  --color-signal: #f3d30e;
+
+  /* legacy aliases */
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #f2f2f2;
+  --color-azul: #000000;
+  --color-naranja: #e10600;
+  --color-oro: #e10600;
+  --color-verde: #8a8a8a;
+  --color-rosa: #e10600;
+  --color-noche: #000000;
+
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --radius-sm: 0.5rem;
+  --radius-full: 9999px;
+
+  --shadow-block: 4px 4px 0 #000000;
+  --shadow-block-active: 2px 2px 0 #000000;
+
+  --max-width-shell: 80rem;
+  --max-width-measure: 68ch;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* YCS nav underline wipe */
+  .nav-link {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    cursor: pointer;
+    z-index: 20;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: #fff;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+  }
+
+  .nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+
+  .nav-link-active {
+    color: var(--color-signal);
+  }
+
+  .nav-link-active::after {
+    background-color: var(--color-signal);
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-signal);
+    outline-offset: 2px;
+  }
+
+  .on-ink :focus-visible,
+  .bg-ink :focus-visible {
+    outline-color: var(--color-paper);
+  }
+
+  /* Keep type-* helpers but sized like YCS (DM Sans + weight, not a blackface display) */
+  .type-display-1 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  .type-display-2 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .type-h1 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .type-h2 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(1.875rem, 3.5vw, 2.25rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+  }
+
+  .type-h3 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .type-h4 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .type-label {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .shadow-block {
+    box-shadow: var(--shadow-block);
+  }
+
+  .shadow-block-active {
+    box-shadow: var(--shadow-block-active);
+  }
+
+  .card {
+    background: var(--color-paper);
+    border: 1px solid var(--color-ink);
+    border-radius: 0.5rem;
+  }
+
+  .marquee-mask {
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .animate-marquee {
+      animation: none;
+    }
+
+    .nav-link::after {
+      transition: none;
+    }
+  }
 }

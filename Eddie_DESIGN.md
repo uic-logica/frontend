@@ -1,3 +1,5 @@
+> **Superseded for implementation.** The live source of truth is [`DESIGN.md`](./DESIGN.md) (black · white · red / Elenco voice + official LOGICA logo). Keep this file as research history only — if the two conflict, `DESIGN.md` wins.
+
 # LOGICA frontend: art, color and interaction reference
 
 This is the my reseach half for the design. I spent a couple of hours in museum records, design system docs and the stylesheets of sites that have already built something close to what we are after.
