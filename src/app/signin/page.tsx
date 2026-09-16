@@ -4,20 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { darkButtonClass as primaryButtonClass, darkInputClass, darkInputErrorClass } from "@/components/ui/darkForm";
 import { api } from "@/lib/api";
 
 type Profile = { id: string; name: string | null; email: string; role: string };
 
 type Step = "email" | "code" | "role";
-
-const darkInputClass =
-  "min-h-12 w-full rounded-sm border-2 border-white/20 bg-transparent px-3.5 text-body text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-signal";
-
-const darkInputErrorClass =
-  "min-h-12 w-full rounded-sm border-2 border-signal bg-transparent px-3.5 text-body text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-signal";
-
-const primaryButtonClass =
-  "inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-white px-6 text-lg font-semibold text-black transition-transform duration-300 enabled:hover:-translate-y-0.5 disabled:opacity-60";
 
 function roleCopy(role: string) {
   if (role === "EXEC_BOARD") return "Exec Board — you can run check-in and moderate.";
