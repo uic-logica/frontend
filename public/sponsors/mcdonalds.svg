@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" role="img" aria-label="McDonald's">
+  <path fill="#111" d="M12 56c0-22 10-44 20-44s20 22 20 44h-12c0-14-5-28-10-28S20 42 20 56H12zm40 0c0-22 10-44 20-44s20 22 20 44H80c0-14-5-28-10-28S60 42 60 56H52z"/>
+  <text x="110" y="44" font-family="Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="700" fill="#111">McDonald&apos;s</text>
+</svg>

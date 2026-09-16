@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 64" role="img" aria-label="Blue Cross Blue Shield">
+  <!-- simplified cross -->
+  <g fill="#111" transform="translate(4,8)">
+    <rect x="18" y="0" width="12" height="48" rx="1"/>
+    <rect x="0" y="18" width="48" height="12" rx="1"/>
+  </g>
+  <!-- simplified shield -->
+  <path fill="#111" transform="translate(64,8)" d="M24 0 L48 8 L48 28 C48 40 36 48 24 48 C12 48 0 40 0 28 L0 8 Z"/>
+  <text x="128" y="28" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="700" fill="#111">BlueCross</text>
+  <text x="128" y="50" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="700" fill="#111">BlueShield</text>
+</svg>
