@@ -83,8 +83,8 @@ export default function MembersHubPage() {
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-12 lg:py-20">
           {error && !profile ? (
             <div className="rounded-2xl border border-ink/15 p-8">
-              <h1 className="text-3xl font-bold">Sign in to continue</h1>
-              <p className="mt-3 max-w-xl text-ink/70">
+              <h1 className="type-h2">Sign in to continue</h1>
+              <p className="mt-3 max-w-xl text-body text-ink/70">
                 Please sign in with your UIC email to access LOGICA member features.
               </p>
               <Link
@@ -96,17 +96,15 @@ export default function MembersHubPage() {
             </div>
           ) : (
             <>
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-ink/50">Members</p>
-              <h1 className="mt-2 text-4xl font-bold md:text-5xl">
-                {profile?.name?.trim() || "Welcome back"}
-              </h1>
+              <p className="type-label text-ink/50">Members</p>
+              <h1 className="type-h1 mt-2">{profile?.name?.trim() || "Welcome back"}</h1>
               {profile && (
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-ink/70">
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-body text-ink/70">
                   <span>{profile.email}</span>
                   <RoleChip role={profile.role} />
                 </div>
               )}
-              <p className="mt-4 max-w-2xl text-lg text-ink/70">
+              <p className="mt-4 max-w-2xl text-body-lg text-ink/70">
                 Your member hub — feed, profile, events, attendance, and forms. Board and exec
                 roles unlock posting and check-in tools.
               </p>
@@ -118,8 +116,8 @@ export default function MembersHubPage() {
                     href={item.href}
                     className="rounded-2xl border border-ink/10 bg-paper p-6 transition hover:border-signal/40 hover:bg-paper-dim"
                   >
-                    <h2 className="text-xl font-bold">{item.label}</h2>
-                    <p className="mt-2 text-ink/60">{item.blurb}</p>
+                    <h2 className="type-h4">{item.label}</h2>
+                    <p className="mt-2 text-body-sm text-ink/60">{item.blurb}</p>
                   </Link>
                 ))}
               </div>
@@ -127,7 +125,7 @@ export default function MembersHubPage() {
               <button
                 type="button"
                 onClick={signOut}
-                className="mt-10 text-sm font-semibold text-ink/50 hover:text-signal"
+                className="mt-10 text-body-sm font-semibold text-ink/50 hover:text-signal"
               >
                 Sign out
               </button>

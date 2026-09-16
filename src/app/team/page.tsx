@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ClubShell, Section } from "@/components/club/ClubShell";
+import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 
 type Person = {
   id: string;
@@ -79,30 +79,30 @@ function BoardSection({
   className?: string;
 }) {
   return (
-    <Section className={className}>
+    <SectionContainer className={className}>
       <div className="mb-12 border-b border-zinc-800 pb-4">
-        <h2 className="text-3xl font-bold text-white md:text-4xl">{title}</h2>
-        <p className="mt-2 text-lg text-zinc-400">{subtitle}</p>
+        <h2 className="type-h2 text-white">{title}</h2>
+        <p className="mt-2 text-body-lg text-zinc-400">{subtitle}</p>
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
         {people.map((m) => (
           <PersonCard key={m.id} person={m} />
         ))}
       </div>
-    </Section>
+    </SectionContainer>
   );
 }
 
 export default function TeamPage() {
   return (
     <ClubShell>
-      <div className="mb-20 pt-16 sm:pt-20 lg:pt-24">
-        <Section>
-          <h1 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">Our Team</h1>
-          <p className="mb-16 max-w-2xl text-xl text-zinc-400">
+      <PageContainer>
+        <SectionContainer>
+          <h1 className="type-h1 mb-4 text-white">Our Team</h1>
+          <p className="mb-16 max-w-2xl text-body-lg text-zinc-400">
             Meet the talented individuals who make LOGICA possible
           </p>
-        </Section>
+        </SectionContainer>
 
         <BoardSection
           title="Executive Board"
@@ -111,13 +111,11 @@ export default function TeamPage() {
           className="mt-8"
         />
 
-        <Section className="mt-32">
+        <SectionContainer className="mt-32">
           <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
             <div className="max-w-3xl">
-              <h2 className="mb-4 text-3xl font-bold leading-tight text-white md:text-4xl lg:text-5xl">
-                Interested in joining our team?
-              </h2>
-              <p className="mb-8 text-lg leading-relaxed text-gray-400 lg:text-2xl">
+              <h2 className="type-h1 mb-4 text-white">Interested in joining our team?</h2>
+              <p className="mb-8 text-body-lg text-gray-400">
                 We&apos;re always looking for passionate students to join our development, design,
                 and events teams. Applications open each semester.
               </p>
@@ -129,8 +127,8 @@ export default function TeamPage() {
               </Link>
             </div>
           </div>
-        </Section>
-      </div>
+        </SectionContainer>
+      </PageContainer>
     </ClubShell>
   );
 }

@@ -7,7 +7,7 @@
   --color-paper: #ffffff;
   --color-paper-dim: #f2f2f2;
   --color-rule: #1a1a1a;
-  --color-signal: #f3d30e;
+  --color-signal: #e10600;
 
   /* legacy aliases */
   --color-surface: #ffffff;
@@ -32,6 +32,17 @@
 
   --max-width-shell: 80rem;
   --max-width-measure: 68ch;
+
+  /* Body-copy scale — pairs with the type-h* utilities below so every page
+     shares one hierarchy instead of ad-hoc Tailwind text sizes. */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.45;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.55;
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
 }
 
 @layer base {
