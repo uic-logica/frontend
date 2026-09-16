@@ -20,27 +20,16 @@ function getReduced() {
 
 export function TypewriterLine() {
   const reduced = useSyncExternalStore(subscribeReduced, getReduced, () => true);
-  const [displayText, setDisplayText] = useState(reduced ? FULL_TEXT : "");
-  const [isTyping, setIsTyping] = useState(!reduced);
+  const [displayText, setDisplayText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
+  const isTyping = displayText.length < FULL_TEXT.length;
 
   useEffect(() => {
-    if (reduced) {
-      setDisplayText(FULL_TEXT);
-      setIsTyping(false);
-      return;
-    }
-
-    if (isTyping && displayText.length < FULL_TEXT.length) {
-      const timeout = window.setTimeout(() => {
-        setDisplayText(FULL_TEXT.slice(0, displayText.length + 1));
-      }, TYPING_SPEED);
-      return () => window.clearTimeout(timeout);
-    }
-
-    if (isTyping && displayText.length === FULL_TEXT.length) {
-      setIsTyping(false);
-    }
+    if (reduced || !isTyping) return;
+    const timeout = window.setTimeout(() => {
+      setDisplayText(FULL_TEXT.slice(0, displayText.length + 1));
+    }, TYPING_SPEED);
+    return () => window.clearTimeout(timeout);
   }, [displayText, isTyping, reduced]);
 
   useEffect(() => {
@@ -55,7 +44,7 @@ export function TypewriterLine() {
     <h1 className="text-3xl font-semibold text-white sm:text-5xl md:text-6xl">
       <span className="sr-only">{FULL_TEXT}</span>
       <span aria-hidden className="whitespace-normal sm:whitespace-nowrap">
-        {displayText}
+        {reduced ? FULL_TEXT : displayText}
         <span className={`${showCursor ? "opacity-100" : "opacity-0"} transition-opacity duration-100`}>
           |
         </span>
