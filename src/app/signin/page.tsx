@@ -41,7 +41,7 @@ function RoleBadge({ role }: { role: string }) {
 
 /**
  * Sign-in — CONTENT.md §3 (Welcome → Email → Verification → Session/Role check).
- * Same black/white/red club theme as the rest of the public site, not a stray
+ * Same black/white/gold club theme as the rest of the public site, not a stray
  * white modal — this page still lives inside ClubShell (nav, canvas, footer).
  */
 export default function SignInPage() {
