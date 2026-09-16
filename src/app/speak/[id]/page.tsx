@@ -13,6 +13,7 @@ type Draft = {
   referredBy: string | null;
   availability: AvailabilityWindow[] | null;
   needs: string | null;
+  note: string | null;
   publicOptIn: boolean;
   submittedAt: string | null;
 };
@@ -58,6 +59,7 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
       referredBy: draft.referredBy ?? undefined,
       availability: draft.availability ?? undefined,
       needs: draft.needs ?? undefined,
+      note: draft.note ?? undefined,
       publicOptIn: draft.publicOptIn,
     };
     body = <SpeakerForm initial={initial} submitPath={`/api/speakers/${id}/complete`} />;

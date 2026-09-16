@@ -20,8 +20,19 @@ export type SpeakerFormValues = {
   referredBy?: string;
   availability?: AvailabilityWindow[];
   needs?: string;
+  note?: string;
   publicOptIn?: boolean;
 };
+
+/** Marks a label as required — a red asterisk reads clearer than an "(optional)" tag on everything else. */
+function Required() {
+  return (
+    <span className="text-signal" aria-hidden>
+      {" "}
+      *
+    </span>
+  );
+}
 
 /**
  * Shared by /speak (fresh, fills out everything) and /speak/[id] (a draft a
@@ -46,6 +57,7 @@ export function SpeakerForm({
     initial?.availability?.length ? initial.availability : [EMPTY_WINDOW],
   );
   const [needs, setNeeds] = useState(initial?.needs ?? "");
+  const [note, setNote] = useState(initial?.note ?? "");
   const [publicOptIn, setPublicOptIn] = useState(initial?.publicOptIn ?? false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -80,6 +92,7 @@ export function SpeakerForm({
           referredBy: referredBy.trim() || undefined,
           availability: filled,
           needs: needs.trim() || undefined,
+          note: note.trim() || undefined,
           publicOptIn,
         }),
       });
@@ -112,17 +125,21 @@ export function SpeakerForm({
         <div className="flex flex-col gap-1.5">
           <label htmlFor="name" className="type-label text-white/70">
             Name
+            <Required />
           </label>
           <input id="name" required value={name} onChange={(e) => setName(e.target.value)} className={darkInputClass} />
         </div>
 
         <div className="flex flex-col gap-1.5">
           <label htmlFor="email" className="type-label text-white/70">
-            Email <span className="text-white/40 normal-case">(optional)</span>
+            Email
+            <Required />
           </label>
+          <p className="text-caption text-white/40">We&apos;ll send confirmation details here.</p>
           <input
             id="email"
             type="email"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={darkInputClass}
@@ -155,7 +172,10 @@ export function SpeakerForm({
         </div>
 
         <div className="flex flex-col gap-3">
-          <span className="type-label text-white/70">When are you available?</span>
+          <span className="type-label text-white/70">
+            When are you available?
+            <Required />
+          </span>
           {windows.map((w, i) => (
             <div key={i} className="flex flex-col gap-2 border border-white/10 p-4">
               <div className="flex items-center justify-between">
@@ -225,15 +245,47 @@ export function SpeakerForm({
           />
         </div>
 
-        <label className="flex items-center gap-2 text-body-sm text-white/70">
-          <input
-            type="checkbox"
-            checked={publicOptIn}
-            onChange={(e) => setPublicOptIn(e.target.checked)}
-            className="h-4 w-4 accent-signal"
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="note" className="type-label text-white/70">
+            Anything else to add?
+          </label>
+          <p className="text-caption text-white/40">
+            e.g. &ldquo;Can&apos;t make Wednesday, Thursday works instead.&rdquo;
+          </p>
+          <textarea
+            id="note"
+            rows={2}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className={`${darkInputClass} min-h-[3.5rem] py-3`}
           />
-          OK to list me publicly on the LOGICA site once confirmed
-        </label>
+        </div>
+
+        <fieldset className="flex flex-col gap-2">
+          <legend className="type-label text-white/70">OK to list you publicly on the LOGICA site once confirmed?</legend>
+          <div className="flex gap-6">
+            <label className="flex items-center gap-2 text-body-sm text-white/70">
+              <input
+                type="radio"
+                name="publicOptIn"
+                checked={publicOptIn === true}
+                onChange={() => setPublicOptIn(true)}
+                className="h-4 w-4 accent-signal"
+              />
+              Yes
+            </label>
+            <label className="flex items-center gap-2 text-body-sm text-white/70">
+              <input
+                type="radio"
+                name="publicOptIn"
+                checked={publicOptIn === false}
+                onChange={() => setPublicOptIn(false)}
+                className="h-4 w-4 accent-signal"
+              />
+              No
+            </label>
+          </div>
+        </fieldset>
 
         <button type="submit" disabled={busy} className={darkButtonClass}>
           {busy ? "Sending…" : "Submit"}

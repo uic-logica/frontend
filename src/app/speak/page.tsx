@@ -175,7 +175,7 @@ function DraftPanel() {
             className={darkInputClass}
           />
           <textarea
-            placeholder="Note to yourself — not shown to the speaker (optional)"
+            placeholder="Note — visible to the speaker too (optional)"
             rows={2}
             value={note}
             onChange={(e) => setNote(e.target.value)}
