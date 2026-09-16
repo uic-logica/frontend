@@ -1,5 +1,13 @@
 # Frontend design direction
 
+## Status (2026-09-16)
+
+**This file is the active direction. Build against it, not against a Figma/Pencil mockup, unless a page is genuinely novel enough to need one.** The team was moving too slowly designing each page separately before coding it; we're building directly against the system below instead, page by page, same roadmap order, faster loop.
+
+The richer Cesar Villela / Athos Bulcão / Carlos Cruz-Diez "culture-rich" direction some pages reference in comments (feed's tile modules, attendance's color-flash) is a **future phase, not now.** `Eddie_DESIGN.md` holds that research — treat it as inspiration for a later pass, not a spec to build today. If a page's comment cites one of those references, the *shape* (e.g. feed's fixed-module grid) still applies; the deeper visual treatment doesn't yet.
+
+Eduardo is no longer design lead — there's no longer a single owner drawing every page ahead of the code. Whoever's building a page owns making it match this file.
+
 ## The concept
 
 LOGICA = logic × growth.
@@ -51,7 +59,20 @@ Member tools (`/signin`, `/profile`, `/feed`, `/attendance`, `/forms`) are app s
 
 Four red dots = Villela motif. Logo = `LogicaMark` / `public/logo-logica.png` only.
 
-Type: **DM Sans** (same family as YCS) — weights 400/500/600/700. No separate blackface display face; size + weight do the hierarchy. Hero cycle line: `text-4xl sm:text-6xl md:text-8xl font-semibold`. Page titles: `text-5xl md:text-7xl font-bold`. Team photos: `h-40 w-40 md:h-48 md:w-48 lg:h-56 lg:w-56 rounded-xl`, grid `gap-x-6 gap-y-12`.
+Type: **DM Sans** (same family as YCS) — weights 400/500/600/700. No separate blackface display face; size + weight do the hierarchy.
+
+**Use the shared scale in `globals.css`, not a one-off Tailwind size.** Every page's headings and body copy should come from these utility classes so pages don't drift apart:
+
+| Class | Use |
+| --- | --- |
+| `type-h1` | Page title (one per page) |
+| `type-h2` | Section heading |
+| `type-h3` | Card / subsection heading |
+| `type-h4` | Minor heading |
+| `type-label` | Eyebrows, form labels, small caps tags |
+| `text-body-lg` / `text-body` / `text-body-sm` / `text-caption` | Paragraph copy, largest to smallest |
+
+Team photos: `h-40 w-40 md:h-48 md:w-48 lg:h-56 lg:w-56 rounded-xl`, grid `gap-x-6 gap-y-12`.
 
 Layout classes mirror YCS rhythm: page shell `mb-20 px-4 sm:px-6 lg:px-12 pt-16 sm:pt-20 lg:pt-24`, sections `max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 mb-16 sm:mb-24 lg:mb-32`, fixed nav `p-8`, spacer `h-24`.
 
@@ -63,4 +84,4 @@ Layout classes mirror YCS rhythm: page shell `mb-20 px-4 sm:px-6 lg:px-12 pt-16 
 
 ## What wins
 
-This file + YCS structure. `Eddie_DESIGN.md` is research only.
+This file + YCS structure. `Eddie_DESIGN.md` is research for a later phase — see Status above.
