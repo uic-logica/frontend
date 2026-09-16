@@ -5,7 +5,7 @@
 LOGICA = logic × growth.
 
 - **Shape / UX:** copy the [Yale Computer Society](https://yalecomputersociety.org) site **exactly** — same IA, same homepage section order, same page types, same interaction patterns (fixed nav, typewriter hero, stats, pathways, sponsors, join CTAs, team grid, products directory, events upcoming/past).
-- **Look:** Cesar Villela / Elenco **black · white · red**, Tropicália print energy, official **LOGICA** circuit-tree logo. YCS pink → our `signal` red. No cream mural system.
+- **Look:** Cesar Villela / Elenco **black · white · gold**, Tropicália print energy, official **LOGICA** circuit-tree logo. YCS pink → our `signal` gold (`#FECC15`). No cream mural system.
 
 ## Shape reference (copy this)
 
@@ -46,10 +46,10 @@ Member tools (`/signin`, `/profile`, `/feed`, `/attendance`, `/forms`) are app s
 | `ink` | `#000000` | Site ground (YCS black) |
 | `paper` | `#FFFFFF` | Text on ink; light wells |
 | `paper-dim` | `#F2F2F2` | Rare light bands |
-| `signal` | `#E10600` | YCS-pink slot — links, accents, four dots |
+| `signal` | `#FECC15` | YCS-pink slot — links, accents, four dots |
 | `ink-muted` | `#8A8A8A` | Secondary on ink |
 
-Four red dots = Villela motif. Logo = `LogicaMark` / `public/logo-logica.png` only.
+Four gold dots = Villela motif. Logo = `LogicaMark` / `public/logo-logica.png` only.
 
 Type: **DM Sans** (same family as YCS) — weights 400/500/600/700. No separate blackface display face; size + weight do the hierarchy. Hero cycle line: `text-4xl sm:text-6xl md:text-8xl font-semibold`. Page titles: `text-5xl md:text-7xl font-bold`. Team photos: `h-40 w-40 md:h-48 md:w-48 lg:h-56 lg:w-56 rounded-xl`, grid `gap-x-6 gap-y-12`.
 
