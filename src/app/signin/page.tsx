@@ -217,6 +217,12 @@ export default function SignInPage() {
           </div>
 
           <p className="mt-8 text-caption text-white/50">
+            Not from UIC?{" "}
+            <Link href="/speaker-signin" className="font-bold text-signal underline-offset-2 hover:underline">
+              Sign in here
+            </Link>
+          </p>
+          <p className="mt-2 text-caption text-white/50">
             Need the public site?{" "}
             <Link href="/" className="font-bold text-signal underline-offset-2 hover:underline">
               Back home
