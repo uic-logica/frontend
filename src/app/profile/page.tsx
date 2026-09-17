@@ -32,6 +32,7 @@ const INTERESTS = [
   "Hardware",
 ] as const;
 
+
 const OPEN_TO = ["Internships", "Project teams", "Study groups"] as const;
 
 /** Profile — CONTENT.md §4 identity / about / involvement / activity (self-view). */
@@ -84,7 +85,7 @@ export default function ProfilePage() {
 
   if (error && !profile) {
     return (
-      <AppShell>
+      <AppShell tone="ink">
         <PageHeader
           eyebrow="Profile"
           title="Your LOGICA record"
@@ -110,7 +111,7 @@ export default function ProfilePage() {
 
   if (!profile) {
     return (
-      <AppShell>
+      <AppShell tone="ink">
         <PageHeader eyebrow="Profile" title="Your LOGICA record" />
         <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
           <p className="text-body text-ink-muted">Loading profile…</p>
@@ -122,8 +123,9 @@ export default function ProfilePage() {
   const bioLen = profile.bio?.length ?? 0;
 
   return (
-    <AppShell>
+    <AppShell tone="ink">
       <PageHeader
+        
         eyebrow="Profile · self view"
         title={profile.name?.trim() || "Your profile"}
         description="Editable by you. Email and form history stay private to the owner."
