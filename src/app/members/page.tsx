@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ClubShell } from "@/components/club/ClubShell";
 import { RoleChip } from "@/components/shell/AppShell";
-import { api } from "@/lib/api";
+import { api, signOut as apiSignOut } from "@/lib/api";
 
 type Profile = { id: string; name: string | null; email: string; role: string };
 
@@ -69,7 +69,7 @@ export default function MembersHubPage() {
 
   async function signOut() {
     try {
-      await fetch("/api/auth/signout", { method: "POST" });
+      await apiSignOut();
     } catch {
       /* ignore */
     }

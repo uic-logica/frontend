@@ -20,3 +20,18 @@ export async function api<T = unknown>(path: string, init?: RequestInit): Promis
   if (!res.ok) throw new ApiError(body?.error ?? `Request failed: ${res.status}`, res.status);
   return body as T;
 }
+
+/**
+ * Ends the session (works for both MEMBER and SPEAKER accounts — Auth.js's
+ * signout endpoint just deletes the Session row by cookie, same either way).
+ * Auth.js's `/api/auth/signout` rejects a bare POST with `MissingCSRF` —
+ * confirmed by testing, not assumed — so the token has to be fetched first.
+ */
+export async function signOut(): Promise<void> {
+  const { csrfToken } = await (await fetch("/api/auth/csrf")).json();
+  await fetch("/api/auth/signout", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ csrfToken, json: "true" }),
+  });
+}
