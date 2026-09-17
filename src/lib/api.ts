@@ -1,3 +1,13 @@
+/** Thrown by `api()` on a non-2xx response — carries the HTTP status for callers that need to branch on it. */
+export class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 // logica-lean: bare-minimum fetch wrapper for the e2e/bare-minimum scaffold.
 // Same-origin — next.config.ts rewrites /api/* to the backend, so the
 // session cookie stays first-party and `credentials` doesn't need "include".
@@ -7,6 +17,6 @@ export async function api<T = unknown>(path: string, init?: RequestInit): Promis
     headers: { "Content-Type": "application/json", ...init?.headers },
   });
   const body = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(body?.error ?? `Request failed: ${res.status}`);
+  if (!res.ok) throw new ApiError(body?.error ?? `Request failed: ${res.status}`, res.status);
   return body as T;
 }
