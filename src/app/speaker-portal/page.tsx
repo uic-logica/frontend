@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
 import { ApiError, api, signOut as apiSignOut } from "@/lib/api";
+import { ResumeUpload } from "@/components/shell/ResumeUpload";
 import { AvailabilityWindow } from "../speak/SpeakerForm";
 
 type Profile = {
@@ -14,7 +15,7 @@ type Profile = {
   username: string | null;
   linkedin: string | null;
   bio: string | null;
-  resumeUrl: string | null;
+  resumeFilename: string | null;
   mustChangePassword: boolean;
   speakerSubmission: {
     organization: string | null;
@@ -186,6 +187,16 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
       )}
 
       <div className="mt-6 flex flex-col gap-5">
+        <div className="flex flex-col gap-1.5">
+          <span className="type-label text-white/70">Resume</span>
+          <ResumeUpload
+            filename={profile.resumeFilename}
+            onChange={(resumeFilename) => onSaved({ ...profile, resumeFilename })}
+            buttonClassName="type-label text-signal underline-offset-4 hover:underline self-start"
+            linkClassName="type-label text-signal underline-offset-4 hover:underline"
+            textClassName="text-body-sm text-white"
+          />
+        </div>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="name" className="type-label text-white/70">
             Name
