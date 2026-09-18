@@ -120,6 +120,15 @@ export default function MembersHubPage() {
                     <p className="mt-2 text-body-sm text-ink/60">{item.blurb}</p>
                   </Link>
                 ))}
+                {(profile?.role === "BOARD" || profile?.role === "EXEC_BOARD") && (
+                  <Link
+                    href="/admin/speakers"
+                    className="rounded-2xl border border-signal/40 bg-paper p-6 transition hover:border-signal hover:bg-paper-dim"
+                  >
+                    <h2 className="type-h4">Speakers (admin)</h2>
+                    <p className="mt-2 text-body-sm text-ink/60">Review, confirm, and invite speakers to the portal</p>
+                  </Link>
+                )}
               </div>
 
               <button
