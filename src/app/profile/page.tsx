@@ -86,7 +86,7 @@ export default function ProfilePage() {
   if (error && !profile) {
     return (
       <AppShell tone="ink">
-        <PageHeader
+        <PageHeader tone="ink"
           eyebrow="Profile"
           title="Your LOGICA record"
           description="Name, major, role, and how you've shown up in the club."
@@ -112,9 +112,9 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <AppShell tone="ink">
-        <PageHeader eyebrow="Profile" title="Your LOGICA record" />
+        <PageHeader tone="ink" eyebrow="Profile" title="Your LOGICA record" />
         <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
-          <p className="text-body text-ink-muted">Loading profile…</p>
+          <p className="text-body text-paper/70">Loading profile…</p>
         </div>
       </AppShell>
     );
@@ -124,8 +124,7 @@ export default function ProfilePage() {
 
   return (
     <AppShell tone="ink">
-      <PageHeader
-        
+      <PageHeader tone="ink"
         eyebrow="Profile · self view"
         title={profile.name?.trim() || "Your profile"}
         description="Editable by you. Email and form history stay private to the owner."
