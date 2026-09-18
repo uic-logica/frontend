@@ -87,15 +87,22 @@ export default function EventsPage() {
                 id={e.id}
                 className="border border-white/20 p-6 transition-all hover:translate-y-[-4px] hover:border-signal"
               >
-                <h2 className="type-h3 text-white">{e.title}</h2>
+                <Link href={`/events/${e.id}`} className="hover:underline">
+                  <h2 className="type-h3 text-white">{e.title}</h2>
+                </Link>
                 <p className="mt-2 text-body-sm text-white/60">
                   {new Date(e.startsAt).toLocaleString()}
                   {e.location ? ` · ${e.location}` : ""}
                 </p>
                 {e.description && <p className="mt-3 text-body text-white/75">{e.description}</p>}
-                <Link href="/signin" className="mt-4 inline-block font-semibold text-signal hover:underline">
-                  RSVP (members)
-                </Link>
+                <div className="mt-4 flex flex-wrap gap-4">
+                  <Link href={`/events/${e.id}`} className="font-semibold text-signal hover:underline">
+                    Details, materials &amp; notes
+                  </Link>
+                  <Link href="/signin" className="font-semibold text-signal hover:underline">
+                    RSVP (members)
+                  </Link>
+                </div>
               </li>
             ))}
           </ul>
