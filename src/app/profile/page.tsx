@@ -91,8 +91,10 @@ export default function ProfilePage() {
           title="Your LOGICA record"
           description="Name, major, role, and how you've shown up in the club."
         />
-        <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
-          <EmptyState
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 mb-16 p-8 sm:mb-24 lg:mb-32">
+          {/* className="border border-white/20 bg-white/5 p-6 md:p-8" */}
+          {/* "mx-auto max-w-shell px-4 py-14 md:px-6" */}
+          {/* <EmptyState
             title="Sign in to continue"
             body="Please sign in with your UIC email to access LOGICA member features. No part of a profile is visible when you're signed out."
             action={
@@ -100,7 +102,19 @@ export default function ProfilePage() {
                 Sign in
               </Link>
             }
-          />
+          /> */}
+          <div className="w-full max-w-xl border border-white/20 bg-white/5 p-6 sm:max-w-2xl md:p-8 lg:max-w-3xl lg:p-10">
+              <h1 className="type-h2 text-paper">Sign in to continue</h1>
+              <p className="mt-3 max-w-measure text-body text-paper/70">
+                Please sign in with your UIC email to access LOGICA member features. No part of
+                a profile is visible when you&apos;re signed out.
+              </p>
+              <Link
+                href="/signin"
+                className="mt-6 inline-flex min-h-12 items-center rounded-sm bg-signal px-6 font-semibold text-ink">
+                Sign in
+              </Link>
+            </div>
           <p className="mt-4 text-caption text-signal" role="status">
             {error}
           </p>

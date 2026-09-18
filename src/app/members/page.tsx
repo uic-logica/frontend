@@ -51,8 +51,7 @@ export default function MembersHubPage() {
               </p>
               <Link
                 href="/signin"
-                className="mt-6 inline-flex items-center rounded-lg bg-signal px-6 py-3 font-semibold text-paper"
-              >
+                className="mt-6 inline-flex items-center rounded-sm bg-signal px-6 py-3 font-semibold text-ink">
                 Sign in
               </Link>
             </div>
