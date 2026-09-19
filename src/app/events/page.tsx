@@ -111,6 +111,9 @@ export default function EventsPage() {
           <div className="border border-white/20 p-8">
             <h3 className="type-h4 text-white">To be announced</h3>
             <p className="mt-3 text-body text-white/70">Check back soon for our speaker lineup this semester.</p>
+            <PinkLink href="/speak" className="mt-6 text-xl">
+              Want to speak at LOGICA? Join the speaker lineup
+            </PinkLink>
           </div>
         </SectionContainer>
 

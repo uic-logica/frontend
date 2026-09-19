@@ -48,7 +48,7 @@ export function LogicaMark({
   );
 }
 
-/** Villela Elenco motif — four red dots = harmony. */
+/** Villela Elenco motif — four gold dots = harmony. */
 export function FourDots({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2 ${className}`} aria-hidden>

@@ -53,7 +53,7 @@ export function TypewriterLine() {
   );
 }
 
-/** Exact YCS ExploreLink classes, with LOGICA signal red. */
+/** Exact YCS ExploreLink classes, with LOGICA signal gold. */
 export function PinkLink({
   href,
   children,

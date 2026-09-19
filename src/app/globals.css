@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
-/* DESIGN.md — black · white · red (Villela / Elenco) + YCS spacing/type rhythm */
+/* DESIGN.md — black · white · signal gold (Villela / Elenco) + YCS spacing/type rhythm */
 @theme {
   --color-ink: #000000;
   --color-ink-muted: #8a8a8a;
   --color-paper: #ffffff;
   --color-paper-dim: #f2f2f2;
   --color-rule: #1a1a1a;
-  --color-signal: #e10600;
+  --color-signal: #fecc15;
 
   /* legacy aliases */
   --color-surface: #ffffff;
   --color-surface-raised: #ffffff;
   --color-surface-sunken: #f2f2f2;
   --color-azul: #000000;
-  --color-naranja: #e10600;
-  --color-oro: #e10600;
+  --color-naranja: #fecc15;
+  --color-oro: #fecc15;
   --color-verde: #8a8a8a;
-  --color-rosa: #e10600;
+  --color-rosa: #fecc15;
   --color-noche: #000000;
 
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
