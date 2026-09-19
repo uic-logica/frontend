@@ -37,66 +37,68 @@ export default function SpeakerSignInPage() {
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer className="max-w-2xl">
-          <h1 className="type-h1 text-white">Speaker sign-in</h1>
-          <p className="mt-3 text-xl text-signal md:text-2xl">
-            For confirmed speakers — no UIC email required.
-          </p>
-
-          <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
-            <p className="text-body text-white/70">
-              Use the username and password from your invite email.
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <h1 className="type-h1 text-white">Speaker sign-in</h1>
+            <p className="mt-3 text-xl text-signal md:text-2xl">
+              For confirmed speakers — no UIC email required.
             </p>
 
-            {error && (
-              <div
-                className="mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
-                role="alert"
-              >
-                {error}
-              </div>
-            )}
+            <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
+              <p className="text-body text-white/70">
+                Use the username and password from your invite email.
+              </p>
 
-            <form onSubmit={submit} className="mt-6 flex flex-col gap-5" noValidate>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="username" className="type-label text-white/70">
-                  Username
-                </label>
-                <input
-                  id="username"
-                  autoComplete="username"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className={error ? darkInputErrorClass : darkInputClass}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="password" className="type-label text-white/70">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={error ? darkInputErrorClass : darkInputClass}
-                />
-              </div>
-              <button type="submit" disabled={busy} className={darkButtonClass}>
-                {busy ? "Signing in…" : "Sign in"}
-              </button>
-            </form>
+              {error && (
+                <div
+                  className="mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
+                  role="alert"
+                >
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={submit} className="mt-6 flex flex-col gap-5" noValidate>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="username" className="type-label text-white/70">
+                    Username
+                  </label>
+                  <input
+                    id="username"
+                    autoComplete="username"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className={error ? darkInputErrorClass : darkInputClass}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="password" className="type-label text-white/70">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={error ? darkInputErrorClass : darkInputClass}
+                  />
+                </div>
+                <button type="submit" disabled={busy} className={darkButtonClass}>
+                  {busy ? "Signing in…" : "Sign in"}
+                </button>
+              </form>
+            </div>
+
+            <p className="mt-8 text-caption text-white/50">
+              UIC student or board member?{" "}
+              <Link href="/signin" className="font-bold text-signal underline-offset-2 hover:underline">
+                Sign in here
+              </Link>
+            </p>
           </div>
-
-          <p className="mt-8 text-caption text-white/50">
-            UIC student or board member?{" "}
-            <Link href="/signin" className="font-bold text-signal underline-offset-2 hover:underline">
-              Sign in here
-            </Link>
-          </p>
         </SectionContainer>
       </PageContainer>
     </ClubShell>

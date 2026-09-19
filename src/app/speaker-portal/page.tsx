@@ -70,14 +70,16 @@ export default function SpeakerPortalPage() {
     return (
       <ClubShell>
         <PageContainer>
-          <SectionContainer className="max-w-2xl">
-            <h1 className="type-h1 text-white">Sign in to continue</h1>
-            <p className="mt-4 text-body text-white/70">
-              <a href="/speaker-signin" className="font-bold text-signal hover:underline">
-                Sign in
-              </a>{" "}
-              to manage your speaker profile.
-            </p>
+          <SectionContainer>
+            <div className="mx-auto max-w-md">
+              <h1 className="type-h1 text-white">Sign in to continue</h1>
+              <p className="mt-4 text-body text-white/70">
+                <a href="/speaker-signin" className="font-bold text-signal hover:underline">
+                  Sign in
+                </a>{" "}
+                to manage your speaker profile.
+              </p>
+            </div>
           </SectionContainer>
         </PageContainer>
       </ClubShell>
@@ -88,8 +90,10 @@ export default function SpeakerPortalPage() {
     return (
       <ClubShell>
         <PageContainer>
-          <SectionContainer className="max-w-2xl">
-            <p className="text-body-sm text-white/50">Loading…</p>
+          <SectionContainer>
+            <div className="mx-auto max-w-md">
+              <p className="text-body-sm text-white/50">Loading…</p>
+            </div>
           </SectionContainer>
         </PageContainer>
       </ClubShell>
@@ -99,28 +103,36 @@ export default function SpeakerPortalPage() {
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer className="max-w-2xl">
-          <h1 className="type-h1 text-white">{profile.name?.trim() || "Speaker portal"}</h1>
-          <p className="mt-3 text-xl text-signal md:text-2xl">{profile.email}</p>
-          <button
-            type="button"
-            onClick={signOut}
-            className="mt-4 type-label text-white/50 hover:text-signal"
-          >
-            Sign out
-          </button>
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <h1 className="type-h1 text-white">{profile.name?.trim() || "Speaker portal"}</h1>
+            <p className="mt-3 text-xl text-signal md:text-2xl">{profile.email}</p>
+            <button
+              type="button"
+              onClick={signOut}
+              className="mt-4 type-label text-white/50 hover:text-signal"
+            >
+              Sign out
+            </button>
+          </div>
         </SectionContainer>
 
-        <SectionContainer className="max-w-2xl">
-          <ProfileForm profile={profile} onSaved={setProfile} />
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <ProfileForm profile={profile} onSaved={setProfile} />
+          </div>
         </SectionContainer>
 
-        <SectionContainer className="max-w-2xl">
-          <NotificationsPanel />
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <NotificationsPanel />
+          </div>
         </SectionContainer>
 
-        <SectionContainer className="max-w-2xl">
-          <EmailPreferencesPanel />
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <EmailPreferencesPanel />
+          </div>
         </SectionContainer>
       </PageContainer>
     </ClubShell>
