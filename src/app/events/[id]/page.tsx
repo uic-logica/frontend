@@ -31,39 +31,45 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer className="max-w-2xl">
-          {event ? (
-            <>
-              <h1 className="type-h1 text-white">{event.title}</h1>
-              <p className="mt-3 text-body-lg text-white/70">
-                {new Date(event.startsAt).toLocaleString()}
-                {event.location ? ` · ${event.location}` : ""}
-              </p>
-              {event.description && <p className="mt-4 text-body text-white/70">{event.description}</p>}
-            </>
-          ) : authError ? (
-            <>
-              <h1 className="type-h1 text-white">Event details</h1>
-              <p className="mt-3 text-body text-white/70">
-                <a href="/signin" className="font-bold text-signal hover:underline">
-                  Sign in
-                </a>{" "}
-                to see the full date, location, and description. Public materials below don&apos;t require signing in.
-              </p>
-            </>
-          ) : (
-            <p className="text-body-sm text-white/50">Loading…</p>
-          )}
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            {event ? (
+              <>
+                <h1 className="type-h1 text-white">{event.title}</h1>
+                <p className="mt-3 text-body-lg text-white/70">
+                  {new Date(event.startsAt).toLocaleString()}
+                  {event.location ? ` · ${event.location}` : ""}
+                </p>
+                {event.description && <p className="mt-4 text-body text-white/70">{event.description}</p>}
+              </>
+            ) : authError ? (
+              <>
+                <h1 className="type-h1 text-white">Event details</h1>
+                <p className="mt-3 text-body text-white/70">
+                  <a href="/signin" className="font-bold text-signal hover:underline">
+                    Sign in
+                  </a>{" "}
+                  to see the full date, location, and description. Public materials below don&apos;t require signing in.
+                </p>
+              </>
+            ) : (
+              <p className="text-body-sm text-white/50">Loading…</p>
+            )}
+          </div>
         </SectionContainer>
 
         {/* Materials are independently public/internal per-item — this panel works signed out. */}
-        <SectionContainer className="max-w-2xl">
-          <MaterialsPanel eventId={id} isBoard={isBoard} />
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <MaterialsPanel eventId={id} isBoard={isBoard} />
+          </div>
         </SectionContainer>
 
         {/* The feed itself requires sign-in (backend), so it handles its own gate. */}
-        <SectionContainer className="max-w-2xl">
-          <FeedPanel eventId={id} eventTitle={event?.title ?? "this event"} />
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <FeedPanel eventId={id} eventTitle={event?.title ?? "this event"} />
+          </div>
         </SectionContainer>
       </PageContainer>
     </ClubShell>

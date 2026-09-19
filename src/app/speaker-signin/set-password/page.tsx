@@ -47,71 +47,73 @@ export default function SetSpeakerPasswordPage() {
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer className="max-w-2xl">
-          <h1 className="type-h1 text-white">Set your password</h1>
-          <p className="mt-3 text-xl text-signal md:text-2xl">
-            First time signing in — pick a password you&apos;ll actually remember.
-          </p>
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <h1 className="type-h1 text-white">Set your password</h1>
+            <p className="mt-3 text-xl text-signal md:text-2xl">
+              First time signing in — pick a password you&apos;ll actually remember.
+            </p>
 
-          <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
-            {error && (
-              <div
-                className="mb-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
-                role="alert"
-              >
-                {error}
-              </div>
-            )}
+            <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
+              {error && (
+                <div
+                  className="mb-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
+                  role="alert"
+                >
+                  {error}
+                </div>
+              )}
 
-            <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="currentPassword" className="type-label text-white/70">
-                  Temporary password
-                </label>
-                <p className="text-caption text-white/40">From your invite email.</p>
-                <input
-                  id="currentPassword"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className={error ? darkInputErrorClass : darkInputClass}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="newPassword" className="type-label text-white/70">
-                  New password
-                </label>
-                <p className="text-caption text-white/40">At least {MIN_LENGTH} characters.</p>
-                <input
-                  id="newPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className={darkInputClass}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="confirm" className="type-label text-white/70">
-                  Confirm new password
-                </label>
-                <input
-                  id="confirm"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  className={darkInputClass}
-                />
-              </div>
-              <button type="submit" disabled={busy} className={darkButtonClass}>
-                {busy ? "Saving…" : "Set password"}
-              </button>
-            </form>
+              <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="currentPassword" className="type-label text-white/70">
+                    Temporary password
+                  </label>
+                  <p className="text-caption text-white/40">From your invite email.</p>
+                  <input
+                    id="currentPassword"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className={error ? darkInputErrorClass : darkInputClass}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="newPassword" className="type-label text-white/70">
+                    New password
+                  </label>
+                  <p className="text-caption text-white/40">At least {MIN_LENGTH} characters.</p>
+                  <input
+                    id="newPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className={darkInputClass}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="confirm" className="type-label text-white/70">
+                    Confirm new password
+                  </label>
+                  <input
+                    id="confirm"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    className={darkInputClass}
+                  />
+                </div>
+                <button type="submit" disabled={busy} className={darkButtonClass}>
+                  {busy ? "Saving…" : "Set password"}
+                </button>
+              </form>
+            </div>
           </div>
         </SectionContainer>
       </PageContainer>
