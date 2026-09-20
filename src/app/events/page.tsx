@@ -81,7 +81,7 @@ export default function EventsPage() {
             </div>
           )}
 
-          <ul className="space-y-4">
+          <ul className="max-w-3xl space-y-4">
             {list.map((e) => (
               <li
                 key={e.id}

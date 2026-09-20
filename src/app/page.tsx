@@ -233,7 +233,7 @@ function Partners() {
         ))}
       </div>
 
-      <div className="club-card mt-16 flex flex-col items-center gap-3 bg-white/[0.02] px-8 py-10 text-center">
+      <div className="club-card mx-auto mt-16 flex w-fit max-w-xl flex-col items-center gap-3 bg-white/[0.02] px-8 py-10 text-center">
         <p className="text-lg text-white md:text-xl">Interested in partnering with LOGICA?</p>
         <p className="text-sm text-white">Join our community of innovators and tech leaders.</p>
         <a
@@ -308,7 +308,7 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="relative overflow-hidden club-card bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
+          <div className="club-card relative mx-auto max-w-4xl overflow-hidden bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
             <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 items-center justify-center overflow-hidden md:flex">
               <Image
                 src="/logo-logica.png"
