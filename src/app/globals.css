@@ -8,6 +8,10 @@
   --color-paper-dim: #f2f2f2;
   --color-rule: #1a1a1a;
   --color-signal: #fecc15;
+  /* Sampled from the wallpaper's own dominant orange (public/logicawallpaper.png)
+     — used to tie footer accents back to the image above it, distinct from
+     the gold "signal" accent used for interactive links. */
+  --color-ember: #ca3a03;
 
   /* legacy aliases */
   --color-surface: #ffffff;
@@ -48,9 +52,22 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Trackpad rubber-band past the bottom of the page stretches the
+       document momentarily beyond its real content — since the wallpaper
+       is a `fixed` background (anchored to the viewport, not the document),
+       that stretch reveals a sliver of it below the footer for the length
+       of the bounce. This is what actually stops it, not anything on the
+       footer itself. */
+    overscroll-behavior-y: none;
   }
 
   body {
+    /* Fixed on the root: this is the one place `background-attachment: fixed`
+       is actually free. Scoping it to a smaller scrolling element (tried
+       earlier) forces the browser to repaint the visible region every
+       scroll frame instead of compositing it — that was the jitter. The
+       footer's own rounded top corners are what make it read as an
+       addition sliding up over this image, not the image itself changing. */
     background: var(--color-ink) url("/logicawallpaper.png") center top / cover no-repeat fixed;
     color: var(--color-paper);
     font-family: var(--font-sans);
