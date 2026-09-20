@@ -41,7 +41,7 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
     body = <p className="text-body-sm text-white">Loading…</p>;
   } else if (state.kind === "invalid") {
     body = (
-      <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10">
+      <div className="club-card w-fit max-w-xl bg-white/[0.02] p-8">
         <h2 className="type-h2 text-white">This link isn&apos;t valid</h2>
         <p className="mt-3 text-body text-white">
           Double check the link, or ask whoever sent it to you for a new one.
@@ -50,7 +50,7 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
     );
   } else if (state.kind === "submitted") {
     body = (
-      <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10">
+      <div className="club-card w-fit max-w-xl bg-white/[0.02] p-8">
         <h2 className="type-h2 text-white">Already submitted</h2>
         <p className="mt-3 text-body text-white">
           This was already filled out. Reach out if anything needs to change.

@@ -106,7 +106,7 @@ export function SpeakerForm({
 
   if (submitted) {
     return (
-      <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10">
+      <div className="club-card w-fit max-w-xl bg-white/[0.02] p-8">
         <h2 className="type-h2 text-white">{submittedTitle}</h2>
         <p className="mt-3 text-body text-white">{submittedBody}</p>
       </div>
@@ -114,7 +114,7 @@ export function SpeakerForm({
   }
 
   return (
-    <form onSubmit={submit} className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8" noValidate>
+    <form onSubmit={submit} className="club-card bg-white/[0.02] p-6 sm:p-8" noValidate>
       {error && (
         <div className="rounded-lg mb-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white" role="alert">
           {error}

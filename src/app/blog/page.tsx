@@ -12,7 +12,7 @@ export default function BlogPage() {
           </p>
         </SectionContainer>
         <SectionContainer>
-          <div className="club-card p-8">
+          <div className="club-card w-fit max-w-xl p-8">
             <h2 className="type-h3 text-white">No posts yet</h2>
             <p className="mt-3 text-body text-white">Check back soon — or explore events in the meantime.</p>
             <div className="mt-6 flex flex-wrap gap-4">

@@ -105,7 +105,7 @@ export default function JoinPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="club-card p-8 md:p-12">
+          <div className="club-card w-fit max-w-2xl p-8 md:p-12">
             <h2 className="type-h3 text-white">Interested in joining?</h2>
             <p className="mt-3 max-w-2xl text-body text-white">
               Join our community of passionate developers, designers, and tech enthusiasts.

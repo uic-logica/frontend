@@ -116,7 +116,7 @@ function MaterialsPanel({ eventId, isBoard }: { eventId: string; isBoard: boolea
   }
 
   return (
-    <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
+    <div className="club-card bg-white/[0.02] p-6 sm:p-8">
       <h2 className="type-h3 text-white">Materials</h2>
       {materials === null && <p className="mt-3 text-body-sm text-white">Loading…</p>}
       {materials?.length === 0 && <p className="mt-3 text-body-sm text-white">Nothing uploaded yet.</p>}
@@ -180,7 +180,7 @@ function FeedPanel({ eventId, eventTitle }: { eventId: string; eventTitle: strin
 
   if (signedOut) {
     return (
-      <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
+      <div className="club-card bg-white/[0.02] p-6 sm:p-8">
         <h2 className="type-h3 text-white">Notes on {eventTitle}</h2>
         <p className="mt-3 text-body-sm text-white">
           <a href="/signin" className="font-bold text-signal hover:underline">
@@ -209,7 +209,7 @@ function FeedPanel({ eventId, eventTitle }: { eventId: string; eventTitle: strin
   }
 
   return (
-    <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
+    <div className="club-card bg-white/[0.02] p-6 sm:p-8">
       <h2 className="type-h3 text-white">Notes on {eventTitle}</h2>
 
       <form onSubmit={submit} className="mt-4 flex flex-col gap-3">

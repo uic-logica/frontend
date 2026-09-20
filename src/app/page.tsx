@@ -308,7 +308,7 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="relative overflow-hidden rounded-2xl bg-white/[0.02] px-8 py-14 ring-1 ring-white/10 md:px-16 md:py-20">
+          <div className="relative overflow-hidden club-card bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
             <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 items-center justify-center overflow-hidden md:flex">
               <Image
                 src="/logo-logica.png"

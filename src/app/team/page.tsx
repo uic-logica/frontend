@@ -112,7 +112,7 @@ export default function TeamPage() {
         />
 
         <SectionContainer className="mt-32">
-          <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
+          <div className="club-card w-fit max-w-3xl bg-white/[0.02] p-8 md:p-10">
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold md:text-4xl mb-4 text-white">Interested in joining our team?</h2>
               <p className="mb-8 text-body-lg text-white">

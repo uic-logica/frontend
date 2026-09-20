@@ -121,7 +121,7 @@ export default function SignInPage() {
                 : "Passwordless — only .edu addresses are accepted."}
             </p>
 
-            <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
+            <div className="mt-10 club-card bg-white/[0.02] p-8 md:p-10">
               {step === "role" && profile ? (
                 <>
                   <div className="club-card bg-white/[0.04] px-5 py-6">

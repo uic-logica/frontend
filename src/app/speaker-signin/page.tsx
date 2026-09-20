@@ -44,7 +44,7 @@ export default function SpeakerSignInPage() {
               For confirmed speakers — no UIC email required.
             </p>
 
-            <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
+            <div className="mt-10 club-card bg-white/[0.02] p-8 md:p-10">
               <p className="text-body text-white">
                 Use the username and password from your invite email.
               </p>
