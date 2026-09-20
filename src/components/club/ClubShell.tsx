@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NetworkCanvas } from "@/components/club/NetworkCanvas";
+import { LiquidGlass } from "@/components/ui/LiquidGlass";
 
 const links = [
   { href: "/about", label: "About" },
@@ -28,9 +29,20 @@ export function SiteNav() {
 
   return (
     <>
-      <nav className="fixed z-20 flex w-full flex-row items-center justify-between bg-black p-6 text-white md:p-8">
+      <nav className="fixed inset-x-0 top-0 z-20 px-4 pt-4 text-white md:px-6 md:pt-5">
+        <LiquidGlass
+          radius={26}
+          bezel={18}
+          strength={30}
+          blur={7}
+          saturation={1.9}
+          tint={0.05}
+          className="flex flex-row items-center justify-between px-5 py-3 md:px-7 md:py-4"
+        >
         <Link href="/" className="pl-2 text-3xl font-extrabold" aria-label="LOGICA home">
-          <Image src="/logo-nav.png" alt="LOGICA" width={35} height={35} priority />
+          {/* unoptimized: the optimizer re-encodes this mark as lossy WebP and
+              flattens its alpha to black, which shows as a plate on the glass. */}
+          <Image src="/logo-nav.png" alt="LOGICA" width={35} height={35} priority unoptimized />
         </Link>
 
         {isMobile ? (
@@ -72,11 +84,12 @@ export function SiteNav() {
             </li>
           </ul>
         )}
+        </LiquidGlass>
       </nav>
-      <div className="h-20 md:h-24" />
+      <div className="h-24 md:h-28" />
 
       {isMobile && open ? (
-        <div className="fixed inset-x-0 top-20 z-20 border-t border-white/10 bg-black px-8 py-4 md:top-24">
+        <div className="fixed inset-x-0 top-24 z-20 rounded-[26px] border border-white/10 bg-black/70 px-8 py-4 backdrop-blur-xl md:top-28">
           <ul className="flex flex-col gap-4 text-lg">
             {links.map((item) => (
               <li key={item.href}>
@@ -123,12 +136,22 @@ export function SiteFooter() {
   );
 }
 
+/**
+ * Glass only reads as glass when there is something behind it to bend. On a flat
+ * black page the refraction is mathematically there and visually invisible, so
+ * this lays down a slow brand-coloured field for the panels to work against.
+ */
+function Aurora() {
+  return <div aria-hidden className="pointer-events-none fixed inset-0 -z-20 aurora" />;
+}
+
 export function ClubShell({ children }: { children: React.ReactNode }) {
   // No bg here — body already paints black. A bg on this wrapper covers the
   // fixed -z-10 canvas/watermark (same stacking as yalecomputersociety.org).
   return (
     <div className="min-h-screen text-white">
-      <NetworkCanvas />
+      <Aurora />
+      <NetworkCanvas intensity={1.9} />
       <SiteNav />
       {children}
       <SiteFooter />

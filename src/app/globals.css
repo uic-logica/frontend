@@ -186,6 +186,25 @@
     border-radius: 0.5rem;
   }
 
+  /* Field the glass refracts. Kept dim so the page still reads as black. */
+  .aurora {
+    background:
+      radial-gradient(40rem 30rem at 14% 4%, rgba(254, 204, 21, 0.16), transparent 66%),
+      radial-gradient(34rem 26rem at 88% 24%, rgba(120, 90, 255, 0.13), transparent 66%),
+      radial-gradient(42rem 30rem at 24% 56%, rgba(60, 190, 255, 0.10), transparent 66%),
+      radial-gradient(44rem 32rem at 78% 78%, rgba(254, 204, 21, 0.13), transparent 66%);
+    animation: aurora-drift 34s ease-in-out infinite alternate;
+  }
+
+  @keyframes aurora-drift {
+    from {
+      transform: translate3d(-3%, -2%, 0) scale(1.06);
+    }
+    to {
+      transform: translate3d(3%, 2%, 0) scale(1.14);
+    }
+  }
+
   .marquee-mask {
     mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
@@ -209,6 +228,10 @@
     }
 
     .animate-marquee {
+      animation: none;
+    }
+
+    .aurora {
       animation: none;
     }
 

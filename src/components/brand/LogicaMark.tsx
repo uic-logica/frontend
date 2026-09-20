@@ -26,6 +26,7 @@ export function LogicaMark({
     <span className={`inline-flex flex-col items-center gap-1 ${className}`}>
       <Image
         src="/logo-nav.png"
+        unoptimized
         alt={lockup === "mark" ? "LOGICA" : ""}
         width={Math.round(size * (308 / 282))}
         height={size}

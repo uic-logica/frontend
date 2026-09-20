@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { LogoMarquee, PartnerLogo } from "@/components/club/LogoMarquee";
+import { LiquidGlass } from "@/components/ui/LiquidGlass";
 import { TypewriterLine } from "@/components/club/Typewriter";
 
 const stats = [
@@ -161,7 +162,13 @@ function LevelCard({
   icon?: ReactNode;
 }) {
   const card = (
-    <div className="group relative flex h-full flex-col rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.04] hover:ring-white/20">
+    <LiquidGlass
+      radius={28}
+      bezel={22}
+      strength={34}
+      blur={4}
+      className="group flex h-full flex-col p-8 transition-transform duration-300 hover:-translate-y-1"
+    >
       <div className="mb-7 flex items-start justify-between">
         <span className="font-mono text-xs tracking-[0.3em] text-white/30 transition-colors duration-300 group-hover:text-white/50">
           {String(index).padStart(2, "0")}
@@ -181,7 +188,7 @@ function LevelCard({
       <h3 className="text-2xl font-semibold text-white">{title}</h3>
       <span className="mt-4 block h-px w-8 bg-white/15 transition-all duration-300 group-hover:w-12 group-hover:bg-signal" />
       <p className="mt-4 text-base leading-relaxed text-white/60 lg:text-[1.0625rem]">{text}</p>
-    </div>
+    </LiquidGlass>
   );
 
   if (!link) return card;
@@ -229,7 +236,7 @@ function Partners() {
         ))}
       </div>
 
-      <div className="mt-16 flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] px-8 py-10 text-center">
+      <LiquidGlass radius={24} bezel={20} strength={30} blur={4} className="mt-16 flex flex-col items-center gap-3 px-8 py-10 text-center">
         <p className="text-lg text-white md:text-xl">Interested in partnering with LOGICA?</p>
         <p className="text-sm text-white/50">Join our community of innovators and tech leaders.</p>
         <a
@@ -238,7 +245,7 @@ function Partners() {
         >
           Become a Partner
         </a>
-      </div>
+      </LiquidGlass>
     </section>
   );
 }
@@ -307,7 +314,7 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="relative overflow-hidden rounded-2xl bg-white/[0.02] px-8 py-14 ring-1 ring-white/10 md:px-16 md:py-20">
+          <LiquidGlass radius={32} bezel={26} strength={40} blur={5} className="overflow-hidden px-8 py-14 md:px-16 md:py-20">
             <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 items-center justify-center overflow-hidden md:flex">
               <Image
                 src="/logo-logica.png"
@@ -341,7 +348,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-          </div>
+          </LiquidGlass>
         </SectionContainer>
       </PageContainer>
     </ClubShell>
