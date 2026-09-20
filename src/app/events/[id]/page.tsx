@@ -35,17 +35,17 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
           <div className="mx-auto max-w-md">
             {event ? (
               <>
-                <h1 className="type-h1 text-white">{event.title}</h1>
-                <p className="mt-3 text-body-lg text-white/70">
+                <h1 className="text-3xl font-bold md:text-4xl text-white">{event.title}</h1>
+                <p className="mt-3 text-body-lg text-white">
                   {new Date(event.startsAt).toLocaleString()}
                   {event.location ? ` · ${event.location}` : ""}
                 </p>
-                {event.description && <p className="mt-4 text-body text-white/70">{event.description}</p>}
+                {event.description && <p className="mt-4 text-body text-white">{event.description}</p>}
               </>
             ) : authError ? (
               <>
-                <h1 className="type-h1 text-white">Event details</h1>
-                <p className="mt-3 text-body text-white/70">
+                <h1 className="text-3xl font-bold md:text-4xl text-white">Event details</h1>
+                <p className="mt-3 text-body text-white">
                   <a href="/signin" className="font-bold text-signal hover:underline">
                     Sign in
                   </a>{" "}
@@ -53,7 +53,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                 </p>
               </>
             ) : (
-              <p className="text-body-sm text-white/50">Loading…</p>
+              <p className="text-body-sm text-white">Loading…</p>
             )}
           </div>
         </SectionContainer>
@@ -118,8 +118,8 @@ function MaterialsPanel({ eventId, isBoard }: { eventId: string; isBoard: boolea
   return (
     <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
       <h2 className="type-h3 text-white">Materials</h2>
-      {materials === null && <p className="mt-3 text-body-sm text-white/50">Loading…</p>}
-      {materials?.length === 0 && <p className="mt-3 text-body-sm text-white/50">Nothing uploaded yet.</p>}
+      {materials === null && <p className="mt-3 text-body-sm text-white">Loading…</p>}
+      {materials?.length === 0 && <p className="mt-3 text-body-sm text-white">Nothing uploaded yet.</p>}
       {materials && materials.length > 0 && (
         <ul className="mt-4 flex flex-col gap-2">
           {materials.map((m) => (
@@ -132,7 +132,7 @@ function MaterialsPanel({ eventId, isBoard }: { eventId: string; isBoard: boolea
               >
                 {m.filename}
               </a>
-              {isBoard && <span className="text-caption text-white/40">{m.visibility}</span>}
+              {isBoard && <span className="text-caption text-white">{m.visibility}</span>}
             </li>
           ))}
         </ul>
@@ -182,7 +182,7 @@ function FeedPanel({ eventId, eventTitle }: { eventId: string; eventTitle: strin
     return (
       <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
         <h2 className="type-h3 text-white">Notes on {eventTitle}</h2>
-        <p className="mt-3 text-body-sm text-white/60">
+        <p className="mt-3 text-body-sm text-white">
           <a href="/signin" className="font-bold text-signal hover:underline">
             Sign in
           </a>{" "}
@@ -226,14 +226,14 @@ function FeedPanel({ eventId, eventTitle }: { eventId: string; eventTitle: strin
         </button>
       </form>
 
-      {posts === null && <p className="mt-4 text-body-sm text-white/50">Loading…</p>}
-      {posts?.length === 0 && <p className="mt-4 text-body-sm text-white/50">No notes yet.</p>}
+      {posts === null && <p className="mt-4 text-body-sm text-white">Loading…</p>}
+      {posts?.length === 0 && <p className="mt-4 text-body-sm text-white">No notes yet.</p>}
       {posts && posts.length > 0 && (
         <ul className="mt-6 flex flex-col gap-4">
           {posts.map((p) => (
             <li key={p.id} className="border-t border-white/10 pt-4">
-              <p className="type-label text-white/70">{p.author.name ?? "Someone"}</p>
-              <p className="mt-1 text-body text-white/80">{p.body}</p>
+              <p className="type-label text-white">{p.author.name ?? "Someone"}</p>
+              <p className="mt-1 text-body text-white">{p.body}</p>
             </li>
           ))}
         </ul>

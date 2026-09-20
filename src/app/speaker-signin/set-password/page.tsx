@@ -49,7 +49,7 @@ export default function SetSpeakerPasswordPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="type-h1 text-white">Set your password</h1>
+            <h1 className="text-3xl font-bold md:text-4xl text-white">Set your password</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               First time signing in — pick a password you&apos;ll actually remember.
             </p>
@@ -66,10 +66,10 @@ export default function SetSpeakerPasswordPage() {
 
               <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="currentPassword" className="type-label text-white/70">
+                  <label htmlFor="currentPassword" className="type-label text-white">
                     Temporary password
                   </label>
-                  <p className="text-caption text-white/40">From your invite email.</p>
+                  <p className="text-caption text-white">From your invite email.</p>
                   <input
                     id="currentPassword"
                     type="password"
@@ -81,10 +81,10 @@ export default function SetSpeakerPasswordPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="newPassword" className="type-label text-white/70">
+                  <label htmlFor="newPassword" className="type-label text-white">
                     New password
                   </label>
-                  <p className="text-caption text-white/40">At least {MIN_LENGTH} characters.</p>
+                  <p className="text-caption text-white">At least {MIN_LENGTH} characters.</p>
                   <input
                     id="newPassword"
                     type="password"
@@ -96,7 +96,7 @@ export default function SetSpeakerPasswordPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="confirm" className="type-label text-white/70">
+                  <label htmlFor="confirm" className="type-label text-white">
                     Confirm new password
                   </label>
                   <input

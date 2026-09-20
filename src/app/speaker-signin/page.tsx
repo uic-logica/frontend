@@ -39,13 +39,13 @@ export default function SpeakerSignInPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="type-h1 text-white">Speaker sign-in</h1>
+            <h1 className="text-3xl font-bold md:text-4xl text-white">Speaker sign-in</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               For confirmed speakers — no UIC email required.
             </p>
 
             <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
-              <p className="text-body text-white/70">
+              <p className="text-body text-white">
                 Use the username and password from your invite email.
               </p>
 
@@ -60,7 +60,7 @@ export default function SpeakerSignInPage() {
 
               <form onSubmit={submit} className="mt-6 flex flex-col gap-5" noValidate>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="username" className="type-label text-white/70">
+                  <label htmlFor="username" className="type-label text-white">
                     Username
                   </label>
                   <input
@@ -73,7 +73,7 @@ export default function SpeakerSignInPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="password" className="type-label text-white/70">
+                  <label htmlFor="password" className="type-label text-white">
                     Password
                   </label>
                   <input
@@ -92,7 +92,7 @@ export default function SpeakerSignInPage() {
               </form>
             </div>
 
-            <p className="mt-8 text-caption text-white/50">
+            <p className="mt-8 text-caption text-white">
               UIC student or board member?{" "}
               <Link href="/signin" className="font-bold text-signal underline-offset-2 hover:underline">
                 Sign in here

@@ -72,8 +72,8 @@ export default function SpeakerPortalPage() {
         <PageContainer>
           <SectionContainer>
             <div className="mx-auto max-w-md">
-              <h1 className="type-h1 text-white">Sign in to continue</h1>
-              <p className="mt-4 text-body text-white/70">
+              <h1 className="text-3xl font-bold md:text-4xl text-white">Sign in to continue</h1>
+              <p className="mt-4 text-body text-white">
                 <a href="/speaker-signin" className="font-bold text-signal hover:underline">
                   Sign in
                 </a>{" "}
@@ -92,7 +92,7 @@ export default function SpeakerPortalPage() {
         <PageContainer>
           <SectionContainer>
             <div className="mx-auto max-w-md">
-              <p className="text-body-sm text-white/50">Loading…</p>
+              <p className="text-body-sm text-white">Loading…</p>
             </div>
           </SectionContainer>
         </PageContainer>
@@ -105,12 +105,12 @@ export default function SpeakerPortalPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="type-h1 text-white">{profile.name?.trim() || "Speaker portal"}</h1>
+            <h1 className="text-3xl font-bold md:text-4xl text-white">{profile.name?.trim() || "Speaker portal"}</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">{profile.email}</p>
             <button
               type="button"
               onClick={signOut}
-              className="mt-4 type-label text-white/50 hover:text-signal"
+              className="mt-4 type-label text-white hover:text-signal"
             >
               Sign out
             </button>
@@ -200,7 +200,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
 
       <div className="mt-6 flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
-          <span className="type-label text-white/70">Resume</span>
+          <span className="type-label text-white">Resume</span>
           <ResumeUpload
             filename={profile.resumeFilename}
             onChange={(resumeFilename) => onSaved({ ...profile, resumeFilename })}
@@ -210,13 +210,13 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="name" className="type-label text-white/70">
+          <label htmlFor="name" className="type-label text-white">
             Name
           </label>
           <input id="name" value={name} onChange={(e) => setName(e.target.value)} className={darkInputClass} />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="linkedin" className="type-label text-white/70">
+          <label htmlFor="linkedin" className="type-label text-white">
             LinkedIn
           </label>
           <input
@@ -228,7 +228,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="organization" className="type-label text-white/70">
+          <label htmlFor="organization" className="type-label text-white">
             Company / organization
           </label>
           <input
@@ -239,7 +239,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="bio" className="type-label text-white/70">
+          <label htmlFor="bio" className="type-label text-white">
             Bio
           </label>
           <textarea
@@ -252,44 +252,44 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
         </div>
 
         <div className="flex flex-col gap-3">
-          <span className="type-label text-white/70">Availability</span>
+          <span className="type-label text-white">Availability</span>
           {windows.map((w, i) => (
             <div key={i} className="flex flex-col gap-2 border border-white/10 p-4">
               <div className="flex items-center justify-between">
-                <span className="text-caption text-white/40">Window {i + 1}</span>
+                <span className="text-caption text-white">Window {i + 1}</span>
                 {windows.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeWindow(i)}
                     aria-label="Remove this window"
-                    className="text-white/50 hover:text-signal"
+                    className="text-white hover:text-signal"
                   >
                     ×
                   </button>
                 )}
               </div>
-              <span className="text-caption text-white/50">From this day</span>
+              <span className="text-caption text-white">From this day</span>
               <input
                 type="date"
                 value={w.startDate}
                 onChange={(e) => updateWindow(i, "startDate", e.target.value)}
                 className={darkInputClass}
               />
-              <span className="text-caption text-white/50">To this day</span>
+              <span className="text-caption text-white">To this day</span>
               <input
                 type="date"
                 value={w.endDate}
                 onChange={(e) => updateWindow(i, "endDate", e.target.value)}
                 className={darkInputClass}
               />
-              <span className="text-caption text-white/50">From this time</span>
+              <span className="text-caption text-white">From this time</span>
               <input
                 type="time"
                 value={w.startTime}
                 onChange={(e) => updateWindow(i, "startTime", e.target.value)}
                 className={darkInputClass}
               />
-              <span className="text-caption text-white/50">To this time</span>
+              <span className="text-caption text-white">To this time</span>
               <input
                 type="time"
                 value={w.endTime}
@@ -308,7 +308,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="needs" className="type-label text-white/70">
+          <label htmlFor="needs" className="type-label text-white">
             What do you need from us?
           </label>
           <textarea
@@ -321,7 +321,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="note" className="type-label text-white/70">
+          <label htmlFor="note" className="type-label text-white">
             Note
           </label>
           <textarea
@@ -367,15 +367,15 @@ function NotificationsPanel() {
   return (
     <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
       <h2 className="type-h3 text-white">Notifications</h2>
-      {notifications === null && <p className="mt-3 text-body-sm text-white/50">Loading…</p>}
-      {notifications?.length === 0 && <p className="mt-3 text-body-sm text-white/50">Nothing yet.</p>}
+      {notifications === null && <p className="mt-3 text-body-sm text-white">Loading…</p>}
+      {notifications?.length === 0 && <p className="mt-3 text-body-sm text-white">Nothing yet.</p>}
       {notifications && notifications.length > 0 && (
         <ul className="mt-4 flex flex-col gap-2">
           {notifications.map((n) => (
             <li
               key={n.id}
               className={`flex items-center justify-between gap-3 border border-white/10 px-4 py-3 text-body-sm ${
-                n.readAt ? "text-white/50" : "text-white"
+                n.readAt ? "text-white/80" : "text-white"
               }`}
             >
               <span>{n.message}</span>
@@ -423,10 +423,10 @@ function EmailPreferencesPanel() {
   return (
     <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
       <h2 className="type-h3 text-white">Email preferences</h2>
-      <p className="mt-2 text-body-sm text-white/60">Choose what we email you — we&apos;ll keep it to what matters.</p>
+      <p className="mt-2 text-body-sm text-white">Choose what we email you — we&apos;ll keep it to what matters.</p>
       {prefs && (
         <div className="mt-4 flex flex-col gap-3">
-          <label className="flex items-center gap-2 text-body-sm text-white/80">
+          <label className="flex items-center gap-2 text-body-sm text-white">
             <input
               type="checkbox"
               checked={prefs.eventReminders}
@@ -436,7 +436,7 @@ function EmailPreferencesPanel() {
             />
             Event reminders
           </label>
-          <label className="flex items-center gap-2 text-body-sm text-white/80">
+          <label className="flex items-center gap-2 text-body-sm text-white">
             <input
               type="checkbox"
               checked={prefs.announcements}

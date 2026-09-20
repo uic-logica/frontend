@@ -112,7 +112,7 @@ export default function SignInPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="type-h1 text-white">
+            <h1 className="text-3xl font-bold md:text-4xl text-white">
               {step === "role" && profile ? "You're signed in" : "Sign in to LOGICA"}
             </h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
@@ -124,12 +124,12 @@ export default function SignInPage() {
             <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
               {step === "role" && profile ? (
                 <>
-                  <div className="border border-white/15 bg-black px-5 py-6">
+                  <div className="border border-white/15 bg-white/[0.04] px-5 py-6">
                     <p className="type-h3 text-white">{profile.name?.trim() || profile.email}</p>
-                    <p className="mt-1 text-body-sm text-white/60">{profile.email}</p>
+                    <p className="mt-1 text-body-sm text-white">{profile.email}</p>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                       <RoleBadge role={profile.role} />
-                      <span className="text-body-sm text-white/60">{roleCopy(profile.role)}</span>
+                      <span className="text-body-sm text-white">{roleCopy(profile.role)}</span>
                     </div>
                   </div>
                   <button
@@ -142,7 +142,7 @@ export default function SignInPage() {
                 </>
               ) : (
                 <>
-                  <p className="text-body text-white/70">
+                  <p className="text-body text-white">
                     {step === "email"
                       ? "We'll email you a one-time code — no password to remember."
                       : `We sent a one-time code to ${email}.`}
@@ -160,10 +160,10 @@ export default function SignInPage() {
                   {step === "email" ? (
                     <form onSubmit={requestCode} className="mt-6 flex flex-col gap-5" noValidate>
                       <div className="flex flex-col gap-1.5">
-                        <label htmlFor="email" className="type-label text-white/70">
+                        <label htmlFor="email" className="type-label text-white">
                           UIC email
                         </label>
-                        <p className="text-caption text-white/40">Example: netid@uic.edu</p>
+                        <p className="text-caption text-white">Example: netid@uic.edu</p>
                         <input
                           id="email"
                           type="email"
@@ -183,7 +183,7 @@ export default function SignInPage() {
                   ) : (
                     <form onSubmit={verifyCode} className="mt-6 flex flex-col gap-5">
                       <div className="flex flex-col gap-1.5">
-                        <label htmlFor="code" className="type-label text-white/70">
+                        <label htmlFor="code" className="type-label text-white">
                           Verification code
                         </label>
                         <input
@@ -217,13 +217,13 @@ export default function SignInPage() {
               )}
             </div>
 
-            <p className="mt-8 text-caption text-white/50">
+            <p className="mt-8 text-caption text-white">
               Not from UIC?{" "}
               <Link href="/speaker-signin" className="font-bold text-signal underline-offset-2 hover:underline">
                 Sign in here
               </Link>
             </p>
-            <p className="mt-2 text-caption text-white/50">
+            <p className="mt-2 text-caption text-white">
               Need the public site?{" "}
               <Link href="/" className="font-bold text-signal underline-offset-2 hover:underline">
                 Back home

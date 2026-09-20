@@ -97,7 +97,7 @@ export default function MembersHubPage() {
           ) : (
             <>
               <p className="type-label text-ink/50">Members</p>
-              <h1 className="type-h1 mt-2">{profile?.name?.trim() || "Welcome back"}</h1>
+              <h1 className="text-3xl font-bold md:text-4xl mt-2">{profile?.name?.trim() || "Welcome back"}</h1>
               {profile && (
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-body text-ink/70">
                   <span>{profile.email}</span>

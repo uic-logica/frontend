@@ -163,7 +163,7 @@ function LevelCard({
   const card = (
     <div className="group relative flex h-full flex-col rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.04] hover:ring-white/20">
       <div className="mb-7 flex items-start justify-between">
-        <span className="font-mono text-xs tracking-[0.3em] text-white/30 transition-colors duration-300 group-hover:text-white/50">
+        <span className="font-mono text-xs tracking-[0.3em] text-white transition-colors duration-300">
           {String(index).padStart(2, "0")}
         </span>
         {link ? (
@@ -180,7 +180,7 @@ function LevelCard({
       {icon ? <div className="mb-5 text-white/80">{icon}</div> : null}
       <h3 className="text-2xl font-semibold text-white">{title}</h3>
       <span className="mt-4 block h-px w-8 bg-white/15 transition-all duration-300 group-hover:w-12 group-hover:bg-signal" />
-      <p className="mt-4 text-base leading-relaxed text-white/60 lg:text-[1.0625rem]">{text}</p>
+      <p className="mt-4 text-base leading-relaxed text-white lg:text-[1.0625rem]">{text}</p>
     </div>
   );
 
@@ -196,8 +196,8 @@ function Partners() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="w-3/4 flex flex-col items-center mx-auto">
-        <div className="text-3xl font-bold text-white text-center md:text-4xl lg:text-5xl">Our Partners</div>
-        <div className=" text-gray-400 lg:text-2xl text-lg mt-5 text-center">
+        <div className="text-3xl font-bold text-white text-center md:text-4xl">Our Partners</div>
+        <div className=" text-white lg:text-2xl text-lg mt-5 text-center">
           The organizations that make LOGICA possible
         </div>
       </div>
@@ -208,7 +208,7 @@ function Partners() {
             {category.label ? (
               <div className="mb-6 flex items-center justify-center gap-4">
                 <span className="h-px w-8 bg-white/15 sm:w-12" />
-                <span className="text-xs font-medium uppercase tracking-[0.25em] text-white/40">
+                <span className="text-xs font-medium uppercase tracking-[0.25em] text-white">
                   {category.label}
                 </span>
                 <span className="h-px w-8 bg-white/15 sm:w-12" />
@@ -221,7 +221,7 @@ function Partners() {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-sm italic text-white/30">
+              <p className="text-center text-sm italic text-white">
                 {"note" in category ? category.note : "Coming soon"}
               </p>
             )}
@@ -231,7 +231,7 @@ function Partners() {
 
       <div className="mt-16 flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] px-8 py-10 text-center">
         <p className="text-lg text-white md:text-xl">Interested in partnering with LOGICA?</p>
-        <p className="text-sm text-white/50">Join our community of innovators and tech leaders.</p>
+        <p className="text-sm text-white">Join our community of innovators and tech leaders.</p>
         <a
           href="mailto:logica@uic.edu"
           className="mt-3 inline-flex items-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-black transition-transform duration-300 hover:-translate-y-0.5"
@@ -271,10 +271,10 @@ export default function Home() {
               >
                 <div className="flex flex-col">
                   <div className="mb-3 text-white opacity-75">{s.icon}</div>
-                  <div className="text-white text-6xl lg:text-5xl font-bold mb-3 font-display">
+                  <div className="text-white text-3xl md:text-4xl font-bold mb-3 font-display">
                     {s.value}
                   </div>
-                  <div className="text-white/80 text-lg">{s.label}</div>
+                  <div className="text-white text-lg">{s.label}</div>
                 </div>
               </div>
             ))}
@@ -282,7 +282,7 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer>
-          <h2 className="mb-10 text-center text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+          <h2 className="mb-10 text-center text-3xl font-bold text-white md:text-4xl">
             Where Our Members Land
           </h2>
           <LogoMarquee items={membersLand} />
@@ -290,10 +290,10 @@ export default function Home() {
 
         <SectionContainer>
           <div className="w-3/4 flex flex-col items-center mx-auto">
-            <div className="text-3xl font-bold text-white text-center md:text-4xl lg:text-5xl">
+            <div className="text-3xl font-bold text-white text-center md:text-4xl">
               Cultivating a passion for computer science, at all skill levels
             </div>
-            <div className=" text-gray-400 lg:text-2xl text-lg mt-5 text-center" />
+            <div className=" text-white lg:text-2xl text-lg mt-5 text-center" />
           </div>
           <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2">
             {pathways.map((p) => (
@@ -320,10 +320,10 @@ export default function Home() {
               />
             </div>
             <div className="relative z-10 max-w-2xl">
-              <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl lg:text-5xl">
+              <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl">
                 Ready to join UIC&apos;s Latinx computing community?
               </h2>
-              <p className="mt-5 text-lg leading-relaxed text-gray-400 lg:text-2xl">
+              <p className="mt-5 text-lg leading-relaxed text-white lg:text-2xl">
                 General membership interest is open year-round. Click below to learn more and apply.
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">

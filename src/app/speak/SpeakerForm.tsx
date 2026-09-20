@@ -108,7 +108,7 @@ export function SpeakerForm({
     return (
       <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10">
         <h2 className="type-h2 text-white">{submittedTitle}</h2>
-        <p className="mt-3 text-body text-white/70">{submittedBody}</p>
+        <p className="mt-3 text-body text-white">{submittedBody}</p>
       </div>
     );
   }
@@ -123,7 +123,7 @@ export function SpeakerForm({
 
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="name" className="type-label text-white/70">
+          <label htmlFor="name" className="type-label text-white">
             Name
             <Required />
           </label>
@@ -131,11 +131,11 @@ export function SpeakerForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="email" className="type-label text-white/70">
+          <label htmlFor="email" className="type-label text-white">
             Email
             <Required />
           </label>
-          <p className="text-caption text-white/40">We&apos;ll send confirmation details here.</p>
+          <p className="text-caption text-white">We&apos;ll send confirmation details here.</p>
           <input
             id="email"
             type="email"
@@ -147,7 +147,7 @@ export function SpeakerForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="organization" className="type-label text-white/70">
+          <label htmlFor="organization" className="type-label text-white">
             Company / organization
           </label>
           <input
@@ -159,7 +159,7 @@ export function SpeakerForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="referredBy" className="type-label text-white/70">
+          <label htmlFor="referredBy" className="type-label text-white">
             Who from LOGICA reached out to you?
           </label>
           <input
@@ -172,48 +172,48 @@ export function SpeakerForm({
         </div>
 
         <div className="flex flex-col gap-3">
-          <span className="type-label text-white/70">
+          <span className="type-label text-white">
             When are you available?
             <Required />
           </span>
           {windows.map((w, i) => (
             <div key={i} className="flex flex-col gap-2 border border-white/10 p-4">
               <div className="flex items-center justify-between">
-                <span className="text-caption text-white/40">Window {i + 1}</span>
+                <span className="text-caption text-white">Window {i + 1}</span>
                 {windows.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeWindow(i)}
                     aria-label="Remove this window"
-                    className="text-white/50 hover:text-signal"
+                    className="text-white hover:text-signal"
                   >
                     ×
                   </button>
                 )}
               </div>
 
-              <span className="text-caption text-white/50">From this day</span>
+              <span className="text-caption text-white">From this day</span>
               <input
                 type="date"
                 value={w.startDate}
                 onChange={(e) => updateWindow(i, "startDate", e.target.value)}
                 className={darkInputClass}
               />
-              <span className="text-caption text-white/50">To this day</span>
+              <span className="text-caption text-white">To this day</span>
               <input
                 type="date"
                 value={w.endDate}
                 onChange={(e) => updateWindow(i, "endDate", e.target.value)}
                 className={darkInputClass}
               />
-              <span className="text-caption text-white/50">From this time</span>
+              <span className="text-caption text-white">From this time</span>
               <input
                 type="time"
                 value={w.startTime}
                 onChange={(e) => updateWindow(i, "startTime", e.target.value)}
                 className={darkInputClass}
               />
-              <span className="text-caption text-white/50">To this time</span>
+              <span className="text-caption text-white">To this time</span>
               <input
                 type="time"
                 value={w.endTime}
@@ -232,10 +232,10 @@ export function SpeakerForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="needs" className="type-label text-white/70">
+          <label htmlFor="needs" className="type-label text-white">
             What do you need from us?
           </label>
-          <p className="text-caption text-white/40">AV equipment, snacks, room setup, anything else.</p>
+          <p className="text-caption text-white">AV equipment, snacks, room setup, anything else.</p>
           <textarea
             id="needs"
             rows={3}
@@ -246,10 +246,10 @@ export function SpeakerForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="note" className="type-label text-white/70">
+          <label htmlFor="note" className="type-label text-white">
             Anything else to add?
           </label>
-          <p className="text-caption text-white/40">
+          <p className="text-caption text-white">
             e.g. &ldquo;Can&apos;t make Wednesday, Thursday works instead.&rdquo;
           </p>
           <textarea
@@ -262,9 +262,9 @@ export function SpeakerForm({
         </div>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="type-label text-white/70">OK to list you publicly on the LOGICA site once confirmed?</legend>
+          <legend className="type-label text-white">OK to list you publicly on the LOGICA site once confirmed?</legend>
           <div className="flex gap-6">
-            <label className="flex items-center gap-2 text-body-sm text-white/70">
+            <label className="flex items-center gap-2 text-body-sm text-white">
               <input
                 type="radio"
                 name="publicOptIn"
@@ -274,7 +274,7 @@ export function SpeakerForm({
               />
               Yes
             </label>
-            <label className="flex items-center gap-2 text-body-sm text-white/70">
+            <label className="flex items-center gap-2 text-body-sm text-white">
               <input
                 type="radio"
                 name="publicOptIn"

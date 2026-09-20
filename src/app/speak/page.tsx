@@ -30,11 +30,11 @@ export default function SpeakPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="type-h1 text-white">Speak at LOGICA</h1>
+            <h1 className="text-3xl font-bold md:text-4xl text-white">Speak at LOGICA</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               Tell us you&apos;re interested — we&apos;ll follow up to confirm details.
             </p>
-            <p className="mt-6 text-body text-white/70">
+            <p className="mt-6 text-body text-white">
               If someone from LOGICA reached out to you about speaking, RSVP here with your
               availability and what you&apos;ll need. No account required.
             </p>
@@ -44,14 +44,14 @@ export default function SpeakPage() {
         <SectionContainer>
           <div className="mx-auto max-w-md">
             <h2 className="type-h3 text-white">Confirmed speakers</h2>
-            {speakers === null && <p className="mt-3 text-body-sm text-white/50">Loading…</p>}
+            {speakers === null && <p className="mt-3 text-body-sm text-white">Loading…</p>}
             {speakers?.length === 0 && (
-              <p className="mt-3 text-body-sm text-white/50">Nobody confirmed yet — check back soon.</p>
+              <p className="mt-3 text-body-sm text-white">Nobody confirmed yet — check back soon.</p>
             )}
             {speakers && speakers.length > 0 && (
               <ul className="mt-4 flex flex-col gap-2">
                 {speakers.map((s) => (
-                  <li key={s.id} className="border border-white/15 px-4 py-2 text-body-sm text-white/80">
+                  <li key={s.id} className="border border-white/15 px-4 py-2 text-body-sm text-white">
                     {s.name}
                     {s.organization ? ` · ${s.organization}` : ""}
                   </li>
@@ -116,7 +116,7 @@ function DraftPanel() {
   return (
     <div className="border border-signal/40 p-6">
       <h2 className="type-h4 text-white">Create a private link (board only)</h2>
-      <p className="mt-2 text-body-sm text-white/60">
+      <p className="mt-2 text-body-sm text-white">
         Fill in whatever you already know — the speaker only fills in the rest.
       </p>
 
@@ -134,7 +134,7 @@ function DraftPanel() {
           </button>
           <button
             type="button"
-            className="type-label self-start text-white/50 hover:text-white"
+            className="type-label self-start text-white hover:text-white"
             onClick={() => {
               setLink(null);
               setName("");
