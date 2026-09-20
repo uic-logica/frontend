@@ -1470,16 +1470,16 @@
   color: rgba(255, 255, 255, 0.82);
 }
 .d-badge.confirmed {
-  background: #e6f1df;
-  color: #284119;
+  background: rgba(13, 42, 0, 0.7);
+  color: #cdeab5;
 }
 .d-badge.pending {
-  background: #fff0a8;
-  color: #4f3b00;
+  background: rgba(64, 45, 0, 0.7);
+  color: #ffdd7a;
 }
 .d-badge.declined {
-  background: #f2d8d0;
-  color: #642b1e;
+  background: rgba(57, 8, 0, 0.7);
+  color: #ffc4b2;
 }
 .d-identity progress,
 .d-identity progress::-webkit-progress-bar {
@@ -1506,6 +1506,11 @@
 .d-task-circle {
   border-color: rgba(255, 255, 255, 0.3);
   color: rgba(255, 255, 255, 0.78);
+}
+.d-task-circle.gold {
+  background: rgba(64, 45, 0, 0.7);
+  color: var(--d-gold);
+  border-color: var(--d-gold);
 }
 .d-task.complete .d-task-circle {
   background: rgba(255, 255, 255, 0.12);
