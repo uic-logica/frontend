@@ -203,6 +203,21 @@
     border-radius: 0.5rem;
   }
 
+  /* Content panels on the wallpaper pages. Padding stays on the element so
+     each page keeps its own density. */
+  .club-card {
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 1rem;
+    transition:
+      transform 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .club-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-signal);
+  }
+
   .marquee-mask {
     mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
@@ -231,6 +246,14 @@
 
     .nav-link::after {
       transition: none;
+    }
+
+    .club-card {
+      transition: none;
+    }
+
+    .club-card:hover {
+      transform: none;
     }
   }
 }

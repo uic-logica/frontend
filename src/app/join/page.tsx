@@ -69,7 +69,7 @@ export default function JoinPage() {
           <h2 className="type-h2 mb-8 text-white">Available Roles</h2>
           <div className="grid gap-6 md:grid-cols-3">
             {roles.map((r) => (
-              <article key={r.title} className="rounded-2xl border border-white/20 p-6">
+              <article key={r.title} className="club-card p-6">
                 <h3 className="type-h4 text-white">{r.title}</h3>
                 <p className="mt-3 text-body text-white">{r.body}</p>
               </article>
@@ -105,7 +105,7 @@ export default function JoinPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="rounded-2xl border border-signal/40 p-8 md:p-12">
+          <div className="club-card p-8 md:p-12">
             <h2 className="type-h3 text-white">Interested in joining?</h2>
             <p className="mt-3 max-w-2xl text-body text-white">
               Join our community of passionate developers, designers, and tech enthusiasts.

@@ -114,7 +114,7 @@ function DraftPanel() {
   }
 
   return (
-    <div className="rounded-2xl border border-signal/40 p-6">
+    <div className="club-card p-6">
       <h2 className="type-h4 text-white">Create a private link (board only)</h2>
       <p className="mt-2 text-body-sm text-white">
         Fill in whatever you already know — the speaker only fills in the rest.

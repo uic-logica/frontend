@@ -124,7 +124,7 @@ export default function SignInPage() {
             <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
               {step === "role" && profile ? (
                 <>
-                  <div className="rounded-2xl border border-white/15 bg-white/[0.04] px-5 py-6">
+                  <div className="club-card bg-white/[0.04] px-5 py-6">
                     <p className="type-h3 text-white">{profile.name?.trim() || profile.email}</p>
                     <p className="mt-1 text-body-sm text-white">{profile.email}</p>
                     <div className="mt-3 flex flex-wrap items-center gap-2">

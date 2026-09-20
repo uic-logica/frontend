@@ -161,7 +161,7 @@ function LevelCard({
   icon?: ReactNode;
 }) {
   const card = (
-    <div className="group relative flex h-full flex-col rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.04] hover:ring-white/20">
+    <div className="club-card group relative flex h-full flex-col bg-white/[0.02] p-8 hover:bg-white/[0.04]">
       <div className="mb-7 flex items-start justify-between">
         <span className="font-mono text-xs tracking-[0.3em] text-white transition-colors duration-300">
           {String(index).padStart(2, "0")}
@@ -229,7 +229,7 @@ function Partners() {
         ))}
       </div>
 
-      <div className="mt-16 flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] px-8 py-10 text-center">
+      <div className="club-card mt-16 flex flex-col items-center gap-3 bg-white/[0.02] px-8 py-10 text-center">
         <p className="text-lg text-white md:text-xl">Interested in partnering with LOGICA?</p>
         <p className="text-sm text-white">Join our community of innovators and tech leaders.</p>
         <a
@@ -265,10 +265,7 @@ export default function Home() {
           <h2 className="mb-8 text-3xl font-bold text-white md:text-4xl">By the numbers</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((s) => (
-              <div
-                key={s.value}
-                className="w-full text-left overflow-hidden transition-all duration-300 hover:shadow-lg hover:translate-y-[-4px]"
-              >
+              <div key={s.value} className="club-card w-full overflow-hidden p-6 text-left">
                 <div className="flex flex-col">
                   <div className="mb-3 text-white opacity-75">{s.icon}</div>
                   <div className="text-white text-3xl md:text-4xl font-bold mb-3 font-display">
