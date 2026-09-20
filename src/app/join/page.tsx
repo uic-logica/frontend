@@ -104,14 +104,14 @@ export default function JoinPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="border border-signal/40 p-8 md:p-12">
+          <div className="rounded-2xl border border-signal/40 p-8 md:p-12">
             <h2 className="type-h3 text-white">Interested in joining?</h2>
             <p className="mt-3 max-w-2xl text-body text-white">
               Join our community of passionate developers, designers, and tech enthusiasts.
             </p>
             <a
               href="mailto:logica@uic.edu?subject=LOGICA%20membership%20interest"
-              className="mt-6 inline-flex min-h-12 items-center bg-signal px-6 font-bold text-white shadow-block"
+              className="mt-6 inline-flex min-h-12 items-center rounded-lg bg-signal px-6 font-bold text-white shadow-block"
             >
               Apply to Join
             </a>

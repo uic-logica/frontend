@@ -112,7 +112,7 @@ export default function FormPage({ params }: { params: Promise<{ slug: string }>
       <AppShell>
         <PageHeader eyebrow="Forms" title={form.title} />
         <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
-          <div className="max-w-lg border border-ink bg-paper-dim p-8 text-ink shadow-block">
+          <div className="max-w-lg rounded-lg border border-ink bg-paper-dim p-8 text-ink shadow-block">
             <h2 className="type-h2">Submitted. Thanks!</h2>
             <p className="mt-3 text-body">
               We got your response for <strong>{form.title}</strong>.

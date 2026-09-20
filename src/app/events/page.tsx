@@ -125,14 +125,14 @@ export default function EventsPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="border border-white/20 p-8">
+          <div className="rounded-2xl border border-white/20 p-8">
             <h2 className="type-h3 text-white">Stay Updated</h2>
             <p className="mt-3 text-body text-white">
               Sign up interest via Join to receive updates about upcoming events and opportunities.
             </p>
             <Link
               href="/join"
-              className="mt-6 inline-flex min-h-12 items-center bg-signal px-6 font-bold text-white shadow-block"
+              className="mt-6 inline-flex min-h-12 items-center rounded-lg bg-signal px-6 font-bold text-white shadow-block"
             >
               Subscribe
             </Link>
