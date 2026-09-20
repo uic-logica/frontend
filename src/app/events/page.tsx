@@ -86,7 +86,7 @@ export default function EventsPage() {
               <li
                 key={e.id}
                 id={e.id}
-                className="club-card p-6"
+                className="club-card club-card-interactive p-6"
               >
                 <Link href={`/events/${e.id}`} className="hover:underline">
                   <h2 className="type-h3 text-white">{e.title}</h2>

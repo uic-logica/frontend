@@ -208,12 +208,17 @@
   .club-card {
     border: 1px solid rgb(255 255 255 / 0.2);
     border-radius: 1rem;
+  }
+
+  /* Only for cards that are actually clickable — the lift promises a hit
+     target, so putting it on static content makes the page lie. */
+  .club-card-interactive {
     transition:
       transform 0.3s ease,
       border-color 0.3s ease;
   }
 
-  .club-card:hover {
+  .club-card-interactive:hover {
     transform: translateY(-4px);
     border-color: var(--color-signal);
   }
@@ -248,11 +253,11 @@
       transition: none;
     }
 
-    .club-card {
+    .club-card-interactive {
       transition: none;
     }
 
-    .club-card:hover {
+    .club-card-interactive:hover {
       transform: none;
     }
   }

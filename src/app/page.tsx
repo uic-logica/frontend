@@ -161,7 +161,11 @@ function LevelCard({
   icon?: ReactNode;
 }) {
   const card = (
-    <div className="club-card group relative flex h-full flex-col bg-white/[0.02] p-8 hover:bg-white/[0.04]">
+    <div
+      className={`club-card group relative flex h-full flex-col bg-white/[0.02] p-8 ${
+        link ? "club-card-interactive hover:bg-white/[0.04]" : ""
+      }`}
+    >
       <div className="mb-7 flex items-start justify-between">
         <span className="font-mono text-xs tracking-[0.3em] text-white transition-colors duration-300">
           {String(index).padStart(2, "0")}
@@ -265,7 +269,7 @@ export default function Home() {
           <h2 className="mb-8 text-3xl font-bold text-white md:text-4xl">By the numbers</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((s) => (
-              <div key={s.value} className="club-card w-full overflow-hidden p-6 text-left">
+              <div key={s.value} className="w-full text-left">
                 <div className="flex flex-col">
                   <div className="mb-3 text-white opacity-75">{s.icon}</div>
                   <div className="text-white text-3xl md:text-4xl font-bold mb-3 font-display">
