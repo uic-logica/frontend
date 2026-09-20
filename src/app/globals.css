@@ -208,19 +208,21 @@
   .club-card {
     border: 1px solid rgb(255 255 255 / 0.2);
     border-radius: 1rem;
-  }
-
-  /* Only for cards that are actually clickable — the lift promises a hit
-     target, so putting it on static content makes the page lie. */
-  .club-card-interactive {
     transition:
       transform 0.3s ease,
       border-color 0.3s ease;
   }
 
+  /* Gold edge on every panel — it reads as "you're on this", not as a
+     promise you can click it. */
+  .club-card:hover {
+    border-color: var(--color-signal);
+  }
+
+  /* The lift is the part that promises a hit target, so it's reserved for
+     cards that actually navigate somewhere. */
   .club-card-interactive:hover {
     transform: translateY(-4px);
-    border-color: var(--color-signal);
   }
 
   .marquee-mask {
@@ -253,7 +255,7 @@
       transition: none;
     }
 
-    .club-card-interactive {
+    .club-card {
       transition: none;
     }
 
