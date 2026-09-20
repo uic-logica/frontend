@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { NetworkCanvas } from "@/components/club/NetworkCanvas";
 
 const links = [
   { href: "/about", label: "About" },
@@ -18,6 +17,7 @@ export function SiteNav() {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [open, setOpen] = useState(false);
+  const [hideLinks, setHideLinks] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
@@ -26,11 +26,22 @@ export function SiteNav() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setHideLinks(y > lastY && y > 80);
+      lastY = y;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
-      <nav className="fixed z-20 flex w-full flex-row items-center justify-between bg-black p-6 text-white md:p-8">
+      <nav className="fixed z-20 flex w-full flex-row items-center justify-between bg-transparent p-6 text-white md:p-8">
         <Link href="/" className="pl-2 text-3xl font-extrabold" aria-label="LOGICA home">
-          <Image src="/logo-nav.png" alt="LOGICA" width={35} height={35} priority />
+          <Image src="/logica-logo-white.png" alt="LOGICA" width={56} height={56} priority />
         </Link>
 
         {isMobile ? (
@@ -44,39 +55,45 @@ export function SiteNav() {
             {open ? "×" : "≡"}
           </button>
         ) : (
-          <ul className="flex gap-5 text-sm md:gap-6">
-            {links.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <li key={item.href} className="relative">
-                  <Link
-                    href={item.href}
-                    className={`nav-link top-[6px] transform px-1 pb-1.5 duration-100 ${
-                      active ? "nav-link-active" : ""
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-            <li className="relative">
-              <Link
-                href="/signin"
-                className={`nav-link top-[6px] transform px-1 pb-1.5 duration-100 ${
-                  pathname === "/signin" || pathname.startsWith("/members") ? "nav-link-active" : ""
+          <div className="flex items-center gap-5 text-sm md:gap-6">
+            <div className="h-10 overflow-hidden">
+              <ul
+                className={`flex gap-5 transition-transform duration-300 ease-out md:gap-6 ${
+                  hideLinks ? "-translate-y-12" : "translate-y-0"
                 }`}
               >
-                Sign in
-              </Link>
-            </li>
-          </ul>
+                {links.map((item) => {
+                  const active = pathname === item.href;
+                  return (
+                    <li key={item.href} className="relative flex h-10 items-center">
+                      <Link
+                        href={item.href}
+                        className={`nav-link transform px-1 pb-1.5 duration-100 ${
+                          active ? "nav-link-active" : ""
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+            <Link
+              href="/signin"
+              className={`nav-link flex h-10 items-center px-1 pb-1.5 duration-100 ${
+                pathname === "/signin" || pathname.startsWith("/members") ? "nav-link-active" : ""
+              }`}
+            >
+              Sign in
+            </Link>
+          </div>
         )}
       </nav>
       <div className="h-20 md:h-24" />
 
       {isMobile && open ? (
-        <div className="fixed inset-x-0 top-20 z-20 border-t border-white/10 bg-black px-8 py-4 md:top-24">
+        <div className="fixed inset-x-0 top-20 z-20 border-t border-white/10 bg-white/[0.06] backdrop-blur-md px-8 py-4 md:top-24">
           <ul className="flex flex-col gap-4 text-lg">
             {links.map((item) => (
               <li key={item.href}>
@@ -114,11 +131,11 @@ export function SiteFooter() {
         <Link href="/join" className="text-lg font-semibold leading-none text-signal hover:underline">
           Join
         </Link>
-        <Link href="/signin" className="text-lg font-semibold leading-none text-white/70 hover:text-signal">
+        <Link href="/signin" className="text-lg font-semibold leading-none text-white hover:text-signal">
           Sign in
         </Link>
       </div>
-      <div className="mb-6 mt-4 text-sm text-gray-400">LOGICA @ UIC © {new Date().getFullYear()}</div>
+      <div className="mb-6 mt-4 text-sm text-white">LOGICA @ UIC © {new Date().getFullYear()}</div>
     </footer>
   );
 }
@@ -128,7 +145,6 @@ export function ClubShell({ children }: { children: React.ReactNode }) {
   // fixed -z-10 canvas/watermark (same stacking as yalecomputersociety.org).
   return (
     <div className="min-h-screen text-white">
-      <NetworkCanvas />
       <SiteNav />
       {children}
       <SiteFooter />

@@ -6,11 +6,11 @@ export default function AboutPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="type-h1 text-white">About LOGICA</h1>
+          <h1 className="text-3xl font-bold md:text-4xl text-white">About LOGICA</h1>
           <p className="mt-4 text-xl text-signal md:text-2xl">
             Latinx Organization for Growth in Computing and Academics
           </p>
-          <p className="mt-8 max-w-3xl text-body-lg text-white/80">
+          <p className="mt-8 max-w-3xl text-body-lg text-white">
             We&apos;re a student org at UIC, working to increase the participation and
             success of students from Latinx and underrepresented communities pursuing
             careers in computing.
@@ -21,14 +21,14 @@ export default function AboutPage() {
           <div className="grid gap-8 md:grid-cols-2">
             <div className="border border-white/20 p-8">
               <h2 className="type-h3 text-white">What we actually do</h2>
-              <p className="mt-4 text-body text-white/75">
+              <p className="mt-4 text-body text-white">
                 Bring in speakers, run company visits, and pass on the openings that reach
                 us. Last year that meant LeetCode and Hot Wings, and a visit to CME.
               </p>
             </div>
             <div className="border border-white/20 p-8">
               <h2 className="type-h3 text-white">Who shows up</h2>
-              <p className="mt-4 text-body text-white/75">
+              <p className="mt-4 text-body text-white">
                 Members come from CS, data science, computer engineering, and plenty of
                 majors that aren&apos;t any of those. If you&apos;re interested in tech,
                 you&apos;re a part of the community.
@@ -56,7 +56,7 @@ export default function AboutPage() {
             ].map((v) => (
               <li key={v.t} className="border-t border-signal pt-4">
                 <h3 className="type-h4 text-white">{v.t}</h3>
-                <p className="mt-2 text-body-sm text-white/70">{v.d}</p>
+                <p className="mt-2 text-body-sm text-white">{v.d}</p>
               </li>
             ))}
           </ul>
@@ -75,7 +75,7 @@ export default function AboutPage() {
             ].map((t) => (
               <li key={t.y} className="grid gap-2 md:grid-cols-[8rem_1fr]">
                 <span className="type-label text-signal">{t.y}</span>
-                <p className="text-body text-white/80">{t.d}</p>
+                <p className="text-body text-white">{t.d}</p>
               </li>
             ))}
           </ol>
@@ -83,7 +83,7 @@ export default function AboutPage() {
 
         <SectionContainer>
           <h2 className="type-h2 text-white">Meet Our Team</h2>
-          <p className="mt-4 max-w-2xl text-body text-white/75">
+          <p className="mt-4 max-w-2xl text-body text-white">
             The students who make LOGICA possible — board and builders.
           </p>
           <PinkLink href="/team" className="mt-6 text-xl">

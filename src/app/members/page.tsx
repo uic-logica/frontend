@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ClubShell } from "@/components/club/ClubShell";
 import { RoleChip } from "@/components/shell/AppShell";
-import { api } from "@/lib/api";
+import { api, signOut as apiSignOut } from "@/lib/api";
 
 type Profile = { id: string; name: string | null; email: string; role: string };
 
@@ -69,7 +69,7 @@ export default function MembersHubPage() {
 
   async function signOut() {
     try {
-      await fetch("/api/auth/signout", { method: "POST" });
+      await apiSignOut();
     } catch {
       /* ignore */
     }
@@ -97,7 +97,7 @@ export default function MembersHubPage() {
           ) : (
             <>
               <p className="type-label text-ink/50">Members</p>
-              <h1 className="type-h1 mt-2">{profile?.name?.trim() || "Welcome back"}</h1>
+              <h1 className="text-3xl font-bold md:text-4xl mt-2">{profile?.name?.trim() || "Welcome back"}</h1>
               {profile && (
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-body text-ink/70">
                   <span>{profile.email}</span>
@@ -120,6 +120,15 @@ export default function MembersHubPage() {
                     <p className="mt-2 text-body-sm text-ink/60">{item.blurb}</p>
                   </Link>
                 ))}
+                {(profile?.role === "BOARD" || profile?.role === "EXEC_BOARD") && (
+                  <Link
+                    href="/admin/speakers"
+                    className="rounded-2xl border border-signal/40 bg-paper p-6 transition hover:border-signal hover:bg-paper-dim"
+                  >
+                    <h2 className="type-h4">Speakers (admin)</h2>
+                    <p className="mt-2 text-body-sm text-ink/60">Review, confirm, and invite speakers to the portal</p>
+                  </Link>
+                )}
               </div>
 
               <button

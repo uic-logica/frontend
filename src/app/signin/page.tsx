@@ -110,118 +110,126 @@ export default function SignInPage() {
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer className="max-w-2xl">
-          <h1 className="type-h1 text-white">
-            {step === "role" && profile ? "You're signed in" : "Sign in to LOGICA"}
-          </h1>
-          <p className="mt-3 text-xl text-signal md:text-2xl">
-            {step === "role" && profile
-              ? "Session and role check"
-              : "Passwordless — only .edu addresses are accepted."}
-          </p>
+        <SectionContainer>
+          <div className="mx-auto max-w-md">
+            <h1 className="text-3xl font-bold md:text-4xl text-white">
+              {step === "role" && profile ? "You're signed in" : "Sign in to LOGICA"}
+            </h1>
+            <p className="mt-3 text-xl text-signal md:text-2xl">
+              {step === "role" && profile
+                ? "Session and role check"
+                : "Passwordless — only .edu addresses are accepted."}
+            </p>
 
-          <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
-            {step === "role" && profile ? (
-              <>
-                <div className="border border-white/15 bg-black px-5 py-6">
-                  <p className="type-h3 text-white">{profile.name?.trim() || profile.email}</p>
-                  <p className="mt-1 text-body-sm text-white/60">{profile.email}</p>
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <RoleBadge role={profile.role} />
-                    <span className="text-body-sm text-white/60">{roleCopy(profile.role)}</span>
+            <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
+              {step === "role" && profile ? (
+                <>
+                  <div className="border border-white/15 bg-white/[0.04] px-5 py-6">
+                    <p className="type-h3 text-white">{profile.name?.trim() || profile.email}</p>
+                    <p className="mt-1 text-body-sm text-white">{profile.email}</p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <RoleBadge role={profile.role} />
+                      <span className="text-body-sm text-white">{roleCopy(profile.role)}</span>
+                    </div>
                   </div>
-                </div>
-                <button
-                  type="button"
-                  className={`${primaryButtonClass} mt-6`}
-                  onClick={() => router.push("/members")}
-                >
-                  Continue to member hub
-                </button>
-              </>
-            ) : (
-              <>
-                <p className="text-body text-white/70">
-                  {step === "email"
-                    ? "We'll email you a one-time code — no password to remember."
-                    : `We sent a one-time code to ${email}.`}
-                </p>
-
-                {error && (
-                  <div
-                    className="mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
-                    role="alert"
+                  <button
+                    type="button"
+                    className={`${primaryButtonClass} mt-6`}
+                    onClick={() => router.push("/members")}
                   >
-                    {error}
-                  </div>
-                )}
+                    Continue to member hub
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-body text-white">
+                    {step === "email"
+                      ? "We'll email you a one-time code — no password to remember."
+                      : `We sent a one-time code to ${email}.`}
+                  </p>
 
-                {step === "email" ? (
-                  <form onSubmit={requestCode} className="mt-6 flex flex-col gap-5" noValidate>
-                    <div className="flex flex-col gap-1.5">
-                      <label htmlFor="email" className="type-label text-white/70">
-                        UIC email
-                      </label>
-                      <p className="text-caption text-white/40">Example: netid@uic.edu</p>
-                      <input
-                        id="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className={error ? darkInputErrorClass : darkInputClass}
-                        placeholder="netid@uic.edu"
-                        aria-invalid={Boolean(error)}
-                      />
-                    </div>
-                    <button type="submit" disabled={busy} className={primaryButtonClass}>
-                      {busy ? "Sending…" : "Continue"}
-                    </button>
-                  </form>
-                ) : (
-                  <form onSubmit={verifyCode} className="mt-6 flex flex-col gap-5">
-                    <div className="flex flex-col gap-1.5">
-                      <label htmlFor="code" className="type-label text-white/70">
-                        Verification code
-                      </label>
-                      <input
-                        id="code"
-                        inputMode="numeric"
-                        autoComplete="one-time-code"
-                        required
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        className={error ? darkInputErrorClass : darkInputClass}
-                        placeholder="123456"
-                      />
-                    </div>
-                    <button type="submit" disabled={busy} className={primaryButtonClass}>
-                      {busy ? "Verifying…" : "Verify & continue"}
-                    </button>
-                    <button
-                      type="button"
-                      className="type-label text-left text-signal underline-offset-4 hover:underline"
-                      onClick={() => {
-                        setStep("email");
-                        setCode("");
-                        setError(null);
-                      }}
+                  {error && (
+                    <div
+                      className="mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
+                      role="alert"
                     >
-                      Use a different email
-                    </button>
-                  </form>
-                )}
-              </>
-            )}
-          </div>
+                      {error}
+                    </div>
+                  )}
 
-          <p className="mt-8 text-caption text-white/50">
-            Need the public site?{" "}
-            <Link href="/" className="font-bold text-signal underline-offset-2 hover:underline">
-              Back home
-            </Link>
-          </p>
+                  {step === "email" ? (
+                    <form onSubmit={requestCode} className="mt-6 flex flex-col gap-5" noValidate>
+                      <div className="flex flex-col gap-1.5">
+                        <label htmlFor="email" className="type-label text-white">
+                          UIC email
+                        </label>
+                        <p className="text-caption text-white">Example: netid@uic.edu</p>
+                        <input
+                          id="email"
+                          type="email"
+                          autoComplete="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className={error ? darkInputErrorClass : darkInputClass}
+                          placeholder="netid@uic.edu"
+                          aria-invalid={Boolean(error)}
+                        />
+                      </div>
+                      <button type="submit" disabled={busy} className={primaryButtonClass}>
+                        {busy ? "Sending…" : "Continue"}
+                      </button>
+                    </form>
+                  ) : (
+                    <form onSubmit={verifyCode} className="mt-6 flex flex-col gap-5">
+                      <div className="flex flex-col gap-1.5">
+                        <label htmlFor="code" className="type-label text-white">
+                          Verification code
+                        </label>
+                        <input
+                          id="code"
+                          inputMode="numeric"
+                          autoComplete="one-time-code"
+                          required
+                          value={code}
+                          onChange={(e) => setCode(e.target.value)}
+                          className={error ? darkInputErrorClass : darkInputClass}
+                          placeholder="123456"
+                        />
+                      </div>
+                      <button type="submit" disabled={busy} className={primaryButtonClass}>
+                        {busy ? "Verifying…" : "Verify & continue"}
+                      </button>
+                      <button
+                        type="button"
+                        className="type-label text-left text-signal underline-offset-4 hover:underline"
+                        onClick={() => {
+                          setStep("email");
+                          setCode("");
+                          setError(null);
+                        }}
+                      >
+                        Use a different email
+                      </button>
+                    </form>
+                  )}
+                </>
+              )}
+            </div>
+
+            <p className="mt-8 text-caption text-white">
+              Not from UIC?{" "}
+              <Link href="/speaker-signin" className="font-bold text-signal underline-offset-2 hover:underline">
+                Sign in here
+              </Link>
+            </p>
+            <p className="mt-2 text-caption text-white">
+              Need the public site?{" "}
+              <Link href="/" className="font-bold text-signal underline-offset-2 hover:underline">
+                Back home
+              </Link>
+            </p>
+          </div>
         </SectionContainer>
       </PageContainer>
     </ClubShell>

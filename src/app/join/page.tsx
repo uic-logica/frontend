@@ -55,8 +55,8 @@ export default function JoinPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="type-h1 text-white">Join LOGICA</h1>
-          <p className="mt-4 max-w-3xl text-body-lg text-white/80">
+          <h1 className="text-3xl font-bold md:text-4xl text-white">Join LOGICA</h1>
+          <p className="mt-4 max-w-3xl text-body-lg text-white">
             We are UIC&apos;s collective of Latinx developers, designers, and computing enthusiasts.
           </p>
           <p className="mt-6 font-semibold text-signal">
@@ -70,7 +70,7 @@ export default function JoinPage() {
             {roles.map((r) => (
               <article key={r.title} className="border border-white/20 p-6">
                 <h3 className="type-h4 text-white">{r.title}</h3>
-                <p className="mt-3 text-body text-white/70">{r.body}</p>
+                <p className="mt-3 text-body text-white">{r.body}</p>
               </article>
             ))}
           </div>
@@ -84,7 +84,7 @@ export default function JoinPage() {
                 <span className="type-label text-signal">{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 className="type-h4 text-white">{s.title}</h3>
-                  <p className="mt-2 text-body text-white/70">{s.body}</p>
+                  <p className="mt-2 text-body text-white">{s.body}</p>
                 </div>
               </li>
             ))}
@@ -97,7 +97,7 @@ export default function JoinPage() {
             {faqs.map((f) => (
               <div key={f.q}>
                 <h3 className="type-h4 text-white">{f.q}</h3>
-                <p className="mt-2 text-body text-white/70">{f.a}</p>
+                <p className="mt-2 text-body text-white">{f.a}</p>
               </div>
             ))}
           </div>
@@ -106,7 +106,7 @@ export default function JoinPage() {
         <SectionContainer>
           <div className="border border-signal/40 p-8 md:p-12">
             <h2 className="type-h3 text-white">Interested in joining?</h2>
-            <p className="mt-3 max-w-2xl text-body text-white/75">
+            <p className="mt-3 max-w-2xl text-body text-white">
               Join our community of passionate developers, designers, and tech enthusiasts.
             </p>
             <a

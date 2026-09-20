@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import { AvailabilityWindow, SpeakerForm, SpeakerFormValues } from "../SpeakerForm";
 
 type Draft = {
@@ -15,43 +15,50 @@ type Draft = {
   needs: string | null;
   note: string | null;
   publicOptIn: boolean;
-  submittedAt: string | null;
 };
+
+type LoadState = { kind: "loading" } | { kind: "invalid" } | { kind: "submitted" } | { kind: "ready"; draft: Draft };
 
 /** Private link a board member sends a specific speaker — pre-filled with whatever's already known. */
 export default function SpeakerDraftPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [draft, setDraft] = useState<Draft | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<LoadState>({ kind: "loading" });
 
   useEffect(() => {
     api<Draft>(`/api/speakers/${id}`)
-      .then(setDraft)
-      .catch((e: Error) => setError(e.message));
+      .then((draft) => setState({ kind: "ready", draft }))
+      .catch((e: unknown) => {
+        if (e instanceof ApiError && e.status === 410) {
+          setState({ kind: "submitted" });
+        } else {
+          setState({ kind: "invalid" });
+        }
+      });
   }, [id]);
 
   let body: React.ReactNode;
-  if (error) {
+  if (state.kind === "loading") {
+    body = <p className="text-body-sm text-white">Loading…</p>;
+  } else if (state.kind === "invalid") {
     body = (
       <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10">
         <h2 className="type-h2 text-white">This link isn&apos;t valid</h2>
-        <p className="mt-3 text-body text-white/70">
+        <p className="mt-3 text-body text-white">
           Double check the link, or ask whoever sent it to you for a new one.
         </p>
       </div>
     );
-  } else if (!draft) {
-    body = <p className="text-body-sm text-white/50">Loading…</p>;
-  } else if (draft.submittedAt) {
+  } else if (state.kind === "submitted") {
     body = (
       <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10">
         <h2 className="type-h2 text-white">Already submitted</h2>
-        <p className="mt-3 text-body text-white/70">
+        <p className="mt-3 text-body text-white">
           This was already filled out. Reach out if anything needs to change.
         </p>
       </div>
     );
   } else {
+    const { draft } = state;
     const initial: SpeakerFormValues = {
       name: draft.name ?? undefined,
       email: draft.email ?? undefined,
@@ -70,7 +77,7 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="type-h1 text-white">Confirm your details</h1>
+            <h1 className="text-3xl font-bold md:text-4xl text-white">Confirm your details</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               We&apos;ve got some of this already — just fill in what&apos;s left.
             </p>

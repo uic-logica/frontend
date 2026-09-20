@@ -12,6 +12,7 @@ import {
   buttonClass,
   inputClass,
 } from "@/components/shell/AppShell";
+import { ResumeUpload } from "@/components/shell/ResumeUpload";
 
 type Profile = {
   id: string;
@@ -21,6 +22,7 @@ type Profile = {
   bio: string | null;
   major: string | null;
   gradYear: number | null;
+  resumeFilename: string | null;
 };
 
 const INTERESTS = [
@@ -199,6 +201,22 @@ export default function ProfilePage() {
               <p className="mt-1 text-body-sm text-ink-muted">
                 {openTo.length ? openTo.join(" · ") : "Not set"}
               </p>
+            </div>
+          </section>
+
+          {/* Resume — visible to board when reviewing who's signed up to events */}
+          <section className="card border-ink p-6 md:p-8">
+            <h3 className="type-h3">Resume</h3>
+            <p className="mt-2 text-body-sm text-ink-muted">
+              Attached to your RSVPs — visible to board and any speaker checking who&apos;s attending.
+            </p>
+            <div className="mt-4">
+              <ResumeUpload
+                filename={profile.resumeFilename}
+                onChange={(resumeFilename) => setProfile({ ...profile, resumeFilename })}
+                buttonClassName={buttonClass}
+                linkClassName="type-label text-signal underline-offset-4 hover:underline"
+              />
             </div>
           </section>
 
