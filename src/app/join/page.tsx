@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { buttonClasses } from "@/components/ui/ButtonLink";
 
 const roles = [
   {
@@ -68,7 +69,7 @@ export default function JoinPage() {
           <h2 className="type-h2 mb-8 text-white">Available Roles</h2>
           <div className="grid gap-6 md:grid-cols-3">
             {roles.map((r) => (
-              <article key={r.title} className="border border-white/20 p-6">
+              <article key={r.title} className="rounded-2xl border border-white/20 p-6">
                 <h3 className="type-h4 text-white">{r.title}</h3>
                 <p className="mt-3 text-body text-white">{r.body}</p>
               </article>
@@ -111,7 +112,7 @@ export default function JoinPage() {
             </p>
             <a
               href="mailto:logica@uic.edu?subject=LOGICA%20membership%20interest"
-              className="mt-6 inline-flex min-h-12 items-center rounded-lg bg-signal px-6 font-bold text-white shadow-block"
+              className={`${buttonClasses()} mt-6`}
             >
               Apply to Join
             </a>

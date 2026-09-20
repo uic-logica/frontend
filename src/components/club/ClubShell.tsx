@@ -47,7 +47,7 @@ export function SiteNav() {
         {isMobile ? (
           <button
             type="button"
-            className="border border-white/40 px-3 py-2 text-white"
+            className="rounded-lg border border-white/40 px-3 py-2 text-white"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >

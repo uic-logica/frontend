@@ -123,7 +123,7 @@ function MaterialsPanel({ eventId, isBoard }: { eventId: string; isBoard: boolea
       {materials && materials.length > 0 && (
         <ul className="mt-4 flex flex-col gap-2">
           {materials.map((m) => (
-            <li key={m.id} className="flex items-center justify-between gap-3 border border-white/10 px-4 py-3 text-body-sm">
+            <li key={m.id} className="rounded-lg flex items-center justify-between gap-3 border border-white/10 px-4 py-3 text-body-sm">
               <a
                 href={`/api/materials/${m.id}/download`}
                 className="font-bold text-signal hover:underline"

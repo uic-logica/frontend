@@ -144,7 +144,7 @@ export default function FormPage({ params }: { params: Promise<{ slug: string }>
             <div
               ref={summaryRef}
               tabIndex={-1}
-              className="mb-5 border-2 border-signal bg-paper px-4 py-3 text-body-sm text-signal outline-none"
+              className="rounded-lg mb-5 border-2 border-signal bg-paper px-4 py-3 text-body-sm text-signal outline-none"
               role="alert"
             >
               <p className="font-bold">Error</p>

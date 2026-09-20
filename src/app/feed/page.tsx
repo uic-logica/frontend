@@ -87,7 +87,7 @@ export default function FeedPage() {
         </form>
 
         {error && (
-          <p className="mb-6 border-2 border-signal bg-paper px-4 py-3 text-body-sm text-signal" role="status">
+          <p className="rounded-lg mb-6 border-2 border-signal bg-paper px-4 py-3 text-body-sm text-signal" role="status">
             {error}
           </p>
         )}

@@ -57,7 +57,7 @@ export default function SetSpeakerPasswordPage() {
             <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
               {error && (
                 <div
-                  className="mb-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
+                  className="rounded-lg mb-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
                   role="alert"
                 >
                   {error}

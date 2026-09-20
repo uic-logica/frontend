@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { PinkLink } from "@/components/club/Typewriter";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 type Event = {
   id: string;
@@ -66,7 +67,7 @@ export default function EventsPage() {
           {events === null && <p className="text-body text-white">Loading…</p>}
 
           {events && list.length === 0 && (
-            <div className="border border-white/20 p-8">
+            <div className="rounded-2xl border border-white/20 p-8">
               <h2 className="type-h3 text-white">
                 {tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}
               </h2>
@@ -85,7 +86,7 @@ export default function EventsPage() {
               <li
                 key={e.id}
                 id={e.id}
-                className="border border-white/20 p-6 transition-all hover:translate-y-[-4px] hover:border-signal"
+                className="rounded-2xl border border-white/20 p-6 transition-all hover:translate-y-[-4px] hover:border-signal"
               >
                 <Link href={`/events/${e.id}`} className="hover:underline">
                   <h2 className="type-h3 text-white">{e.title}</h2>
@@ -115,7 +116,7 @@ export default function EventsPage() {
               People presenting at upcoming LOGICA talks and workshops
             </p>
           </div>
-          <div className="border border-white/20 p-8">
+          <div className="rounded-2xl border border-white/20 p-8">
             <h3 className="type-h4 text-white">To be announced</h3>
             <p className="mt-3 text-body text-white">Check back soon for our speaker lineup this semester.</p>
             <PinkLink href="/speak" className="mt-6 text-xl">
@@ -130,12 +131,9 @@ export default function EventsPage() {
             <p className="mt-3 text-body text-white">
               Sign up interest via Join to receive updates about upcoming events and opportunities.
             </p>
-            <Link
-              href="/join"
-              className="mt-6 inline-flex min-h-12 items-center rounded-lg bg-signal px-6 font-bold text-white shadow-block"
-            >
+            <ButtonLink href="/join" className="mt-6">
               Subscribe
-            </Link>
+            </ButtonLink>
           </div>
         </SectionContainer>
       </PageContainer>

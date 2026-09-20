@@ -51,7 +51,7 @@ export default function SpeakerSignInPage() {
 
               {error && (
                 <div
-                  className="mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
+                  className="rounded-lg mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
                   role="alert"
                 >
                   {error}

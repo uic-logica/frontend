@@ -19,14 +19,14 @@ export default function AboutPage() {
 
         <SectionContainer>
           <div className="grid gap-8 md:grid-cols-2">
-            <div className="border border-white/20 p-8">
+            <div className="rounded-2xl border border-white/20 p-8">
               <h2 className="type-h3 text-white">What we actually do</h2>
               <p className="mt-4 text-body text-white">
                 Bring in speakers, run company visits, and pass on the openings that reach
                 us. Last year that meant LeetCode and Hot Wings, and a visit to CME.
               </p>
             </div>
-            <div className="border border-white/20 p-8">
+            <div className="rounded-2xl border border-white/20 p-8">
               <h2 className="type-h3 text-white">Who shows up</h2>
               <p className="mt-4 text-body text-white">
                 Members come from CS, data science, computer engineering, and plenty of
