@@ -352,6 +352,7 @@ export const sections = [
   "pipeline",
   "documents",
   "members",
+  "applications",
   "messages",
   "notifications",
   "connections",
@@ -370,6 +371,7 @@ export const titles: Record<Section, string> = {
   pipeline: "Pipeline",
   documents: "Documents",
   members: "Members",
+  applications: "Applications",
   messages: "Messages",
   notifications: "Notifications",
   connections: "MCP Connections",
@@ -421,6 +423,7 @@ export function navFor(
       "pipeline",
       "speakers",
       "members",
+      "applications",
       "documents",
       "events",
       "community",
@@ -547,3 +550,15 @@ export function relativeDay(value: string | null) {
 export function personName(person: BoardPerson | null | undefined) {
   return person?.name || person?.email || null;
 }
+
+export type Application = {
+  id: string;
+  name: string;
+  email: string;
+  track: "GENERAL" | "SOFTWARE_ENGINEER" | "MENTORSHIP";
+  major: string | null;
+  gradYear: number | null;
+  why: string | null;
+  status: "PENDING" | "INTERVIEW" | "ACCEPTED" | "DECLINED";
+  createdAt: string;
+};
