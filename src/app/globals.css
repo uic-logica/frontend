@@ -70,7 +70,16 @@
        scroll frame instead of compositing it — that was the jitter. The
        footer's own rounded top corners are what make it read as an
        addition sliding up over this image, not the image itself changing. */
-    background: var(--color-ink) url("/logicawallpaper.png") center top / cover no-repeat fixed;
+    /* Tune the wallpaper's brightness here — one number, nothing else. */
+    --wallpaper-dim: 0.3;
+    background-color: var(--color-ink);
+    background-image:
+      linear-gradient(rgb(0 0 0 / var(--wallpaper-dim)), rgb(0 0 0 / var(--wallpaper-dim))),
+      url("/logicawallpaper.png");
+    background-position: center top;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: var(--color-paper);
     font-family: var(--font-sans);
     font-size: 1rem;
