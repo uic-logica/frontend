@@ -18,6 +18,7 @@ import { BoardHome } from "./BoardHome";
 import { Insights } from "./Insights";
 import { Documents } from "./Documents";
 import { Members } from "./Members";
+import { AgentAccess } from "./AgentAccess";
 import {
   type SessionUser,
   type Profile,
@@ -203,20 +204,21 @@ export function Dashboard() {
                       Yours
                     </span>
                   )}
-              <Link
-                onClick={() => setMenu(false)}
-                href={href(item)}
-                aria-current={section === item ? "page" : undefined}
-              >
-                <Icon name={item} />
-                {titleFor(item, user, profile)}
-                {item === "speakers" &&
-                  !!speakers?.filter((s) => s.status === "PENDING").length && (
-                    <span className="d-count">
-                      {speakers.filter((s) => s.status === "PENDING").length}
-                    </span>
-                  )}
-              </Link>
+                <Link
+                  onClick={() => setMenu(false)}
+                  href={href(item)}
+                  aria-current={section === item ? "page" : undefined}
+                >
+                  <Icon name={item} />
+                  {titleFor(item, user, profile)}
+                  {item === "speakers" &&
+                    !!speakers?.filter((s) => s.status === "PENDING")
+                      .length && (
+                      <span className="d-count">
+                        {speakers.filter((s) => s.status === "PENDING").length}
+                      </span>
+                    )}
+                </Link>
               </Fragment>
             ))}
           </nav>
@@ -229,6 +231,16 @@ export function Dashboard() {
                 <Icon name="notifications" />
                 Notifications
                 {unread > 0 && <span className="d-count">{unread}</span>}
+              </Link>
+              {/* Account-level, like notifications and settings — not club
+                  business, so it sits in the bottom group rather than
+                  lengthening a main nav that already outgrew the rail. */}
+              <Link
+                href="/dashboard/connections"
+                aria-current={section === "connections" ? "page" : undefined}
+              >
+                <Icon name="connections" />
+                MCP Connections
               </Link>
               <Link
                 href="/dashboard/settings"
@@ -427,19 +439,35 @@ export function Dashboard() {
                 ))}
               {/* Four board sections, one gate. Cosmetic only — every one
                   of these endpoints re-checks the role server-side. */}
-              {(["insights", "money", "pipeline", "documents", "members"] as const).includes(
-                section as "insights",
-              ) &&
+              {(
+                [
+                  "insights",
+                  "money",
+                  "pipeline",
+                  "documents",
+                  "members",
+                ] as const
+              ).includes(section as "insights") &&
                 (runsWorkspace(user) ? (
                   <>
                     {section === "insights" && <Insights />}
                     {/* Keyed by kind so switching pipelines starts clean
                         rather than showing the other one's rows. */}
                     {section === "money" && (
-                      <Board key="MONEY" kind="MONEY" members={members} events={events} />
+                      <Board
+                        key="MONEY"
+                        kind="MONEY"
+                        members={members}
+                        events={events}
+                      />
                     )}
                     {section === "pipeline" && (
-                      <Board key="OUTREACH" kind="OUTREACH" members={members} events={events} />
+                      <Board
+                        key="OUTREACH"
+                        kind="OUTREACH"
+                        members={members}
+                        events={events}
+                      />
                     )}
                     {section === "documents" && <Documents />}
                     {section === "members" && (
@@ -460,6 +488,7 @@ export function Dashboard() {
               {section === "notifications" && (
                 <Notifications notices={notices} onChange={setNotices} />
               )}
+              {section === "connections" && <AgentAccess />}
               {section === "settings" && <Settings user={user} />}
             </>
           )}

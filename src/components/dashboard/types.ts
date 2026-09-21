@@ -247,7 +247,8 @@ export const STAGE_LABEL: Record<string, string> = {
  * map onto them rather than inventing a fourth palette.
  */
 export function stageTone(stage: string) {
-  if (["PAID", "REIMBURSED", "DONE", "SCHEDULED"].includes(stage)) return "confirmed";
+  if (["PAID", "REIMBURSED", "DONE", "SCHEDULED"].includes(stage))
+    return "confirmed";
   if (["DECLINED", "PASSED"].includes(stage)) return "declined";
   return "pending";
 }
@@ -296,11 +297,7 @@ export type ClubInsights = {
 };
 
 export type Officer =
-  | "PRESIDENT"
-  | "TREASURER"
-  | "SECRETARY"
-  | "OUTREACH"
-  | "OTHER";
+  "PRESIDENT" | "TREASURER" | "SECRETARY" | "OUTREACH" | "OTHER";
 
 export const OFFICER_LABEL: Record<Officer, string> = {
   PRESIDENT: "President",
@@ -357,6 +354,7 @@ export const sections = [
   "members",
   "messages",
   "notifications",
+  "connections",
   "settings",
 ] as const;
 export type Section = (typeof sections)[number];
@@ -374,6 +372,7 @@ export const titles: Record<Section, string> = {
   members: "Members",
   messages: "Messages",
   notifications: "Notifications",
+  connections: "MCP Connections",
   settings: "Settings",
 };
 
@@ -436,13 +435,24 @@ export function navFor(
   return MEMBER_NAV;
 }
 
-const MEMBER_NAV: Section[] = ["overview", "profile", "events", "activity", "community"];
+const MEMBER_NAV: Section[] = [
+  "overview",
+  "profile",
+  "events",
+  "activity",
+  "community",
+];
 
 /**
  * Where the club's business ends and the member's own begins, for the
  * sidebar rule. Board nav only.
  */
-export const PERSONAL_SECTIONS: Section[] = ["events", "community", "profile", "activity"];
+export const PERSONAL_SECTIONS: Section[] = [
+  "events",
+  "community",
+  "profile",
+  "activity",
+];
 
 /**
  * Who gets the board workspace — money, the pipeline, the roster, the
@@ -466,12 +476,7 @@ export function isBoardRole(user: SessionUser) {
  * depending on the board's decision; BOARD and EXEC_BOARD are members with
  * more of the club to run.
  */
-export type Stage =
-  | "CANDIDATE"
-  | "SPEAKER"
-  | "MEMBER"
-  | "BOARD"
-  | "EXEC_BOARD";
+export type Stage = "CANDIDATE" | "SPEAKER" | "MEMBER" | "BOARD" | "EXEC_BOARD";
 
 export function stageOf(user: SessionUser, profile?: Profile | null): Stage {
   if (user.accountKind === "SPEAKER") {
@@ -529,7 +534,8 @@ export function relativeDay(value: string | null) {
   if (!value) return null;
   const day = 24 * 60 * 60 * 1000;
   const then = new Date(value);
-  const midnight = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const midnight = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
   const days = Math.round((midnight(then) - midnight(new Date())) / day);
   if (days === 0) return "today";
   if (days === 1) return "tomorrow";
