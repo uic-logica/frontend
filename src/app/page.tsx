@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
@@ -308,30 +307,20 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="club-card relative mx-auto max-w-3xl overflow-hidden bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <Image
-                src="/logo-logica.png"
-                alt=""
-                aria-hidden
-                width={447}
-                height={447}
-                className="h-[85%] w-auto max-w-full object-contain opacity-[0.06]"
-              />
-            </div>
-            <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="club-card mx-auto max-w-3xl bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
+            <div className="flex flex-col items-center text-center">
               <h2 className="type-title text-3xl leading-tight text-white md:text-4xl">
                 Ready to join UIC&apos;s Latinx computing community?
               </h2>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-white">
-                General membership interest is open year-round.
+                Open to any UIC student, whatever your major.
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/join"
                   className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black transition-transform duration-300 hover:-translate-y-0.5"
                 >
-                  Apply to Join
+                  Join LOGICA
                 </Link>
                 <Link
                   href="/events"
