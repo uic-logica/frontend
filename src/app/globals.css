@@ -75,7 +75,9 @@
     font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.5;
-    font-weight: 400;
+    /* 500, not 400: Archivo Black is heavy enough that 400 body reads thin
+       beside it. Same face as before, just a touch more substantial. */
+    font-weight: 500;
   }
 
   /* YCS nav underline wipe */

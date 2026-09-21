@@ -62,7 +62,7 @@ function PersonCard({ person }: { person: Person }) {
         </div>
       </div>
       <h3 className="text-center text-xl font-bold text-white group-hover:text-signal">{person.name}</h3>
-      <p className="text-center text-sm tracking-[0.08em] text-signal">{person.role}</p>
+      <p className="text-center text-sm font-semibold tracking-[0.08em] text-signal">{person.role}</p>
     </a>
   );
 }

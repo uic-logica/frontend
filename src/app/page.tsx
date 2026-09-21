@@ -166,7 +166,7 @@ function LevelCard({
       }`}
     >
       <div className="mb-4 flex h-5 items-center justify-between">
-        <span className="text-xs tracking-[0.3em] text-white transition-colors duration-300">
+        <span className="text-xs font-semibold tracking-[0.3em] text-white transition-colors duration-300">
           {String(index).padStart(2, "0")}
         </span>
         {link ? (
