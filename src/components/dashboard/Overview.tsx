@@ -11,7 +11,7 @@ import {
   type Speaker,
   type Notice,
   roleName,
-  isBoard,
+  runsWorkspace,
   date,
   initials,
 } from "./types";
@@ -90,7 +90,7 @@ export function Overview({
   notices: Notice[] | null;
 }) {
   // Speakers never reach this — they get SpeakerHome instead.
-  const board = isBoard(user);
+  const board = runsWorkspace(user);
   const upcoming = events
     ?.filter((e) => new Date(e.startsAt) >= new Date())
     .slice(0, 3);

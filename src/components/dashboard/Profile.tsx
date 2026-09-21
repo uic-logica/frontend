@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { ResumeUpload } from "@/components/shell/ResumeUpload";
-import { AgentAccess } from "./AgentAccess";
 import { Heading } from "./Overview";
 import {
   type Profile,
@@ -470,7 +469,6 @@ export function Settings({ user }: { user: SessionUser }) {
         title="On your terms."
         description="Choose how you hear from LOGICA and manage your account."
       />
-      <AgentAccess />
       <section className="d-panel d-settings">
         <h2>Email preferences</h2>
         <p>

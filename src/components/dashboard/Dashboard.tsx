@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { api, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
@@ -13,6 +13,12 @@ import { Speakers } from "./Speakers";
 import { SpeakerHome } from "./SpeakerHome";
 import { CandidateHome } from "./CandidateHome";
 import { Thread } from "./Thread";
+import { Board } from "./Board";
+import { BoardHome } from "./BoardHome";
+import { Insights } from "./Insights";
+import { Documents } from "./Documents";
+import { Members } from "./Members";
+import { AgentAccess } from "./AgentAccess";
 import {
   type SessionUser,
   type Profile,
@@ -20,14 +26,16 @@ import {
   type Engagement,
   type Notice,
   type Speaker,
+  type Member,
   type Section,
   sections,
   titleFor,
   navFor,
   isConfirmedSpeaker,
   roleName,
-  isBoard,
+  runsWorkspace,
   initials,
+  PERSONAL_SECTIONS,
 } from "./types";
 import "./dashboard.css";
 
@@ -51,6 +59,7 @@ export function Dashboard() {
   const [engagement, setEngagement] = useState<Engagement | null>(null);
   const [notices, setNotices] = useState<Notice[] | null>(null);
   const [speakers, setSpeakers] = useState<Speaker[] | null>(null);
+  const [members, setMembers] = useState<Member[] | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [authState, setAuthState] = useState<
     "loading" | "ready" | "signed-out" | "error"
@@ -107,13 +116,18 @@ export function Dashboard() {
             : [
                 read<Engagement>("/api/dashboard", "engagement", setEngagement),
               ]),
-          ...(isBoard(current)
+          // The roster is loaded for the board up front because three of
+          // their sections need it to name an owner. The board's own
+          // pipelines are fetched inside their sections instead — no point
+          // pulling the money down for someone reading the feed.
+          ...(runsWorkspace(current)
             ? [
                 read<Speaker[]>(
                   "/api/speakers",
                   "speaker submissions",
                   setSpeakers,
                 ),
+                read<Member[]>("/api/board/members", "the roster", setMembers),
               ]
             : []),
         ]);
@@ -148,6 +162,7 @@ export function Dashboard() {
     }
   }
   const nav = navFor(user, profile);
+  const isBoardNav = !!user && runsWorkspace(user);
   const unread = notices?.filter((n) => !n.readAt).length ?? 0;
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
@@ -177,22 +192,34 @@ export function Dashboard() {
           className={`d-sidebar-inner ${menu ? "is-open" : ""}`}
         >
           <nav aria-label="Dashboard">
-            {nav.map((item) => (
-              <Link
-                key={item}
-                onClick={() => setMenu(false)}
-                href={href(item)}
-                aria-current={section === item ? "page" : undefined}
-              >
-                <Icon name={item} />
-                {titleFor(item, user, profile)}
-                {item === "speakers" &&
-                  !!speakers?.filter((s) => s.status === "PENDING").length && (
-                    <span className="d-count">
-                      {speakers.filter((s) => s.status === "PENDING").length}
+            {nav.map((item, index) => (
+              <Fragment key={item}>
+                {/* Board nav runs to ten items. A rule where the club's
+                    business ends and their own begins is the difference
+                    between a list you scan and one you read. */}
+                {isBoardNav &&
+                  PERSONAL_SECTIONS.includes(item) &&
+                  !PERSONAL_SECTIONS.includes(nav[index - 1]) && (
+                    <span className="d-nav-divider" aria-hidden="true">
+                      Yours
                     </span>
                   )}
-              </Link>
+                <Link
+                  onClick={() => setMenu(false)}
+                  href={href(item)}
+                  aria-current={section === item ? "page" : undefined}
+                >
+                  <Icon name={item} />
+                  {titleFor(item, user, profile)}
+                  {item === "speakers" &&
+                    !!speakers?.filter((s) => s.status === "PENDING")
+                      .length && (
+                      <span className="d-count">
+                        {speakers.filter((s) => s.status === "PENDING").length}
+                      </span>
+                    )}
+                </Link>
+              </Fragment>
             ))}
           </nav>
           <div className="d-sidebar-bottom">
@@ -204,6 +231,16 @@ export function Dashboard() {
                 <Icon name="notifications" />
                 Notifications
                 {unread > 0 && <span className="d-count">{unread}</span>}
+              </Link>
+              {/* Account-level, like notifications and settings — not club
+                  business, so it sits in the bottom group rather than
+                  lengthening a main nav that already outgrew the rail. */}
+              <Link
+                href="/dashboard/connections"
+                aria-current={section === "connections" ? "page" : undefined}
+              >
+                <Icon name="connections" />
+                MCP Connections
               </Link>
               <Link
                 href="/dashboard/settings"
@@ -328,6 +365,13 @@ export function Dashboard() {
                       onSaved={setProfile}
                     />
                   )
+                ) : runsWorkspace(user) ? (
+                  <BoardHome
+                    user={user}
+                    members={members}
+                    events={events}
+                    speakers={speakers}
+                  />
                 ) : (
                   <Overview
                     user={user}
@@ -379,7 +423,7 @@ export function Dashboard() {
               {section === "activity" && <Activity engagement={engagement} />}
               {section === "community" && <Community user={user} />}
               {section === "speakers" &&
-                (isBoard(user) ? (
+                (runsWorkspace(user) ? (
                   <Speakers
                     user={user}
                     speakers={speakers}
@@ -393,9 +437,58 @@ export function Dashboard() {
                     <Link href="/dashboard">Return to your overview</Link>
                   </div>
                 ))}
+              {/* Four board sections, one gate. Cosmetic only — every one
+                  of these endpoints re-checks the role server-side. */}
+              {(
+                [
+                  "insights",
+                  "money",
+                  "pipeline",
+                  "documents",
+                  "members",
+                ] as const
+              ).includes(section as "insights") &&
+                (runsWorkspace(user) ? (
+                  <>
+                    {section === "insights" && <Insights />}
+                    {/* Keyed by kind so switching pipelines starts clean
+                        rather than showing the other one's rows. */}
+                    {section === "money" && (
+                      <Board
+                        key="MONEY"
+                        kind="MONEY"
+                        members={members}
+                        events={events}
+                      />
+                    )}
+                    {section === "pipeline" && (
+                      <Board
+                        key="OUTREACH"
+                        kind="OUTREACH"
+                        members={members}
+                        events={events}
+                      />
+                    )}
+                    {section === "documents" && <Documents />}
+                    {section === "members" && (
+                      <Members
+                        user={user}
+                        members={members}
+                        onChange={() => setReload((v) => v + 1)}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <div className="d-empty">
+                    <h1>Board access required</h1>
+                    <p>This is available to LOGICA board members.</p>
+                    <Link href="/dashboard">Return to your overview</Link>
+                  </div>
+                ))}
               {section === "notifications" && (
                 <Notifications notices={notices} onChange={setNotices} />
               )}
+              {section === "connections" && <AgentAccess />}
               {section === "settings" && <Settings user={user} />}
             </>
           )}
