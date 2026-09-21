@@ -157,7 +157,7 @@ export function Overview({
           <div className="d-feature-label">
             <span className="d-live-dot" />
             {speaker
-              ? "Your speaker workspace"
+              ? "Ahead of your visit"
               : board
                 ? "Behind the community"
                 : "Your place in LOGICA"}
@@ -207,10 +207,6 @@ export function Overview({
                 : "Find your next event"}
             <Icon name="arrow" />
           </Link>
-          <div className="d-feature-bottom">
-            <span>LOGICA @ UIC</span>
-            <span>Logic × growth</span>
-          </div>
         </section>
         <section className="d-panel d-identity">
           <div className="d-section-head">

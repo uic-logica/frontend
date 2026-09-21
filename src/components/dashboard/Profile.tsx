@@ -400,7 +400,7 @@ export function Settings({ user }: { user: SessionUser }) {
       <section className="d-panel d-settings">
         <h2>Email preferences</h2>
         <p>
-          Notifications remain available in your workspace even when email is
+          Notifications remain available in your dashboard even when email is
           off.
         </p>
         {error && (

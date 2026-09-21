@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
@@ -18,6 +18,7 @@ import {
   type Notice,
   type Speaker,
   type Section,
+  sections,
   titles,
   roleName,
   isBoard,
@@ -25,8 +26,20 @@ import {
 } from "./types";
 import "./dashboard.css";
 
-export function Dashboard({ section }: { section: Section }) {
+/**
+ * Rendered once by `app/dashboard/layout.tsx`, not per route — the section
+ * comes from the pathname so switching sections re-renders this component
+ * instead of remounting it. That's what keeps the session and the loaded
+ * data in place; a per-page mount flashed the skeleton (and briefly the
+ * signed-out panel) on every click.
+ */
+export function Dashboard() {
   const router = useRouter();
+  const pathname = usePathname();
+  const slug = pathname.replace(/^\/dashboard\/?/, "");
+  const section: Section = sections.includes(slug as Section)
+    ? (slug as Section)
+    : "overview";
   const [user, setUser] = useState<SessionUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [events, setEvents] = useState<Event[] | null>(null);
@@ -156,12 +169,7 @@ export function Dashboard({ section }: { section: Section }) {
           id="dashboard-nav"
           className={`d-sidebar-inner ${menu ? "is-open" : ""}`}
         >
-          <div className="d-workspace">
-            <span className="d-workspace-dot" />
-            {user ? roleName(user) : "Your"} workspace
-          </div>
-          <nav aria-label="Workspace">
-            <span className="d-nav-label">Your space</span>
+          <nav aria-label="Dashboard">
             {nav.map((item) => (
               <Link
                 key={item}
@@ -197,10 +205,6 @@ export function Dashboard({ section }: { section: Section }) {
                 <Icon name="settings" />
                 Settings
               </Link>
-              <Link href="/">
-                <Icon name="arrow" />
-                Visit public site
-              </Link>
             </nav>
             {user && (
               <div className="d-account">
@@ -229,7 +233,6 @@ export function Dashboard({ section }: { section: Section }) {
       <div className="d-workarea">
         <header className="d-topbar">
           <span>
-            Workspace <span className="d-slash">/</span>{" "}
             <strong>{titles[section]}</strong>
           </span>
           <div>
@@ -254,7 +257,7 @@ export function Dashboard({ section }: { section: Section }) {
         <main id="dashboard-content" className="d-main">
           {authState === "loading" && (
             <div className="d-skeleton" role="status">
-              <span className="sr-only">Loading your workspace</span>
+              <span className="sr-only">Loading your dashboard</span>
               <div />
               <div />
               <div />
@@ -262,8 +265,8 @@ export function Dashboard({ section }: { section: Section }) {
           )}
           {authState === "signed-out" && (
             <div className="d-panel d-welcome">
-              <h1>Your space at LOGICA.</h1>
-              <p>Sign in to see your profile, events, and club activity.</p>
+              <h1>Sign in to LOGICA.</h1>
+              <p>See your profile, events, and club activity.</p>
               <div className="d-actions">
                 <Link className="d-button" href="/signin">
                   Member sign-in
@@ -276,7 +279,7 @@ export function Dashboard({ section }: { section: Section }) {
           )}
           {authState === "error" && (
             <div className="d-error" role="alert">
-              We couldn’t connect to your workspace.{" "}
+              We couldn’t connect to your dashboard.{" "}
               <button onClick={() => setReload((v) => v + 1)}>Try again</button>
             </div>
           )}
@@ -343,10 +346,6 @@ export function Dashboard({ section }: { section: Section }) {
             </>
           )}
         </main>
-        <footer className="d-footer">
-          <span>Logic × growth.</span>
-          <span>Built for the people of LOGICA.</span>
-        </footer>
       </div>
     </div>
   );
