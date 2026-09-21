@@ -1,0 +1,34 @@
+/* Public controls: total time, initial delay, phase durations, and rendered size.
+   Keep these defaults in var() fallbacks so a parent can override any control. */
+.logo {
+  display: block;
+  width: var(--logo-size, 400px);
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1048 / 1064;
+  overflow: visible;
+}
+.logo path {
+  /* Visible without animations, including when CSS animations are unsupported. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  stroke-linecap: butt;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .logo .internal path,
+  .logo .nodes path {
+    animation: logica-draw calc(var(--logo-internal-duration, calc(var(--logo-duration, 2350ms) * .66)) * var(--segment-duration)) linear both;
+    animation-delay: calc(var(--logo-delay, 0ms) + var(--logo-internal-duration, calc(var(--logo-duration, 2350ms) * .66)) * var(--segment-start));
+  }
+  .logo .ring path {
+    animation: logica-draw var(--logo-ring-duration, calc(var(--logo-duration, 2350ms) * .287)) cubic-bezier(.33, 0, .2, 1) both;
+    animation-delay: calc(var(--logo-delay, 0ms) + var(--logo-internal-duration, calc(var(--logo-duration, 2350ms) * .66)) + var(--logo-pause-duration, calc(var(--logo-duration, 2350ms) * .053)));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo path { animation: none; stroke-dashoffset: 0; }
+}
+@keyframes logica-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}

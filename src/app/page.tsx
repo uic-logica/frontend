@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AnimatedLogo } from "@/components/club/AnimatedLogo";
 import type { ReactNode } from "react";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { LogoMarquee, PartnerLogo } from "@/components/club/LogoMarquee";
@@ -251,16 +252,21 @@ export default function Home() {
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer className="pl-6 sm:pl-10 lg:pl-16">
-          <p className="mb-3 text-xl font-semibold text-signal md:text-3xl">
-            We are
-          </p>
-          <TypewriterLine />
-          <div className="mt-10 text-base md:text-lg">
-            <p className="max-w-2xl text-white">
-              Increasing the participation and success of students from Latinx and underrepresented
-              communities pursuing careers in the field of computing and computer science.
+        <SectionContainer className="grid items-center gap-10 pl-6 sm:pl-10 lg:grid-cols-[minmax(0,1fr)_minmax(240px,340px)] lg:gap-12 lg:pl-16">
+          <div className="min-w-0">
+            <p className="mb-3 text-xl font-semibold text-signal md:text-3xl">
+              We are
             </p>
+            <TypewriterLine />
+            <div className="mt-10 text-base md:text-lg">
+              <p className="max-w-2xl text-white">
+                Increasing the participation and success of students from Latinx and underrepresented
+                communities pursuing careers in the field of computing and computer science.
+              </p>
+            </div>
+          </div>
+          <div className="mx-auto w-full max-w-[240px] text-white sm:max-w-[280px] lg:max-w-[340px]">
+            <AnimatedLogo />
           </div>
         </SectionContainer>
 
