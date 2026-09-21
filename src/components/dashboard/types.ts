@@ -193,16 +193,38 @@ export function isBoard(user: SessionUser) {
     user.accountKind === "MEMBER" && ["BOARD", "EXEC_BOARD"].includes(user.role)
   );
 }
+/**
+ * The five kinds of person here — mirrors lib/stage.ts on the backend,
+ * which is the authority. A SPEAKER account is a candidate or a speaker
+ * depending on the board's decision; BOARD and EXEC_BOARD are members with
+ * more of the club to run.
+ */
+export type Stage =
+  | "CANDIDATE"
+  | "SPEAKER"
+  | "MEMBER"
+  | "BOARD"
+  | "EXEC_BOARD";
+
+export function stageOf(user: SessionUser, profile?: Profile | null): Stage {
+  if (user.accountKind === "SPEAKER") {
+    return isConfirmedSpeaker(profile ?? null) ? "SPEAKER" : "CANDIDATE";
+  }
+  if (user.role === "EXEC_BOARD") return "EXEC_BOARD";
+  if (user.role === "BOARD") return "BOARD";
+  return "MEMBER";
+}
+
+const STAGE_LABELS: Record<Stage, string> = {
+  CANDIDATE: "Candidate",
+  SPEAKER: "Guest speaker",
+  MEMBER: "Member",
+  BOARD: "Board member",
+  EXEC_BOARD: "Exec board",
+};
+
 export function roleName(user: SessionUser, profile?: Profile | null) {
-  return user.accountKind === "SPEAKER"
-    ? profile && !isConfirmedSpeaker(profile)
-      ? "Candidate"
-      : "Guest speaker"
-    : user.role === "EXEC_BOARD"
-      ? "Exec board"
-      : user.role === "BOARD"
-        ? "Board member"
-        : "Member";
+  return STAGE_LABELS[stageOf(user, profile)];
 }
 export function date(
   value: string,

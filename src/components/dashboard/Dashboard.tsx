@@ -212,6 +212,19 @@ export function Dashboard() {
                 <Icon name="settings" />
                 Settings
               </Link>
+              {/* Day-to-day chat is Discord's job; this dashboard holds the
+                  things that need a record. Hidden until the URL is set
+                  rather than guessed at. */}
+              {process.env.NEXT_PUBLIC_DISCORD_URL && (
+                <a
+                  href={process.env.NEXT_PUBLIC_DISCORD_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Icon name="community" />
+                  Discord
+                </a>
+              )}
             </nav>
             {user && (
               <div className="d-account">
