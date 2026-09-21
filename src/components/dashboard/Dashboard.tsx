@@ -10,6 +10,8 @@ import { Overview, Activity, Notifications } from "./Overview";
 import { ProfileEditor, Settings } from "./Profile";
 import { Events, Community } from "./Participation";
 import { Speakers } from "./Speakers";
+import { SpeakerHome } from "./SpeakerHome";
+import { Thread } from "./Thread";
 import {
   type SessionUser,
   type Profile,
@@ -19,7 +21,8 @@ import {
   type Speaker,
   type Section,
   sections,
-  titles,
+  titleFor,
+  navFor,
   roleName,
   isBoard,
   initials,
@@ -96,8 +99,10 @@ export function Dashboard() {
             setProfile,
           ),
           read<Event[]>("/api/events", "events", setEvents),
-          read<Engagement>("/api/dashboard", "engagement", setEngagement),
           read<Notice[]>("/api/notifications", "notifications", setNotices),
+          ...(current.accountKind === "SPEAKER"
+            ? []
+            : [read<Engagement>("/api/dashboard", "engagement", setEngagement)]),
           ...(isBoard(current)
             ? [
                 read<Speaker[]>(
@@ -119,8 +124,10 @@ export function Dashboard() {
   }, [reload, router]);
 
   useEffect(() => {
-    document.title = `${titles[section]} · LOGICA`;
-  }, [section]);
+    document.title = `${titleFor(section, user)} · LOGICA`;
+  }, [section, user]);
+  const speaker = user?.accountKind === "SPEAKER";
+  const submissionId = profile?.speakerSubmission?.id;
   async function logout() {
     setLeaving(true);
     try {
@@ -133,14 +140,7 @@ export function Dashboard() {
       setLeaving(false);
     }
   }
-  const nav: Section[] = [
-    "overview",
-    "profile",
-    "events",
-    "activity",
-    "community",
-    ...(user && isBoard(user) ? ["speakers" as const] : []),
-  ];
+  const nav = navFor(user);
   const unread = notices?.filter((n) => !n.readAt).length ?? 0;
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
@@ -178,7 +178,7 @@ export function Dashboard() {
                 aria-current={section === item ? "page" : undefined}
               >
                 <Icon name={item} />
-                {titles[item]}
+                {titleFor(item, user)}
                 {item === "speakers" &&
                   !!speakers?.filter((s) => s.status === "PENDING").length && (
                     <span className="d-count">
@@ -233,7 +233,7 @@ export function Dashboard() {
       <div className="d-workarea">
         <header className="d-topbar">
           <span>
-            <strong>{titles[section]}</strong>
+            <strong>{titleFor(section, user)}</strong>
           </span>
           <div>
             <span className="d-campus">LOGICA @ UIC</span>
@@ -293,16 +293,32 @@ export function Dashboard() {
           )}
           {user && authState === "ready" && (
             <>
-              {section === "overview" && (
-                <Overview
-                  user={user}
-                  profile={profile}
-                  events={events}
-                  engagement={engagement}
-                  speakers={speakers}
-                  notices={notices}
-                />
-              )}
+              {section === "overview" &&
+                (speaker ? (
+                  <SpeakerHome user={user} profile={profile} />
+                ) : (
+                  <Overview
+                    user={user}
+                    profile={profile}
+                    events={events}
+                    engagement={engagement}
+                    speakers={speakers}
+                    notices={notices}
+                  />
+                ))}
+              {section === "messages" &&
+                (submissionId ? (
+                  <Thread
+                    submissionId={submissionId}
+                    user={user}
+                    events={events}
+                  />
+                ) : (
+                  <div className="d-empty">
+                    <h1>No thread yet</h1>
+                    <p>Your thread with the board opens once your visit is on file.</p>
+                  </div>
+                ))}
               {section === "profile" &&
                 (profile ? (
                   <ProfileEditor
@@ -330,6 +346,7 @@ export function Dashboard() {
                   <Speakers
                     user={user}
                     speakers={speakers}
+                    events={events}
                     onChange={setSpeakers}
                   />
                 ) : (

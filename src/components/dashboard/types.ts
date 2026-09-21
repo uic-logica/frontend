@@ -12,6 +12,19 @@ export type Window = {
   startTime: string;
   endTime: string;
 };
+/** The scheduled event a speaker's talk is attached to, once the board links one. */
+export type TalkEvent = {
+  id: string;
+  title: string;
+  startsAt: string;
+  location: string | null;
+};
+/** Null until the talk has an event — there is nothing to count before that. */
+export type TalkStats = {
+  rsvpGoing: number;
+  checkedIn: number;
+  questions: number;
+} | null;
 export type Profile = {
   id: string;
   name: string | null;
@@ -22,11 +35,28 @@ export type Profile = {
   linkedin?: string | null;
   resumeFilename: string | null;
   speakerSubmission?: {
+    id: string;
     organization: string | null;
     availability: Window[] | null;
     needs: string | null;
     note: string | null;
+    talkTitle: string | null;
+    slidesUrl: string | null;
+    event: TalkEvent | null;
   } | null;
+  talkStats?: TalkStats;
+};
+/** One message in a speaker's thread with the board. */
+export type SpeakerMessage = {
+  id: string;
+  body: string;
+  createdAt: string;
+  author: {
+    id: string;
+    name: string | null;
+    role: string;
+    accountKind: string;
+  };
 };
 export type Event = {
   id: string;
@@ -69,6 +99,9 @@ export type Speaker = {
   note: string | null;
   availability: Window[] | null;
   referredBy: string | null;
+  talkTitle: string | null;
+  slidesUrl: string | null;
+  event: TalkEvent | null;
   user: {
     id: string;
     username: string | null;
@@ -83,6 +116,7 @@ export const sections = [
   "activity",
   "community",
   "speakers",
+  "messages",
   "notifications",
   "settings",
 ] as const;
@@ -94,9 +128,38 @@ export const titles: Record<Section, string> = {
   activity: "My engagement",
   community: "Community",
   speakers: "Speaker directory",
+  messages: "Messages",
   notifications: "Notifications",
   settings: "Settings",
 };
+
+/**
+ * A speaker's "overview" isn't an overview of the club — it's their own
+ * talk, and that's the only thing on it.
+ */
+export function titleFor(section: Section, user: SessionUser | null) {
+  if (section === "overview" && user?.accountKind === "SPEAKER") return "My talk";
+  return titles[section];
+}
+
+/**
+ * Speakers get their profile first (it's the thing they're here to fill in),
+ * then their talk and the board thread. Club events, engagement stats and
+ * the community feed are member business — a guest speaker has no use for
+ * any of it.
+ */
+export function navFor(user: SessionUser | null): Section[] {
+  if (!user) return ["overview"];
+  if (user.accountKind === "SPEAKER") return ["profile", "overview", "messages"];
+  return [
+    "overview",
+    "profile",
+    "events",
+    "activity",
+    "community",
+    ...(isBoard(user) ? (["speakers"] as const) : []),
+  ];
+}
 export function isBoard(user: SessionUser) {
   return (
     user.accountKind === "MEMBER" && ["BOARD", "EXEC_BOARD"].includes(user.role)

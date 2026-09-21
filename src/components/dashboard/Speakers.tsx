@@ -2,15 +2,18 @@
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
-import { type Speaker, type SessionUser, initials } from "./types";
+import { Thread } from "./Thread";
+import { type Event, type Speaker, type SessionUser, date, initials } from "./types";
 
 export function Speakers({
   user,
   speakers,
+  events,
   onChange,
 }: {
   user: SessionUser;
   speakers: Speaker[] | null;
+  events: Event[] | null;
   onChange: (s: Speaker[]) => void;
 }) {
   const [query, setQuery] = useState("");
@@ -46,6 +49,32 @@ export function Speakers({
       });
       onChange(await api<Speaker[]>("/api/speakers"));
       setMessage(`${s.name || "Speaker"} ${value.toLowerCase()}.`);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+  /**
+   * Attaching the scheduled event is what turns on the speaker's own
+   * attendance numbers — until this is set their dashboard has nothing to
+   * count. Empty unlinks.
+   */
+  async function link(s: Speaker, eventId: string) {
+    setBusy(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ eventId: eventId || null }),
+      });
+      onChange(await api<Speaker[]>("/api/speakers"));
+      setMessage(
+        eventId
+          ? `Linked ${s.name || "speaker"} to their event.`
+          : `Unlinked ${s.name || "speaker"} from their event.`,
+      );
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -289,6 +318,22 @@ export function Speakers({
             </div>
             <dl>
               <div>
+                <dt>Talk</dt>
+                <dd>{s.talkTitle || "Not named yet"}</dd>
+              </div>
+              <div>
+                <dt>Slides</dt>
+                <dd>
+                  {s.slidesUrl ? (
+                    <a href={s.slidesUrl} target="_blank" rel="noreferrer">
+                      Open slides ↗
+                    </a>
+                  ) : (
+                    "Not shared yet"
+                  )}
+                </dd>
+              </div>
+              <div>
                 <dt>Contact</dt>
                 <dd>{s.email || "Not provided"}</dd>
               </div>
@@ -318,6 +363,25 @@ export function Speakers({
                 </dd>
               </div>
             </dl>
+            <label className="d-link-event">
+              Scheduled event
+              <select
+                value={s.event?.id ?? ""}
+                disabled={busy === s.id}
+                onChange={(e) => link(s, e.target.value)}
+              >
+                <option value="">Not scheduled yet</option>
+                {events?.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.title} · {date(e.startsAt)}
+                  </option>
+                ))}
+              </select>
+              <small>
+                Links this speaker to the event so their dashboard can show
+                RSVPs and check-ins.
+              </small>
+            </label>
             <div className="d-actions">
               {s.user?.resumeFilename && (
                 <a
@@ -376,6 +440,13 @@ export function Speakers({
                   </button>
                 )}
             </div>
+            <Thread
+              submissionId={s.id}
+              user={user}
+              events={events}
+              title={`Thread with ${s.name || "this speaker"}`}
+              description="Shared with every board member. Type [[ to reference an event."
+            />
           </section>
         ))}
     </>

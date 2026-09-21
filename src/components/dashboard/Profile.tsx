@@ -37,14 +37,21 @@ export function ProfileEditor({
     setDraft((p) => ({ ...p, [key]: value }));
     setSaved(false);
   }
-  function submission(key: "organization" | "needs" | "note", value: string) {
+  function submission(
+    key: "organization" | "needs" | "note" | "talkTitle" | "slidesUrl",
+    value: string,
+  ) {
     setDraft((p) => ({
       ...p,
       speakerSubmission: {
+        id: "",
         organization: "",
         availability: [],
         needs: "",
         note: "",
+        talkTitle: "",
+        slidesUrl: "",
+        event: null,
         ...p.speakerSubmission,
         [key]: value,
       },
@@ -76,6 +83,8 @@ export function ProfileEditor({
                   organization: draft.speakerSubmission?.organization || "",
                   needs: draft.speakerSubmission?.needs || "",
                   note: draft.speakerSubmission?.note || "",
+                  talkTitle: draft.speakerSubmission?.talkTitle || "",
+                  slidesUrl: draft.speakerSubmission?.slidesUrl || "",
                   availability: windows,
                 }
               : {
@@ -229,8 +238,47 @@ export function ProfileEditor({
           </label>
           {speaker && (
             <>
+              <div className="d-form-section" id="talk">
+                <h2>Your talk</h2>
+                <p>
+                  The two things we can&apos;t print a poster or run a room
+                  without.
+                </p>
+                <label>
+                  <span className="d-label-row">
+                    What should we call your talk?
+                    <span className="d-required">Required</span>
+                  </span>
+                  <input
+                    value={draft.speakerSubmission?.talkTitle || ""}
+                    onChange={(e) => submission("talkTitle", e.target.value)}
+                    maxLength={200}
+                    placeholder="e.g. Shipping your first production service"
+                  />
+                  <small>This is the title students will see.</small>
+                </label>
+                <label>
+                  <span className="d-label-row">
+                    Link to your slides
+                    <span className="d-required">Required</span>
+                  </span>
+                  <input
+                    type="url"
+                    value={draft.speakerSubmission?.slidesUrl || ""}
+                    onChange={(e) => submission("slidesUrl", e.target.value)}
+                    placeholder="https://docs.google.com/presentation/..."
+                  />
+                  <small>
+                    A link, not a file — so your deck opens on whatever laptop
+                    is plugged in that day. Google Slides, Canva, a PDF in
+                    Drive: anything we can open.
+                  </small>
+                </label>
+              </div>
               <div className="d-form-section" id="availability">
-                <h2>Your availability</h2>
+                <h2>
+                  Your availability <span className="d-required">Required</span>
+                </h2>
                 <p>
                   Share dates and times with the board. These are availability
                   windows, not confirmed bookings. Use Chicago local time.
@@ -304,8 +352,10 @@ export function ProfileEditor({
                 </button>
               </div>
               <div className="d-form-section">
-                <h2>Plan your visit</h2>
-                <label>
+                <h2>
+                  Plan your visit <span className="d-optional">Optional</span>
+                </h2>
+                <label id="needs">
                   What do you need from us?
                   <textarea
                     rows={2}

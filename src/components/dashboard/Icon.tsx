@@ -6,6 +6,7 @@ const paths: Record<Section | "arrow" | "exit" | "check" | "menu", string> = {
   activity: "M3 20h18 M6 16v-5 M12 16V4 M18 16V8",
   community: "M21 11a8 8 0 0 1-8 8H7l-5 3 1-6a8 8 0 1 1 18-5",
   speakers: "M9 3h6v11H9z M5 10v3a7 7 0 0 0 14 0v-3 M12 20v3 M8 23h8",
+  messages: "M4 4h16v12H8l-4 4z M8 9h8 M8 12h5",
   notifications: "M5 9a7 7 0 0 1 14 0v6l2 3H3l2-3z M9 21h6",
   settings: "M4 7h16 M4 17h16 M8 4v6 M16 14v6",
   arrow: "M5 12h14 M13 6l6 6-6 6",
