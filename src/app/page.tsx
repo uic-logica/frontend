@@ -15,7 +15,7 @@ const stats = [
     ),
   },
   {
-    value: "40+",
+    value: "20+",
     label: "Workshops, company visits, and socials hosted each year.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -253,7 +253,7 @@ export default function Home() {
       <PageContainer>
         <SectionContainer className="pl-6 sm:pl-10 lg:pl-16">
           <p className="mb-3 text-xl font-semibold text-signal md:text-3xl">
-            We are the
+            We are
           </p>
           <TypewriterLine />
           <div className="mt-10 text-base md:text-lg">
@@ -269,13 +269,11 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((s) => (
               <div key={s.value} className="w-full text-left">
-                <div className="flex flex-col">
-                  <div className="mb-3 text-white opacity-75">{s.icon}</div>
-                  <div className="text-white text-3xl md:text-4xl font-bold mb-3 font-display">
-                    {s.value}
-                  </div>
-                  <div className="text-white text-lg">{s.label}</div>
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="text-white opacity-75">{s.icon}</span>
+                  <span className="font-display text-3xl text-white md:text-4xl">{s.value}</span>
                 </div>
+                <div className="text-lg text-white">{s.label}</div>
               </div>
             ))}
           </div>

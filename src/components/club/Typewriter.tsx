@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 /** Match YCS: type the org name once, then blink the cursor. */
-const FULL_TEXT = "LOGICA Community";
+const FULL_TEXT = "LOGICA @ UIC";
 const TYPING_SPEED = 100;
 const CURSOR_BLINK_SPEED = 530;
 

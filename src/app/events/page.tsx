@@ -39,14 +39,16 @@ export default function EventsPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="type-title text-3xl md:text-4xl text-white">Events</h1>
-          <p className="mt-4 max-w-3xl text-body-lg text-white">
-            From workshops to socials, hack nights to tech talks — we host events each semester.
-          </p>
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="type-title text-3xl text-white md:text-4xl">Events</h1>
+            <p className="mt-4 text-body-lg text-white">
+              From workshops to socials, hack nights to tech talks — we host events each semester.
+            </p>
+          </div>
         </SectionContainer>
 
         <SectionContainer>
-          <div className="mb-8 flex flex-wrap items-center gap-4">
+          <div className="mb-8 flex flex-wrap items-center justify-center gap-4">
             {(["upcoming", "past"] as const).map((t) => (
               <button
                 key={t}
@@ -67,7 +69,7 @@ export default function EventsPage() {
           {events === null && <p className="text-body text-white">Loading…</p>}
 
           {events && list.length === 0 && (
-            <div className="club-card w-fit max-w-xl p-8">
+            <div className="club-card mx-auto w-fit max-w-xl p-8">
               <h2 className="type-h3 text-white">
                 {tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}
               </h2>
@@ -81,7 +83,7 @@ export default function EventsPage() {
             </div>
           )}
 
-          <ul className="max-w-3xl space-y-4">
+          <ul className="mx-auto max-w-3xl space-y-4">
             {list.map((e) => (
               <li
                 key={e.id}
@@ -110,13 +112,13 @@ export default function EventsPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div id="speakers" className="mb-12 border-b border-white/20 pb-4">
+          <div id="speakers" className="mx-auto mb-12 max-w-3xl border-b border-white/20 pb-4 text-center">
             <h2 className="type-h2 text-white">Upcoming Speakers</h2>
             <p className="mt-2 text-body-lg text-white">
               People presenting at upcoming LOGICA talks and workshops
             </p>
           </div>
-          <div className="club-card w-fit max-w-xl p-8">
+          <div className="club-card mx-auto w-fit max-w-xl p-8">
             <h3 className="type-h4 text-white">To be announced</h3>
             <p className="mt-3 text-body text-white">Check back soon for our speaker lineup this semester.</p>
             <PinkLink href="/speak" className="mt-6 text-xl">
@@ -126,7 +128,7 @@ export default function EventsPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="club-card w-fit max-w-xl p-8">
+          <div className="club-card mx-auto w-fit max-w-xl p-8">
             <h2 className="type-h3 text-white">Stay Updated</h2>
             <p className="mt-3 text-body text-white">
               Sign up interest via Join to receive updates about upcoming events and opportunities.
