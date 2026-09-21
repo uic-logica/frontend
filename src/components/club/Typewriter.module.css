@@ -14,8 +14,8 @@
 }
 
 @keyframes reveal-character {
-  from { visibility: hidden; }
-  to { visibility: visible; }
+  from { visibility: hidden; position: absolute; }
+  to { visibility: visible; position: static; }
 }
 
 @keyframes blink-cursor {
