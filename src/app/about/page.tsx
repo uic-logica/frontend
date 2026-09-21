@@ -6,7 +6,7 @@ export default function AboutPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="text-3xl font-bold md:text-4xl text-white">About LOGICA</h1>
+          <h1 className="type-title text-3xl md:text-4xl text-white">About LOGICA</h1>
           <p className="mt-4 text-xl text-signal md:text-2xl">
             Latinx Organization for Growth in Computing and Academics
           </p>

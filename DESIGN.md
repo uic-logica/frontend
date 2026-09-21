@@ -59,7 +59,21 @@ Member tools (`/signin`, `/profile`, `/feed`, `/attendance`, `/forms`) are app s
 
 Four gold dots = Villela motif. Logo = `LogicaMark` / `public/logo-logica.png` only.
 
-Type: **DM Sans** (same family as YCS) — weights 400/500/600/700. No separate blackface display face; size + weight do the hierarchy.
+Type: **two faces, and only two.**
+
+| Face | Use | Token |
+| --- | --- | --- |
+| **DM Sans** (400/500/600/700) | Everything you read — body, labels, buttons, nav, `type-h3` and below | `--font-sans` |
+| **Archivo Black** | Display only — page titles, `type-h1`/`type-h2`, the LOGICA wordmark, big stat numbers | `--font-display` |
+
+Archivo Black stands in for **Folio Extra Bold**, the 1957 Bauer neo-grotesque used on the
+[Getz/Gilberto](https://fontsinuse.com/uses/37528/stan-getz-joao-gilberto-getz-gilberto-album-a)
+cover — the same record whose Olga Albizu painting the wallpaper comes from. Folio isn't
+free; Archivo Black is the closest open face in that lineage.
+
+Two rules: Archivo Black ships **one weight**, so never pair it with `font-bold` — that
+triggers synthetic bolding and smears it. And don't reach for it below `type-h2`; it's too
+heavy to read at body sizes. No third face — no monospace, no serif.
 
 **Use the shared scale in `globals.css`, not a one-off Tailwind size.** Every page's headings and body copy should come from these utility classes so pages don't drift apart:
 

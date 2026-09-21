@@ -39,7 +39,7 @@ export default function EventsPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="text-3xl font-bold md:text-4xl text-white">Events</h1>
+          <h1 className="type-title text-3xl md:text-4xl text-white">Events</h1>
           <p className="mt-4 max-w-3xl text-body-lg text-white">
             From workshops to socials, hack nights to tech talks — we host events each semester.
           </p>

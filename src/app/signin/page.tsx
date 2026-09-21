@@ -112,7 +112,7 @@ export default function SignInPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">
+            <h1 className="type-title text-3xl md:text-4xl text-white">
               {step === "role" && profile ? "You're signed in" : "Sign in to LOGICA"}
             </h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">

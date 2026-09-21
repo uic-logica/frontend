@@ -6,7 +6,7 @@ export default function BlogPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="text-3xl font-bold md:text-4xl text-white">Blog</h1>
+          <h1 className="type-title text-3xl md:text-4xl text-white">Blog</h1>
           <p className="mt-4 max-w-3xl text-body-lg text-white">
             What we&apos;re building, learning, and sharing.
           </p>

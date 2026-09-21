@@ -91,7 +91,7 @@ export default function AttendancePage() {
               required
               value={eventId}
               onChange={(e) => setEventId(e.target.value)}
-              className={`${inputClass} font-mono tracking-[0.12em]`}
+              className={`${inputClass} tracking-[0.12em]`}
               placeholder="Event ID"
             />
           </Field>

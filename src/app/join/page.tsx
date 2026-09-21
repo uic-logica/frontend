@@ -56,7 +56,7 @@ export default function JoinPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="text-3xl font-bold md:text-4xl text-white">Join LOGICA</h1>
+          <h1 className="type-title text-3xl md:text-4xl text-white">Join LOGICA</h1>
           <p className="mt-4 max-w-3xl text-body-lg text-white">
             We are UIC&apos;s collective of Latinx developers, designers, and computing enthusiasts.
           </p>

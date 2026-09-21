@@ -30,7 +30,7 @@ export default function SpeakPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">Speak at LOGICA</h1>
+            <h1 className="type-title text-3xl md:text-4xl text-white">Speak at LOGICA</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               Tell us you&apos;re interested — we&apos;ll follow up to confirm details.
             </p>

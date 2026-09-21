@@ -62,7 +62,7 @@ function PersonCard({ person }: { person: Person }) {
         </div>
       </div>
       <h3 className="text-center text-xl font-bold text-white group-hover:text-signal">{person.name}</h3>
-      <p className="text-center font-mono text-sm text-signal">{person.role}</p>
+      <p className="text-center text-sm tracking-[0.08em] text-signal">{person.role}</p>
     </a>
   );
 }
@@ -98,7 +98,7 @@ export default function TeamPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="text-3xl font-bold md:text-4xl mb-4 text-white">Our Team</h1>
+          <h1 className="type-title text-3xl md:text-4xl mb-4 text-white">Our Team</h1>
           <p className="mb-16 max-w-2xl text-body-lg text-white">
             Meet the talented individuals who make LOGICA possible
           </p>
@@ -114,7 +114,7 @@ export default function TeamPage() {
         <SectionContainer className="mt-32">
           <div className="club-card w-fit max-w-3xl bg-white/[0.02] p-8 md:p-10">
             <div className="max-w-3xl">
-              <h2 className="text-3xl font-bold md:text-4xl mb-4 text-white">Interested in joining our team?</h2>
+              <h2 className="type-title text-3xl md:text-4xl mb-4 text-white">Interested in joining our team?</h2>
               <p className="mb-8 text-body-lg text-white">
                 We&apos;re always looking for passionate students to join our development, design,
                 and events teams. Applications open each semester.

@@ -35,7 +35,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
           <div className="mx-auto max-w-md">
             {event ? (
               <>
-                <h1 className="text-3xl font-bold md:text-4xl text-white">{event.title}</h1>
+                <h1 className="type-title text-3xl md:text-4xl text-white">{event.title}</h1>
                 <p className="mt-3 text-body-lg text-white">
                   {new Date(event.startsAt).toLocaleString()}
                   {event.location ? ` · ${event.location}` : ""}
@@ -44,7 +44,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
               </>
             ) : authError ? (
               <>
-                <h1 className="text-3xl font-bold md:text-4xl text-white">Event details</h1>
+                <h1 className="type-title text-3xl md:text-4xl text-white">Event details</h1>
                 <p className="mt-3 text-body text-white">
                   <a href="/signin" className="font-bold text-signal hover:underline">
                     Sign in

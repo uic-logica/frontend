@@ -49,7 +49,7 @@ export default function SetSpeakerPasswordPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">Set your password</h1>
+            <h1 className="type-title text-3xl md:text-4xl text-white">Set your password</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               First time signing in — pick a password you&apos;ll actually remember.
             </p>

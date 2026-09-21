@@ -39,7 +39,7 @@ export default function SpeakerSignInPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">Speaker sign-in</h1>
+            <h1 className="type-title text-3xl md:text-4xl text-white">Speaker sign-in</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               For confirmed speakers — no UIC email required.
             </p>

@@ -167,7 +167,7 @@ function LevelCard({
       }`}
     >
       <div className="mb-7 flex items-start justify-between">
-        <span className="font-mono text-xs tracking-[0.3em] text-white transition-colors duration-300">
+        <span className="text-xs tracking-[0.3em] text-white transition-colors duration-300">
           {String(index).padStart(2, "0")}
         </span>
         {link ? (
@@ -200,7 +200,7 @@ function Partners() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="w-3/4 flex flex-col items-center mx-auto">
-        <div className="text-3xl font-bold text-white text-center md:text-4xl">Our Partners</div>
+        <div className="type-title text-3xl text-white text-center md:text-4xl">Our Partners</div>
         <div className=" text-white lg:text-2xl text-lg mt-5 text-center">
           The organizations that make LOGICA possible
         </div>
@@ -266,7 +266,7 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer className="mt-20 pl-6 sm:pl-10 lg:pl-16">
-          <h2 className="mb-8 text-3xl font-bold text-white md:text-4xl">By the numbers</h2>
+          <h2 className="mb-8 type-title text-3xl text-white md:text-4xl">By the numbers</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((s) => (
               <div key={s.value} className="w-full text-left">
@@ -283,7 +283,7 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer>
-          <h2 className="mb-10 text-center text-3xl font-bold text-white md:text-4xl">
+          <h2 className="mb-10 text-center type-title text-3xl text-white md:text-4xl">
             Where Our Members Land
           </h2>
           <LogoMarquee items={membersLand} />
@@ -291,7 +291,7 @@ export default function Home() {
 
         <SectionContainer>
           <div className="w-3/4 flex flex-col items-center mx-auto">
-            <div className="text-3xl font-bold text-white text-center md:text-4xl">
+            <div className="type-title text-3xl text-white text-center md:text-4xl">
               Cultivating a passion for computer science, at all skill levels
             </div>
             <div className=" text-white lg:text-2xl text-lg mt-5 text-center" />
@@ -321,7 +321,7 @@ export default function Home() {
               />
             </div>
             <div className="relative z-10 max-w-2xl">
-              <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl">
+              <h2 className="type-title text-3xl leading-tight text-white md:text-4xl">
                 Ready to join UIC&apos;s Latinx computing community?
               </h2>
               <p className="mt-5 text-lg leading-relaxed text-white lg:text-2xl">

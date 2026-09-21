@@ -77,7 +77,7 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">Confirm your details</h1>
+            <h1 className="type-title text-3xl md:text-4xl text-white">Confirm your details</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               We&apos;ve got some of this already — just fill in what&apos;s left.
             </p>
