@@ -145,6 +145,12 @@ export function Speakers({
               .length,
           ],
           [
+            "Ready to decide",
+            speakers?.filter(
+              (s) => s.status === "PENDING" && s.availabilityConfirmedAt,
+            ).length,
+          ],
+          [
             "Confirmed speakers",
             speakers?.filter((s) => s.status === "CONFIRMED").length,
           ],
@@ -374,7 +380,16 @@ export function Speakers({
                 <dd>{s.note || "No notes yet"}</dd>
               </div>
               <div>
-                <dt>Availability</dt>
+                <dt>
+                  Availability
+                  {s.availabilityConfirmedAt ? (
+                    <span className="d-badge confirmed">
+                      Confirmed {date(s.availabilityConfirmedAt)}
+                    </span>
+                  ) : s.availability?.length ? (
+                    <span className="d-badge pending">Still editing</span>
+                  ) : null}
+                </dt>
                 <dd>
                   {s.availability?.length
                     ? s.availability.map((w, i) => (
@@ -436,6 +451,11 @@ export function Speakers({
                 <button
                   className="d-button"
                   disabled={!!busy}
+                  title={
+                    s.availabilityConfirmedAt
+                      ? undefined
+                      : "They haven't confirmed their availability yet."
+                  }
                   onClick={() => status(s, "CONFIRMED")}
                 >
                   Confirm as speaker

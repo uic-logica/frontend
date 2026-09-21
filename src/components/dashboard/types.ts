@@ -42,6 +42,7 @@ export type Profile = {
     note: string | null;
     status: string;
     submittedAt: string | null;
+    availabilityConfirmedAt: string | null;
     talkTitle: string | null;
     slidesUrl: string | null;
     event: TalkEvent | null;
@@ -111,6 +112,7 @@ export type Speaker = {
   note: string | null;
   availability: Window[] | null;
   referredBy: string | null;
+  availabilityConfirmedAt: string | null;
   talkTitle: string | null;
   slidesUrl: string | null;
   event: TalkEvent | null;
@@ -161,14 +163,22 @@ export function titleFor(
 }
 
 /**
- * Speakers get their profile first (it's the thing they're here to fill in),
- * then their talk and the board thread. Club events, engagement stats and
- * the community feed are member business — a guest speaker has no use for
- * any of it.
+ * A candidate lands on their one task; their details sit behind it because
+ * the board filled those in when they set the account up. A confirmed
+ * speaker leads with their profile, then their talk and the thread. Club
+ * events, engagement stats and the community feed are member business —
+ * a guest has no use for any of it.
  */
-export function navFor(user: SessionUser | null): Section[] {
+export function navFor(
+  user: SessionUser | null,
+  profile?: Profile | null,
+): Section[] {
   if (!user) return ["overview"];
-  if (user.accountKind === "SPEAKER") return ["profile", "overview", "messages"];
+  if (user.accountKind === "SPEAKER") {
+    return isConfirmedSpeaker(profile ?? null)
+      ? ["profile", "overview", "messages"]
+      : ["overview", "messages", "profile"];
+  }
   return [
     "overview",
     "profile",

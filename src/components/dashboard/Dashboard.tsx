@@ -11,6 +11,7 @@ import { ProfileEditor, Settings } from "./Profile";
 import { Events, Community } from "./Participation";
 import { Speakers } from "./Speakers";
 import { SpeakerHome } from "./SpeakerHome";
+import { CandidateHome } from "./CandidateHome";
 import { Thread } from "./Thread";
 import {
   type SessionUser,
@@ -23,6 +24,7 @@ import {
   sections,
   titleFor,
   navFor,
+  isConfirmedSpeaker,
   roleName,
   isBoard,
   initials,
@@ -102,7 +104,9 @@ export function Dashboard() {
           read<Notice[]>("/api/notifications", "notifications", setNotices),
           ...(current.accountKind === "SPEAKER"
             ? []
-            : [read<Engagement>("/api/dashboard", "engagement", setEngagement)]),
+            : [
+                read<Engagement>("/api/dashboard", "engagement", setEngagement),
+              ]),
           ...(isBoard(current)
             ? [
                 read<Speaker[]>(
@@ -140,7 +144,7 @@ export function Dashboard() {
       setLeaving(false);
     }
   }
-  const nav = navFor(user);
+  const nav = navFor(user, profile);
   const unread = notices?.filter((n) => !n.readAt).length ?? 0;
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
@@ -295,7 +299,16 @@ export function Dashboard() {
             <>
               {section === "overview" &&
                 (speaker ? (
-                  <SpeakerHome user={user} profile={profile} />
+                  isConfirmedSpeaker(profile) ? (
+                    <SpeakerHome user={user} profile={profile} />
+                  ) : (
+                    <CandidateHome
+                      key={profile?.speakerSubmission?.id}
+                      user={user}
+                      profile={profile}
+                      onSaved={setProfile}
+                    />
+                  )
                 ) : (
                   <Overview
                     user={user}
@@ -316,7 +329,10 @@ export function Dashboard() {
                 ) : (
                   <div className="d-empty">
                     <h1>No thread yet</h1>
-                    <p>Your thread with the board opens once your visit is on file.</p>
+                    <p>
+                      Your thread with the board opens once your visit is on
+                      file.
+                    </p>
                   </div>
                 ))}
               {section === "profile" &&

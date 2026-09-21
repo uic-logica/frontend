@@ -889,7 +889,8 @@
 .d-search input,
 .d-filter select,
 .d-link-event select,
-.d-thread-input textarea {
+.d-thread-input textarea,
+.d-window-row input {
   width: 100%;
   border: 1px solid #bdbdbd;
   border-radius: 5px;
@@ -1491,6 +1492,7 @@
 .d-filter select,
 .d-link-event select,
 .d-thread-input textarea,
+.d-window-row input,
 .d-composer textarea {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.32);
@@ -1960,6 +1962,107 @@
   }
   .d-empty {
     padding: 28px 6px;
+  }
+}
+
+/* ---- Candidate: one task, one card ----------------------------------- */
+
+.d-availability p.d-small {
+  margin-bottom: 18px;
+  max-width: 58ch;
+}
+.d-window-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+/* One window on one line: two dates, two times, and a way out. Wraps to a
+   two-up grid before it ever squeezes the inputs. */
+.d-window-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr)) 34px;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid var(--d-rule);
+  border-radius: 8px;
+}
+.d-window-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--d-muted);
+}
+.d-window-row input {
+  padding: 9px 10px;
+}
+/* The board reads the candidate's own confirmation next to the times it
+   applies to — that's the cue that it's their turn. */
+.d-speaker-detail dt .d-badge {
+  margin-left: 8px;
+}
+.d-window-remove {
+  height: 36px;
+  border: 1px solid var(--d-rule);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--d-muted);
+  font-size: 17px;
+  line-height: 1;
+}
+.d-window-remove:hover:not(:disabled) {
+  border-color: var(--d-ink);
+  color: var(--d-ink);
+}
+.d-window-remove:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.d-standalone {
+  display: inline-block;
+  margin-top: 14px;
+}
+.d-availability-footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--d-rule);
+}
+/* Confirmed: the windows read back as sentences, not as form fields. */
+.d-window-summary {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.d-window-summary li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.d-window-summary svg {
+  width: 15px;
+  height: 15px;
+  color: var(--d-gold);
+  flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+  .d-window-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .d-window-remove {
+    grid-column: 1 / -1;
   }
 }
 
