@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import styles from "./Typewriter.module.css";
 
-export const HERO_REVEAL_DURATION = 2350;
+export const HERO_REVEAL_DURATION = 1600;
 const FULL_TEXT = "LOGICA @ UIC";
 
 /** CSS shares the logo's initial-render clock, including before hydration. */
