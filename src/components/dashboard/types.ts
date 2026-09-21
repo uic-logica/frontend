@@ -123,6 +123,200 @@ export type Speaker = {
     resumeFilename: string | null;
   } | null;
 };
+// ---- The board's two pipelines ----------------------------------------
+// One shape for both: a spend and a company we're talking to differ only in
+// which fields are filled in. Mirrors BoardItem in the backend schema.
+
+export type BoardKind = "MONEY" | "OUTREACH";
+
+export type BoardPerson = { id: string; name: string | null; email?: string };
+
+export type BoardItem = {
+  id: string;
+  kind: BoardKind;
+  title: string;
+  stage: string;
+  detail: string | null;
+  ownerId: string | null;
+  nextStepAt: string | null;
+  stageChangedAt: string | null;
+  archivedAt: string | null;
+  updatedAt: string;
+  // Money
+  amountCents: number | null;
+  budgetId: string | null;
+  paidByUserId: string | null;
+  receiptUrl: string | null;
+  // Outreach
+  org: string | null;
+  contactName: string | null;
+  contactEmail: string | null;
+  channel: string | null;
+  category: string | null;
+  link: string | null;
+  lastTouchAt: string | null;
+  eventId: string | null;
+  owner: BoardPerson | null;
+  paidBy: BoardPerson | null;
+  stageChangedBy: BoardPerson | null;
+  createdBy: BoardPerson | null;
+  event: { id: string; title: string; startsAt: string } | null;
+  budget: { id: string; label: string } | null;
+};
+
+export type Budget = {
+  id: string;
+  label: string;
+  amountCents: number;
+  startsAt: string;
+  endsAt: string;
+  itemCount: number;
+  spentCents: number;
+  pendingCents: number;
+  remainingCents: number;
+  owedBackCents: number;
+};
+
+export type Budgets = {
+  budgets: Budget[];
+  unbudgeted: {
+    spentCents: number;
+    pendingCents: number;
+    owedBackCents: number;
+  };
+};
+
+/** Keep in step with STAGES in the backend's lib/board-item.ts. */
+export const STAGES: Record<BoardKind, readonly string[]> = {
+  MONEY: ["REQUESTED", "APPROVED", "PAID", "REIMBURSED", "DECLINED"],
+  OUTREACH: [
+    "PROSPECT",
+    "CONTACTED",
+    "NEEDS_REPLY",
+    "REPLIED",
+    "SCHEDULED",
+    "DONE",
+    "PASSED",
+  ],
+};
+
+export const STAGE_LABEL: Record<string, string> = {
+  REQUESTED: "Requested",
+  APPROVED: "Approved",
+  PAID: "Paid",
+  REIMBURSED: "Paid back",
+  DECLINED: "Declined",
+  PROSPECT: "Prospect",
+  CONTACTED: "Reached out",
+  NEEDS_REPLY: "Needs a reply",
+  REPLIED: "We replied",
+  SCHEDULED: "Scheduled",
+  DONE: "Done",
+  PASSED: "Passed",
+};
+
+/**
+ * Which `.d-badge` colour a stage gets. The existing three (confirmed /
+ * pending / declined) already mean "good", "waiting", "no", so the stages
+ * map onto them rather than inventing a fourth palette.
+ */
+export function stageTone(stage: string) {
+  if (["PAID", "REIMBURSED", "DONE", "SCHEDULED"].includes(stage)) return "confirmed";
+  if (["DECLINED", "PASSED"].includes(stage)) return "declined";
+  return "pending";
+}
+
+/** The public site's own partner taxonomy — see src/app/page.tsx. */
+export const OUTREACH_CATEGORIES = [
+  "Company visit",
+  "Talk",
+  "Workshop",
+  "Partner",
+] as const;
+export const OUTREACH_CHANNELS = [
+  "LinkedIn",
+  "Email",
+  "In person",
+  "Referral",
+] as const;
+
+export type ClubInsights = {
+  members: {
+    total: number;
+    joinedRecently: number;
+    active: number;
+    lapsed: number;
+    activeWindowDays: number;
+  };
+  events: {
+    id: string;
+    title: string;
+    startsAt: string;
+    location: string | null;
+    going: number;
+    attended: number;
+    showRate: number | null;
+  }[];
+  topAttendees: {
+    id: string;
+    name: string | null;
+    email: string;
+    major: string | null;
+    gradYear: number | null;
+    attended: number;
+  }[];
+  speakers: Record<string, number>;
+  applications: Record<string, number>;
+};
+
+export type Officer =
+  | "PRESIDENT"
+  | "TREASURER"
+  | "SECRETARY"
+  | "OUTREACH"
+  | "OTHER";
+
+export const OFFICER_LABEL: Record<Officer, string> = {
+  PRESIDENT: "President",
+  TREASURER: "Treasurer",
+  SECRETARY: "Secretary",
+  OUTREACH: "Outreach",
+  OTHER: "Board",
+};
+
+export type Member = {
+  id: string;
+  name: string | null;
+  email: string;
+  role: string;
+  officer: Officer | null;
+  major: string | null;
+  gradYear: number | null;
+  createdAt: string;
+  eventsAttended: number;
+  postsMade: number;
+  lastSeenAt: string | null;
+  lastSeenAt_event: string | null;
+};
+
+export type DriveFile = {
+  id: string;
+  name: string;
+  mimeType: string;
+  webViewLink?: string;
+  modifiedTime?: string;
+  size?: string;
+  owners?: { displayName: string }[];
+};
+
+export type Documents = {
+  configured: boolean;
+  root: string | null;
+  folder?: string | null;
+  searching?: string | null;
+  files: DriveFile[];
+};
+
 export const sections = [
   "overview",
   "profile",
@@ -130,6 +324,11 @@ export const sections = [
   "activity",
   "community",
   "speakers",
+  "insights",
+  "money",
+  "pipeline",
+  "documents",
+  "members",
   "messages",
   "notifications",
   "settings",
@@ -142,6 +341,11 @@ export const titles: Record<Section, string> = {
   activity: "My engagement",
   community: "Community",
   speakers: "Speaker directory",
+  insights: "Insights",
+  money: "Money",
+  pipeline: "Pipeline",
+  documents: "Documents",
+  members: "Members",
   messages: "Messages",
   notifications: "Notifications",
   settings: "Settings",
@@ -179,15 +383,32 @@ export function navFor(
       ? ["profile", "overview", "messages"]
       : ["overview", "messages", "profile"];
   }
-  return [
-    "overview",
-    "profile",
-    "events",
-    "activity",
-    "community",
-    ...(isBoard(user) ? (["speakers"] as const) : []),
-  ];
+  if (isBoard(user)) {
+    // Running the club, then being in it. The divider in the sidebar falls
+    // between the two groups — nine flat items is where this stops feeling
+    // like something you can scan.
+    return [
+      "overview",
+      "insights",
+      "money",
+      "pipeline",
+      "speakers",
+      "members",
+      "documents",
+      "events",
+      "community",
+      "profile",
+    ];
+  }
+  return ["overview", "profile", "events", "activity", "community"];
 }
+
+/**
+ * Where the club's business ends and the member's own begins, for the
+ * sidebar rule. Board nav only.
+ */
+export const PERSONAL_SECTIONS: Section[] = ["events", "community", "profile", "activity"];
+
 export function isBoard(user: SessionUser) {
   return (
     user.accountKind === "MEMBER" && ["BOARD", "EXEC_BOARD"].includes(user.role)
@@ -238,4 +459,39 @@ export function initials(name: string | null) {
     .slice(0, 2)
     .map((n) => n[0])
     .join("");
+}
+
+/**
+ * Cents in, dollars out. Everything money-shaped is stored as whole cents so
+ * no total is ever a float; this is the only place that divides.
+ */
+export function money(cents: number | null | undefined, { cell = false } = {}) {
+  if (cents === null || cents === undefined) return cell ? "—" : "$0";
+  const negative = cents < 0;
+  const text = (Math.abs(cents) / 100).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    // Whole dollars read better in a summary strip; cells need the cents.
+    minimumFractionDigits: cell || Math.abs(cents) % 100 !== 0 ? 2 : 0,
+    maximumFractionDigits: 2,
+  });
+  return negative ? `−${text}` : text;
+}
+
+/** "in 3 days" / "2 days ago" / "today" — for a next step or a last touch. */
+export function relativeDay(value: string | null) {
+  if (!value) return null;
+  const day = 24 * 60 * 60 * 1000;
+  const then = new Date(value);
+  const midnight = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const days = Math.round((midnight(then) - midnight(new Date())) / day);
+  if (days === 0) return "today";
+  if (days === 1) return "tomorrow";
+  if (days === -1) return "yesterday";
+  if (days > 0) return `in ${days} days`;
+  return `${-days} days ago`;
+}
+
+export function personName(person: BoardPerson | null | undefined) {
+  return person?.name || person?.email || null;
 }

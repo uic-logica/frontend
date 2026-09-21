@@ -896,6 +896,7 @@
 }
 .d-form input,
 .d-form textarea,
+.d-form select,
 .d-search input,
 .d-filter select,
 .d-link-event select,
@@ -1498,6 +1499,7 @@
 }
 .d-form input,
 .d-form textarea,
+.d-form select,
 .d-search input,
 .d-filter select,
 .d-link-event select,
@@ -2657,5 +2659,374 @@
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ---- The board: money, outreach, insights, documents ---------------------
+   Written dark-native, like everything below the candidate section — the
+   wallpaper identity layer is above these rules, so a light declaration
+   here would win and never theme. Colour comes from --d-gold/--d-muted/
+   --d-rule only, so both faces stay in step.
+
+   Almost nothing here is new furniture. The tables are .d-directory, the
+   stage chips are .d-badge, the stage filter is .d-tabs, the budget bar is
+   the same gold <progress> the identity card uses. What follows is the
+   handful of shapes those don't already cover. */
+
+/* Ten nav items is too many to scan as one list; this splits the club's
+   business from the member's own. */
+.d-nav-divider {
+  display: block;
+  margin: 18px 0 6px;
+  padding: 0 22px;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.34);
+}
+
+.d-columns-top {
+  align-items: start;
+}
+
+/* Tabular figures so a column of amounts lines up on the decimal. */
+.d-money {
+  font-variant-numeric: tabular-nums;
+}
+.d-overdue {
+  color: #e2a90f;
+  font-weight: 600;
+}
+
+/* ---- The board home: what's pinned, what's waiting ---- */
+.d-board-pin {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.d-pin {
+  display: block;
+  padding: 20px;
+  border: 1px solid var(--d-rule);
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.84);
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.d-pin:hover {
+  border-color: var(--d-gold);
+  transform: translateY(-2px);
+}
+.d-pin-icon {
+  display: block;
+  color: var(--d-gold);
+  margin-bottom: 12px;
+}
+.d-pin strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+.d-pin > span:last-of-type,
+.d-pin span:not(.d-pin-icon) {
+  display: block;
+  font-size: 11px;
+  color: var(--d-muted);
+  margin-top: 5px;
+}
+.d-pin small {
+  display: block;
+  margin-top: 9px;
+  font-size: 10px;
+  color: var(--d-gold);
+}
+
+.d-waiting {
+  list-style: none;
+}
+.d-waiting li + li {
+  border-top: 1px solid var(--d-rule);
+}
+.d-waiting a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 0;
+}
+.d-waiting a:hover strong {
+  color: var(--d-gold);
+}
+.d-waiting span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.d-waiting strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.d-waiting small {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--d-muted);
+}
+
+.d-event-row-list {
+  list-style: none;
+}
+
+/* ---- Money ---- */
+.d-budget progress {
+  width: 100%;
+  height: 5px;
+  appearance: none;
+  border: 0;
+}
+.d-budget progress::-webkit-progress-bar {
+  background: var(--d-rule);
+  border-radius: 3px;
+}
+.d-budget progress::-webkit-progress-value {
+  background: var(--d-gold);
+  border-radius: 3px;
+}
+.d-budget progress::-moz-progress-bar {
+  background: var(--d-gold);
+  border-radius: 3px;
+}
+.d-budget .d-error,
+.d-budget .d-footnote {
+  margin-top: 14px;
+}
+
+/* The stage filter carries a count per stage, so it needs a little more
+   room than the plain .d-tabs it extends. */
+.d-stage-tabs {
+  flex-wrap: wrap;
+  gap: 22px;
+}
+.d-stage-tabs button span {
+  margin-left: 5px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+}
+
+.d-directory td small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--d-muted);
+}
+.d-speaker-detail .d-form-grid {
+  margin-top: 22px;
+}
+
+/* ---- Insights: two rects and a width, not a chart library ---- */
+.d-bars {
+  list-style: none;
+}
+.d-bars li + li {
+  margin-top: 20px;
+}
+.d-bar-head,
+.d-bar-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 11px;
+}
+.d-bar-head strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.d-bar-track {
+  margin: 8px 0 6px;
+  display: grid;
+  gap: 3px;
+}
+.d-bar {
+  height: 9px;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.d-bar-going {
+  background: var(--d-rule);
+}
+.d-bar-came {
+  background: var(--d-gold);
+}
+.d-key {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  margin: 0 3px 0 9px;
+  vertical-align: baseline;
+}
+.d-key-going {
+  background: var(--d-rule);
+}
+.d-key-came {
+  background: var(--d-gold);
+}
+
+.d-rank {
+  list-style: none;
+}
+.d-rank li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+}
+.d-rank li + li {
+  border-top: 1px solid var(--d-rule);
+}
+.d-rank-n {
+  width: 16px;
+  font-size: 11px;
+  color: var(--d-muted);
+  font-variant-numeric: tabular-nums;
+}
+.d-rank li > span:nth-child(3) {
+  flex: 1;
+  min-width: 0;
+}
+.d-rank strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+.d-rank small {
+  display: block;
+  font-size: 11px;
+  color: var(--d-muted);
+}
+.d-rank-count {
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: -0.03em;
+}
+
+.d-tally + .d-tally {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--d-rule);
+}
+.d-tally h3 {
+  margin-bottom: 10px;
+}
+.d-tally dl > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 12px;
+}
+.d-tally dt {
+  color: var(--d-muted);
+}
+.d-tally dd {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Documents: a wall of things, because that's how people remember
+   where a file is — by where it sat, not by its path. ---- */
+.d-tile-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 14px;
+  padding: 24px;
+}
+.d-tile > a,
+.d-tile > button {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  padding: 16px;
+  border: 1px solid var(--d-rule);
+  border-radius: 8px;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.d-tile > a:hover,
+.d-tile > button:hover {
+  border-color: var(--d-gold);
+  transform: translateY(-2px);
+}
+.d-tile-mark {
+  display: block;
+  color: var(--d-muted);
+  margin-bottom: 12px;
+}
+.d-tile-mark[data-folder] {
+  color: var(--d-gold);
+}
+.d-tile strong {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+.d-tile small {
+  display: block;
+  margin-top: 7px;
+  font-size: 10.5px;
+  color: var(--d-muted);
+}
+.d-crumbs {
+  font-size: 12px;
+  color: var(--d-muted);
+}
+
+@media (max-width: 1150px) {
+  .d-board-pin {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 680px) {
+  .d-board-pin {
+    grid-template-columns: 1fr;
+  }
+  .d-stage-tabs {
+    gap: 16px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  .d-stage-tabs button {
+    white-space: nowrap;
+  }
+  .d-tile-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 18px;
+  }
+  .d-nav-divider {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .d-pin,
+  .d-tile > a,
+  .d-tile > button,
+  .d-bar {
+    transition: none;
+  }
+  .d-pin:hover,
+  .d-tile > a:hover,
+  .d-tile > button:hover {
+    transform: none;
   }
 }
