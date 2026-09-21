@@ -132,6 +132,9 @@ export function Dashboard() {
   }, [section, user, profile]);
   const speaker = user?.accountKind === "SPEAKER";
   const submissionId = profile?.speakerSubmission?.id;
+  // The standalone thread is the whole page, so the work area gives up its
+  // padding and max-width for it.
+  const chatFull = section === "messages" && !!submissionId;
   async function logout() {
     setLeaving(true);
     try {
@@ -258,7 +261,10 @@ export function Dashboard() {
             </Link>
           </div>
         </header>
-        <main id="dashboard-content" className="d-main">
+        <main
+          id="dashboard-content"
+          className={`d-main ${chatFull ? "d-main-flush" : ""}`}
+        >
           {authState === "loading" && (
             <div className="d-skeleton" role="status">
               <span className="sr-only">Loading your dashboard</span>
@@ -322,9 +328,11 @@ export function Dashboard() {
               {section === "messages" &&
                 (submissionId ? (
                   <Thread
+                    full
                     submissionId={submissionId}
                     user={user}
                     events={events}
+                    windows={profile?.speakerSubmission?.availability ?? []}
                   />
                 ) : (
                   <div className="d-empty">

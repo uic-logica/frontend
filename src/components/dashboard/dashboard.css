@@ -240,6 +240,16 @@
   display: flex;
   flex-direction: column;
 }
+/* A full-height chat sizes itself to the viewport rather than growing the
+   page — the log scrolls, the rest stays put. */
+.dash:has(.d-main-flush) {
+  height: 100vh;
+  min-height: 0;
+}
+.dash:has(.d-main-flush) .d-workarea {
+  min-height: 0;
+  height: 100vh;
+}
 .d-topbar {
   height: 74px;
   border-bottom: 1px solid var(--d-rule);
@@ -2269,6 +2279,44 @@
   padding: 4px 2px 12px;
   scrollbar-width: thin;
 }
+
+/* Standalone, the thread is the page: it fills the work area, the log
+   takes whatever height is left, and the composer sits on the bottom edge
+   instead of floating in the middle of a panel. */
+.d-main-flush {
+  padding: 0;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.d-chat-panel.is-full {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+.d-chat-panel.is-full .d-chat-head {
+  padding: 18px 32px;
+  margin: 0;
+  border-bottom: 1px solid var(--d-rule);
+}
+.d-chat-panel.is-full .d-chat {
+  flex: 1;
+  max-height: none;
+  padding: 18px 32px 8px;
+}
+.d-chat-panel.is-full .d-thread-compose {
+  padding: 14px 32px 18px;
+  margin: 0;
+}
+.d-chat-panel.is-full .d-error {
+  margin: 0 32px;
+}
 .d-thread-empty {
   padding: 34px 0;
   text-align: center;
@@ -2383,9 +2431,18 @@
 .d-ref:hover {
   background: rgba(254, 204, 21, 0.3);
 }
+.d-ref.is-window {
+  background: rgba(255, 255, 255, 0.14);
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
 .d-ref.is-missing {
   background: rgba(255, 255, 255, 0.08);
   color: var(--d-muted);
+}
+.d-ref.is-window.is-missing {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
 }
 /* Inside a gold bubble the gold chip would vanish, so it inverts. */
 .d-bubble-row.is-mine .d-ref {
@@ -2394,6 +2451,10 @@
 }
 .d-bubble-row.is-mine .d-ref:hover {
   background: rgba(0, 0, 0, 0.22);
+}
+.d-bubble-row.is-mine .d-ref.is-window {
+  background: rgba(0, 0, 0, 0.14);
+  color: var(--d-ink);
 }
 
 .d-thread-compose {

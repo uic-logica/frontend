@@ -500,6 +500,7 @@ export function Speakers({
               submissionId={s.id}
               user={user}
               events={events}
+              windows={s.availability ?? []}
               title={`Thread with ${s.name || "this speaker"}`}
               description="Shared with every board member"
             />

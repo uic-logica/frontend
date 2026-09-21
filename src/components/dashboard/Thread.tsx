@@ -7,37 +7,91 @@ import {
   type Event,
   type SessionUser,
   type SpeakerMessage,
+  type Window,
   date,
   initials,
 } from "./types";
 
 /**
- * `[[event:<id>|Label]]` — written into the message body as typed and
- * resolved when it's read, so renaming an event never rewrites what someone
- * said. The label is carried along so a reference still reads as words if
- * the event it points at is gone.
+ * `[[event:<id>|Label]]` and `[[window:<key>|Label]]` — written into the
+ * message body exactly as typed and resolved when read, so renaming an
+ * event or moving a window never rewrites what someone actually said. The
+ * label travels with the reference, so it still reads as words even when
+ * the thing it points at is gone.
  */
-const REFERENCE = /\[\[event:([^|\]]+)\|([^\]]*)\]\]/g;
+const REFERENCE = /\[\[(event|window):([^|\]]+)\|([^\]]*)\]\]/g;
 
-function Body({ body, events }: { body: string; events: Event[] | null }) {
+/**
+ * Availability windows have no id, so they're keyed by their own four
+ * values. That survives reordering the list, which an index wouldn't, and
+ * it stops matching the moment the candidate actually changes the times —
+ * which is the correct behaviour: that window no longer exists.
+ */
+export function windowKey(w: Window) {
+  return `${w.startDate}~${w.endDate}~${w.startTime}~${w.endTime}`;
+}
+
+const day = (d: string) =>
+  date(`${d}T12:00:00`, { month: "short", day: "numeric" });
+const time = (t: string) =>
+  new Date(`2000-01-01T${t}`).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+export function windowLabel(w: Window) {
+  const span =
+    w.startDate === w.endDate
+      ? day(w.startDate)
+      : `${day(w.startDate)} – ${day(w.endDate)}`;
+  return `${span}, ${time(w.startTime)}–${time(w.endTime)}`;
+}
+
+function Body({
+  body,
+  events,
+  windows,
+}: {
+  body: string;
+  events: Event[] | null;
+  windows: Window[];
+}) {
   const parts: React.ReactNode[] = [];
   let last = 0;
   for (const match of body.matchAll(REFERENCE)) {
-    const [raw, id, label] = match;
+    const [raw, kind, id, label] = match;
     const at = match.index ?? 0;
     if (at > last) parts.push(body.slice(last, at));
-    const known = events?.some((e) => e.id === id);
-    parts.push(
-      known ? (
-        <Link className="d-ref" href="/dashboard/events" key={`${id}-${at}`}>
-          {label || id}
-        </Link>
-      ) : (
-        <span className="d-ref is-missing" key={`${id}-${at}`}>
-          {label || id}
-        </span>
-      ),
-    );
+    const key = `${kind}-${id}-${at}`;
+    const text = label || id;
+    if (kind === "window") {
+      // A window is a fact about this thread, not somewhere to navigate —
+      // it highlights, it doesn't link. Struck through once the candidate
+      // has moved those times, so nobody plans around a stale slot.
+      const live = windows.some((w) => windowKey(w) === id);
+      parts.push(
+        <span
+          className={`d-ref is-window ${live ? "" : "is-missing"}`}
+          key={key}
+          title={live ? undefined : "These times have since changed"}
+        >
+          {text}
+        </span>,
+      );
+    } else {
+      const live = events?.some((e) => e.id === id);
+      parts.push(
+        live ? (
+          <Link className="d-ref" href="/dashboard/events" key={key}>
+            {text}
+          </Link>
+        ) : (
+          <span className="d-ref is-missing" key={key}>
+            {text}
+          </span>
+        ),
+      );
+    }
     last = at + raw.length;
   }
   parts.push(body.slice(last));
@@ -84,14 +138,20 @@ export function Thread({
   submissionId,
   user,
   events,
+  windows = [],
   title = "Messages",
   description = "You and the LOGICA board",
+  full = false,
 }: {
   submissionId: string;
   user: SessionUser;
   events: Event[] | null;
+  /** The candidate's own availability, so the two sides can point at a slot. */
+  windows?: Window[];
   title?: string;
   description?: string;
+  /** Fills the work area instead of sitting in a boxed panel. */
+  full?: boolean;
 }) {
   const [messages, setMessages] = useState<SpeakerMessage[] | null>(null);
   const [draft, setDraft] = useState("");
@@ -122,12 +182,38 @@ export function Thread({
     if (log.current) log.current.scrollTop = log.current.scrollHeight;
   }, [messages]);
 
+  type Suggestion = {
+    kind: "event" | "window";
+    id: string;
+    label: string;
+    hint: string;
+  };
+  const suggestions: Suggestion[] = [
+    ...windows.map((w) => ({
+      kind: "window" as const,
+      id: windowKey(w),
+      label: windowLabel(w),
+      hint: "Availability window",
+    })),
+    ...(events ?? []).map((e) => ({
+      kind: "event" as const,
+      id: e.id,
+      label: e.title,
+      hint: date(e.startsAt, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      }),
+    })),
+  ];
   const matches = picker
-    ? (events ?? [])
-        .filter((e) =>
-          e.title.toLowerCase().includes(picker.query.toLowerCase()),
+    ? suggestions
+        .filter((o) =>
+          `${o.label} ${o.hint}`
+            .toLowerCase()
+            .includes(picker.query.toLowerCase()),
         )
-        .slice(0, 5)
+        .slice(0, 6)
     : [];
 
   function sync(value: string, caret: number) {
@@ -137,11 +223,11 @@ export function Thread({
     setHighlight(0);
   }
 
-  function insert(event: Event) {
+  function insert(option: Suggestion) {
     if (!picker) return;
     const caret = box.current?.selectionStart ?? draft.length;
-    const next = `${draft.slice(0, picker.start)}[[event:${event.id}|${event.title}]]${draft.slice(caret)}`;
-    setDraft(next);
+    const ref = `[[${option.kind}:${option.id}|${option.label}]]`;
+    setDraft(`${draft.slice(0, picker.start)}${ref}${draft.slice(caret)}`);
     setPicker(null);
     box.current?.focus();
   }
@@ -191,7 +277,9 @@ export function Thread({
   }
 
   return (
-    <section className="d-panel d-thread d-chat-panel">
+    <section
+      className={`d-thread d-chat-panel ${full ? "is-full" : "d-panel"}`}
+    >
       <div className="d-section-head d-chat-head">
         <h2>{title}</h2>
         <span className="d-muted">{description}</span>
@@ -242,7 +330,7 @@ export function Thread({
                       </small>
                     </span>
                   )}
-                  <Body body={m.body} events={events} />
+                  <Body body={m.body} events={events} windows={windows} />
                   <time dateTime={m.createdAt}>{clock(m.createdAt)}</time>
                 </div>
               </div>
@@ -266,7 +354,7 @@ export function Thread({
             rows={1}
             maxLength={2000}
             value={draft}
-            placeholder="Message — type [[ to reference an event"
+            placeholder="Message — type [[ to reference an event or a time"
             onKeyDown={keys}
             onChange={(e) => sync(e.target.value, e.target.selectionStart)}
             onClick={(e) =>
@@ -274,9 +362,13 @@ export function Thread({
             }
           />
           {picker && matches.length > 0 && (
-            <ul className="d-ref-picker" role="listbox" aria-label="Events">
-              {matches.map((e, i) => (
-                <li key={e.id}>
+            <ul
+              className="d-ref-picker"
+              role="listbox"
+              aria-label="Events and availability"
+            >
+              {matches.map((o, i) => (
+                <li key={`${o.kind}-${o.id}`}>
                   <button
                     type="button"
                     role="option"
@@ -284,13 +376,13 @@ export function Thread({
                     className={i === highlight ? "is-active" : ""}
                     onMouseDown={(ev) => {
                       ev.preventDefault();
-                      insert(e);
+                      insert(o);
                     }}
                   >
-                    <Icon name="events" />
+                    <Icon name={o.kind === "window" ? "clock" : "events"} />
                     <span>
-                      <strong>{e.title}</strong>
-                      <small>{date(e.startsAt)}</small>
+                      <strong>{o.label}</strong>
+                      <small>{o.hint}</small>
                     </span>
                   </button>
                 </li>
