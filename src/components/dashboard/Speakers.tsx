@@ -48,7 +48,13 @@ export function Speakers({
         body: JSON.stringify({ status: value }),
       });
       onChange(await api<Speaker[]>("/api/speakers"));
-      setMessage(`${s.name || "Speaker"} ${value.toLowerCase()}.`);
+      setMessage(
+        value === "CONFIRMED"
+          ? `${s.name || "Candidate"} is now a speaker — their talk details and event numbers are unlocked.`
+          : value === "PENDING"
+            ? `${s.name || "Speaker"} moved back to candidate.`
+            : `${s.name || "Speaker"} declined.`,
+      );
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -134,12 +140,12 @@ export function Speakers({
         {[
           ["Submissions", speakers?.length],
           [
-            "Awaiting review",
+            "Candidates",
             speakers?.filter((s) => s.status === "PENDING" && s.submittedAt)
               .length,
           ],
           [
-            "Confirmed",
+            "Confirmed speakers",
             speakers?.filter((s) => s.status === "CONFIRMED").length,
           ],
           ["Portal accounts", speakers?.filter((s) => s.user).length],
@@ -267,9 +273,9 @@ export function Speakers({
                       {!s.submittedAt
                         ? "Draft"
                         : s.status === "PENDING"
-                          ? "Pending review"
+                          ? "Candidate"
                           : s.status === "CONFIRMED"
-                            ? "Confirmed"
+                            ? "Speaker"
                             : "Declined"}
                     </span>
                   </td>
@@ -318,13 +324,31 @@ export function Speakers({
             </div>
             <dl>
               <div>
+                <dt>Stage</dt>
+                <dd>
+                  {!s.submittedAt
+                    ? "Draft — not submitted"
+                    : s.status === "PENDING"
+                      ? "Candidate — deciding whether a date works"
+                      : s.status === "CONFIRMED"
+                        ? "Speaker — talk details unlocked"
+                        : "Declined"}
+                </dd>
+              </div>
+              <div>
                 <dt>Talk</dt>
-                <dd>{s.talkTitle || "Not named yet"}</dd>
+                <dd>
+                  {s.status === "CONFIRMED"
+                    ? s.talkTitle || "Not named yet"
+                    : "Unlocks when confirmed"}
+                </dd>
               </div>
               <div>
                 <dt>Slides</dt>
                 <dd>
-                  {s.slidesUrl ? (
+                  {s.status !== "CONFIRMED" ? (
+                    "Unlocks when confirmed"
+                  ) : s.slidesUrl ? (
                     <a href={s.slidesUrl} target="_blank" rel="noreferrer">
                       Open slides ↗
                     </a>
@@ -414,7 +438,16 @@ export function Speakers({
                   disabled={!!busy}
                   onClick={() => status(s, "CONFIRMED")}
                 >
-                  Confirm speaker
+                  Confirm as speaker
+                </button>
+              )}
+              {s.status === "CONFIRMED" && (
+                <button
+                  className="d-button secondary"
+                  disabled={!!busy}
+                  onClick={() => status(s, "PENDING")}
+                >
+                  Move back to candidate
                 </button>
               )}
               {s.submittedAt && s.status !== "DECLINED" && (
@@ -423,10 +456,11 @@ export function Speakers({
                   disabled={!!busy}
                   onClick={() => status(s, "DECLINED")}
                 >
-                  Decline speaker
+                  Decline
                 </button>
               )}
-              {s.status === "CONFIRMED" &&
+              {s.submittedAt &&
+                s.status !== "DECLINED" &&
                 !s.user &&
                 user.role === "EXEC_BOARD" && (
                   <button
@@ -436,7 +470,9 @@ export function Speakers({
                   >
                     {busy === s.id
                       ? "Inviting…"
-                      : "Create account & email invite"}
+                      : s.status === "CONFIRMED"
+                        ? "Create account & email invite"
+                        : "Invite as candidate"}
                   </button>
                 )}
             </div>

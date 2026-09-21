@@ -9,6 +9,7 @@ import {
   type SessionUser,
   type Window,
   initials,
+  isConfirmedSpeaker,
   roleName,
 } from "./types";
 
@@ -22,6 +23,9 @@ export function ProfileEditor({
   onSaved: (p: Profile) => void;
 }) {
   const speaker = user.accountKind === "SPEAKER";
+  // Candidates aren't asked to prepare a talk we haven't agreed to yet; the
+  // API rejects these fields at that stage too.
+  const confirmed = isConfirmedSpeaker(profile);
   useEffect(() => {
     const target = window.location.hash.slice(1);
     if (target) document.getElementById(target)?.scrollIntoView();
@@ -49,6 +53,8 @@ export function ProfileEditor({
         availability: [],
         needs: "",
         note: "",
+        status: "PENDING",
+        submittedAt: null,
         talkTitle: "",
         slidesUrl: "",
         event: null,
@@ -83,8 +89,12 @@ export function ProfileEditor({
                   organization: draft.speakerSubmission?.organization || "",
                   needs: draft.speakerSubmission?.needs || "",
                   note: draft.speakerSubmission?.note || "",
-                  talkTitle: draft.speakerSubmission?.talkTitle || "",
-                  slidesUrl: draft.speakerSubmission?.slidesUrl || "",
+                  ...(confirmed
+                    ? {
+                        talkTitle: draft.speakerSubmission?.talkTitle || "",
+                        slidesUrl: draft.speakerSubmission?.slidesUrl || "",
+                      }
+                    : {}),
                   availability: windows,
                 }
               : {
@@ -121,7 +131,7 @@ export function ProfileEditor({
             {initials(profile.name)}
           </span>
           <h2>{profile.name || "Your name"}</h2>
-          <span className="d-badge">{roleName(user)}</span>
+          <span className="d-badge">{roleName(user, profile)}</span>
           <p>{profile.email}</p>
           <hr />
           <h3>A little about you</h3>
@@ -320,42 +330,49 @@ export function ProfileEditor({
               <div className="d-form-section" id="talk">
                 <h2>
                   <span className="d-step">2</span> Your talk
+                  {!confirmed && (
+                    <span className="d-optional">Unlocks once confirmed</span>
+                  )}
                 </h2>
                 <p>
-                  Once we&apos;ve agreed a date: the two things we can&apos;t
-                  print a poster or run a room without. Saved as you go, so you
-                  can come back to it.
+                  {confirmed
+                    ? "The two things we can't print a poster or run a room without. Saved as you go, so you can come back to it."
+                    : "Once we've agreed a date and the board confirms you, this is where you'll name your talk and link your slides."}
                 </p>
-                <label>
-                  <span className="d-label-row">
-                    What should we call your talk?
-                    <span className="d-required">Required</span>
-                  </span>
-                  <input
-                    value={draft.speakerSubmission?.talkTitle || ""}
-                    onChange={(e) => submission("talkTitle", e.target.value)}
-                    maxLength={200}
-                    placeholder="e.g. Shipping your first production service"
-                  />
-                  <small>This is the title students will see.</small>
-                </label>
-                <label>
-                  <span className="d-label-row">
-                    Link to your slides
-                    <span className="d-required">Required</span>
-                  </span>
-                  <input
-                    type="url"
-                    value={draft.speakerSubmission?.slidesUrl || ""}
-                    onChange={(e) => submission("slidesUrl", e.target.value)}
-                    placeholder="https://docs.google.com/presentation/..."
-                  />
-                  <small>
-                    A link, not a file — so your deck opens on whatever laptop
-                    is plugged in that day. Google Slides, Canva, a PDF in
-                    Drive: anything we can open.
-                  </small>
-                </label>
+                {confirmed && (
+                  <>
+                    <label>
+                      <span className="d-label-row">
+                        What should we call your talk?
+                        <span className="d-required">Required</span>
+                      </span>
+                      <input
+                        value={draft.speakerSubmission?.talkTitle || ""}
+                        onChange={(e) => submission("talkTitle", e.target.value)}
+                        maxLength={200}
+                        placeholder="e.g. Shipping your first production service"
+                      />
+                      <small>This is the title students will see.</small>
+                    </label>
+                    <label>
+                      <span className="d-label-row">
+                        Link to your slides
+                        <span className="d-required">Required</span>
+                      </span>
+                      <input
+                        type="url"
+                        value={draft.speakerSubmission?.slidesUrl || ""}
+                        onChange={(e) => submission("slidesUrl", e.target.value)}
+                        placeholder="https://docs.google.com/presentation/..."
+                      />
+                      <small>
+                        A link, not a file — so your deck opens on whatever
+                        laptop is plugged in that day. Google Slides, Canva, a
+                        PDF in Drive: anything we can open.
+                      </small>
+                    </label>
+                  </>
+                )}
               </div>
               <div className="d-form-section">
                 <h2>

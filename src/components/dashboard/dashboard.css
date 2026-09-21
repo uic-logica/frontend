@@ -2078,6 +2078,53 @@
   vertical-align: 2px;
 }
 
+/* "What happens next" — a candidate's only real content while they wait. */
+.d-next {
+  list-style: none;
+  counter-reset: next;
+  margin: 0;
+  padding: 0;
+}
+.d-next li {
+  counter-increment: next;
+  position: relative;
+  padding: 16px 0 16px 42px;
+  border-top: 1px solid var(--d-rule);
+}
+.d-next li:first-child {
+  border-top: 0;
+  padding-top: 4px;
+}
+.d-next li::before {
+  content: counter(next);
+  position: absolute;
+  left: 0;
+  top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--d-rule);
+  font-size: 11px;
+  font-weight: 700;
+}
+.d-next li:first-child::before {
+  top: 3px;
+}
+.d-next strong {
+  display: block;
+  font-size: 13px;
+}
+.d-next span {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--d-muted);
+  max-width: 62ch;
+}
+
 .d-link-event {
   display: block;
   margin: 18px 0 4px;

@@ -124,8 +124,8 @@ export function Dashboard() {
   }, [reload, router]);
 
   useEffect(() => {
-    document.title = `${titleFor(section, user)} · LOGICA`;
-  }, [section, user]);
+    document.title = `${titleFor(section, user, profile)} · LOGICA`;
+  }, [section, user, profile]);
   const speaker = user?.accountKind === "SPEAKER";
   const submissionId = profile?.speakerSubmission?.id;
   async function logout() {
@@ -178,7 +178,7 @@ export function Dashboard() {
                 aria-current={section === item ? "page" : undefined}
               >
                 <Icon name={item} />
-                {titleFor(item, user)}
+                {titleFor(item, user, profile)}
                 {item === "speakers" &&
                   !!speakers?.filter((s) => s.status === "PENDING").length && (
                     <span className="d-count">
@@ -215,7 +215,7 @@ export function Dashboard() {
                   <strong>
                     {profile?.name || user.name || "Your account"}
                   </strong>
-                  <small>{roleName(user)}</small>
+                  <small>{roleName(user, profile)}</small>
                 </span>
                 <button
                   aria-label="Sign out"
@@ -233,7 +233,7 @@ export function Dashboard() {
       <div className="d-workarea">
         <header className="d-topbar">
           <span>
-            <strong>{titleFor(section, user)}</strong>
+            <strong>{titleFor(section, user, profile)}</strong>
           </span>
           <div>
             <span className="d-campus">LOGICA @ UIC</span>

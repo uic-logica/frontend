@@ -40,12 +40,24 @@ export type Profile = {
     availability: Window[] | null;
     needs: string | null;
     note: string | null;
+    status: string;
+    submittedAt: string | null;
     talkTitle: string | null;
     slidesUrl: string | null;
     event: TalkEvent | null;
   } | null;
   talkStats?: TalkStats;
 };
+/**
+ * A submitted guest is a *candidate* until the board confirms them — they
+ * can offer availability and talk to us, but there's no talk to prepare
+ * yet. Confirming promotes them to a speaker, which is what unlocks the
+ * talk details, slides and event numbers. The API enforces the same split.
+ */
+export function isConfirmedSpeaker(profile: Profile | null) {
+  return profile?.speakerSubmission?.status === "CONFIRMED";
+}
+
 /** One message in a speaker's thread with the board. */
 export type SpeakerMessage = {
   id: string;
@@ -137,8 +149,14 @@ export const titles: Record<Section, string> = {
  * A speaker's "overview" isn't an overview of the club — it's their own
  * talk, and that's the only thing on it.
  */
-export function titleFor(section: Section, user: SessionUser | null) {
-  if (section === "overview" && user?.accountKind === "SPEAKER") return "My talk";
+export function titleFor(
+  section: Section,
+  user: SessionUser | null,
+  profile?: Profile | null,
+) {
+  if (section === "overview" && user?.accountKind === "SPEAKER") {
+    return isConfirmedSpeaker(profile ?? null) ? "My talk" : "My visit";
+  }
   return titles[section];
 }
 
@@ -165,9 +183,11 @@ export function isBoard(user: SessionUser) {
     user.accountKind === "MEMBER" && ["BOARD", "EXEC_BOARD"].includes(user.role)
   );
 }
-export function roleName(user: SessionUser) {
+export function roleName(user: SessionUser, profile?: Profile | null) {
   return user.accountKind === "SPEAKER"
-    ? "Guest speaker"
+    ? profile && !isConfirmedSpeaker(profile)
+      ? "Candidate"
+      : "Guest speaker"
     : user.role === "EXEC_BOARD"
       ? "Exec board"
       : user.role === "BOARD"
