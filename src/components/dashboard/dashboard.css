@@ -3081,3 +3081,9 @@
   font-size: 12px;
   word-break: break-all;
 }
+
+/* "New term" sits inline with the budget's own label rather than in a
+   section head, because it belongs to that bar and nothing else. */
+.d-term-button {
+  margin-left: 12px;
+}

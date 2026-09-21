@@ -79,6 +79,7 @@ export function Board({ kind, members, events }: Props) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [newTerm, setNewTerm] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
@@ -109,7 +110,15 @@ export function Board({ kind, members, events }: Props) {
     return items.filter((item) => {
       if (stage !== "ALL" && item.stage !== stage) return false;
       if (!needle) return true;
-      return [item.title, item.detail, item.org, item.contactName, item.contactEmail, item.channel, item.category]
+      return [
+        item.title,
+        item.detail,
+        item.org,
+        item.contactName,
+        item.contactEmail,
+        item.channel,
+        item.category,
+      ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase()
@@ -135,7 +144,9 @@ export function Board({ kind, members, events }: Props) {
         ["Left", pot ? money(pot.amountCents - spent - pending) : "—"],
         [
           "Owed back",
-          budgets ? money((pot?.owedBackCents ?? 0) + (loose?.owedBackCents ?? 0)) : "—",
+          budgets
+            ? money((pot?.owedBackCents ?? 0) + (loose?.owedBackCents ?? 0))
+            : "—",
         ],
       ] as const;
     }
@@ -160,7 +171,8 @@ export function Board({ kind, members, events }: Props) {
       // The form takes dollars because that is what a receipt says; the API
       // takes cents because no total should ever be a float.
       if (dollars) body.amountCents = Math.round(Number(dollars) * 100);
-      if (form.get("paidByUserId")) body.paidByUserId = form.get("paidByUserId");
+      if (form.get("paidByUserId"))
+        body.paidByUserId = form.get("paidByUserId");
       if (budgets?.budgets[0]) body.budgetId = budgets.budgets[0].id;
     } else {
       body.org = String(form.get("org") ?? "");
@@ -172,7 +184,10 @@ export function Board({ kind, members, events }: Props) {
     }
     if (form.get("eventId")) body.eventId = form.get("eventId");
     try {
-      await api("/api/board/items", { method: "POST", body: JSON.stringify(body) });
+      await api("/api/board/items", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
       setAdding(false);
       refresh();
     } catch (e) {
@@ -186,7 +201,10 @@ export function Board({ kind, members, events }: Props) {
     setBusy(id);
     setError("");
     try {
-      await api(`/api/board/items/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+      await api(`/api/board/items/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      });
       refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -201,6 +219,38 @@ export function Board({ kind, members, events }: Props) {
     try {
       await api(`/api/board/items/${id}`, { method: "DELETE" });
       setOpen(null);
+      refresh();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  /**
+   * The money section is exec-only and POST /api/board/budgets is exec-only,
+   * so everyone who can see this can do it. Until now the page said "an exec
+   * can add one" and offered no way to — a budget could not be created
+   * through the product at all.
+   */
+  async function createBudget(form: FormData) {
+    setBusy("budget");
+    setError("");
+    try {
+      const dollars = Number(String(form.get("amount") ?? "").trim());
+      if (!Number.isFinite(dollars) || dollars < 0) {
+        throw new Error("Give the term a budget in dollars.");
+      }
+      await api("/api/board/budgets", {
+        method: "POST",
+        body: JSON.stringify({
+          label: String(form.get("label") ?? ""),
+          amountCents: Math.round(dollars * 100),
+          startsAt: String(form.get("startsAt") ?? ""),
+          endsAt: String(form.get("endsAt") ?? ""),
+        }),
+      });
+      setNewTerm(false);
       refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -226,26 +276,110 @@ export function Board({ kind, members, events }: Props) {
       <div className="d-directory-summary">
         {counts.map(([label, value]) => (
           <div key={label}>
-            <strong className={kind === "MONEY" ? "d-money" : undefined}>{value}</strong>
+            <strong className={kind === "MONEY" ? "d-money" : undefined}>
+              {value}
+            </strong>
             <span>{label}</span>
           </div>
         ))}
       </div>
 
-      {kind === "MONEY" && budgets?.budgets[0] && <BudgetBar budget={budgets.budgets[0]} />}
+      {kind === "MONEY" && budgets?.budgets[0] && (
+        <BudgetBar
+          budget={budgets.budgets[0]}
+          onNewTerm={() => setNewTerm(!newTerm)}
+          newTermOpen={newTerm}
+        />
+      )}
 
       {kind === "MONEY" && !!unbudgeted(budgets) && (
         <p className="d-footnote">
           {money(unbudgeted(budgets))} of that isn&apos;t filed under a budget,
-          so the bar above doesn&apos;t count it. Open a cost to put it on one.
+          so the bar above doesn&apos;t count it. Open one and set &ldquo;counts
+          against&rdquo; to fix that.
         </p>
       )}
 
-      {kind === "MONEY" && budgets && !budgets.budgets.length && (
-        <p className="d-footnote">
-          No budget set for this term yet — costs still get tracked, they just
-          aren&apos;t counted against anything. An exec can add one.
-        </p>
+      {kind === "MONEY" && budgets && !budgets.budgets.length && !newTerm && (
+        <section className="d-panel d-note-panel">
+          <span className="d-note-icon">
+            <Icon name="money" />
+          </span>
+          <div>
+            <h2>No budget set yet</h2>
+            <p>
+              Costs are still tracked without one — they just aren&apos;t
+              counted against anything, so nothing can tell you what&apos;s
+              left.
+            </p>
+            <button className="d-button" onClick={() => setNewTerm(true)}>
+              Set this term&apos;s budget
+            </button>
+          </div>
+        </section>
+      )}
+
+      {kind === "MONEY" && newTerm && (
+        <form
+          className="d-panel d-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            createBudget(new FormData(e.currentTarget));
+          }}
+        >
+          <h2>
+            {budgets?.budgets.length
+              ? "Start a new term"
+              : "Set this term's budget"}
+          </h2>
+          <p>
+            What the club has to spend between these dates. Costs filed against
+            it draw it down; the balance is worked out on the fly, so a
+            correction here can never leave a stale number behind.
+          </p>
+          <div className="d-form-grid">
+            <label>
+              Term
+              <input
+                name="label"
+                required
+                placeholder="Fall 2026"
+                maxLength={120}
+              />
+            </label>
+            <label>
+              Amount
+              <input
+                name="amount"
+                type="number"
+                step="0.01"
+                min="0"
+                required
+                placeholder="4000"
+              />
+            </label>
+            <label>
+              Starts
+              <input name="startsAt" type="date" required />
+            </label>
+            <label>
+              Ends
+              <input name="endsAt" type="date" required />
+            </label>
+          </div>
+          <div className="d-actions">
+            <button className="d-button" disabled={busy === "budget"}>
+              {busy === "budget" ? "Saving…" : "Save budget"}
+            </button>
+            <button
+              type="button"
+              className="d-text-button"
+              onClick={() => setNewTerm(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       )}
 
       {adding && (
@@ -265,7 +399,9 @@ export function Board({ kind, members, events }: Props) {
                 name="title"
                 required
                 placeholder={
-                  kind === "MONEY" ? "Pizza for the Aon visit" : "Zebra — spring workshop"
+                  kind === "MONEY"
+                    ? "Pizza for the Aon visit"
+                    : "Zebra — spring workshop"
                 }
               />
             </label>
@@ -273,7 +409,13 @@ export function Board({ kind, members, events }: Props) {
               <>
                 <label>
                   Amount
-                  <input name="amount" type="number" step="0.01" min="0" placeholder="84.50" />
+                  <input
+                    name="amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="84.50"
+                  />
                 </label>
                 <label>
                   Fronted by
@@ -295,7 +437,10 @@ export function Board({ kind, members, events }: Props) {
                 </label>
                 <label>
                   Contact
-                  <input name="contactName" placeholder="Who we're talking to" />
+                  <input
+                    name="contactName"
+                    placeholder="Who we're talking to"
+                  />
                 </label>
                 <label>
                   Their email
@@ -321,7 +466,11 @@ export function Board({ kind, members, events }: Props) {
                 </label>
                 <label>
                   Link
-                  <input name="link" type="url" placeholder="https://linkedin.com/in/…" />
+                  <input
+                    name="link"
+                    type="url"
+                    placeholder="https://linkedin.com/in/…"
+                  />
                 </label>
               </>
             )}
@@ -355,14 +504,22 @@ export function Board({ kind, members, events }: Props) {
 
       {/* Stage is the question people actually arrive with, so it's the
           primary control rather than a dropdown inside the toolbar. */}
-      <div className="d-tabs d-stage-tabs" role="group" aria-label="Filter by stage">
+      <div
+        className="d-tabs d-stage-tabs"
+        role="group"
+        aria-label="Filter by stage"
+      >
         <button aria-pressed={stage === "ALL"} onClick={() => setStage("ALL")}>
           All <span>{items?.length ?? 0}</span>
         </button>
         {stages.map((s) => {
           const n = items?.filter((i) => i.stage === s).length ?? 0;
           return (
-            <button key={s} aria-pressed={stage === s} onClick={() => setStage(s)}>
+            <button
+              key={s}
+              aria-pressed={stage === s}
+              onClick={() => setStage(s)}
+            >
               {STAGE_LABEL[s] ?? s} <span>{n}</span>
             </button>
           );
@@ -399,7 +556,9 @@ export function Board({ kind, members, events }: Props) {
                 <tr key={item.id}>
                   <td>
                     <strong>{item.title}</strong>
-                    {kind === "OUTREACH" && item.org && <small>{item.org}</small>}
+                    {kind === "OUTREACH" && item.org && (
+                      <small>{item.org}</small>
+                    )}
                     {kind === "MONEY" && item.paidBy && (
                       <small>fronted by {personName(item.paidBy)}</small>
                     )}
@@ -414,10 +573,18 @@ export function Board({ kind, members, events }: Props) {
                       {STAGE_LABEL[item.stage] ?? item.stage}
                     </span>
                   </td>
-                  <td>{personName(item.owner) ?? <span className="d-muted">Unassigned</span>}</td>
+                  <td>
+                    {personName(item.owner) ?? (
+                      <span className="d-muted">Unassigned</span>
+                    )}
+                  </td>
                   <td>
                     {item.nextStepAt ? (
-                      <span className={isOverdue(item.nextStepAt) ? "d-overdue" : undefined}>
+                      <span
+                        className={
+                          isOverdue(item.nextStepAt) ? "d-overdue" : undefined
+                        }
+                      >
                         {relativeDay(item.nextStepAt)}
                       </span>
                     ) : (
@@ -440,8 +607,12 @@ export function Board({ kind, members, events }: Props) {
           </table>
         </div>
         {filtered?.length === 0 && (
-          <Empty title={items?.length ? "Nothing at this stage" : copy.emptyTitle}>
-            {items?.length ? "Try another stage or a different search." : copy.emptyBody}
+          <Empty
+            title={items?.length ? "Nothing at this stage" : copy.emptyTitle}
+          >
+            {items?.length
+              ? "Try another stage or a different search."
+              : copy.emptyBody}
           </Empty>
         )}
         {!items && !error && <p className="d-muted">Loading…</p>}
@@ -454,6 +625,7 @@ export function Board({ kind, members, events }: Props) {
           members={members}
           busy={busy === detail.id}
           onClose={() => setOpen(null)}
+          budgets={budgets}
           onPatch={(body) => patch(detail.id, body)}
           onArchive={() => archive(detail.id)}
         />
@@ -473,23 +645,40 @@ function unbudgeted(budgets: Budgets | null) {
 }
 
 /** The gold <progress> the identity card already uses — no new bar. */
-function BudgetBar({ budget }: { budget: Budgets["budgets"][number] }) {
+function BudgetBar({
+  budget,
+  onNewTerm,
+  newTermOpen,
+}: {
+  budget: Budgets["budgets"][number];
+  onNewTerm: () => void;
+  newTermOpen: boolean;
+}) {
   const used = budget.spentCents + budget.pendingCents;
   const over = budget.remainingCents < 0;
   return (
     <section className="d-panel d-budget">
       <div className="d-progress-label">
         <span>
-          {budget.label} — <strong className="d-money">{money(budget.remainingCents)}</strong> left
+          {budget.label} —{" "}
+          <strong className="d-money">{money(budget.remainingCents)}</strong>{" "}
+          left
+          <button className="d-text-button d-term-button" onClick={onNewTerm}>
+            {newTermOpen ? "Cancel" : "New term"}
+          </button>
         </span>
         <span className="d-muted">
           {money(budget.spentCents)} spent
-          {budget.pendingCents > 0 && ` · ${money(budget.pendingCents)} committed`}
+          {budget.pendingCents > 0 &&
+            ` · ${money(budget.pendingCents)} committed`}
           {" of "}
           {money(budget.amountCents)}
         </span>
       </div>
-      <progress value={Math.min(used, budget.amountCents)} max={budget.amountCents || 1} />
+      <progress
+        value={Math.min(used, budget.amountCents)}
+        max={budget.amountCents || 1}
+      />
       {over && (
         <p className="d-error" role="status">
           This term is over budget by {money(-budget.remainingCents)}.
@@ -497,7 +686,8 @@ function BudgetBar({ budget }: { budget: Budgets["budgets"][number] }) {
       )}
       {budget.owedBackCents > 0 && (
         <p className="d-footnote">
-          {money(budget.owedBackCents)} is owed back to people who paid out of pocket.
+          {money(budget.owedBackCents)} is owed back to people who paid out of
+          pocket.
         </p>
       )}
     </section>
@@ -508,6 +698,7 @@ function Detail({
   item,
   kind,
   members,
+  budgets,
   busy,
   onClose,
   onPatch,
@@ -516,6 +707,7 @@ function Detail({
   item: BoardItem;
   kind: BoardKind;
   members: Member[] | null;
+  budgets: Budgets | null;
   busy: boolean;
   onClose: () => void;
   onPatch: (body: Record<string, unknown>) => void;
@@ -559,7 +751,9 @@ function Detail({
           <>
             <div>
               <dt>Amount</dt>
-              <dd className="d-money">{money(item.amountCents, { cell: true })}</dd>
+              <dd className="d-money">
+                {money(item.amountCents, { cell: true })}
+              </dd>
             </div>
             <div>
               <dt>Budget</dt>
@@ -573,7 +767,11 @@ function Detail({
               <dt>Receipt</dt>
               <dd>
                 {item.receiptUrl ? (
-                  <a href={item.receiptUrl} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={item.receiptUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
                     Open receipt ↗
                   </a>
                 ) : (
@@ -595,7 +793,9 @@ function Detail({
                 {item.contactEmail && (
                   <>
                     {" · "}
-                    <a href={`mailto:${item.contactEmail}`}>{item.contactEmail}</a>
+                    <a href={`mailto:${item.contactEmail}`}>
+                      {item.contactEmail}
+                    </a>
                   </>
                 )}
               </dd>
@@ -607,7 +807,11 @@ function Detail({
                 {item.link && (
                   <>
                     {" · "}
-                    <a href={item.link} target="_blank" rel="noreferrer noopener">
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
                       Open ↗
                     </a>
                   </>
@@ -620,7 +824,9 @@ function Detail({
             </div>
             <div>
               <dt>Last spoke</dt>
-              <dd>{item.lastTouchAt ? date(item.lastTouchAt) : "Not recorded"}</dd>
+              <dd>
+                {item.lastTouchAt ? date(item.lastTouchAt) : "Not recorded"}
+              </dd>
             </div>
           </>
         )}
@@ -635,8 +841,88 @@ function Detail({
       </dl>
 
       {/* `d-form` as well as the grid: the label-stacking and input styling
-          both hang off .d-form, and this panel isn't a form element. */}
+          both hang off .d-form, and this panel isn't a form element.
+
+          Everything the API accepts on a PATCH is editable here. Three of
+          these were read-only rows in the <dl> above with no way to set
+          them, while the page told you to "open a cost to put it on a
+          budget" and the detail showed "Receipt — none attached". */}
       <div className="d-form d-form-grid">
+        {kind === "MONEY" && (
+          <>
+            <label>
+              Counts against
+              <select
+                value={item.budgetId ?? ""}
+                disabled={busy}
+                onChange={(e) => onPatch({ budgetId: e.target.value })}
+              >
+                <option value="">No budget</option>
+                {budgets?.budgets.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Fronted by
+              <select
+                value={item.paidByUserId ?? ""}
+                disabled={busy}
+                onChange={(e) => onPatch({ paidByUserId: e.target.value })}
+              >
+                <option value="">Nobody — club card</option>
+                {members?.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name || m.email}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Receipt link
+              {/* Keyed on the saved value: these are uncontrolled, so
+                  without it they keep whatever was typed and go stale when
+                  the row changes underneath — another exec editing, or the
+                  same person's agent doing it over MCP. */}
+              <input
+                key={item.receiptUrl ?? ""}
+                type="url"
+                defaultValue={item.receiptUrl ?? ""}
+                disabled={busy}
+                placeholder="https://drive.google.com/…"
+                onBlur={(e) =>
+                  e.target.value !== (item.receiptUrl ?? "") &&
+                  onPatch({ receiptUrl: e.target.value })
+                }
+              />
+            </label>
+            <label>
+              Amount
+              <input
+                key={item.amountCents ?? ""}
+                type="number"
+                step="0.01"
+                min="0"
+                defaultValue={
+                  item.amountCents === null
+                    ? ""
+                    : (item.amountCents / 100).toFixed(2)
+                }
+                disabled={busy}
+                onBlur={(e) => {
+                  const cents =
+                    e.target.value === ""
+                      ? null
+                      : Math.round(Number(e.target.value) * 100);
+                  if (cents !== item.amountCents)
+                    onPatch({ amountCents: cents });
+                }}
+              />
+            </label>
+          </>
+        )}
         <label>
           Whose move is it
           <select
@@ -655,6 +941,7 @@ function Detail({
         <label>
           Next move due
           <input
+            key={item.nextStepAt ?? ""}
             type="date"
             disabled={busy}
             defaultValue={item.nextStepAt ? item.nextStepAt.slice(0, 10) : ""}
@@ -679,7 +966,11 @@ function Detail({
 
       <div className="d-actions">
         {next && (
-          <button className="d-button" disabled={busy} onClick={() => onPatch({ stage: next })}>
+          <button
+            className="d-button"
+            disabled={busy}
+            onClick={() => onPatch({ stage: next })}
+          >
             <Icon name="check" /> {STAGE_LABEL[next] ?? next}
           </button>
         )}
