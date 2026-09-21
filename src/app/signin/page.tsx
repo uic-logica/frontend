@@ -163,7 +163,7 @@ export default function SignInPage() {
                         <label htmlFor="email" className="type-label text-white">
                           UIC email
                         </label>
-                        <p className="text-caption text-white">Example: netid@uic.edu</p>
+                        <p className="text-body-sm text-white">Example: netid@uic.edu</p>
                         <input
                           id="email"
                           type="email"
@@ -217,16 +217,10 @@ export default function SignInPage() {
               )}
             </div>
 
-            <p className="mt-8 text-caption text-white">
+            <p className="mt-8 text-body text-white">
               Not from UIC?{" "}
               <Link href="/speaker-signin" className="font-bold text-signal underline-offset-2 hover:underline">
                 Sign in here
-              </Link>
-            </p>
-            <p className="mt-2 text-caption text-white">
-              Need the public site?{" "}
-              <Link href="/" className="font-bold text-signal underline-offset-2 hover:underline">
-                Back home
               </Link>
             </p>
           </div>

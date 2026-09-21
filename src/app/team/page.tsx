@@ -112,12 +112,13 @@ export default function TeamPage() {
         />
 
         <SectionContainer className="mt-32">
-          <div className="club-card w-fit max-w-3xl bg-white/[0.02] p-8 md:p-10">
-            <div className="max-w-3xl">
-              <h2 className="type-title text-3xl md:text-4xl mb-4 text-white">Interested in joining our team?</h2>
+          <div className="club-card mx-auto w-fit max-w-2xl bg-white/[0.02] p-8 md:p-10">
+            <div className="flex flex-col items-center text-center">
+              <h2 className="type-title mb-4 text-3xl text-white md:text-4xl">
+                Interested in joining the board?
+              </h2>
               <p className="mb-8 text-body-lg text-white">
-                We&apos;re always looking for passionate students to join our development, design,
-                and events teams. Applications open each semester.
+                Board applications open each semester.
               </p>
               <Link
                 href="/join"

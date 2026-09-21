@@ -96,7 +96,7 @@ const pathways = [
   {
     index: 1,
     title: "Development",
-    text: "Join project teams shipping the LOGICA site and tools that serve our members on campus.",
+    text: "Project teams building this site and the club's tools.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
@@ -106,7 +106,7 @@ const pathways = [
   {
     index: 2,
     title: "Mentorship",
-    text: "New to computing? Learn from peers and mentors through workshops and study cohorts.",
+    text: "Workshops and study cohorts. Start with no experience.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
@@ -121,7 +121,7 @@ const pathways = [
   {
     index: 3,
     title: "Events",
-    text: "Socials, hack nights, company visits, and talks with industry and alumni.",
+    text: "Socials, hack nights, company visits, and talks.",
     link: "/events",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,7 +132,7 @@ const pathways = [
   {
     index: 4,
     title: "Community",
-    text: "Find people who share your drive — Discord, meetups, and a home for Latinx technologists at UIC.",
+    text: "Discord, meetups, and Latinx technologists at UIC.",
     link: "/join",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -162,11 +162,11 @@ function LevelCard({
 }) {
   const card = (
     <div
-      className={`club-card group relative flex h-full flex-col bg-white/[0.02] p-8 ${
+      className={`club-card group relative flex h-full flex-col bg-white/[0.02] p-6 ${
         link ? "club-card-interactive hover:bg-white/[0.04]" : ""
       }`}
     >
-      <div className="mb-7 flex items-start justify-between">
+      <div className="mb-4 flex h-5 items-center justify-between">
         <span className="text-xs tracking-[0.3em] text-white transition-colors duration-300">
           {String(index).padStart(2, "0")}
         </span>
@@ -181,10 +181,10 @@ function LevelCard({
           </svg>
         ) : null}
       </div>
-      {icon ? <div className="mb-5 text-white/80">{icon}</div> : null}
-      <h3 className="text-2xl font-semibold text-white">{title}</h3>
-      <span className="mt-4 block h-px w-8 bg-white/15 transition-all duration-300 group-hover:w-12 group-hover:bg-signal" />
-      <p className="mt-4 text-base leading-relaxed text-white lg:text-[1.0625rem]">{text}</p>
+      {icon ? <div className="mb-3 text-white/80">{icon}</div> : null}
+      <h3 className="text-xl font-semibold text-white">{title}</h3>
+      <span className="mt-3 block h-px w-8 bg-white/15 transition-all duration-300 group-hover:w-12 group-hover:bg-signal" />
+      <p className="mt-3 text-body-sm leading-relaxed text-white">{text}</p>
     </div>
   );
 
@@ -296,7 +296,7 @@ export default function Home() {
             </div>
             <div className=" text-white lg:text-2xl text-lg mt-5 text-center" />
           </div>
-          <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {pathways.map((p) => (
               <LevelCard key={p.index} {...p} />
             ))}
@@ -308,24 +308,23 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="club-card relative mx-auto max-w-4xl overflow-hidden bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
-            <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 items-center justify-center overflow-hidden md:flex">
+          <div className="club-card relative mx-auto max-w-3xl overflow-hidden bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <Image
                 src="/logo-logica.png"
                 alt=""
                 aria-hidden
-                width={320}
-                height={320}
-                className="object-contain opacity-[0.06]"
-                style={{ maxWidth: "none", width: "80%", height: "80%" }}
+                width={447}
+                height={447}
+                className="h-[85%] w-auto max-w-full object-contain opacity-[0.06]"
               />
             </div>
-            <div className="relative z-10 max-w-2xl">
+            <div className="relative z-10 flex flex-col items-center text-center">
               <h2 className="type-title text-3xl leading-tight text-white md:text-4xl">
                 Ready to join UIC&apos;s Latinx computing community?
               </h2>
-              <p className="mt-5 text-lg leading-relaxed text-white lg:text-2xl">
-                General membership interest is open year-round. Click below to learn more and apply.
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white">
+                General membership interest is open year-round.
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 <Link
