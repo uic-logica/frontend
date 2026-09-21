@@ -32,7 +32,7 @@ import {
   navFor,
   isConfirmedSpeaker,
   roleName,
-  isBoard,
+  runsWorkspace,
   initials,
   PERSONAL_SECTIONS,
 } from "./types";
@@ -119,7 +119,7 @@ export function Dashboard() {
           // their sections need it to name an owner. The board's own
           // pipelines are fetched inside their sections instead — no point
           // pulling the money down for someone reading the feed.
-          ...(isBoard(current)
+          ...(runsWorkspace(current)
             ? [
                 read<Speaker[]>(
                   "/api/speakers",
@@ -161,7 +161,7 @@ export function Dashboard() {
     }
   }
   const nav = navFor(user, profile);
-  const isBoardNav = !!user && isBoard(user);
+  const isBoardNav = !!user && runsWorkspace(user);
   const unread = notices?.filter((n) => !n.readAt).length ?? 0;
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
@@ -353,7 +353,7 @@ export function Dashboard() {
                       onSaved={setProfile}
                     />
                   )
-                ) : isBoard(user) ? (
+                ) : runsWorkspace(user) ? (
                   <BoardHome
                     user={user}
                     members={members}
@@ -411,7 +411,7 @@ export function Dashboard() {
               {section === "activity" && <Activity engagement={engagement} />}
               {section === "community" && <Community user={user} />}
               {section === "speakers" &&
-                (isBoard(user) ? (
+                (runsWorkspace(user) ? (
                   <Speakers
                     user={user}
                     speakers={speakers}
@@ -430,7 +430,7 @@ export function Dashboard() {
               {(["insights", "money", "pipeline", "documents", "members"] as const).includes(
                 section as "insights",
               ) &&
-                (isBoard(user) ? (
+                (runsWorkspace(user) ? (
                   <>
                     {section === "insights" && <Insights />}
                     {/* Keyed by kind so switching pipelines starts clean

@@ -136,6 +136,24 @@
   flex: 1;
   min-height: 0;
   flex-direction: column;
+  /* The rail is fixed to the viewport, so a nav taller than the screen was
+     simply unreachable — notifications, settings and sign-out all sat below
+     the fold with nothing to scroll. The mobile dropdown already did this;
+     the desktop rail never did. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #4a4a4a transparent;
+}
+.d-sidebar-inner::-webkit-scrollbar {
+  width: 6px;
+}
+.d-sidebar-inner::-webkit-scrollbar-thumb {
+  background: #3d3d3d;
+  border-radius: 3px;
+}
+.d-sidebar-inner::-webkit-scrollbar-thumb:hover {
+  background: #575757;
 }
 .d-sidebar nav > a {
   display: flex;

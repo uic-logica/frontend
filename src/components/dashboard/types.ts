@@ -411,9 +411,9 @@ export function navFor(
       ? ["profile", "overview", "messages"]
       : ["overview", "messages", "profile"];
   }
-  if (isBoard(user)) {
+  if (runsWorkspace(user)) {
     // Running the club, then being in it. The divider in the sidebar falls
-    // between the two groups — nine flat items is where this stops feeling
+    // between the two groups — ten flat items is where this stops feeling
     // like something you can scan.
     return [
       "overview",
@@ -428,8 +428,15 @@ export function navFor(
       "profile",
     ];
   }
-  return ["overview", "profile", "events", "activity", "community"];
+  // BOARD gets its own branch even though it returns what a member gets
+  // today. Board is a real tier that will get its own surface; until
+  // someone decides what belongs on it, they see the member view rather
+  // than the exec one. Splitting it later is editing this line.
+  if (isBoardRole(user)) return MEMBER_NAV;
+  return MEMBER_NAV;
 }
+
+const MEMBER_NAV: Section[] = ["overview", "profile", "events", "activity", "community"];
 
 /**
  * Where the club's business ends and the member's own begins, for the
@@ -437,10 +444,21 @@ export function navFor(
  */
 export const PERSONAL_SECTIONS: Section[] = ["events", "community", "profile", "activity"];
 
-export function isBoard(user: SessionUser) {
-  return (
-    user.accountKind === "MEMBER" && ["BOARD", "EXEC_BOARD"].includes(user.role)
-  );
+/**
+ * Who gets the board workspace — money, the pipeline, the roster, the
+ * speaker directory. Exec only for now.
+ *
+ * Widening it to BOARD means this function *and* `runsWorkspace` in the
+ * backend's lib/authz.ts. The server re-checks every one of those
+ * endpoints, so changing it here alone would only hide buttons.
+ */
+export function runsWorkspace(user: SessionUser) {
+  return user.accountKind === "MEMBER" && user.role === "EXEC_BOARD";
+}
+
+/** On the board but not exec. Its own helper so the two can diverge. */
+export function isBoardRole(user: SessionUser) {
+  return user.accountKind === "MEMBER" && user.role === "BOARD";
 }
 /**
  * The five kinds of person here — mirrors lib/stage.ts on the backend,
