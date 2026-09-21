@@ -238,50 +238,16 @@ export function ProfileEditor({
           </label>
           {speaker && (
             <>
-              <div className="d-form-section" id="talk">
-                <h2>Your talk</h2>
-                <p>
-                  The two things we can&apos;t print a poster or run a room
-                  without.
-                </p>
-                <label>
-                  <span className="d-label-row">
-                    What should we call your talk?
-                    <span className="d-required">Required</span>
-                  </span>
-                  <input
-                    value={draft.speakerSubmission?.talkTitle || ""}
-                    onChange={(e) => submission("talkTitle", e.target.value)}
-                    maxLength={200}
-                    placeholder="e.g. Shipping your first production service"
-                  />
-                  <small>This is the title students will see.</small>
-                </label>
-                <label>
-                  <span className="d-label-row">
-                    Link to your slides
-                    <span className="d-required">Required</span>
-                  </span>
-                  <input
-                    type="url"
-                    value={draft.speakerSubmission?.slidesUrl || ""}
-                    onChange={(e) => submission("slidesUrl", e.target.value)}
-                    placeholder="https://docs.google.com/presentation/..."
-                  />
-                  <small>
-                    A link, not a file — so your deck opens on whatever laptop
-                    is plugged in that day. Google Slides, Canva, a PDF in
-                    Drive: anything we can open.
-                  </small>
-                </label>
-              </div>
               <div className="d-form-section" id="availability">
                 <h2>
-                  Your availability <span className="d-required">Required</span>
+                  <span className="d-step">1</span> Your availability{" "}
+                  <span className="d-required">Required</span>
                 </h2>
                 <p>
-                  Share dates and times with the board. These are availability
-                  windows, not confirmed bookings. Use Chicago local time.
+                  Start here. Before anything else we need to know when you
+                  could come in, so we can agree a date that works for both of
+                  us. These are windows, not confirmed bookings — use Chicago
+                  local time.
                 </p>
                 {windows.map((w, i) => (
                   <fieldset className="d-window" key={i}>
@@ -350,6 +316,46 @@ export function ProfileEditor({
                 >
                   + Add availability
                 </button>
+              </div>
+              <div className="d-form-section" id="talk">
+                <h2>
+                  <span className="d-step">2</span> Your talk
+                </h2>
+                <p>
+                  Once we&apos;ve agreed a date: the two things we can&apos;t
+                  print a poster or run a room without. Saved as you go, so you
+                  can come back to it.
+                </p>
+                <label>
+                  <span className="d-label-row">
+                    What should we call your talk?
+                    <span className="d-required">Required</span>
+                  </span>
+                  <input
+                    value={draft.speakerSubmission?.talkTitle || ""}
+                    onChange={(e) => submission("talkTitle", e.target.value)}
+                    maxLength={200}
+                    placeholder="e.g. Shipping your first production service"
+                  />
+                  <small>This is the title students will see.</small>
+                </label>
+                <label>
+                  <span className="d-label-row">
+                    Link to your slides
+                    <span className="d-required">Required</span>
+                  </span>
+                  <input
+                    type="url"
+                    value={draft.speakerSubmission?.slidesUrl || ""}
+                    onChange={(e) => submission("slidesUrl", e.target.value)}
+                    placeholder="https://docs.google.com/presentation/..."
+                  />
+                  <small>
+                    A link, not a file — so your deck opens on whatever laptop
+                    is plugged in that day. Google Slides, Canva, a PDF in
+                    Drive: anything we can open.
+                  </small>
+                </label>
               </div>
               <div className="d-form-section">
                 <h2>

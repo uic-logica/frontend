@@ -2060,6 +2060,24 @@
   margin: 0;
 }
 
+/* The step number in a section heading, and the same number standing in for
+   the checkmark on an unfinished task — the order is the point, so it should
+   be legible without reading the copy. */
+.d-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--d-gold);
+  color: var(--d-ink);
+  font-size: 11px;
+  font-weight: 700;
+  vertical-align: 2px;
+}
+
 .d-link-event {
   display: block;
   margin: 18px 0 4px;

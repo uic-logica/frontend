@@ -22,30 +22,38 @@ export function SpeakerHome({
   const stats = profile?.talkStats ?? null;
   const first = (profile?.name || user.name || "there").split(" ")[0];
 
-  // What the board is actually waiting on, in the order they need it, and
-  // honest about which parts they can skip. A speaker shouldn't have to
-  // guess which blanks matter.
+  const hasAvailability = !!submission?.availability?.length;
+
+  // Availability comes first because everything after it is wasted effort if
+  // no date works: the board can't confirm a talk they can't schedule. The
+  // rest stays open — a speaker who wants to fill it in early isn't blocked,
+  // they just see which step actually unlocks the others.
   const checks = [
     {
+      step: 1,
+      label: "Share your availability",
+      note: "Dates and times that work, so we can find one that suits us both.",
+      done: hasAvailability,
+      required: true,
+      href: "/dashboard/profile#availability",
+    },
+    {
+      step: 2,
       label: "Name your talk",
-      note: "The title students will see on the poster.",
+      note: hasAvailability
+        ? "The title students will see on the poster."
+        : "Once a date works, tell us what to put on the poster.",
       done: !!submission?.talkTitle,
       required: true,
       href: "/dashboard/profile#talk",
     },
     {
+      step: 3,
       label: "Link your slides",
       note: "A link, not a file — it opens on whatever laptop is in the room.",
       done: !!submission?.slidesUrl,
       required: true,
       href: "/dashboard/profile#talk",
-    },
-    {
-      label: "Share your availability",
-      note: "Dates and times that work, so we can pick one.",
-      done: !!submission?.availability?.length,
-      required: true,
-      href: "/dashboard/profile#availability",
     },
     {
       label: "Introduce yourself",
@@ -71,13 +79,13 @@ export function SpeakerHome({
         description={
           !profile
             ? "Your talk, your slides, and how your room is filling up."
-            : outstanding.length
-              ? `We still need ${outstanding.length} thing${
-                  outstanding.length === 1 ? "" : "s"
-                } from you: ${outstanding
-                  .map((c) => c.label.toLowerCase())
-                  .join(", ")}.`
-              : "You've given us everything we need. Nothing else to do."
+            : !hasAvailability
+              ? "First things first: tell us when you're free, so we can work out a date that suits us both."
+              : outstanding.length
+                ? `Next up: ${outstanding
+                    .map((c) => c.label.toLowerCase())
+                    .join(", then ")}.`
+                : "You've given us everything we need. Nothing else to do."
         }
       />
 
@@ -85,9 +93,18 @@ export function SpeakerHome({
         <div className="d-talk-main">
           <span className="d-talk-label">
             <span className="d-live-dot" />
-            {event ? "Scheduled" : "Not scheduled yet"}
+            {event
+              ? "Scheduled"
+              : hasAvailability
+                ? "Waiting on a date from us"
+                : "Step 1: tell us when you're free"}
           </span>
-          <h2>{submission?.talkTitle || "Your talk needs a name."}</h2>
+          <h2>
+            {submission?.talkTitle ||
+              (hasAvailability
+                ? "Your talk needs a name."
+                : "Let's find a date that works.")}
+          </h2>
           <p>
             {event
               ? `${date(event.startsAt, {
@@ -98,12 +115,20 @@ export function SpeakerHome({
                   hour: "numeric",
                   minute: "2-digit",
                 })}${event.location ? ` · ${event.location}` : ""}`
-              : "The board will confirm a date with you. Everything below is ready whenever you are."}
+              : hasAvailability
+                ? "Thanks — we have your availability. The board will confirm a date with you."
+                : "Before anything else we need to know when you're free. Everything else can wait until we've agreed a date."}
           </p>
           <div className="d-actions">
-            <Link className="d-button" href="/dashboard/profile#talk">
-              {submission?.talkTitle ? "Edit talk details" : "Name your talk"}
-            </Link>
+            {hasAvailability ? (
+              <Link className="d-button" href="/dashboard/profile#talk">
+                {submission?.talkTitle ? "Edit talk details" : "Name your talk"}
+              </Link>
+            ) : (
+              <Link className="d-button" href="/dashboard/profile#availability">
+                Share your availability
+              </Link>
+            )}
             {submission?.slidesUrl ? (
               <a
                 className="d-button secondary"
@@ -179,7 +204,7 @@ export function SpeakerHome({
               key={c.label}
             >
               <span className="d-task-circle">
-                <Icon name={c.done ? "check" : "profile"} />
+                {c.done ? <Icon name="check" /> : (c.step ?? <Icon name="profile" />)}
               </span>
               <span>
                 <strong>
