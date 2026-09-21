@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
+import { AnimatedLogo } from "@/components/club/AnimatedLogo";
 import type { ReactNode } from "react";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { LogoMarquee, PartnerLogo } from "@/components/club/LogoMarquee";
-import { TypewriterLine } from "@/components/club/Typewriter";
+import { HERO_REVEAL_DURATION, TypewriterLine } from "@/components/club/Typewriter";
 
 const stats = [
   {
@@ -16,7 +16,7 @@ const stats = [
     ),
   },
   {
-    value: "40+",
+    value: "20+",
     label: "Workshops, company visits, and socials hosted each year.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,7 +96,7 @@ const pathways = [
   {
     index: 1,
     title: "Development",
-    text: "Join project teams shipping the LOGICA site and tools that serve our members on campus.",
+    text: "Project teams building this site and the club's tools.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
@@ -106,7 +106,7 @@ const pathways = [
   {
     index: 2,
     title: "Mentorship",
-    text: "New to computing? Learn from peers and mentors through workshops and study cohorts.",
+    text: "Workshops and study cohorts. Start with no experience.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
@@ -121,7 +121,7 @@ const pathways = [
   {
     index: 3,
     title: "Events",
-    text: "Socials, hack nights, company visits, and talks with industry and alumni.",
+    text: "Socials, hack nights, company visits, and talks.",
     link: "/events",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,7 +132,7 @@ const pathways = [
   {
     index: 4,
     title: "Community",
-    text: "Find people who share your drive — Discord, meetups, and a home for Latinx technologists at UIC.",
+    text: "Discord, meetups, and Latinx technologists at UIC.",
     link: "/join",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -161,9 +161,13 @@ function LevelCard({
   icon?: ReactNode;
 }) {
   const card = (
-    <div className="group relative flex h-full flex-col rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.04] hover:ring-white/20">
-      <div className="mb-7 flex items-start justify-between">
-        <span className="font-mono text-xs tracking-[0.3em] text-white transition-colors duration-300">
+    <div
+      className={`club-card group relative flex h-full flex-col bg-white/[0.02] p-6 ${
+        link ? "club-card-interactive hover:bg-white/[0.04]" : ""
+      }`}
+    >
+      <div className="mb-4 flex h-5 items-center justify-between">
+        <span className="text-xs font-semibold tracking-[0.3em] text-white transition-colors duration-300">
           {String(index).padStart(2, "0")}
         </span>
         {link ? (
@@ -177,10 +181,10 @@ function LevelCard({
           </svg>
         ) : null}
       </div>
-      {icon ? <div className="mb-5 text-white/80">{icon}</div> : null}
-      <h3 className="text-2xl font-semibold text-white">{title}</h3>
-      <span className="mt-4 block h-px w-8 bg-white/15 transition-all duration-300 group-hover:w-12 group-hover:bg-signal" />
-      <p className="mt-4 text-base leading-relaxed text-white lg:text-[1.0625rem]">{text}</p>
+      {icon ? <div className="mb-3 text-white/80">{icon}</div> : null}
+      <h3 className="text-xl font-semibold text-white">{title}</h3>
+      <span className="mt-3 block h-px w-8 bg-white/15 transition-all duration-300 group-hover:w-12 group-hover:bg-signal" />
+      <p className="mt-3 text-body-sm leading-relaxed text-white">{text}</p>
     </div>
   );
 
@@ -196,7 +200,7 @@ function Partners() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="w-3/4 flex flex-col items-center mx-auto">
-        <div className="text-3xl font-bold text-white text-center md:text-4xl">Our Partners</div>
+        <div className="type-title text-3xl text-white text-center md:text-4xl">Our Partners</div>
         <div className=" text-white lg:text-2xl text-lg mt-5 text-center">
           The organizations that make LOGICA possible
         </div>
@@ -229,7 +233,7 @@ function Partners() {
         ))}
       </div>
 
-      <div className="mt-16 flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] px-8 py-10 text-center">
+      <div className="club-card mx-auto mt-16 flex w-fit max-w-xl flex-col items-center gap-3 bg-white/[0.02] px-8 py-10 text-center">
         <p className="text-lg text-white md:text-xl">Interested in partnering with LOGICA?</p>
         <p className="text-sm text-white">Join our community of innovators and tech leaders.</p>
         <a
@@ -248,41 +252,41 @@ export default function Home() {
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer className="pl-6 sm:pl-10 lg:pl-16">
-          <p className="mb-3 text-xl font-semibold text-signal md:text-3xl">
-            We are the
-          </p>
-          <TypewriterLine />
-          <div className="mt-10 text-base md:text-lg">
-            <p className="max-w-2xl text-white">
-              Increasing the participation and success of students from Latinx and underrepresented
-              communities pursuing careers in the field of computing and computer science.
+        <SectionContainer className="grid items-center gap-10 pl-6 sm:pl-10 lg:grid-cols-[minmax(0,1fr)_minmax(240px,340px)] lg:gap-12 lg:pl-16">
+          <div className="min-w-0">
+            <p className="mb-3 text-xl font-semibold text-signal md:text-3xl">
+              We are
             </p>
+            <TypewriterLine />
+            <div className="mt-10 text-base md:text-lg">
+              <p className="max-w-2xl text-white">
+                Increasing the participation and success of students from Latinx and underrepresented
+                communities pursuing careers in the field of computing and computer science.
+              </p>
+            </div>
+          </div>
+          <div className="order-first mx-auto w-full max-w-[240px] text-white sm:max-w-[280px] lg:order-last lg:max-w-[340px]">
+            <AnimatedLogo duration={HERO_REVEAL_DURATION} />
           </div>
         </SectionContainer>
 
         <SectionContainer className="mt-20 pl-6 sm:pl-10 lg:pl-16">
-          <h2 className="mb-8 text-3xl font-bold text-white md:text-4xl">By the numbers</h2>
+          <h2 className="mb-8 type-title text-3xl text-white md:text-4xl">By the numbers</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((s) => (
-              <div
-                key={s.value}
-                className="w-full text-left overflow-hidden transition-all duration-300 hover:shadow-lg hover:translate-y-[-4px]"
-              >
-                <div className="flex flex-col">
-                  <div className="mb-3 text-white opacity-75">{s.icon}</div>
-                  <div className="text-white text-3xl md:text-4xl font-bold mb-3 font-display">
-                    {s.value}
-                  </div>
-                  <div className="text-white text-lg">{s.label}</div>
+              <div key={s.value} className="w-full text-left">
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="text-white opacity-75">{s.icon}</span>
+                  <span className="font-display text-3xl text-white md:text-4xl">{s.value}</span>
                 </div>
+                <div className="text-lg text-white">{s.label}</div>
               </div>
             ))}
           </div>
         </SectionContainer>
 
         <SectionContainer>
-          <h2 className="mb-10 text-center text-3xl font-bold text-white md:text-4xl">
+          <h2 className="mb-10 text-center type-title text-3xl text-white md:text-4xl">
             Where Our Members Land
           </h2>
           <LogoMarquee items={membersLand} />
@@ -290,12 +294,12 @@ export default function Home() {
 
         <SectionContainer>
           <div className="w-3/4 flex flex-col items-center mx-auto">
-            <div className="text-3xl font-bold text-white text-center md:text-4xl">
+            <div className="type-title text-3xl text-white text-center md:text-4xl">
               Cultivating a passion for computer science, at all skill levels
             </div>
             <div className=" text-white lg:text-2xl text-lg mt-5 text-center" />
           </div>
-          <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {pathways.map((p) => (
               <LevelCard key={p.index} {...p} />
             ))}
@@ -307,31 +311,20 @@ export default function Home() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="relative overflow-hidden rounded-2xl bg-white/[0.02] px-8 py-14 ring-1 ring-white/10 md:px-16 md:py-20">
-            <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 items-center justify-center overflow-hidden md:flex">
-              <Image
-                src="/logo-logica.png"
-                alt=""
-                aria-hidden
-                width={320}
-                height={320}
-                className="object-contain opacity-[0.06]"
-                style={{ maxWidth: "none", width: "80%", height: "80%" }}
-              />
-            </div>
-            <div className="relative z-10 max-w-2xl">
-              <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl">
+          <div className="club-card mx-auto max-w-3xl bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
+            <div className="flex flex-col items-center text-center">
+              <h2 className="type-title text-3xl leading-tight text-white md:text-4xl">
                 Ready to join UIC&apos;s Latinx computing community?
               </h2>
-              <p className="mt-5 text-lg leading-relaxed text-white lg:text-2xl">
-                General membership interest is open year-round. Click below to learn more and apply.
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white">
+                Open to any UIC student, whatever your major.
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/join"
                   className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black transition-transform duration-300 hover:-translate-y-0.5"
                 >
-                  Apply to Join
+                  Join LOGICA
                 </Link>
                 <Link
                   href="/events"

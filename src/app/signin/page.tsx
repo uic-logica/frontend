@@ -112,7 +112,7 @@ export default function SignInPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">
+            <h1 className="type-title text-3xl md:text-4xl text-white">
               {step === "role" && profile ? "You're signed in" : "Sign in to LOGICA"}
             </h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
@@ -121,10 +121,10 @@ export default function SignInPage() {
                 : "Passwordless — only .edu addresses are accepted."}
             </p>
 
-            <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
+            <div className="mt-10 club-card bg-white/[0.02] p-8 md:p-10">
               {step === "role" && profile ? (
                 <>
-                  <div className="border border-white/15 bg-white/[0.04] px-5 py-6">
+                  <div className="club-card bg-white/[0.04] px-5 py-6">
                     <p className="type-h3 text-white">{profile.name?.trim() || profile.email}</p>
                     <p className="mt-1 text-body-sm text-white">{profile.email}</p>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -150,7 +150,7 @@ export default function SignInPage() {
 
                   {error && (
                     <div
-                      className="mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
+                      className="rounded-lg mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
                       role="alert"
                     >
                       {error}
@@ -163,7 +163,7 @@ export default function SignInPage() {
                         <label htmlFor="email" className="type-label text-white">
                           UIC email
                         </label>
-                        <p className="text-caption text-white">Example: netid@uic.edu</p>
+                        <p className="text-body-sm text-white">Example: netid@uic.edu</p>
                         <input
                           id="email"
                           type="email"
@@ -217,16 +217,10 @@ export default function SignInPage() {
               )}
             </div>
 
-            <p className="mt-8 text-caption text-white">
+            <p className="mt-8 text-body text-white">
               Not from UIC?{" "}
               <Link href="/speaker-signin" className="font-bold text-signal underline-offset-2 hover:underline">
                 Sign in here
-              </Link>
-            </p>
-            <p className="mt-2 text-caption text-white">
-              Need the public site?{" "}
-              <Link href="/" className="font-bold text-signal underline-offset-2 hover:underline">
-                Back home
               </Link>
             </p>
           </div>

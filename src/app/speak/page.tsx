@@ -30,7 +30,7 @@ export default function SpeakPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">Speak at LOGICA</h1>
+            <h1 className="type-title text-3xl md:text-4xl text-white">Speak at LOGICA</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               Tell us you&apos;re interested — we&apos;ll follow up to confirm details.
             </p>
@@ -51,7 +51,7 @@ export default function SpeakPage() {
             {speakers && speakers.length > 0 && (
               <ul className="mt-4 flex flex-col gap-2">
                 {speakers.map((s) => (
-                  <li key={s.id} className="border border-white/15 px-4 py-2 text-body-sm text-white">
+                  <li key={s.id} className="rounded-lg border border-white/15 px-4 py-2 text-body-sm text-white">
                     {s.name}
                     {s.organization ? ` · ${s.organization}` : ""}
                   </li>
@@ -114,7 +114,7 @@ function DraftPanel() {
   }
 
   return (
-    <div className="border border-signal/40 p-6">
+    <div className="club-card p-6">
       <h2 className="type-h4 text-white">Create a private link (board only)</h2>
       <p className="mt-2 text-body-sm text-white">
         Fill in whatever you already know — the speaker only fills in the rest.

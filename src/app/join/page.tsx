@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { buttonClasses } from "@/components/ui/ButtonLink";
 
 const roles = [
   {
@@ -55,7 +56,7 @@ export default function JoinPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="text-3xl font-bold md:text-4xl text-white">Join LOGICA</h1>
+          <h1 className="type-title text-3xl md:text-4xl text-white">Join LOGICA</h1>
           <p className="mt-4 max-w-3xl text-body-lg text-white">
             We are UIC&apos;s collective of Latinx developers, designers, and computing enthusiasts.
           </p>
@@ -68,7 +69,7 @@ export default function JoinPage() {
           <h2 className="type-h2 mb-8 text-white">Available Roles</h2>
           <div className="grid gap-6 md:grid-cols-3">
             {roles.map((r) => (
-              <article key={r.title} className="border border-white/20 p-6">
+              <article key={r.title} className="club-card p-6">
                 <h3 className="type-h4 text-white">{r.title}</h3>
                 <p className="mt-3 text-body text-white">{r.body}</p>
               </article>
@@ -104,14 +105,14 @@ export default function JoinPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="border border-signal/40 p-8 md:p-12">
+          <div className="club-card w-fit max-w-2xl p-8 md:p-12">
             <h2 className="type-h3 text-white">Interested in joining?</h2>
             <p className="mt-3 max-w-2xl text-body text-white">
               Join our community of passionate developers, designers, and tech enthusiasts.
             </p>
             <a
               href="mailto:logica@uic.edu?subject=LOGICA%20membership%20interest"
-              className="mt-6 inline-flex min-h-12 items-center bg-signal px-6 font-bold text-white shadow-block"
+              className={`${buttonClasses()} mt-6`}
             >
               Apply to Join
             </a>

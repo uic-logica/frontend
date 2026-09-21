@@ -41,7 +41,7 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
     body = <p className="text-body-sm text-white">Loading…</p>;
   } else if (state.kind === "invalid") {
     body = (
-      <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10">
+      <div className="club-card w-fit max-w-xl bg-white/[0.02] p-8">
         <h2 className="type-h2 text-white">This link isn&apos;t valid</h2>
         <p className="mt-3 text-body text-white">
           Double check the link, or ask whoever sent it to you for a new one.
@@ -50,7 +50,7 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
     );
   } else if (state.kind === "submitted") {
     body = (
-      <div className="rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10">
+      <div className="club-card w-fit max-w-xl bg-white/[0.02] p-8">
         <h2 className="type-h2 text-white">Already submitted</h2>
         <p className="mt-3 text-body text-white">
           This was already filled out. Reach out if anything needs to change.
@@ -77,7 +77,7 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">Confirm your details</h1>
+            <h1 className="type-title text-3xl md:text-4xl text-white">Confirm your details</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               We&apos;ve got some of this already — just fill in what&apos;s left.
             </p>

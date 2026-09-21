@@ -35,7 +35,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
           <div className="mx-auto max-w-md">
             {event ? (
               <>
-                <h1 className="text-3xl font-bold md:text-4xl text-white">{event.title}</h1>
+                <h1 className="type-title text-3xl md:text-4xl text-white">{event.title}</h1>
                 <p className="mt-3 text-body-lg text-white">
                   {new Date(event.startsAt).toLocaleString()}
                   {event.location ? ` · ${event.location}` : ""}
@@ -44,7 +44,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
               </>
             ) : authError ? (
               <>
-                <h1 className="text-3xl font-bold md:text-4xl text-white">Event details</h1>
+                <h1 className="type-title text-3xl md:text-4xl text-white">Event details</h1>
                 <p className="mt-3 text-body text-white">
                   <a href="/signin" className="font-bold text-signal hover:underline">
                     Sign in
@@ -116,14 +116,14 @@ function MaterialsPanel({ eventId, isBoard }: { eventId: string; isBoard: boolea
   }
 
   return (
-    <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
+    <div className="club-card bg-white/[0.02] p-6 sm:p-8">
       <h2 className="type-h3 text-white">Materials</h2>
       {materials === null && <p className="mt-3 text-body-sm text-white">Loading…</p>}
       {materials?.length === 0 && <p className="mt-3 text-body-sm text-white">Nothing uploaded yet.</p>}
       {materials && materials.length > 0 && (
         <ul className="mt-4 flex flex-col gap-2">
           {materials.map((m) => (
-            <li key={m.id} className="flex items-center justify-between gap-3 border border-white/10 px-4 py-3 text-body-sm">
+            <li key={m.id} className="rounded-lg flex items-center justify-between gap-3 border border-white/10 px-4 py-3 text-body-sm">
               <a
                 href={`/api/materials/${m.id}/download`}
                 className="font-bold text-signal hover:underline"
@@ -180,7 +180,7 @@ function FeedPanel({ eventId, eventTitle }: { eventId: string; eventTitle: strin
 
   if (signedOut) {
     return (
-      <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
+      <div className="club-card bg-white/[0.02] p-6 sm:p-8">
         <h2 className="type-h3 text-white">Notes on {eventTitle}</h2>
         <p className="mt-3 text-body-sm text-white">
           <a href="/signin" className="font-bold text-signal hover:underline">
@@ -209,7 +209,7 @@ function FeedPanel({ eventId, eventTitle }: { eventId: string; eventTitle: strin
   }
 
   return (
-    <div className="rounded-2xl bg-white/[0.02] p-6 ring-1 ring-white/10 sm:p-8">
+    <div className="club-card bg-white/[0.02] p-6 sm:p-8">
       <h2 className="type-h3 text-white">Notes on {eventTitle}</h2>
 
       <form onSubmit={submit} className="mt-4 flex flex-col gap-3">

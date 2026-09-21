@@ -49,15 +49,15 @@ export default function SetSpeakerPasswordPage() {
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-md">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">Set your password</h1>
+            <h1 className="type-title text-3xl md:text-4xl text-white">Set your password</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">
               First time signing in — pick a password you&apos;ll actually remember.
             </p>
 
-            <div className="mt-10 rounded-2xl bg-white/[0.02] p-8 ring-1 ring-white/10 md:p-10">
+            <div className="mt-10 club-card bg-white/[0.02] p-8 md:p-10">
               {error && (
                 <div
-                  className="mb-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
+                  className="rounded-lg mb-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
                   role="alert"
                 >
                   {error}

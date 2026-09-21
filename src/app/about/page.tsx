@@ -6,7 +6,7 @@ export default function AboutPage() {
     <ClubShell>
       <PageContainer>
         <SectionContainer>
-          <h1 className="text-3xl font-bold md:text-4xl text-white">About LOGICA</h1>
+          <h1 className="type-title text-3xl md:text-4xl text-white">About LOGICA</h1>
           <p className="mt-4 text-xl text-signal md:text-2xl">
             Latinx Organization for Growth in Computing and Academics
           </p>
@@ -19,14 +19,14 @@ export default function AboutPage() {
 
         <SectionContainer>
           <div className="grid gap-8 md:grid-cols-2">
-            <div className="border border-white/20 p-8">
+            <div className="club-card p-8">
               <h2 className="type-h3 text-white">What we actually do</h2>
               <p className="mt-4 text-body text-white">
                 Bring in speakers, run company visits, and pass on the openings that reach
                 us. Last year that meant LeetCode and Hot Wings, and a visit to CME.
               </p>
             </div>
-            <div className="border border-white/20 p-8">
+            <div className="club-card p-8">
               <h2 className="type-h3 text-white">Who shows up</h2>
               <p className="mt-4 text-body text-white">
                 Members come from CS, data science, computer engineering, and plenty of
@@ -54,7 +54,7 @@ export default function AboutPage() {
                 d: "A family of students who pass along their learned mistakes and successes, and help each other through the rest.",
               },
             ].map((v) => (
-              <li key={v.t} className="border-t border-signal pt-4">
+              <li key={v.t} className="club-card p-6">
                 <h3 className="type-h4 text-white">{v.t}</h3>
                 <p className="mt-2 text-body-sm text-white">{v.d}</p>
               </li>

@@ -75,7 +75,7 @@ export default function AttendancePage() {
             <div className="h-full w-1/2 bg-signal" />
             <div className="h-full w-1/2 bg-paper-dim" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="bg-signal px-6 py-3 type-h3 text-ink shadow-block">Checked in</span>
+              <span className="rounded-lg bg-signal px-6 py-3 type-h3 text-ink shadow-block">Checked in</span>
             </div>
           </div>
         )}
@@ -91,7 +91,7 @@ export default function AttendancePage() {
               required
               value={eventId}
               onChange={(e) => setEventId(e.target.value)}
-              className={`${inputClass} font-mono tracking-[0.12em]`}
+              className={`${inputClass} tracking-[0.12em]`}
               placeholder="Event ID"
             />
           </Field>
