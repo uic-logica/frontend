@@ -417,14 +417,19 @@ export function Notifications({
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
-  async function read(id: string) {
-    setBusy(id);
+  const unread = notices?.filter((n) => !n.readAt) ?? [];
+  const earlier = notices?.filter((n) => n.readAt) ?? [];
+  async function read(ids: string[]) {
+    setBusy(ids.length === 1 ? ids[0] : "all");
     setError("");
     try {
-      await api(`/api/notifications/${id}`, { method: "PATCH" });
+      await Promise.all(
+        ids.map((id) => api(`/api/notifications/${id}`, { method: "PATCH" })),
+      );
+      const at = new Date().toISOString();
       onChange(
         (notices || []).map((n) =>
-          n.id === id ? { ...n, readAt: new Date().toISOString() } : n,
+          ids.includes(n.id) ? { ...n, readAt: at } : n,
         ),
       );
     } catch (e) {
@@ -444,25 +449,56 @@ export function Notifications({
           {error}
         </p>
       )}
-      <section className="d-panel">
-        {notices?.map((n) => (
-          <div className="d-notification" key={n.id}>
-            <span className={n.readAt ? "d-read-dot" : "d-live-dot"} />
-            <div>
-              <p>{n.message}</p>
-              <small>{date(n.createdAt)}</small>
-            </div>
-            {!n.readAt && (
+      {unread.length > 0 && (
+        <section className="d-panel">
+          <div className="d-section-head">
+            <h2>Unread</h2>
+            <button
+              className="d-text-button"
+              disabled={!!busy}
+              onClick={() => read(unread.map((n) => n.id))}
+            >
+              Mark all read
+            </button>
+          </div>
+          {unread.map((n) => (
+            <div className="d-notification is-unread" key={n.id}>
+              <span className="d-live-dot" />
+              <div>
+                <p>{n.message}</p>
+                <small>{date(n.createdAt)}</small>
+              </div>
               <button
                 disabled={!!busy}
                 className="d-text-button"
-                onClick={() => read(n.id)}
+                onClick={() => read([n.id])}
               >
                 {busy === n.id ? "Saving…" : "Mark read"}
               </button>
-            )}
+            </div>
+          ))}
+        </section>
+      )}
+      {/* Read notices move down here, which is the point of marking one —
+          the list you're working through gets shorter. */}
+      {earlier.length > 0 && (
+        <section className="d-panel">
+          <div className="d-section-head">
+            <h2>Earlier</h2>
+            <span className="d-muted">Already read</span>
           </div>
-        ))}
+          {earlier.map((n) => (
+            <div className="d-notification" key={n.id}>
+              <span className="d-read-dot" />
+              <div>
+                <p>{n.message}</p>
+                <small>{date(n.createdAt)}</small>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+      <section className="d-panel">
         {notices?.length === 0 && (
           <Empty title="All caught up">
             We’ll put club updates and reminders here when there’s something for

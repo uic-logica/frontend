@@ -44,6 +44,31 @@ function Body({ body, events }: { body: string; events: Event[] | null }) {
   return <p>{parts}</p>;
 }
 
+/** "Today" / "Yesterday" / a date — the separator between days of chat. */
+function dayLabel(iso: string) {
+  const at = new Date(iso);
+  const midnight = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const days = Math.round((midnight(new Date()) - midnight(at)) / 86_400_000);
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  return at.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+    ...(at.getFullYear() === new Date().getFullYear()
+      ? {}
+      : { year: "numeric" }),
+  });
+}
+
+function clock(iso: string) {
+  return new Date(iso).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 /** The open `[[` the caret currently sits inside, if any. */
 function openReference(value: string, caret: number) {
   const before = value.slice(0, caret);
@@ -60,7 +85,7 @@ export function Thread({
   user,
   events,
   title = "Messages",
-  description = "You and the LOGICA board. Type [[ to reference an event.",
+  description = "You and the LOGICA board",
 }: {
   submissionId: string;
   user: SessionUser;
@@ -122,7 +147,13 @@ export function Thread({
   }
 
   function keys(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (!picker || !matches.length) return;
+    if (!picker || !matches.length) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        void send(e);
+      }
+      return;
+    }
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       setHighlight(
@@ -139,7 +170,7 @@ export function Thread({
     }
   }
 
-  async function send(e: React.FormEvent) {
+  async function send(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!draft.trim()) return;
     setBusy(true);
@@ -160,41 +191,64 @@ export function Thread({
   }
 
   return (
-    <section className="d-panel d-thread">
-      <div className="d-section-head">
+    <section className="d-panel d-thread d-chat-panel">
+      <div className="d-section-head d-chat-head">
         <h2>{title}</h2>
         <span className="d-muted">{description}</span>
       </div>
-      <div className="d-thread-log" ref={log}>
+      <div className="d-chat" ref={log}>
         {messages === null && <p className="d-muted">Loading the thread…</p>}
         {messages?.length === 0 && (
           <p className="d-muted d-thread-empty">
             Nothing here yet. Ask a question, or tell the board what you need.
           </p>
         )}
-        {messages?.map((m) => (
-          <article
-            className={`d-message ${m.author.id === user.id ? "is-mine" : ""}`}
-            key={m.id}
-          >
-            <span className="d-avatar">{initials(m.author.name)}</span>
-            <div>
-              <header>
-                <strong>{m.author.name || "LOGICA"}</strong>
-                <small>
-                  {m.author.accountKind === "SPEAKER" ? "Speaker" : "Board"} ·{" "}
-                  {date(m.createdAt, {
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                </small>
-              </header>
-              <Body body={m.body} events={events} />
+        {messages?.map((m, i) => {
+          const previous = messages[i - 1];
+          const mine = m.author.id === user.id;
+          const newDay =
+            !previous || dayLabel(previous.createdAt) !== dayLabel(m.createdAt);
+          // Consecutive messages from the same person on the same day are one
+          // run: only the first carries a name, only the last carries a tail.
+          const runStart = newDay || previous?.author.id !== m.author.id;
+          const next = messages[i + 1];
+          const runEnd =
+            !next ||
+            next.author.id !== m.author.id ||
+            dayLabel(next.createdAt) !== dayLabel(m.createdAt);
+          return (
+            <div key={m.id}>
+              {newDay && (
+                <div className="d-chat-day">
+                  <span>{dayLabel(m.createdAt)}</span>
+                </div>
+              )}
+              <div
+                className={`d-bubble-row ${mine ? "is-mine" : ""} ${
+                  runEnd ? "is-last" : ""
+                }`}
+              >
+                <span className="d-avatar" aria-hidden={!runStart}>
+                  {runStart ? initials(m.author.name) : ""}
+                </span>
+                <div className="d-bubble">
+                  {runStart && !mine && (
+                    <span className="d-bubble-who">
+                      {m.author.name || "LOGICA"}
+                      <small>
+                        {m.author.accountKind === "SPEAKER"
+                          ? "Speaker"
+                          : "Board"}
+                      </small>
+                    </span>
+                  )}
+                  <Body body={m.body} events={events} />
+                  <time dateTime={m.createdAt}>{clock(m.createdAt)}</time>
+                </div>
+              </div>
             </div>
-          </article>
-        ))}
+          );
+        })}
       </div>
       {error && (
         <p className="d-error" role="alert">
@@ -209,10 +263,10 @@ export function Thread({
           <textarea
             id={`thread-${submissionId}`}
             ref={box}
-            rows={2}
+            rows={1}
             maxLength={2000}
             value={draft}
-            placeholder="Write a message. Type [[ to reference an event."
+            placeholder="Message — type [[ to reference an event"
             onKeyDown={keys}
             onChange={(e) => sync(e.target.value, e.target.selectionStart)}
             onClick={(e) =>
@@ -244,8 +298,12 @@ export function Thread({
             </ul>
           )}
         </div>
-        <button className="d-button" disabled={busy || !draft.trim()}>
-          {busy ? "Sending…" : "Send"}
+        <button
+          className="d-send"
+          aria-label="Send message"
+          disabled={busy || !draft.trim()}
+        >
+          <Icon name="arrow" />
         </button>
       </form>
     </section>

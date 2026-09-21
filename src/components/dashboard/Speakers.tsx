@@ -501,7 +501,7 @@ export function Speakers({
               user={user}
               events={events}
               title={`Thread with ${s.name || "this speaker"}`}
-              description="Shared with every board member. Type [[ to reference an event."
+              description="Shared with every board member"
             />
           </section>
         ))}
