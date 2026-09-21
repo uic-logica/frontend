@@ -3,7 +3,7 @@ import { AnimatedLogo } from "@/components/club/AnimatedLogo";
 import type { ReactNode } from "react";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { LogoMarquee, PartnerLogo } from "@/components/club/LogoMarquee";
-import { TypewriterLine } from "@/components/club/Typewriter";
+import { HERO_REVEAL_DURATION, TypewriterLine } from "@/components/club/Typewriter";
 
 const stats = [
   {
@@ -265,8 +265,8 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto w-full max-w-[240px] text-white sm:max-w-[280px] lg:max-w-[340px]">
-            <AnimatedLogo />
+          <div className="order-first mx-auto w-full max-w-[240px] text-white sm:max-w-[280px] lg:order-last lg:max-w-[340px]">
+            <AnimatedLogo duration={HERO_REVEAL_DURATION} />
           </div>
         </SectionContainer>
 

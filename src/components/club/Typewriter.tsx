@@ -1,53 +1,26 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import type { CSSProperties } from "react";
+import styles from "./Typewriter.module.css";
 
-/** Match YCS: type the org name once, then blink the cursor. */
+export const HERO_REVEAL_DURATION = 2350;
 const FULL_TEXT = "LOGICA @ UIC";
-const TYPING_SPEED = 100;
-const CURSOR_BLINK_SPEED = 530;
 
-function subscribeReduced(cb: () => void) {
-  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-  mq.addEventListener("change", cb);
-  return () => mq.removeEventListener("change", cb);
-}
-
-function getReduced() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
+/** CSS shares the logo's initial-render clock, including before hydration. */
 export function TypewriterLine() {
-  const reduced = useSyncExternalStore(subscribeReduced, getReduced, () => true);
-  const [displayText, setDisplayText] = useState("");
-  const [showCursor, setShowCursor] = useState(true);
-  const isTyping = displayText.length < FULL_TEXT.length;
-
-  useEffect(() => {
-    if (reduced || !isTyping) return;
-    const timeout = window.setTimeout(() => {
-      setDisplayText(FULL_TEXT.slice(0, displayText.length + 1));
-    }, TYPING_SPEED);
-    return () => window.clearTimeout(timeout);
-  }, [displayText, isTyping, reduced]);
-
-  useEffect(() => {
-    if (reduced) return;
-    const cursorInterval = window.setInterval(() => {
-      setShowCursor((prev) => !prev);
-    }, CURSOR_BLINK_SPEED);
-    return () => window.clearInterval(cursorInterval);
-  }, [reduced]);
-
   return (
     <h1 className="text-3xl font-semibold text-white sm:text-5xl md:text-6xl">
       <span className="sr-only">{FULL_TEXT}</span>
       <span aria-hidden className="whitespace-normal sm:whitespace-nowrap">
-        {reduced ? FULL_TEXT : displayText}
-        <span className={`${showCursor ? "opacity-100" : "opacity-0"} transition-opacity duration-100`}>
-          |
-        </span>
+        {Array.from(FULL_TEXT).map((character, index) => (
+          <span
+            key={index}
+            className={styles.character}
+            style={{ "--character-delay": `${((index + 1) / FULL_TEXT.length) * HERO_REVEAL_DURATION}ms` } as CSSProperties}
+          >
+            {character}
+          </span>
+        ))}
+        <span className={styles.cursor}>|</span>
       </span>
     </h1>
   );

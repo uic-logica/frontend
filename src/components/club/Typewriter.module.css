@@ -1,0 +1,24 @@
+.character {
+  white-space: pre;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .character {
+    animation: reveal-character 0s linear both;
+    animation-delay: var(--character-delay);
+  }
+
+  .cursor {
+    animation: blink-cursor 1060ms steps(1, end) infinite;
+  }
+}
+
+@keyframes reveal-character {
+  from { visibility: hidden; }
+  to { visibility: visible; }
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
