@@ -3030,3 +3030,36 @@
     transform: none;
   }
 }
+
+/* ---- The one link a board member sends a guest --------------------------
+   Shown exactly once, like the agent token above it — worth the gold edge
+   and worth taking up real space, because there is no second chance to
+   read it. */
+.d-invite-link {
+  border: 1px solid var(--d-gold);
+  border-radius: 9px;
+  padding: 22px 24px;
+  margin-bottom: 22px;
+  background: rgba(254, 204, 21, 0.06);
+}
+.d-invite-link strong {
+  display: block;
+  font-size: 14px;
+}
+.d-invite-link small {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--d-muted);
+  max-width: 62ch;
+}
+.d-invite-link code {
+  display: block;
+  margin: 16px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--d-rule);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  word-break: break-all;
+}

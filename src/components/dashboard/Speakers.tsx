@@ -3,7 +3,15 @@ import { useState } from "react";
 import { api } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
 import { Thread } from "./Thread";
-import { type Event, type Speaker, type SessionUser, date, initials } from "./types";
+import {
+  type Event,
+  type Speaker,
+  type SessionUser,
+  date,
+  initials,
+  inviteUrl,
+  VISIT_LABEL,
+} from "./types";
 
 export function Speakers({
   user,
@@ -28,6 +36,43 @@ export function Speakers({
     tempPassword: string;
   } | null>(null);
   const [draftLink, setDraftLink] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  /**
+   * The link only exists in this response — the server keeps a hash, so it
+   * can never be shown again. Regenerating is the recovery path.
+   */
+  async function newLink(s: Speaker) {
+    setBusy(s.id);
+    setError("");
+    setMessage("");
+    try {
+      const { inviteToken } = await api<{ inviteToken: string }>(
+        `/api/speakers/${s.id}/invite-link`,
+        { method: "POST" },
+      );
+      setDraftLink(inviteUrl(inviteToken));
+      setCopied(false);
+      onChange(await api<Speaker[]>("/api/speakers"));
+      setMessage(
+        `New link for ${s.name || "this guest"}. The previous one stopped working.`,
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(draftLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  }
   const filtered = speakers?.filter(
     (s) =>
       (filter === "ALL" ||
@@ -110,13 +155,16 @@ export function Speakers({
     setBusy("draft");
     setError("");
     try {
-      const result = await api<{ id: string }>("/api/speakers/drafts", {
-        method: "POST",
-        body: JSON.stringify(
-          Object.fromEntries([...data.entries()].filter(([, v]) => v)),
-        ),
-      });
-      setDraftLink(`${window.location.origin}/speak/${result.id}`);
+      const result = await api<{ id: string; inviteToken: string }>(
+        "/api/speakers/drafts",
+        {
+          method: "POST",
+          body: JSON.stringify(
+            Object.fromEntries([...data.entries()].filter(([, v]) => v)),
+          ),
+        },
+      );
+      setDraftLink(inviteUrl(result.inviteToken));
       onChange(await api<Speaker[]>("/api/speakers"));
       setAdding(false);
     } catch (e) {
@@ -164,12 +212,21 @@ export function Speakers({
       </div>
       {adding && (
         <form onSubmit={draft} className="d-panel d-form">
-          <h2>Start a speaker draft</h2>
+          <h2>Invite a guest</h2>
           <p>
-            Add what you know. You’ll get a private link the speaker can use to
-            complete their details.
+            Add what you know — all of it optional. You get one link to send
+            them; they pick a password and they&apos;re set up, no second step
+            from you.
           </p>
           <div className="d-form-grid">
+            <label>
+              What are we asking for
+              <select name="kind" defaultValue="TALK">
+                <option value="TALK">A talk</option>
+                <option value="WORKSHOP">A workshop</option>
+                <option value="COMPANY_VISIT">A company visit</option>
+              </select>
+            </label>
             <label>
               Name
               <input name="name" />
@@ -188,14 +245,28 @@ export function Speakers({
             </label>
           </div>
           <button className="d-button" disabled={!!busy}>
-            {busy === "draft" ? "Creating…" : "Create speaker draft"}
+            {busy === "draft" ? "Creating…" : "Create the link"}
           </button>
         </form>
       )}
       {draftLink && (
-        <div className="d-success" role="status">
-          Draft created. Share this private link with the speaker:{" "}
-          <a href={draftLink}>{draftLink}</a>
+        <div className="d-invite-link" role="status">
+          <div>
+            <strong>Send them this.</strong>
+            <small>
+              Works once, expires in 14 days, and won&apos;t be shown again —
+              copy it now. They set their own email and password on it.
+            </small>
+          </div>
+          <code>{draftLink}</code>
+          <div className="d-actions">
+            <button className="d-button" onClick={copyLink}>
+              {copied ? "Copied" : "Copy link"}
+            </button>
+            <button className="d-text-button" onClick={() => setDraftLink("")}>
+              Done
+            </button>
+          </div>
         </div>
       )}
       {error && (
@@ -273,7 +344,10 @@ export function Speakers({
                       </span>
                     </div>
                   </td>
-                  <td>{s.organization || "Not provided"}</td>
+                  <td>
+                    {s.organization || "Not provided"}
+                    <small>{VISIT_LABEL[s.kind ?? "TALK"]}</small>
+                  </td>
                   <td>
                     <span className={`d-badge ${s.status.toLowerCase()}`}>
                       {!s.submittedAt
@@ -285,7 +359,15 @@ export function Speakers({
                             : "Declined"}
                     </span>
                   </td>
-                  <td>{s.user ? "Active" : "Not invited"}</td>
+                  <td>
+                    {s.user ? (
+                      "Active"
+                    ) : s.inviteLive ? (
+                      <span className="d-badge pending">Link sent</span>
+                    ) : (
+                      "No account"
+                    )}
+                  </td>
                   <td>
                     <button
                       className="d-text-button"
@@ -442,10 +524,22 @@ export function Speakers({
                   LinkedIn ↗
                 </a>
               )}
-              {!s.submittedAt && (
-                <a className="d-button secondary" href={`/speak/${s.id}`}>
-                  Open completion link ↗
-                </a>
+              {/* The link itself is unrecoverable by design, so the only
+                  honest affordance is "make a new one" — which kills the
+                  old. Board-wide, not exec: sending someone a link is not
+                  the same power as handing out an account by email. */}
+              {!s.user && (
+                <button
+                  className="d-button secondary"
+                  disabled={!!busy}
+                  onClick={() => newLink(s)}
+                >
+                  {busy === s.id
+                    ? "Making a link…"
+                    : s.inviteLive
+                      ? "Replace their link"
+                      : "Make a sign-up link"}
+                </button>
               )}
               {s.submittedAt && s.status !== "CONFIRMED" && (
                 <button

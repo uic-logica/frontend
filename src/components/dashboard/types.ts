@@ -36,6 +36,7 @@ export type Profile = {
   resumeFilename: string | null;
   speakerSubmission?: {
     id: string;
+    kind?: VisitKind;
     organization: string | null;
     availability: Window[] | null;
     needs: string | null;
@@ -101,12 +102,37 @@ export type Engagement = {
   posts: { id: string; body: string; createdAt: string }[];
   submissions: { id: string; createdAt: string; form: { title: string } }[];
 };
+/** What we're asking a guest for. Mirrors VisitKind in the backend schema. */
+export type VisitKind = "TALK" | "WORKSHOP" | "COMPANY_VISIT";
+
+export const VISIT_LABEL: Record<VisitKind, string> = {
+  TALK: "Talk",
+  WORKSHOP: "Workshop",
+  COMPANY_VISIT: "Company visit",
+};
+
+/** "their talk" / "their workshop" — for a sentence rather than a chip. */
+export const VISIT_NOUN: Record<VisitKind, string> = {
+  TALK: "talk",
+  WORKSHOP: "workshop",
+  COMPANY_VISIT: "visit",
+};
+
+/** Where a minted invite token points. Built here so nothing hardcodes /join. */
+export function inviteUrl(token: string) {
+  const origin = typeof window === "undefined" ? "" : window.location.origin;
+  return `${origin}/invite/${token}`;
+}
+
 export type Speaker = {
   id: string;
   name: string | null;
   email: string | null;
   organization: string | null;
   status: string;
+  kind?: VisitKind;
+  /** An unused, unexpired sign-up link is out there right now. */
+  inviteLive?: boolean;
   submittedAt: string | null;
   needs: string | null;
   note: string | null;
@@ -361,7 +387,9 @@ export function titleFor(
   profile?: Profile | null,
 ) {
   if (section === "overview" && user?.accountKind === "SPEAKER") {
-    return isConfirmedSpeaker(profile ?? null) ? "My talk" : "My visit";
+    // A workshop host should not be reading the word "talk" all week.
+    const noun = VISIT_NOUN[profile?.speakerSubmission?.kind ?? "TALK"];
+    return isConfirmedSpeaker(profile ?? null) ? `My ${noun}` : "My visit";
   }
   return titles[section];
 }
