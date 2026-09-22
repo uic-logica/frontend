@@ -3087,3 +3087,14 @@
 .d-term-button {
   margin-left: 12px;
 }
+
+/* Credential confirmation keeps the native checkbox beside its label. */
+.d-form .d-credential-confirm {
+  flex-direction: row;
+  align-items: flex-start;
+}
+.d-form .d-credential-confirm input {
+  width: auto;
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
