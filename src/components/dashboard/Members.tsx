@@ -162,7 +162,9 @@ export function Members({
             </select>
           </label>
         </div>
-        <div className="d-table-scroll">
+        {/* Focusable: below ~680px this scrolls sideways, and a scroll
+            container a keyboard can't reach is a WCAG 2.1.1 failure. */}
+        <div className="d-table-scroll" tabIndex={0} role="region" aria-label="Member roster">
           <table>
             <thead>
               <tr>
