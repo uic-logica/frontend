@@ -4,16 +4,12 @@ import { JoinForm } from "./JoinForm";
 
 const roles = [
   {
-    title: "General Member",
-    body: "Attend workshops, socials, and talks; contribute to projects and the blog. Open to all UIC students.",
-  },
-  {
     title: "Software Engineer",
     body: "Develop LOGICA products with a team on a weekly cadence — startup-like pace, campus impact.",
   },
   {
-    title: "Mentorship track",
-    body: "Beginner-friendly pathway to level up and eventually join a product team.",
+    title: "Board Member",
+    body: "Help run LOGICA through events, outreach, finances, and day-to-day executive board work.",
   },
 ];
 
@@ -35,7 +31,7 @@ const steps = [
 const faqs = [
   {
     q: "Do I need prior experience?",
-    a: "Not at all. Mentorship tracks are for beginners. Enthusiasm and willingness to learn matter most.",
+    a: "No. Both tracks are open to students without prior experience. Enthusiasm and willingness to learn matter most.",
   },
   {
     q: "Do I need to be a CS major?",
@@ -60,14 +56,11 @@ export default function JoinPage() {
           <p className="mt-4 max-w-3xl text-body-lg text-white">
             We are UIC&apos;s collective of Latinx developers, designers, and computing enthusiasts.
           </p>
-          <p className="mt-6 font-semibold text-signal">
-            Apply for general membership — interest forms open on a rolling basis.
-          </p>
         </SectionContainer>
 
         <SectionContainer>
           <h2 className="type-h2 mb-8 text-white">Available Roles</h2>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2">
             {roles.map((r) => (
               <article key={r.title} className="club-card p-6">
                 <h3 className="type-h4 text-white">{r.title}</h3>

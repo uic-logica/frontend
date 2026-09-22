@@ -77,6 +77,7 @@ export type Event = {
   title: string;
   description: string | null;
   location: string | null;
+  link: string | null;
   startsAt: string;
 };
 export type Post = {
@@ -556,7 +557,7 @@ export type Application = {
   id: string;
   name: string;
   email: string;
-  track: "GENERAL" | "SOFTWARE_ENGINEER" | "MENTORSHIP";
+  track: "GENERAL" | "SOFTWARE_ENGINEER" | "MENTORSHIP" | "BOARD_MEMBER";
   major: string | null;
   gradYear: number | null;
   why: string | null;
