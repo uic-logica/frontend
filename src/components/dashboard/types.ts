@@ -183,6 +183,7 @@ export type BoardItem = {
   link: string | null;
   lastTouchAt: string | null;
   eventId: string | null;
+  createdById: string | null;
   owner: BoardPerson | null;
   paidBy: BoardPerson | null;
   stageChangedBy: BoardPerson | null;
