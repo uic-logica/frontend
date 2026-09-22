@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { downloadIcs } from "@/lib/ics";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { PinkLink } from "@/components/club/Typewriter";
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -61,8 +62,6 @@ export default function EventsPage() {
                 {t === "upcoming" ? "Upcoming Events" : "Past Events"}
               </button>
             ))}
-            <span className="text-white">·</span>
-            <span className="text-white">Add to Calendar (soon)</span>
           </div>
 
           {error && <p className="mb-4 text-body text-signal">{error}</p>}
@@ -105,6 +104,13 @@ export default function EventsPage() {
                   <Link href="/signin" className="font-semibold text-signal hover:underline">
                     RSVP (members)
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => downloadIcs(e)}
+                    className="font-semibold text-signal hover:underline"
+                  >
+                    Add to calendar
+                  </button>
                 </div>
               </li>
             ))}
