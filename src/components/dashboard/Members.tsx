@@ -28,6 +28,10 @@ export function Members({
   onChange: () => void;
 }) {
   const isExec = user.role === "EXEC_BOARD";
+  const [credentialEmail, setCredentialEmail] = useState("");
+  const [issued, setIssued] = useState<{ email: string; password: string } | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
+  const [issuing, setIssuing] = useState(false);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("ALL");
   const [busy, setBusy] = useState<string | null>(null);
@@ -55,6 +59,26 @@ export function Members({
       setError((e as Error).message);
     } finally {
       setBusy(null);
+    }
+  }
+
+  async function issuePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (issuing || !confirmed) return;
+    setIssuing(true);
+    setError("");
+    setIssued(null);
+    try {
+      const result = await api<{ email: string; password: string }>("/api/board/members/password", {
+        method: "POST", body: JSON.stringify({ email: credentialEmail }),
+      });
+      setIssued(result);
+      setConfirmed(false);
+      onChange();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not issue password.");
+    } finally {
+      setIssuing(false);
     }
   }
 
@@ -92,6 +116,30 @@ export function Members({
         <p className="d-error" role="alert">
           {error}
         </p>
+      )}
+
+      {isExec && (
+        <section className="d-panel" aria-labelledby="password-heading">
+          <h2 id="password-heading">Issue a member password</h2>
+          <p>Creates a member account or replaces an existing member or board password. Existing roles stay the same. A reset signs the person out everywhere and revokes their MCP connections.</p>
+          <form onSubmit={issuePassword} className="d-form" aria-busy={issuing}>
+            <label htmlFor="credential-email">UIC email</label>
+            <input id="credential-email" type="email" required maxLength={254} autoComplete="off" value={credentialEmail} onChange={(e) => { setCredentialEmail(e.target.value); setConfirmed(false); setIssued(null); }} />
+            <label className="d-credential-confirm">
+              <input type="checkbox" required checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} />
+              {" "}I verified the recipient’s identity and intend to replace their password if an account exists.
+            </label>
+            <button className="d-button" disabled={issuing || !confirmed || !!issued} type="submit">{issuing ? "Generating…" : "Generate password"}</button>
+          </form>
+          {issued && (
+            <div role="status" className="d-form">
+              <p>Password for <strong>{issued.email}</strong>. Deliver it privately now; it cannot be retrieved later.</p>
+              <label htmlFor="issued-password">Generated password</label>
+              <input id="issued-password" readOnly autoComplete="off" value={issued.password} onFocus={(e) => e.target.select()} />
+              <button type="button" className="d-button secondary" onClick={() => setIssued(null)}>Dismiss password</button>
+            </div>
+          )}
+        </section>
       )}
 
       <section className="d-panel d-directory">
