@@ -8,36 +8,29 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## LOGICA @ UIC workflow
+## Work from the implementation
 
-Follows [CONTRIBUTING.md](https://github.com/uic-logica/.github/blob/main/CONTRIBUTING.md) and [ROADMAP.md](https://github.com/uic-logica/.github/blob/main/ROADMAP.md). Claude Code gets these as `/logica-*` skills from the `uic-logica/skills` marketplace; this is the same content for Codex, Cursor, or anyone else reading `AGENTS.md`.
+Read the affected page/component and its API calls before changing it. `PRODUCT.md`, `CONTENT.md`, and `DESIGN.md` describe the current code, including gaps; older comments may describe retired plans.
 
-### Opening a PR
-- Never push straight to `main` — branch protection blocks it. `git checkout -b <name>/<short-description>`.
-- Run `npm run lint` and `npx tsc --noEmit` before pushing — CI runs the same checks.
-- Every PR links a `roadmap`-labeled tracking issue (`gh issue list --label roadmap`); file one first if it doesn't exist.
-- PR body: 1-3 bullet summary, `Closes #<issue>`, a test plan. Don't self-merge — one approval + passing lint required.
+- Keep browser API calls same-origin through `next.config.ts` and `src/lib/api.ts`. Configure the backend origin with `NEXT_PUBLIC_API_URL`.
+- Dashboard layout is persistent: `src/app/dashboard/layout.tsx` mounts `Dashboard.tsx`, which reads the section from the pathname. Reuse that shell rather than mounting a second dashboard in each page.
+- `src/components/dashboard/types.ts` mirrors backend stages and board shapes. `runsWorkspace()` is MEMBER + EXEC_BOARD only; BOARD receives member navigation. Backend checks remain authoritative.
+- Money and outreach share `Board.tsx`. Officer titles change home tiles in `BoardHome.tsx`, not access. Do not introduce duplicate pipelines or permission rules per officer.
+- Preserve loading, empty, signed-out, and error states. Keep labeled fields, keyboard access, focus indicators, and reduced-motion alternatives when modifying UI.
+- Reuse the route's existing shell and styles: `ClubShell`/`globals.css` for public pages, `dashboard.css` for the workspace, `AppShell` for standalone tools. Fonts are loaded in `src/app/layout.tsx`.
+- Operational data comes from the backend. Public home/team copy is currently authored in page arrays; do not describe it as live analytics or use it as an authenticated-data fallback.
+- Do not add credentials or env files to git. `.env.example` contains public frontend configuration only.
 
-### Reviewing a diff
-- No secrets staged (`.env*` beyond `.env.example`), no scope creep past the linked issue.
-- Loading, empty, and error states handled, not just the happy path.
-- Forms have labeled inputs and are keyboard-navigable.
-- Data comes from the backend (`NEXT_PUBLIC_API_URL`) — no hardcoded fixtures shipping to prod, nothing sensitive stored client-side.
+## Known boundaries
 
-### Writing tests
-- Use whatever runner is already configured (check `package.json` scripts, existing `*.test.*` files) — ask before adding a new one.
-- Scope the test to the change, not exhaustive coverage.
-- Test user-visible behavior, not internals; mock the backend API at the network boundary.
+`src/app/signin/page.tsx` still calls retired OTP endpoints, while the backend requires issued member passwords. `Members.tsx` lacks issuance controls, and legacy `/attendance` omits the required check-in code. Do not describe these as complete flows or quietly change auth during an unrelated task. Guest invitation claims and speaker password login have separate pages.
 
-### Filing issues
-- Title: `[Step N] ...` for a roadmap step, `[Addition] ...` for an Additions-list item, plain title otherwise.
-- Reuse existing labels (`gh label list -R uic-logica/frontend`) — roadmap issues get `roadmap` + `frontend` + `enhancement` (skip `enhancement` for foundational work).
-- Body links the roadmap step/section and ends with a concrete "done when" line.
+## Checks
 
-### Keeping it lean
-1. Does this need to exist yet, or is it ahead of the current roadmap step?
-2. Native HTML/Tailwind before a component library.
-3. Can it be one line?
-4. Only then, the minimum new code that works.
+`.github/workflows/ci.yml` uses Node 24: `npm ci`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm run build`. Run lint and typecheck before pushing; generate route types first in a fresh checkout. `package.json` has no test command or installed test runner. Ask before adding one. For UI work, check the affected role, keyboard flow, narrow layout, and error/empty states against the backend.
 
-Mark deliberate shortcuts inline: `// logica-lean: <ceiling> — revisit if <trigger>`. Never simplify away accessibility or input validation.
+## Branches and PRs
+
+Use `<name>/<short-description>`, not `main`; keep an already-supplied task branch. Open a PR against `main` with 1–3 summary bullets, the linked tracking issue (`Closes #<issue>` when completed), and a test plan. Do not self-merge. `.github/CODEOWNERS` assigns `@uic-logica/maintainers`; it does not specify an approval count.
+
+Link a roadmap-labeled tracking issue; reuse an existing one or file one for the task. Keep changes within its scope. Native HTML and current Tailwind/CSS patterns come before another component library. Add only what the current behavior needs. Preserve accessibility and validation when simplifying. Existing deliberate deferrals use `// logica-lean: <ceiling> — revisit if <trigger>`.
