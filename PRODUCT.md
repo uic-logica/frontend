@@ -1,38 +1,33 @@
 # Product
 
-## Register
+The public site introduces LOGICA, the Latinx Organization for Growth in Computing and Academics at UIC. The dashboard handles records: participation, guest availability and talks, and exec decisions. This describes the checked-in implementation, including unfinished connections.
 
-brand
+## Public site
 
-## Users
+`src/app/page.tsx` presents the mission, static club statistics, member-employer logos, four pathways, partner categories, and links to join or attend. These are authored arrays and copy, not dashboard analytics.
 
-Two groups on the same site:
-- **Prospective members and sponsors** (UIC students, company reps evaluating the club) — landing on `/`, `/about`, `/join`, `/team`, `/events` to decide whether to apply, attend, or sponsor.
-- **Current members** — using the gated tools (`/signin`, `/profile`, `/feed`, `/attendance`, `/forms/*`) to sign in, check event feed, check into events, and fill required forms. These are still part of the same brand surface, not a separate app; a member should never feel like they left the club's site when they sign in.
+`src/components/club/ClubShell.tsx` links About, Events, Team, Blog, and Sign in. `/team` renders four hardcoded exec profiles. `/blog` says “No posts yet.” `/join` describes roles and an application process, but its action opens an email to `logica@uic.edu`; there is no application form on that page.
 
-## Product Purpose
+`src/app/events/page.tsx` fetches events and splits them into upcoming/past lists. Calendar export is marked “soon”; the speaker lineup is a static placeholder. `/speak` has the public guest intake form and fetches the public speaker list. These are separate from creating a login account.
 
-LOGICA @ UIC's public site: it markets the club (mission, team, events, sponsors) to recruit members and sponsors, and layers in the minimum member tooling (sign-in, profile, feed, attendance, forms) needed to run the club day to day. Success = visitors understand what LOGICA is and apply/attend/sponsor; members can sign in and do the one task they came for without friction.
+## Signed-in users
 
-## Brand Personality
+`src/components/dashboard/types.ts` and `Dashboard.tsx` select the experience:
 
-"Logic × growth." Bold, graphic, disciplined — black/white/red Elenco (Cesar Villela) print energy with Tropicália-poster confidence, not soft SaaS-startup polish. Sharp typography and hard contrast do the work; no gradients, no pastel, no cream/mural warmth.
+- MEMBER and BOARD receive the member view: overview, profile, events, engagement, and community.
+- MEMBER accounts with EXEC_BOARD role get insights, money, outreach pipeline, guest directory, roster, and documents as well. Officer titles alter the home tiles in `BoardHome.tsx`, not permissions.
+- SPEAKER accounts whose submission is not CONFIRMED see the candidate home: availability and a board message thread. Confirmed guests see talk preparation and linked-event counts. TALK, WORKSHOP, and COMPANY_VISIT change the visit wording.
 
-## Anti-references
+Notifications, settings, and MCP Connections sit in the account navigation. Discord appears only when `NEXT_PUBLIC_DISCORD_URL` is set. `AgentAccess.tsx` manages backend-issued bearer tokens and displays the tools the backend returns for that caller; it does not define the tool catalog.
 
-- Not a cream/pastel "warm mural" aesthetic (explicitly ruled out in DESIGN.md).
-- Not generic SaaS: no glassmorphism, no hero-metric-card template, no soft rounded dashboard look for the member tools.
-- Shape (information architecture, section order, page types) follows Yale Computer Society's site exactly, but the *look* is Villela/Elenco black-white-red, not YCS's pink.
-- The current `/signin` and other scaffold pages (`/profile`, `/feed`, `/attendance`, `/forms/[slug]`) are explicitly throwaway, unstyled placeholders per README — they are the anti-reference for what these pages should become.
+Money and outreach use one `Board.tsx` component and one backend `BoardItem` model with two kinds. Documents is a read-only Drive browser; without the backend service-account settings it shows a not-connected state.
 
-## Design Principles
+## Account entry
 
-1. **One system, two audiences.** Member tool pages (signin, profile, feed, attendance, forms) use the exact same visual language as the public marketing pages — same nav shell, type scale, color tokens, spacing rhythm. A signed-in member is still on the LOGICA site.
-2. **Shape from YCS, look from Villela.** Never blend the two: structure/IA/interaction patterns copy Yale Computer Society; color/type/motion identity is black-white-red Elenco with the four-dot motif.
-3. **Size and weight carry hierarchy, not extra typefaces.** Single family (DM Sans), no separate display face.
-4. **Consistency over novelty per-page.** Every page reuses the same page-shell spacing, heading scale, and section rhythm defined in DESIGN.md — no page invents its own type scale or container widths.
-5. **Keep it lean.** Native HTML/Tailwind before component libraries; minimum code that works (per AGENTS.md's "Keeping it lean").
+Guests claim `/invite/[token]` with their name, email, and chosen password, then enter the dashboard. `/speaker-signin` posts username/password and routes temporary-password accounts to the password-change page.
 
-## Accessibility & Inclusion
+Member auth is currently mismatched: `src/app/signin/page.tsx` still requests email codes, while the paired backend only supports issued member passwords. The frontend has no member-password login or issuance form. There is no public member signup. Do not describe the old code flow as working, or the replacement UI as already shipped.
 
-WCAG AA baseline. Forms have labeled, keyboard-navigable inputs (explicit review checklist item in AGENTS.md and QA/CHECKLIST). Interactive controls (check-in buttons, nav, forms) must be reachable and operable by keyboard and screen reader. Motion (typewriter hero, hover transforms) respects `prefers-reduced-motion`, as already specified in DESIGN.md.
+## Visual surfaces
+
+Public pages use the fixed wallpaper, gold accents, DM Sans, and Archivo Black from `globals.css` and `layout.tsx`. The dashboard uses its own black sidebar and light work area in `dashboard.css`. Standalone feed, attendance, and forms still use `AppShell`. They do not all share one identical shell. See [DESIGN.md](DESIGN.md) and [DASHBOARD.md](DASHBOARD.md).
