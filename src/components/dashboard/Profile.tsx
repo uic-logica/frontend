@@ -516,7 +516,7 @@ export function Settings({ user }: { user: SessionUser }) {
               {roleName(user)} ·{" "}
               {user.accountKind === "SPEAKER"
                 ? "Username and password"
-                : "Passwordless email sign-in"}
+                : "Email and password"}
             </small>
           </span>
           {user.accountKind === "SPEAKER" && (
