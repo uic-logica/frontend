@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { ResumeUpload } from "@/components/shell/ResumeUpload";
+
+import { AvailabilityGrid } from "./AvailabilityGrid";
 import { Heading } from "./Overview";
 import {
   type Profile,
@@ -34,6 +36,7 @@ export function ProfileEditor({
   const [windows, setWindows] = useState<Window[]>(
     profile.speakerSubmission?.availability || [],
   );
+  const [picker, setPicker] = useState<"grid" | "list">("grid");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
@@ -255,75 +258,100 @@ export function ProfileEditor({
                 <div className="d-form-section" id="availability">
                   <h2>Your availability</h2>
                   <p>Windows that work for you, in Chicago local time.</p>
-                  {windows.map((w, i) => (
-                    <fieldset className="d-window" key={i}>
-                      <legend>Window {i + 1}</legend>
-                      <div className="d-form-grid">
-                        {(
-                          [
-                            "startDate",
-                            "endDate",
-                            "startTime",
-                            "endTime",
-                          ] as const
-                        ).map((key) => (
-                          <label key={key}>
-                            {
-                              {
-                                startDate: "From date",
-                                endDate: "Through date",
-                                startTime: "From time",
-                                endTime: "Until time",
-                              }[key]
-                            }
-                            <input
-                              required
-                              type={key.includes("Date") ? "date" : "time"}
-                              value={w[key]}
-                              onChange={(e) => {
-                                setWindows((prev) =>
-                                  prev.map((v, j) =>
-                                    i === j
-                                      ? { ...v, [key]: e.target.value }
-                                      : v,
-                                  ),
-                                );
-                                setSaved(false);
-                              }}
-                            />
-                          </label>
-                        ))}
-                      </div>
-                      <button
-                        type="button"
-                        className="d-text-button"
-                        onClick={() => {
-                          setWindows((prev) => prev.filter((_, j) => i !== j));
-                          setSaved(false);
-                        }}
-                      >
-                        Remove window {i + 1}
-                      </button>
-                    </fieldset>
-                  ))}
                   <button
                     type="button"
-                    className="d-button secondary"
-                    onClick={() => {
-                      setWindows((prev) => [
-                        ...prev,
-                        {
-                          startDate: "",
-                          endDate: "",
-                          startTime: "",
-                          endTime: "",
-                        },
-                      ]);
-                      setSaved(false);
-                    }}
+                    className="d-text-button"
+                    onClick={() =>
+                      setPicker(picker === "grid" ? "list" : "grid")
+                    }
                   >
-                    + Add availability
+                    {picker === "grid"
+                      ? "Type dates instead"
+                      : "Pick on a calendar instead"}
                   </button>
+                  {picker === "grid" && (
+                    <AvailabilityGrid
+                      windows={windows}
+                      onChange={(next) => {
+                        setWindows(next);
+                        setSaved(false);
+                      }}
+                    />
+                  )}
+                  {picker === "list" &&
+                    windows.map((w, i) => (
+                      <fieldset className="d-window" key={i}>
+                        <legend>Window {i + 1}</legend>
+                        <div className="d-form-grid">
+                          {(
+                            [
+                              "startDate",
+                              "endDate",
+                              "startTime",
+                              "endTime",
+                            ] as const
+                          ).map((key) => (
+                            <label key={key}>
+                              {
+                                {
+                                  startDate: "From date",
+                                  endDate: "Through date",
+                                  startTime: "From time",
+                                  endTime: "Until time",
+                                }[key]
+                              }
+                              <input
+                                required
+                                type={key.includes("Date") ? "date" : "time"}
+                                value={w[key]}
+                                onChange={(e) => {
+                                  setWindows((prev) =>
+                                    prev.map((v, j) =>
+                                      i === j
+                                        ? { ...v, [key]: e.target.value }
+                                        : v,
+                                    ),
+                                  );
+                                  setSaved(false);
+                                }}
+                              />
+                            </label>
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          className="d-text-button"
+                          onClick={() => {
+                            setWindows((prev) =>
+                              prev.filter((_, j) => i !== j),
+                            );
+                            setSaved(false);
+                          }}
+                        >
+                          Remove window {i + 1}
+                        </button>
+                      </fieldset>
+                    ))}
+                  {picker === "list" && (
+                    <button
+                      type="button"
+                      className="d-button secondary"
+                      onClick={() => {
+                        setWindows((prev) => [
+                          ...prev,
+                          {
+                            startDate: "",
+                            endDate: "",
+                            startTime: "",
+                            endTime: "",
+                          },
+                        ]);
+                        setSaved(false);
+                      }}
+                    >
+                      + Add availability
+                    </button>
+                  )}
                 </div>
               )}
               {confirmed && (
