@@ -299,10 +299,11 @@ export type ClubInsights = {
 };
 
 export type Officer =
-  "PRESIDENT" | "TREASURER" | "SECRETARY" | "OUTREACH" | "OTHER";
+  "PRESIDENT" | "VICE_PRESIDENT" | "TREASURER" | "SECRETARY" | "OUTREACH" | "OTHER";
 
 export const OFFICER_LABEL: Record<Officer, string> = {
   PRESIDENT: "President",
+  VICE_PRESIDENT: "Vice President",
   TREASURER: "Treasurer",
   SECRETARY: "Secretary",
   OUTREACH: "Outreach",

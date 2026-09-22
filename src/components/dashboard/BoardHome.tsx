@@ -297,6 +297,9 @@ function pinsFor(
   if (officer === "TREASURER") return [budget, approvals, replies, active];
   if (officer === "OUTREACH") return [replies, guests, budget, active];
   if (officer === "SECRETARY") return [active, docs, guests, budget];
-  if (officer === "PRESIDENT") return [active, budget, replies, guests];
+  // The VP runs the club alongside the president, so they get the same
+  // four tiles rather than a set invented to make them look different.
+  if (officer === "PRESIDENT" || officer === "VICE_PRESIDENT")
+    return [active, budget, replies, guests];
   return [replies, budget, guests, active];
 }

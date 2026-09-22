@@ -11,7 +11,7 @@ import {
   OFFICER_LABEL,
 } from "./types";
 
-const OFFICERS: Officer[] = ["PRESIDENT", "TREASURER", "SECRETARY", "OUTREACH", "OTHER"];
+const OFFICERS: Officer[] = ["PRESIDENT", "VICE_PRESIDENT", "TREASURER", "SECRETARY", "OUTREACH", "OTHER"];
 
 /**
  * The roster. Board members can see who's here and when they last turned
