@@ -16,6 +16,7 @@ const paths: Record<
   documents: "M4 4h6l2 3h8v13H4z M8 13h8 M8 16.5h5",
   members:
     "M14 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0 M3 20v-1.5A5.5 5.5 0 0 1 8.5 13h5a5.5 5.5 0 0 1 5.5 5.5V20 M18 4a3 3 0 0 1 0 6",
+  applications: "M8 4H5v17h14V4h-3 M8 3h8v4H8z M8 11h8 M8 15h5",
   messages: "M4 4h16v12H8l-4 4z M8 9h8 M8 12h5",
   clock: "M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18 M12 7v5l3.5 2",
   notifications: "M5 9a7 7 0 0 1 14 0v6l2 3H3l2-3z M9 21h6",

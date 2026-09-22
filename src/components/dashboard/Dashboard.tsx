@@ -17,6 +17,7 @@ import { Board } from "./Board";
 import { BoardHome } from "./BoardHome";
 import { Insights } from "./Insights";
 import { Documents } from "./Documents";
+import { Applications } from "./Applications";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
 import {
@@ -437,7 +438,7 @@ export function Dashboard() {
                     <Link href="/dashboard">Return to your overview</Link>
                   </div>
                 ))}
-              {/* Four board sections, one gate. Cosmetic only — every one
+              {/* Exec sections, one gate. Cosmetic only — every one
                   of these endpoints re-checks the role server-side. */}
               {(
                 [
@@ -446,6 +447,7 @@ export function Dashboard() {
                   "pipeline",
                   "documents",
                   "members",
+                  "applications",
                 ] as const
               ).includes(section as "insights") &&
                 (runsWorkspace(user) ? (
@@ -469,6 +471,7 @@ export function Dashboard() {
                         events={events}
                       />
                     )}
+                    {section === "applications" && <Applications />}
                     {section === "documents" && <Documents />}
                     {section === "members" && (
                       <Members
