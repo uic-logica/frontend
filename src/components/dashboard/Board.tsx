@@ -837,6 +837,16 @@ function Detail({
           <dd>{item.event?.title ?? "Not tied to one"}</dd>
         </div>
         <div>
+          <dt>Added by</dt>
+          <dd>
+            {item.createdBy
+              ? personName(item.createdBy)
+              : item.channel === "Website"
+                ? "From the website"
+                : "Former board member"}
+          </dd>
+        </div>
+        <div>
           <dt>Notes</dt>
           <dd>{item.detail || "None"}</dd>
         </div>

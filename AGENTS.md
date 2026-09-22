@@ -27,7 +27,7 @@ Read the affected page/component and its API calls before changing it. `PRODUCT.
 
 ## Checks
 
-`.github/workflows/ci.yml` uses Node 24: `npm ci`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm run build`. Run lint and typecheck before pushing; generate route types first in a fresh checkout. `package.json` has no test command or installed test runner. Ask before adding one. For UI work, check the affected role, keyboard flow, narrow layout, and error/empty states against the backend.
+`.github/workflows/ci.yml` uses Node 24: `npm ci`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm test`, `npm run build`. Run lint, typecheck and tests before pushing; generate route types first in a fresh checkout. The runner is vitest (`npm test` → `vitest run`), added in #56; it covers pure helpers in `src/lib/` only — there is no component or browser testing set up, so do not reach for one without asking. For UI work, check the affected role, keyboard flow, narrow layout, and error/empty states against the backend.
 
 ## Branches and PRs
 
