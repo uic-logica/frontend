@@ -65,6 +65,7 @@ export function Events({
           title: data.get("title"),
           description: data.get("description"),
           location: data.get("location"),
+          link: data.get("link"),
           startsAt: new Date(String(data.get("startsAt"))).toISOString(),
         }),
       });
@@ -114,6 +115,10 @@ export function Events({
           <label>
             Description
             <textarea name="description" rows={3} />
+          </label>
+          <label>
+            Event page URL (Luma, Discord, or flyer)
+            <input name="link" type="url" />
           </label>
           <button disabled={!!busy} className="d-button">
             {busy === "create" ? "Creating…" : "Create event"}

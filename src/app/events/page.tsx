@@ -1,7 +1,7 @@
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { PinkLink } from "@/components/club/Typewriter";
-import { ButtonLink } from "@/components/ui/ButtonLink";
 import { EventsList, type ClubEvent } from "./EventsList";
+import { SubscribeForm } from "./SubscribeForm";
 
 // ponytail: fetched on the server and cached, so the page arrives with the
 // events already in the HTML — no "Loading…" flash on every visit. Next
@@ -70,17 +70,11 @@ export default async function EventsPage() {
           </div>
         </SectionContainer>
 
-        <SectionContainer>
-          <div className="club-card mx-auto w-fit max-w-xl p-8">
-            <h2 className="type-h3 text-white">Stay Updated</h2>
-            <p className="mt-3 text-body text-white">
-              Sign up interest via Join to receive updates about upcoming events and opportunities.
-            </p>
-            <ButtonLink href="/join" className="mt-6">
-              Subscribe
-            </ButtonLink>
-          </div>
-        </SectionContainer>
+        <div id="subscribe">
+          <SectionContainer>
+            <SubscribeForm />
+          </SectionContainer>
+        </div>
       </PageContainer>
     </ClubShell>
   );
