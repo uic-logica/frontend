@@ -3126,3 +3126,17 @@
   outline: 2px solid var(--d-gold);
   outline-offset: 2px;
 }
+
+/* Section panes. A section stays mounted once opened so returning to it is
+   instant, so every section is in the DOM and all but one are hidden.
+
+   `display: contents` makes the wrapper generate no box at all, so adding it
+   changed no existing layout. The `[hidden]` rule has to be written out
+   because `display: contents` would otherwise beat the browser's default
+   `[hidden] { display: none }` and every pane would render at once. */
+.d-pane {
+  display: contents;
+}
+.d-pane[hidden] {
+  display: none;
+}

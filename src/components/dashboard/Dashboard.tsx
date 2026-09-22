@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, type ReactNode, useEffect, useState } from "react";
 import { api, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
@@ -41,6 +41,42 @@ import {
 import "./dashboard.css";
 
 /**
+ * A section, once opened, stays mounted and is hidden rather than torn down.
+ *
+ * The shell already survives navigation, but each section was rendered as
+ * `{section === "x" && <X />}`, so leaving it unmounted the component and
+ * coming back re-ran its fetch from an empty state — "Loading…" on every
+ * single click, plus a lost scroll position, search box and open row.
+ *
+ * ponytail: no cache layer and no SWR dependency; the component instance is
+ * the cache. The ceiling is staleness — a pane kept alive does not refetch,
+ * so a change made in one section is not reflected in another until a manual
+ * refresh or a reload. If that starts to bite, the upgrade is a revalidate
+ * signal passed in here, not a data-fetching library.
+ */
+/** Exec-only sections. Money and pipeline are separate panes, which is also
+ *  what keeps one pipeline from ever showing the other's rows. */
+const EXEC_SECTIONS = [
+  "insights",
+  "money",
+  "pipeline",
+  "applications",
+  "documents",
+  "members",
+] as const satisfies readonly Section[];
+
+function Pane({ active, children }: { active: boolean; children: ReactNode }) {
+  // `hidden` rather than unmounting. dashboard.css forces display:none on it,
+  // which also takes the contents out of the accessibility tree and out of
+  // the tab order — a hidden pane must not be reachable by keyboard.
+  return (
+    <div hidden={!active} className="d-pane">
+      {children}
+    </div>
+  );
+}
+
+/**
  * Rendered once by `app/dashboard/layout.tsx`, not per route — the section
  * comes from the pathname so switching sections re-renders this component
  * instead of remounting it. That's what keeps the session and the loaded
@@ -66,6 +102,24 @@ export function Dashboard() {
     "loading" | "ready" | "signed-out" | "error"
   >("loading");
   const [reload, setReload] = useState(0);
+  // Every section opened so far. A section is rendered once it appears here
+  // and never removed, so revisiting it is a CSS change, not a refetch.
+  //
+  // The current section is folded in for this render rather than waiting for
+  // the effect below to commit it — an effect runs after paint, which would
+  // show one blank frame on a section's first visit, and a blank frame is the
+  // flicker this whole change exists to remove.
+  const [opened, setOpened] = useState<readonly Section[]>([]);
+  const rendered = opened.includes(section) ? opened : [...opened, section];
+  const seen = (item: Section) => rendered.includes(item);
+  useEffect(() => {
+    // This set accumulates across navigations and cannot be derived from the
+    // current section alone, which is the case the rule's heuristic does not
+    // cover. It self-terminates rather than cascading: once a section is in
+    // the list the updater returns `prev` and React bails out.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOpened((prev) => (prev.includes(section) ? prev : [...prev, section]));
+  }, [section]);
   const [menu, setMenu] = useState(false);
   const [leaving, setLeaving] = useState(false);
 
@@ -354,8 +408,9 @@ export function Dashboard() {
           )}
           {user && authState === "ready" && (
             <>
-              {section === "overview" &&
-                (speaker ? (
+              {seen("overview") && (
+              <Pane active={section === "overview"}>
+                {speaker ? (
                   isConfirmedSpeaker(profile) ? (
                     <SpeakerHome user={user} profile={profile} />
                   ) : (
@@ -382,9 +437,12 @@ export function Dashboard() {
                     speakers={speakers}
                     notices={notices}
                   />
-                ))}
-              {section === "messages" &&
-                (submissionId ? (
+                )}
+              </Pane>
+              )}
+              {seen("messages") && (
+              <Pane active={section === "messages"}>
+                {submissionId ? (
                   <Thread
                     full
                     submissionId={submissionId}
@@ -400,9 +458,12 @@ export function Dashboard() {
                       file.
                     </p>
                   </div>
-                ))}
-              {section === "profile" &&
-                (profile ? (
+                )}
+              </Pane>
+              )}
+              {seen("profile") && (
+              <Pane active={section === "profile"}>
+                {profile ? (
                   <ProfileEditor
                     key={profile.id}
                     profile={profile}
@@ -411,20 +472,33 @@ export function Dashboard() {
                   />
                 ) : (
                   !errors.length && <p role="status">Loading your profile…</p>
-                ))}
-              {section === "events" && (
-                <Events
-                  user={user}
-                  events={events}
-                  engagement={engagement}
-                  onEngagement={setEngagement}
-                  onEvents={setEvents}
-                />
+                )}
+              </Pane>
               )}
-              {section === "activity" && <Activity engagement={engagement} />}
-              {section === "community" && <Community user={user} />}
-              {section === "speakers" &&
-                (runsWorkspace(user) ? (
+              {seen("events") && (
+                <Pane active={section === "events"}>
+                  <Events
+                    user={user}
+                    events={events}
+                    engagement={engagement}
+                    onEngagement={setEngagement}
+                    onEvents={setEvents}
+                  />
+                </Pane>
+              )}
+              {seen("activity") && (
+                <Pane active={section === "activity"}>
+                  <Activity engagement={engagement} />
+                </Pane>
+              )}
+              {seen("community") && (
+                <Pane active={section === "community"}>
+                  <Community user={user} />
+                </Pane>
+              )}
+              {seen("speakers") && (
+              <Pane active={section === "speakers"}>
+                {runsWorkspace(user) ? (
                   <Speakers
                     user={user}
                     speakers={speakers}
@@ -437,62 +511,57 @@ export function Dashboard() {
                     <p>This directory is available to LOGICA board members.</p>
                     <Link href="/dashboard">Return to your overview</Link>
                   </div>
-                ))}
-              {/* Exec sections, one gate. Cosmetic only — every one
-                  of these endpoints re-checks the role server-side. */}
-              {(
-                [
-                  "insights",
-                  "money",
-                  "pipeline",
-                  "documents",
-                  "members",
-                  "applications",
-                ] as const
-              ).includes(section as "insights") &&
-                (runsWorkspace(user) ? (
-                  <>
-                    {section === "insights" && <Insights />}
-                    {/* Keyed by kind so switching pipelines starts clean
-                        rather than showing the other one's rows. */}
-                    {section === "money" && (
-                      <Board
-                        key="MONEY"
-                        kind="MONEY"
-                        members={members}
-                        events={events}
-                      />
-                    )}
-                    {section === "pipeline" && (
-                      <Board
-                        key="OUTREACH"
-                        kind="OUTREACH"
-                        members={members}
-                        events={events}
-                      />
-                    )}
-                    {section === "applications" && <Applications />}
-                    {section === "documents" && <Documents />}
-                    {section === "members" && (
-                      <Members
-                        user={user}
-                        members={members}
-                        onChange={() => setReload((v) => v + 1)}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <div className="d-empty">
-                    <h1>Board access required</h1>
-                    <p>This is available to LOGICA board members.</p>
-                    <Link href="/dashboard">Return to your overview</Link>
-                  </div>
-                ))}
-              {section === "notifications" && (
-                <Notifications notices={notices} onChange={setNotices} />
+                )}
+              </Pane>
               )}
-              {section === "connections" && <AgentAccess />}
-              {section === "settings" && <Settings user={user} />}
+
+              {/* Exec sections. The gate is cosmetic — every one of these
+                  endpoints re-checks the role server-side — but it still has
+                  to be evaluated per pane now that panes outlive their visit,
+                  so a demoted user's rendered pane can't linger. */}
+              {EXEC_SECTIONS.filter(seen).map((item) => (
+                <Pane key={item} active={section === item}>
+                  {!runsWorkspace(user) ? (
+                    <div className="d-empty">
+                      <h1>Board access required</h1>
+                      <p>This is available to LOGICA board members.</p>
+                      <Link href="/dashboard">Return to your overview</Link>
+                    </div>
+                  ) : item === "insights" ? (
+                    <Insights />
+                  ) : item === "money" ? (
+                    <Board kind="MONEY" members={members} events={events} />
+                  ) : item === "pipeline" ? (
+                    <Board kind="OUTREACH" members={members} events={events} />
+                  ) : item === "applications" ? (
+                    <Applications />
+                  ) : item === "documents" ? (
+                    <Documents />
+                  ) : (
+                    <Members
+                      user={user}
+                      members={members}
+                      onChange={() => setReload((v) => v + 1)}
+                    />
+                  )}
+                </Pane>
+              ))}
+
+              {seen("notifications") && (
+                <Pane active={section === "notifications"}>
+                  <Notifications notices={notices} onChange={setNotices} />
+                </Pane>
+              )}
+              {seen("connections") && (
+                <Pane active={section === "connections"}>
+                  <AgentAccess />
+                </Pane>
+              )}
+              {seen("settings") && (
+                <Pane active={section === "settings"}>
+                  <Settings user={user} />
+                </Pane>
+              )}
             </>
           )}
         </main>
