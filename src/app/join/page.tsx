@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { buttonClasses } from "@/components/ui/ButtonLink";
+import { JoinForm } from "./JoinForm";
 
 const roles = [
   {
@@ -105,23 +105,12 @@ export default function JoinPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="club-card w-fit max-w-2xl p-8 md:p-12">
-            <h2 className="type-h3 text-white">Interested in joining?</h2>
-            <p className="mt-3 max-w-2xl text-body text-white">
-              Join our community of passionate developers, designers, and tech enthusiasts.
-            </p>
-            <a
-              href="mailto:logica@uic.edu?subject=LOGICA%20membership%20interest"
-              className={`${buttonClasses()} mt-6`}
-            >
-              Apply to Join
-            </a>
-            <p className="mt-4">
-              <Link href="/events" className="font-semibold text-signal hover:underline">
-                Or attend an event first →
-              </Link>
-            </p>
-          </div>
+          <JoinForm />
+          <p className="mt-4">
+            <Link href="/events" className="font-semibold text-signal hover:underline">
+              Or attend an event first →
+            </Link>
+          </p>
         </SectionContainer>
       </PageContainer>
     </ClubShell>
