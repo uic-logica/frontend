@@ -1,40 +1,42 @@
-"use client";
-
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
-import { downloadIcs } from "@/lib/ics";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { PinkLink } from "@/components/club/Typewriter";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { EventsList, type ClubEvent } from "./EventsList";
 
-type Event = {
-  id: string;
-  title: string;
-  location: string | null;
-  startsAt: string;
-  description?: string | null;
-};
+// ponytail: fetched on the server and cached, so the page arrives with the
+// events already in the HTML — no "Loading…" flash on every visit. Next
+// revalidates in the background, so a new event shows up within 5 minutes
+// without anyone redeploying.
+const REVALIDATE_SECONDS = 300;
 
-export default function EventsPage() {
-  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
-  const [events, setEvents] = useState<Event[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+type EventsData = { upcoming: ClubEvent[]; past: ClubEvent[]; error: string | null };
 
-  useEffect(() => {
-    api<Event[]>("/api/events")
-      .then((data) => setEvents(Array.isArray(data) ? data : []))
-      .catch((e: Error) => {
-        setError(e.message);
-        setEvents([]);
-      });
-  }, []);
+function split(events: ClubEvent[], error: string | null): EventsData {
+  const now = Date.now();
+  return {
+    upcoming: events.filter((e) => new Date(e.startsAt).getTime() >= now),
+    past: events.filter((e) => new Date(e.startsAt).getTime() < now),
+    error,
+  };
+}
 
-  const [now] = useState(() => Date.now());
-  const list =
-    events?.filter((e) =>
-      tab === "upcoming" ? new Date(e.startsAt).getTime() >= now : new Date(e.startsAt).getTime() < now,
-    ) ?? [];
+async function getEvents(): Promise<EventsData> {
+  // The browser goes through next.config.ts's /api/* rewrite; on the server
+  // there's no origin to be relative to, so hit the backend directly.
+  const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+  try {
+    const res = await fetch(`${base}/api/events`, { next: { revalidate: REVALIDATE_SECONDS } });
+    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+    const body = await res.json();
+    return split(Array.isArray(body) ? body : [], null);
+  } catch {
+    // A backend blip shouldn't blank the whole page — the rest is static copy.
+    return split([], "Couldn't load events right now.");
+  }
+}
+
+export default async function EventsPage() {
+  const { upcoming, past, error } = await getEvents();
 
   return (
     <ClubShell>
@@ -49,72 +51,7 @@ export default function EventsPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="mb-8 flex flex-wrap items-center justify-center gap-4">
-            {(["upcoming", "past"] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTab(t)}
-                className={`text-lg font-semibold capitalize ${
-                  tab === t ? "text-signal underline" : "text-white hover:text-white"
-                }`}
-              >
-                {t === "upcoming" ? "Upcoming Events" : "Past Events"}
-              </button>
-            ))}
-          </div>
-
-          {error && <p className="mb-4 text-body text-signal">{error}</p>}
-          {events === null && <p className="text-body text-white">Loading…</p>}
-
-          {events && list.length === 0 && (
-            <div className="club-card mx-auto w-fit max-w-xl p-8">
-              <h2 className="type-h3 text-white">
-                {tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}
-              </h2>
-              <p className="mt-3 max-w-xl text-body text-white">
-                We&apos;re currently planning our next round of events. Check back soon or join
-                the newsletter to be notified.
-              </p>
-              <PinkLink href="/join" className="mt-6 text-xl">
-                Stay Updated
-              </PinkLink>
-            </div>
-          )}
-
-          <ul className="mx-auto max-w-3xl space-y-4">
-            {list.map((e) => (
-              <li
-                key={e.id}
-                id={e.id}
-                className="club-card club-card-interactive p-6"
-              >
-                <Link href={`/events/${e.id}`} className="hover:underline">
-                  <h2 className="type-h3 text-white">{e.title}</h2>
-                </Link>
-                <p className="mt-2 text-body-sm text-white">
-                  {new Date(e.startsAt).toLocaleString()}
-                  {e.location ? ` · ${e.location}` : ""}
-                </p>
-                {e.description && <p className="mt-3 text-body text-white">{e.description}</p>}
-                <div className="mt-4 flex flex-wrap gap-4">
-                  <Link href={`/events/${e.id}`} className="font-semibold text-signal hover:underline">
-                    Details, materials &amp; notes
-                  </Link>
-                  <Link href="/signin" className="font-semibold text-signal hover:underline">
-                    RSVP (members)
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => downloadIcs(e)}
-                    className="font-semibold text-signal hover:underline"
-                  >
-                    Add to calendar
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <EventsList upcoming={upcoming} past={past} error={error} />
         </SectionContainer>
 
         <SectionContainer>
