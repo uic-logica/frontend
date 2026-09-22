@@ -77,6 +77,7 @@ export type Event = {
   title: string;
   description: string | null;
   location: string | null;
+  link: string | null;
   startsAt: string;
 };
 export type Post = {

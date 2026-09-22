@@ -11,6 +11,7 @@ export type ClubEvent = {
   location: string | null;
   startsAt: string;
   description?: string | null;
+  link: string | null;
 };
 
 // ponytail: fixed to Chicago rather than the viewer's locale — the events are
@@ -68,7 +69,7 @@ export function EventsList({
             We&apos;re currently planning our next round of events. Check back soon or join
             the newsletter to be notified.
           </p>
-          <PinkLink href="/join" className="mt-6 text-xl">
+          <PinkLink href="#subscribe" className="mt-6 text-xl">
             Stay Updated
           </PinkLink>
         </div>
@@ -91,11 +92,18 @@ export function EventsList({
             {e.description && <p className="mt-3 text-body text-white">{e.description}</p>}
             <div className="mt-4 flex flex-wrap gap-4">
               <Link href={`/events/${e.id}`} className="font-semibold text-signal hover:underline">
-                Details, materials &amp; notes
+                Details
               </Link>
-              <Link href="/signin" className="font-semibold text-signal hover:underline">
-                RSVP (members)
-              </Link>
+              {e.link && (
+                <a
+                  href={e.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-signal hover:underline"
+                >
+                  Event page ↗
+                </a>
+              )}
               <button
                 type="button"
                 onClick={() => downloadIcs(e)}
