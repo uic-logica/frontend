@@ -17,6 +17,7 @@ const TRACK = {
   GENERAL: "General",
   SOFTWARE_ENGINEER: "Software engineer",
   MENTORSHIP: "Mentorship",
+  BOARD_MEMBER: "Board member",
 };
 const ACTION = {
   PENDING: "Mark pending",
