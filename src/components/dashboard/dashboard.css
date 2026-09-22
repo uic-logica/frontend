@@ -3140,3 +3140,177 @@
 .d-pane[hidden] {
   display: none;
 }
+
+/* Availability calendar ----------------------------------------------------
+   The visual way to answer "when are you free?": a week of half-hour cells
+   you drag across. Same ink/paper/gold vocabulary as the rest of the
+   workspace; every dimension a person feels — row height, gold, radius —
+   is a variable here rather than a number buried in the component. */
+.d-cal {
+  --cal-row: 20px;
+  --cal-gutter: 54px;
+  --cal-fill: var(--d-gold);
+  --cal-radius: 7px;
+  margin-top: 16px;
+  user-select: none;
+  touch-action: manipulation;
+}
+.d-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.d-cal-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.d-cal-head strong {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  min-width: 13.5em;
+  text-align: center;
+}
+.d-cal-step {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border: 1px solid var(--d-rule);
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 17px;
+  line-height: 1;
+  transition: background 120ms ease;
+}
+.d-cal-step:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.d-cal-jump {
+  margin-left: auto;
+}
+.d-cal-jump input {
+  border: 1px solid var(--d-rule);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 9px;
+}
+.d-cal-days,
+.d-cal-body {
+  display: grid;
+  grid-template-columns: var(--cal-gutter) repeat(7, minmax(0, 1fr));
+}
+.d-cal-days > span {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--d-muted);
+  padding-bottom: 8px;
+}
+.d-cal-days em {
+  display: block;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: inherit;
+}
+.d-cal-days > span.d-cal-today {
+  color: var(--d-gold);
+}
+.d-cal-days > span.d-cal-past {
+  opacity: 0.45;
+}
+.d-cal-body {
+  max-height: calc(var(--cal-row) * 22);
+  overflow-y: auto;
+  border: 1px solid var(--d-rule);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  overscroll-behavior: contain;
+}
+.d-cal-time {
+  height: var(--cal-row);
+  padding-right: 9px;
+  text-align: right;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--d-muted);
+  transform: translateY(-0.55em);
+}
+.d-cal-cell {
+  height: var(--cal-row);
+  border-left: 1px solid var(--d-rule);
+  border-top: 1px dotted color-mix(in oklab, currentColor 14%, transparent);
+  background: transparent;
+  transition: background 90ms ease;
+}
+.d-cal-cell.d-cal-hour {
+  border-top: 1px solid var(--d-rule);
+}
+/* Seven cells per row, so every 7th starts one: no rule against the edge. */
+.d-cal-cell:nth-of-type(7n + 1) {
+  border-left: 0;
+}
+.d-cal-cell:hover {
+  background: color-mix(in oklab, var(--cal-fill) 28%, transparent);
+}
+.d-cal-cell.d-cal-past {
+  opacity: 0.4;
+}
+.d-cal-cell.is-on {
+  background: var(--cal-fill);
+  /* The hour rule would otherwise cut a seam through a filled block. */
+  border-top-color: var(--cal-fill);
+  border-radius: var(--cal-radius);
+}
+/* A run of cells reads as one block, so only its two ends are rounded. */
+.d-cal-cell.is-on.joins-above {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.d-cal-cell.is-on.joins-below {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.d-cal-cell:focus-visible {
+  outline: 2px solid var(--d-gold);
+  outline-offset: -2px;
+}
+.d-cal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--d-muted);
+}
+@media (max-width: 640px) {
+  .d-cal {
+    --cal-row: 24px;
+    --cal-gutter: 44px;
+  }
+  .d-cal-head strong {
+    min-width: 0;
+    font-size: 13px;
+  }
+  .d-cal-jump {
+    width: 100%;
+    margin-left: 0;
+    order: 1;
+  }
+  .d-cal-jump input {
+    width: 100%;
+  }
+}

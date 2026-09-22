@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "@/lib/api";
+import { AvailabilityGrid } from "./AvailabilityGrid";
 import { Icon } from "./Icon";
 import { Heading } from "./Overview";
 import { type Profile, type SessionUser, type Window, date } from "./types";
@@ -60,6 +61,7 @@ export function CandidateHome({
   const [windows, setWindows] = useState<Window[]>(
     saved.length ? saved : [EMPTY],
   );
+  const [picker, setPicker] = useState<"grid" | "list">("grid");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -148,65 +150,88 @@ export function CandidateHome({
         {open ? (
           <>
             <p className="d-small">
-              Add every window that could work — the more options, the better
-              the odds we find a date. Chicago time.
+              {picker === "grid"
+                ? "Drag across every time that could work — the more you mark, the better the odds we find a date. Chicago time."
+                : "Add every window that could work — the more options, the better the odds we find a date. Chicago time."}{" "}
+              <button
+                type="button"
+                className="d-text-button"
+                onClick={() => setPicker(picker === "grid" ? "list" : "grid")}
+              >
+                {picker === "grid"
+                  ? "Type dates instead"
+                  : "Use the calendar instead"}
+              </button>
             </p>
-            <div className="d-window-list">
-              {windows.map((w, i) => (
-                <div className="d-window-row" key={i}>
-                  <label>
-                    <span>From</span>
-                    <input
-                      type="date"
-                      value={w.startDate}
-                      onChange={(e) => edit(i, "startDate", e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    <span>To</span>
-                    <input
-                      type="date"
-                      value={w.endDate || w.startDate}
-                      onChange={(e) => edit(i, "endDate", e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    <span>Between</span>
-                    <input
-                      type="time"
-                      value={w.startTime}
-                      onChange={(e) => edit(i, "startTime", e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    <span>and</span>
-                    <input
-                      type="time"
-                      value={w.endTime}
-                      onChange={(e) => edit(i, "endTime", e.target.value)}
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    className="d-window-remove"
-                    aria-label={`Remove window ${i + 1}`}
-                    disabled={windows.length === 1}
-                    onClick={() =>
-                      setWindows((prev) => prev.filter((_, j) => j !== i))
-                    }
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="d-text-button d-standalone"
-              onClick={() => setWindows((prev) => [...prev, EMPTY])}
-            >
-              + Add another window
-            </button>
+            {picker === "grid" && (
+              <AvailabilityGrid
+                windows={usable}
+                onChange={(next) => {
+                  setWindows(next.length ? next : [EMPTY]);
+                  setError("");
+                }}
+              />
+            )}
+            {picker === "list" && (
+              <div className="d-window-list">
+                {windows.map((w, i) => (
+                  <div className="d-window-row" key={i}>
+                    <label>
+                      <span>From</span>
+                      <input
+                        type="date"
+                        value={w.startDate}
+                        onChange={(e) => edit(i, "startDate", e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      <span>To</span>
+                      <input
+                        type="date"
+                        value={w.endDate || w.startDate}
+                        onChange={(e) => edit(i, "endDate", e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      <span>Between</span>
+                      <input
+                        type="time"
+                        value={w.startTime}
+                        onChange={(e) => edit(i, "startTime", e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      <span>and</span>
+                      <input
+                        type="time"
+                        value={w.endTime}
+                        onChange={(e) => edit(i, "endTime", e.target.value)}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      className="d-window-remove"
+                      aria-label={`Remove window ${i + 1}`}
+                      disabled={windows.length === 1}
+                      onClick={() =>
+                        setWindows((prev) => prev.filter((_, j) => j !== i))
+                      }
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {picker === "list" && (
+              <button
+                type="button"
+                className="d-text-button d-standalone"
+                onClick={() => setWindows((prev) => [...prev, EMPTY])}
+              >
+                + Add another window
+              </button>
+            )}
 
             {error && (
               <p className="d-error" role="alert">
