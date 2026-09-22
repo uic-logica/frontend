@@ -3098,3 +3098,31 @@
   flex: 0 0 auto;
   margin-top: 2px;
 }
+
+/* ---- Sideways scrolling: make it visible, keep it contained ----
+
+   Below 680px the stage filter and the directory tables scroll sideways
+   rather than wrapping. That was the right call, but two things were
+   missing.
+
+   The scrollbar: macOS and iOS hide overlay scrollbars until you already
+   scroll, so a table cut off mid-column looks broken rather than
+   scrollable. A thin permanent one costs 4px and removes the guesswork.
+
+   overscroll-behavior-x: without it, swiping past the end of a table
+   hands the gesture to the browser and navigates back — losing whatever
+   the person was part-way through typing. Nothing here wants that. */
+.d-table-scroll,
+.d-stage-tabs {
+  scrollbar-width: thin;
+  scrollbar-color: var(--d-gold) transparent;
+  overscroll-behavior-x: contain;
+}
+
+/* The focus ring belongs on the scroll container (it is tabbable so a
+   keyboard can reach the overflow), but only when reached by keyboard —
+   clicking a row shouldn't outline the whole table. */
+.d-table-scroll:focus-visible {
+  outline: 2px solid var(--d-gold);
+  outline-offset: 2px;
+}
