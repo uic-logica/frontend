@@ -124,7 +124,7 @@ export default function TeamPage() {
                 href="/join"
                 className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-lg font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
               >
-                Join LOGICA
+                Join the Board
               </Link>
             </div>
           </div>

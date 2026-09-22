@@ -105,21 +105,6 @@ const pathways = [
   },
   {
     index: 2,
-    title: "Mentorship",
-    text: "Workshops and study cohorts. Start with no experience.",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-        />
-      </svg>
-    ),
-  },
-  {
-    index: 3,
     title: "Events",
     text: "Socials, hack nights, company visits, and talks.",
     link: "/events",
@@ -130,7 +115,7 @@ const pathways = [
     ),
   },
   {
-    index: 4,
+    index: 3,
     title: "Community",
     text: "Discord, meetups, and Latinx technologists at UIC.",
     link: "/join",
@@ -236,12 +221,12 @@ function Partners() {
       <div className="club-card mx-auto mt-16 flex w-fit max-w-xl flex-col items-center gap-3 bg-white/[0.02] px-8 py-10 text-center">
         <p className="text-lg text-white md:text-xl">Interested in partnering with LOGICA?</p>
         <p className="text-sm text-white">Join our community of innovators and tech leaders.</p>
-        <a
-          href="mailto:logica@uic.edu"
+        <Link
+          href="/partner"
           className="mt-3 inline-flex items-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-black transition-transform duration-300 hover:-translate-y-0.5"
         >
           Become a Partner
-        </a>
+        </Link>
       </div>
     </section>
   );
@@ -299,7 +284,10 @@ export default function Home() {
             </div>
             <div className=" text-white lg:text-2xl text-lg mt-5 text-center" />
           </div>
-          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Three cards, so no `sm:grid-cols-2` step — it would leave one
+              card orphaned on its own row, which is the raggedness dropping
+              Mentorship was supposed to fix. One column, then three. */}
+          <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-5 md:grid-cols-3">
             {pathways.map((p) => (
               <LevelCard key={p.index} {...p} />
             ))}
@@ -321,7 +309,7 @@ export default function Home() {
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="/join"
+                  href="/signup"
                   className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black transition-transform duration-300 hover:-translate-y-0.5"
                 >
                   Join LOGICA
