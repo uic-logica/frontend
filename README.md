@@ -48,4 +48,4 @@ is archived under `archive/passwordless/` and is not active.
 
 For Vercel, build with `npm run build` and set `NEXT_PUBLIC_API_URL` to the backend origin. Set the backend's `FRONTEND_URL` to this site's origin for member password request checks. Database setup and migrations belong to the backend; see its `prisma.config.ts`, `.env.example`, and README.
 
-`.github/workflows/ci.yml` uses Node 24 and runs `npm ci`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, and `npm run build`. There is no test script or test runner in `package.json`. See [AGENTS.md](AGENTS.md) for review instructions and [CONTENT.md](CONTENT.md) for the page inventory.
+`.github/workflows/ci.yml` uses Node 24 and runs `npm ci`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm test`, and `npm run build`. `npm test` runs vitest over the pure helpers in `src/lib/`; nothing renders a component. See [AGENTS.md](AGENTS.md) for review instructions and [CONTENT.md](CONTENT.md) for the page inventory.

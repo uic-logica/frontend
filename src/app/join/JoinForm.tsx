@@ -7,14 +7,13 @@ import { ApiError, api } from "@/lib/api";
 
 /** Matches `TRACKS` in the backend's lib/membership-application.ts. */
 const TRACKS = [
-  { value: "GENERAL", label: "General Member" },
   { value: "SOFTWARE_ENGINEER", label: "Software Engineer" },
-  { value: "MENTORSHIP", label: "Mentorship track" },
+  { value: "BOARD_MEMBER", label: "Board Member" },
 ] as const;
 
 export function JoinForm() {
   const id = useId();
-  const [track, setTrack] = useState<string>("GENERAL");
+  const [track, setTrack] = useState<string>("SOFTWARE_ENGINEER");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [major, setMajor] = useState("");
