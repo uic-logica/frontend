@@ -562,6 +562,11 @@ export type Application = {
   major: string | null;
   gradYear: number | null;
   why: string | null;
+  // Build-team (SOFTWARE_ENGINEER) applications only; `projects` is ranked.
+  github?: string | null;
+  hoursPerWeek?: number | null;
+  projects?: string[];
+  skills?: string | null;
   status: "PENDING" | "INTERVIEW" | "ACCEPTED" | "DECLINED";
   createdAt: string;
 };

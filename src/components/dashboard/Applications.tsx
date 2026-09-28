@@ -19,6 +19,15 @@ const TRACK = {
   MENTORSHIP: "Mentorship",
   BOARD_MEMBER: "Board member",
 };
+const PROJECT: Record<string, string> = {
+  OPPORTUNITY_BOARD: "Opportunity board",
+  RESUME_BUILDER: "Resume builder",
+  EVENT_REPLAYS: "Event replays",
+  MOCK_INTERVIEWER: "Mock interviewer",
+};
+const projects = (item: Application) => item.projects?.map((p) => PROJECT[p] ?? p).join(" → ");
+const githubUrl = (value: string) =>
+  /^https?:\/\//.test(value) ? value : `https://github.com/${value.replace(/^@/, "")}`;
 const ACTION = {
   PENDING: "Mark pending",
   INTERVIEW: "Move to interview",
@@ -56,7 +65,7 @@ export function Applications() {
   const needle = query.trim().toLowerCase();
   const filtered = items?.filter((item) =>
     (status === "ALL" || item.status === status) &&
-    [item.name, item.email, TRACK[item.track], item.major, item.gradYear, item.why]
+    [item.name, item.email, TRACK[item.track], item.major, item.gradYear, item.why, item.github, projects(item), item.skills]
       .filter(Boolean).join(" ").toLowerCase().includes(needle),
   );
   const detail = items?.find((item) => item.id === open);
@@ -110,7 +119,7 @@ export function Applications() {
         <div className="d-directory-toolbar">
           <label className="d-search">
             <span className="sr-only">Search applications</span>
-            <input type="search" placeholder="Search name, email, track, major…" value={query} onChange={(e) => setQuery(e.target.value)} />
+            <input type="search" placeholder="Search name, email, track, project, skills…" value={query} onChange={(e) => setQuery(e.target.value)} />
           </label>
         </div>
         <div className="d-table-scroll" tabIndex={0} role="region" aria-label="Applications table">
@@ -121,7 +130,7 @@ export function Applications() {
             <tbody>{filtered?.map((item) => (
               <tr key={item.id}>
                 <td><strong>{item.name}</strong><small>{item.email}</small></td>
-                <td>{TRACK[item.track]}</td>
+                <td>{TRACK[item.track]}{item.projects?.length ? <small>{projects(item)}</small> : null}</td>
                 <td>{item.major || "—"}<small>{item.gradYear ?? "Graduation year not provided"}</small></td>
                 <td>{date(item.createdAt, { month: "short", day: "numeric", year: "numeric" })}</td>
                 <td><span className={`d-badge ${tone(item.status)}`}>{LABEL[item.status]}</span></td>
@@ -146,6 +155,12 @@ export function Applications() {
           <div><dt>Email</dt><dd><a href={`mailto:${detail.email}`}>{detail.email}</a></dd></div>
           <div><dt>Status</dt><dd><span className={`d-badge ${tone(detail.status)}`}>{LABEL[detail.status]}</span></dd></div>
           <div><dt>Track</dt><dd>{TRACK[detail.track]}</dd></div>
+          {detail.track === "SOFTWARE_ENGINEER" && detail.github && <>
+            <div><dt>GitHub</dt><dd><a href={githubUrl(detail.github)} target="_blank" rel="noreferrer">{detail.github}</a></dd></div>
+            <div><dt>Hours a week</dt><dd>{detail.hoursPerWeek ?? "Not provided"}</dd></div>
+            <div><dt>Projects, ranked</dt><dd>{projects(detail) || "None picked"}</dd></div>
+            <div><dt>Skills</dt><dd>{detail.skills || "Not provided"}</dd></div>
+          </>}
           <div><dt>Major / graduation</dt><dd>{detail.major || "Not provided"} · {detail.gradYear ?? "Year not provided"}</dd></div>
           <div><dt>Applied</dt><dd>{date(detail.createdAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>
           <div><dt>Why do you want to join?</dt><dd>{detail.why || "No answer provided"}</dd></div>

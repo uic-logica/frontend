@@ -30,7 +30,9 @@ export default function SignInPage() {
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
       });
       setPassword("");
-      router.replace("/dashboard");
+      // Only same-site paths, so ?next= can't bounce anyone off the site.
+      const next = new URLSearchParams(window.location.search).get("next");
+      router.replace(next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not sign in. Please try again.");
     } finally {
