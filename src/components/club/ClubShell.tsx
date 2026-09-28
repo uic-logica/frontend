@@ -4,7 +4,7 @@ import Image from "next/image";
 import { JourneyBackdrop, sceneFor } from "./JourneyBackdrop";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const links = [
   { href: "/about", label: "About" },
@@ -13,9 +13,17 @@ const links = [
   { href: "/blog", label: "Blog" },
 ];
 
-/** Floating navigation with a warm glass capsule and responsive menu. */
+/** Where the capsule's white indicator last sat. Every page renders its own
+ * ClubShell, so the nav remounts on navigation; remembering the old spot lets
+ * the new indicator start there and slide over, like mapier.ai's. */
+let lastBar: { x: number; y: number; w: number; h: number } | null = null;
+
+/** Floating navigation with a glass capsule and responsive menu. */
 export function SiteNav() {
   const pathname = usePathname();
+  const capsule = useRef<HTMLDivElement>(null);
+  const navLinks = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLSpanElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -25,6 +33,43 @@ export function SiteNav() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // One white indicator slides under the active item (mapier.ai's segmented capsule).
+  // Measured from the DOM: its size is the rendered text width.
+  useLayoutEffect(() => {
+    const box = capsule.current;
+    const el = bar.current;
+    if (!box || !el) return;
+    const place = (animate: boolean) => {
+      // Sign in sits outside the capsule; the indicator can travel over to it too.
+      const active = navLinks.current?.querySelector<HTMLElement>("a[aria-current=page]");
+      if (!active) {
+        el.style.opacity = "0";
+        lastBar = null;
+        return;
+      }
+      const a = active.getBoundingClientRect();
+      const c = box.getBoundingClientRect();
+      const x = a.left - c.left;
+      const y = a.top - c.top;
+      el.dataset.animate = animate ? "true" : "";
+      el.style.opacity = "1";
+      el.style.width = `${a.width}px`;
+      el.style.height = `${a.height}px`;
+      el.style.transform = `translate(${x}px, ${y}px)`;
+      lastBar = { x, y, w: a.width, h: a.height };
+    };
+    if (lastBar) {
+      // Start where the previous page's indicator was, then slide on the next frame.
+      el.style.opacity = "1";
+      el.style.width = `${lastBar.w}px`;
+      el.style.height = `${lastBar.h}px`;
+      el.style.transform = `translate(${lastBar.x}px, ${lastBar.y}px)`;
+      const frame = requestAnimationFrame(() => place(true));
+      return () => cancelAnimationFrame(frame);
+    }
+    place(false);
+  }, [pathname, isMobile]);
 
   return (
     <>
@@ -55,9 +100,10 @@ export function SiteNav() {
             </button>
           </div>
         ) : (
-          <div className="site-nav-links flex items-center gap-5 text-sm md:gap-6">
-            <div className="site-nav-capsule h-10 overflow-hidden">
-              <ul className="flex gap-5 md:gap-6">
+          <div ref={navLinks} className="site-nav-links flex items-center gap-5 text-sm md:gap-6">
+            <div ref={capsule} className="site-nav-capsule h-10">
+              <span ref={bar} className="site-nav-bar" aria-hidden="true" />
+              <ul className="relative flex gap-5 md:gap-6">
                 {links.map((item) => {
                   const active = pathname === item.href;
                   return (
@@ -78,6 +124,7 @@ export function SiteNav() {
             </div>
             <Link
               href="/signin"
+              aria-current={pathname === "/signin" ? "page" : undefined}
               className={`site-signin nav-link flex h-10 items-center px-1 pb-1.5 duration-100 ${
                 pathname === "/signin" || pathname.startsWith("/members") ? "nav-link-active" : ""
               }`}
@@ -157,13 +204,11 @@ export function ClubShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const scene = sceneFor(pathname);
   // The page is at least as tall as its painting, so the art's closing landmark
-  // always sits behind the footer. Panned scenes (start > 0) are much taller than any page.
-  const ratios = scene.start
-    ? undefined
-    : ({ "--art-ratio": scene.height / scene.width, "--art-ratio-phone": scene.mobile ? scene.mobile[2] / scene.mobile[1] : undefined } as React.CSSProperties);
+  // reaches the footer; a longer page continues in the painting's bottom colour.
+  const stage = { "--art-ratio": scene.height / scene.width, "--art-ground": scene.ground } as React.CSSProperties;
   return (
     <div className="club-shell min-h-screen text-white" data-home={pathname === "/"} data-route={pathname.split("/")[1] || "home"}>
-      <div className="journey-stage" style={ratios}>
+      <div className="journey-stage" style={stage}>
         <JourneyBackdrop pathname={pathname} />
         <SiteNav />
         {children}

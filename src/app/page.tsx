@@ -316,7 +316,7 @@ export default function Home() {
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="/join"
+                  href="/signup"
                   className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black transition-transform duration-300 hover:-translate-y-0.5"
                 >
                   Join LOGICA

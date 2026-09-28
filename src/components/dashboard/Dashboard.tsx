@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { api, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
@@ -26,11 +26,11 @@ import {
 } from "./types";
 import "./dashboard.css";
 
-/** Each section opens on its own part of the site's painting: [image, vertical position]. */
+/** Each section opens on its own night painting (logica.pen Variant E): [image, vertical position]. */
 const art: Record<Section, [string, string]> = {
-  overview: ["campus", "30%"], profile: ["skyline", "35%"], events: ["blue-line", "55%"],
-  activity: ["pilsen", "45%"], community: ["lake", "55%"], speakers: ["journey-c", "8%"],
-  notifications: ["golden-hour", "60%"], settings: ["journey-c", "88%"],
+  overview: ["campus-night", "30%"], profile: ["skyline-night", "35%"], events: ["blue-line-night", "55%"],
+  activity: ["pilsen-night", "45%"], community: ["lake-night", "55%"], speakers: ["journey-c-night", "8%"],
+  notifications: ["golden-hour-night", "60%"], settings: ["journey-c-night", "88%"],
 };
 
 /**
@@ -60,6 +60,29 @@ export function Dashboard() {
   const [reload, setReload] = useState(0);
   const [menu, setMenu] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const sidebar = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLSpanElement>(null);
+
+  // One white indicator slides between sidebar items as the section changes,
+  // the same motion as the site nav's capsule. Measured from the DOM because
+  // it depends on rendered layout; not animated on first placement.
+  useLayoutEffect(() => {
+    const box = sidebar.current;
+    const el = bar.current;
+    if (!box || !el) return;
+    const active = box.querySelector<HTMLElement>("a[aria-current=page]");
+    if (!active || !active.offsetParent) {
+      el.style.opacity = "0";
+      return;
+    }
+    const a = active.getBoundingClientRect();
+    const top = a.top - box.getBoundingClientRect().top;
+    el.style.opacity = "1";
+    el.style.height = `${a.height}px`;
+    el.style.transform = `translateY(${top}px)`;
+    const frame = requestAnimationFrame(() => (el.dataset.animate = "true"));
+    return () => cancelAnimationFrame(frame);
+  }, [section, user]);
 
   useEffect(() => {
     let alive = true;
@@ -152,13 +175,13 @@ export function Dashboard() {
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
   return (
-    <div className="dash">
+    <div className="dash" style={{ "--d-art": `url(/journey/${art[section][0]}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})`, "--d-art-y": art[section][1] } as CSSProperties}>
       <a href="#dashboard-content" className="d-skip">
         Skip to content
       </a>
       <aside className="d-sidebar">
         <Link className="d-brand" href="/dashboard">
-          <Image src="/logica-logo-white.png" alt="" width={40} height={40} />
+          <Image src="/logica-logo-black.png" alt="" width={40} height={40} />
           <span>
             LOGICA<small>University of Illinois Chicago</small>
           </span>
@@ -174,8 +197,10 @@ export function Dashboard() {
         </button>
         <div
           id="dashboard-nav"
+          ref={sidebar}
           className={`d-sidebar-inner ${menu ? "is-open" : ""}`}
         >
+          <span ref={bar} className="d-nav-bar" aria-hidden="true" />
           <nav aria-label="Dashboard">
             {nav.map((item) => (
               <Link
@@ -239,7 +264,6 @@ export function Dashboard() {
       </aside>
       <div
         className="d-workarea"
-        style={{ "--d-art": `url(/journey/${art[section][0]}.webp)`, "--d-art-y": art[section][1] } as CSSProperties}
       >
         <header className="d-topbar">
           <span>

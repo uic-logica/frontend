@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { PinkLink } from "@/components/club/Typewriter";
-import { ButtonLink } from "@/components/ui/ButtonLink";
 
 type Event = {
   id: string;
@@ -74,11 +72,11 @@ export default function EventsPage() {
             </span>
           </div>
 
-          {error && <p className="mb-4 text-body text-signal">{error}</p>}
-          {events === null && <p className="text-body text-white">Loading…</p>}
+          {error && <p className="mb-4 text-center text-body text-signal">{error}</p>}
+          {events === null && <p className="text-center text-body text-white">Loading…</p>}
 
           {events && list.length === 0 && (
-            <div className="club-card mx-auto w-fit max-w-xl p-8">
+            <div className="club-card mx-auto w-full max-w-xl p-8">
               <h2 className="type-h3 text-white">
                 {tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}
               </h2>
@@ -86,9 +84,6 @@ export default function EventsPage() {
                 We&apos;re currently planning our next round of events. Check back soon or join
                 the newsletter to be notified.
               </p>
-              <PinkLink href="/join" className="mt-6 text-xl">
-                Stay Updated
-              </PinkLink>
             </div>
           )}
 
@@ -120,33 +115,6 @@ export default function EventsPage() {
           </ul>
         </SectionContainer>
 
-        <SectionContainer>
-          <div id="speakers" className="mx-auto mb-12 max-w-3xl border-b border-white/20 pb-4 text-center">
-            <h2 className="type-h2 text-white">Upcoming Speakers</h2>
-            <p className="mt-2 text-body-lg text-white">
-              People presenting at upcoming LOGICA talks and workshops
-            </p>
-          </div>
-          <div className="club-card mx-auto w-fit max-w-xl p-8">
-            <h3 className="type-h4 text-white">To be announced</h3>
-            <p className="mt-3 text-body text-white">Check back soon for our speaker lineup this semester.</p>
-            <PinkLink href="/speak" className="mt-6 text-xl">
-              Want to speak at LOGICA? Join the speaker lineup
-            </PinkLink>
-          </div>
-        </SectionContainer>
-
-        <SectionContainer>
-          <div className="club-card mx-auto w-fit max-w-xl p-8">
-            <h2 className="type-h3 text-white">Stay Updated</h2>
-            <p className="mt-3 text-body text-white">
-              Sign up interest via Join to receive updates about upcoming events and opportunities.
-            </p>
-            <ButtonLink href="/join" className="mt-6">
-              Subscribe
-            </ButtonLink>
-          </div>
-        </SectionContainer>
       </PageContainer>
     </ClubShell>
   );
