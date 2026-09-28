@@ -130,24 +130,38 @@ export function Dashboard() {
 
   // One white indicator slides between sidebar items as the section changes,
   // the same motion as the site nav's capsule. Measured from the DOM because
-  // it depends on rendered layout; not animated on first placement.
+  // it depends on rendered layout, and re-measured whenever the menu itself
+  // changes (a guest's items change once their profile loads). Not animated
+  // on first placement.
   useLayoutEffect(() => {
     const box = sidebar.current;
     const el = bar.current;
     if (!box || !el) return;
-    const active = box.querySelector<HTMLElement>("a[aria-current=page]");
-    if (!active || !active.offsetParent) {
-      el.style.opacity = "0";
-      return;
-    }
-    const a = active.getBoundingClientRect();
-    const top = a.top - box.getBoundingClientRect().top;
-    el.style.opacity = "1";
-    el.style.height = `${a.height}px`;
-    el.style.transform = `translateY(${top}px)`;
+    const place = () => {
+      const active = box.querySelector<HTMLElement>("a[aria-current=page]");
+      if (!active || !active.offsetParent) {
+        el.style.opacity = "0";
+        return;
+      }
+      const a = active.getBoundingClientRect();
+      // The sidebar scrolls when the menu is long, so measure in its content box.
+      const top = a.top - box.getBoundingClientRect().top + box.scrollTop;
+      el.style.opacity = "1";
+      el.style.height = `${a.height}px`;
+      el.style.transform = `translateY(${top}px)`;
+    };
+    place();
     const frame = requestAnimationFrame(() => (el.dataset.animate = "true"));
-    return () => cancelAnimationFrame(frame);
-  }, [section, user]);
+    const menuChanges = new MutationObserver(place);
+    menuChanges.observe(box, { subtree: true, childList: true, attributeFilter: ["aria-current"] });
+    const resizes = new ResizeObserver(place);
+    resizes.observe(box);
+    return () => {
+      cancelAnimationFrame(frame);
+      menuChanges.disconnect();
+      resizes.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     let alive = true;

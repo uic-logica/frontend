@@ -3158,6 +3158,21 @@
 .d-form input[readonly] { background: rgb(255 255 255 / .75); color: #3b3b3b; }
 .d-filter select { background: #fff; color: #2b2b2b; }
 
+/* Main's newer pieces (board home, talk card, chat, invite link) in the night palette. */
+.d-pin { background: var(--d-glass); backdrop-filter: var(--d-blur); border: 0; border-radius: 24px; color: #fff; }
+.d-pin:hover { background: rgb(11 18 48 / .62); }
+.d-pin-icon { color: var(--d-gold); }
+.d-talk { background: var(--d-glass); backdrop-filter: var(--d-blur); color: #fff; border: 0; border-radius: 28px; }
+.d-chat-panel.is-full { background: var(--d-glass); backdrop-filter: var(--d-blur); }
+.d-ref-picker { background: #0b1230; color: #fff; border: 1px solid rgb(255 255 255 / .16); }
+.d-bubble-row.is-mine .d-ref, .d-bubble-row.is-mine .d-ref.is-window { background: rgb(11 18 48 / .35); color: #fff; }
+.d-bubble-row.is-mine .d-ref:hover { background: rgb(11 18 48 / .5); }
+.d-invite-link code { background: rgb(5 8 24 / .45); color: #fff; }
+
+/* Fifteen items (frame 35 was drawn with eight): tighter rows so the account row stays on screen. */
+.d-sidebar nav > a { height: 38px; margin-bottom: 2px; }
+.d-brand { padding-bottom: 16px; }
+
 @media (max-width: 900px) {
   .d-sidebar { position: sticky; inset: auto; top: 0; width: auto; margin: 12px; border-radius: 24px; }
   .d-workarea { margin-left: 0; }
