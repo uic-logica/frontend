@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Fragment, type ReactNode, useEffect, useState } from "react";
+import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { api, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
@@ -39,6 +39,9 @@ import {
   PERSONAL_SECTIONS,
 } from "./types";
 import "./dashboard.css";
+
+/** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
+const art = "dashboard-night";
 
 /**
  * A section, once opened, stays mounted and is hidden rather than torn down.
@@ -97,6 +100,15 @@ export function Dashboard() {
   const [notices, setNotices] = useState<Notice[] | null>(null);
   const [speakers, setSpeakers] = useState<Speaker[] | null>(null);
   const [members, setMembers] = useState<Member[] | null>(null);
+  function forgetSession() {
+    setUser(null);
+    setProfile(null);
+    setEvents(null);
+    setEngagement(null);
+    setNotices(null);
+    setSpeakers(null);
+    setMembers(null);
+  }
   const [errors, setErrors] = useState<string[]>([]);
   const [authState, setAuthState] = useState<
     "loading" | "ready" | "signed-out" | "error"
@@ -122,6 +134,43 @@ export function Dashboard() {
   }, [section]);
   const [menu, setMenu] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const sidebar = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLSpanElement>(null);
+
+  // One white indicator slides between sidebar items as the section changes,
+  // the same motion as the site nav's capsule. Measured from the DOM because
+  // it depends on rendered layout, and re-measured whenever the menu itself
+  // changes (a guest's items change once their profile loads). Not animated
+  // on first placement.
+  useLayoutEffect(() => {
+    const box = sidebar.current;
+    const el = bar.current;
+    if (!box || !el) return;
+    const place = () => {
+      const active = box.querySelector<HTMLElement>("a[aria-current=page]");
+      if (!active || !active.offsetParent) {
+        el.style.opacity = "0";
+        return;
+      }
+      const a = active.getBoundingClientRect();
+      // The sidebar scrolls when the menu is long, so measure in its content box.
+      const top = a.top - box.getBoundingClientRect().top + box.scrollTop;
+      el.style.opacity = "1";
+      el.style.height = `${a.height}px`;
+      el.style.transform = `translateY(${top}px)`;
+    };
+    place();
+    const frame = requestAnimationFrame(() => (el.dataset.animate = "true"));
+    const menuChanges = new MutationObserver(place);
+    menuChanges.observe(box, { subtree: true, childList: true, attributeFilter: ["aria-current"] });
+    const resizes = new ResizeObserver(place);
+    resizes.observe(box);
+    return () => {
+      cancelAnimationFrame(frame);
+      menuChanges.disconnect();
+      resizes.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -133,6 +182,9 @@ export function Dashboard() {
         );
         if (!alive) return;
         if (!session?.user) {
+          // Drop anything a previous session left behind (QA #80: after
+          // signing out, Back showed the sign-in buttons next to the old avatar).
+          forgetSession();
           setAuthState("signed-out");
           return;
         }
@@ -208,6 +260,7 @@ export function Dashboard() {
     setLeaving(true);
     try {
       await signOut();
+      forgetSession();
       router.push(
         user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin",
       );
@@ -222,13 +275,13 @@ export function Dashboard() {
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
   return (
-    <div className="dash">
+    <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
       <a href="#dashboard-content" className="d-skip">
         Skip to content
       </a>
       <aside className="d-sidebar">
         <Link className="d-brand" href="/dashboard">
-          <Image src="/logica-logo-white.png" alt="" width={40} height={40} />
+          <Image src="/logica-logo-black.png" alt="" width={40} height={40} />
           <span>
             LOGICA<small>University of Illinois Chicago</small>
           </span>
@@ -244,8 +297,10 @@ export function Dashboard() {
         </button>
         <div
           id="dashboard-nav"
+          ref={sidebar}
           className={`d-sidebar-inner ${menu ? "is-open" : ""}`}
         >
+          <span ref={bar} className="d-nav-bar" aria-hidden="true" />
           <nav aria-label="Dashboard">
             {nav.map((item, index) => (
               <Fragment key={item}>
@@ -342,28 +397,34 @@ export function Dashboard() {
           </div>
         </div>
       </aside>
-      <div className="d-workarea">
+      <div
+        className="d-workarea"
+      >
         <header className="d-topbar">
           <span>
             <strong>{titleFor(section, user, profile)}</strong>
           </span>
           <div>
             <span className="d-campus">LOGICA @ UIC</span>
-            <Link
-              aria-label={`${unread} unread notifications`}
-              href="/dashboard/notifications"
-              className="d-bell"
-            >
-              <Icon name="notifications" />
-              {unread > 0 && <i />}
-            </Link>
-            <Link
-              className="d-avatar d-avatar-small"
-              href="/dashboard/profile"
-              aria-label="My profile"
-            >
-              {initials(profile?.name || user?.name || null)}
-            </Link>
+            {user && (
+              <>
+                <Link
+                  aria-label={`${unread} unread notifications`}
+                  href="/dashboard/notifications"
+                  className="d-bell"
+                >
+                  <Icon name="notifications" />
+                  {unread > 0 && <i />}
+                </Link>
+                <Link
+                  className="d-avatar d-avatar-small"
+                  href="/dashboard/profile"
+                  aria-label="My profile"
+                >
+                  {initials(profile?.name || user.name || null)}
+                </Link>
+              </>
+            )}
           </div>
         </header>
         <main

@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { JourneyBackdrop, sceneFor } from "./JourneyBackdrop";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const links = [
   { href: "/about", label: "About" },
@@ -12,12 +13,19 @@ const links = [
   { href: "/blog", label: "Blog" },
 ];
 
-/** Fixed black nav + spacer. No gradient bar. */
+/** Where the capsule's white indicator last sat. Every page renders its own
+ * ClubShell, so the nav remounts on navigation; remembering the old spot lets
+ * the new indicator start there and slide over, like mapier.ai's. */
+let lastBar: { x: number; y: number; w: number; h: number } | null = null;
+
+/** Floating navigation with a glass capsule and responsive menu. */
 export function SiteNav() {
   const pathname = usePathname();
+  const capsule = useRef<HTMLDivElement>(null);
+  const navLinks = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLSpanElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [open, setOpen] = useState(false);
-  const [hideLinks, setHideLinks] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
@@ -26,48 +34,83 @@ export function SiteNav() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    let lastY = window.scrollY;
-    const handleScroll = () => {
-      const y = window.scrollY;
-      setHideLinks(y > lastY && y > 80);
-      lastY = y;
+  // One white indicator slides under the active item (mapier.ai's segmented capsule).
+  // Measured from the DOM: its size is the rendered text width.
+  useLayoutEffect(() => {
+    const box = capsule.current;
+    const el = bar.current;
+    if (!box || !el) return;
+    const place = (animate: boolean) => {
+      // Sign in sits outside the capsule; the indicator can travel over to it too.
+      const active = navLinks.current?.querySelector<HTMLElement>("a[aria-current=page]");
+      if (!active) {
+        el.style.opacity = "0";
+        lastBar = null;
+        return;
+      }
+      const a = active.getBoundingClientRect();
+      const c = box.getBoundingClientRect();
+      const x = a.left - c.left;
+      const y = a.top - c.top;
+      el.dataset.animate = animate ? "true" : "";
+      el.style.opacity = "1";
+      el.style.width = `${a.width}px`;
+      el.style.height = `${a.height}px`;
+      el.style.transform = `translate(${x}px, ${y}px)`;
+      lastBar = { x, y, w: a.width, h: a.height };
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (lastBar) {
+      // Start where the previous page's indicator was, then slide on the next frame.
+      el.style.opacity = "1";
+      el.style.width = `${lastBar.w}px`;
+      el.style.height = `${lastBar.h}px`;
+      el.style.transform = `translate(${lastBar.x}px, ${lastBar.y}px)`;
+      const frame = requestAnimationFrame(() => place(true));
+      return () => cancelAnimationFrame(frame);
+    }
+    place(false);
+  }, [pathname, isMobile]);
 
   return (
     <>
-      <nav className="fixed z-20 flex w-full flex-row items-center justify-between bg-transparent p-6 text-white md:p-8">
+      <nav className="site-nav fixed z-20 flex w-full flex-row items-center justify-between bg-transparent p-6 text-white md:p-8">
         <Link href="/" className="pl-2 text-3xl font-extrabold" aria-label="LOGICA home">
           <Image src="/logica-logo-white.png" alt="LOGICA" width={56} height={56} priority />
         </Link>
 
         {isMobile ? (
-          <button
-            type="button"
-            className="rounded-lg border border-white/40 px-3 py-2 text-white"
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span className="sr-only">Menu</span>
-            {open ? "×" : "≡"}
-          </button>
+          <div className="site-nav-mobile">
+            <Link href="/signin" className="site-signin">
+              Sign in
+            </Link>
+            <button
+              type="button"
+              className="rounded-lg border border-white/40 px-3 py-2 text-white"
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span className="sr-only">Menu</span>
+              {open ? (
+                "×"
+              ) : (
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                  <path d="M4 7h16M4 12h16M4 17h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         ) : (
-          <div className="flex items-center gap-5 text-sm md:gap-6">
-            <div className="h-10 overflow-hidden">
-              <ul
-                className={`flex gap-5 transition-transform duration-300 ease-out md:gap-6 ${
-                  hideLinks ? "-translate-y-12" : "translate-y-0"
-                }`}
-              >
+          <div ref={navLinks} className="site-nav-links flex items-center gap-5 text-sm md:gap-6">
+            <div ref={capsule} className="site-nav-capsule h-10">
+              <span ref={bar} className="site-nav-bar" aria-hidden="true" />
+              <ul className="relative flex gap-5 md:gap-6">
                 {links.map((item) => {
                   const active = pathname === item.href;
                   return (
                     <li key={item.href} className="relative flex h-10 items-center">
                       <Link
                         href={item.href}
+                        aria-current={active ? "page" : undefined}
                         className={`nav-link transform px-1 pb-1.5 duration-100 ${
                           active ? "nav-link-active" : ""
                         }`}
@@ -81,7 +124,8 @@ export function SiteNav() {
             </div>
             <Link
               href="/signin"
-              className={`nav-link flex h-10 items-center px-1 pb-1.5 duration-100 ${
+              aria-current={pathname === "/signin" ? "page" : undefined}
+              className={`site-signin nav-link flex h-10 items-center px-1 pb-1.5 duration-100 ${
                 pathname === "/signin" || pathname.startsWith("/members") ? "nav-link-active" : ""
               }`}
             >
@@ -93,7 +137,7 @@ export function SiteNav() {
       <div className="h-20 md:h-24" />
 
       {isMobile && open ? (
-        <div className="fixed inset-x-0 top-20 z-20 border-t border-white/10 bg-white/[0.06] backdrop-blur-md px-8 py-4 md:top-24">
+        <div className="site-mobile-menu fixed inset-x-0 top-20 z-20 border-t border-white/10 bg-white/[0.06] backdrop-blur-md px-8 py-4 md:top-24">
           <ul className="flex flex-col gap-4 text-lg">
             {links.map((item) => (
               <li key={item.href}>
@@ -120,102 +164,36 @@ const legalLinks = [
   { href: "/support", label: "Support" },
 ];
 
-/** Corner radius for the notch below — kept in one place since the mask math
- * and the piece's own box size both depend on it. */
-const CORNER = 40;
-
-/**
- * A flat-topped black box — the rounding lives in two small corner pieces
- * sitting right above it, not on the box itself. Each piece is ink-colored
- * with a radial-gradient mask: transparent (wallpaper showing through)
- * nearest the content above, opaque ink beyond the arc — so it reads as the
- * *picture's* corner curving away into the black, rather than the black
- * box curving up into the picture. Doing it this way (an overlay, not
- * `border-radius` + `overflow:hidden` on the actual fixed background) is
- * what keeps the fixed wallpaper untouched and jank-free.
- */
-function CornerNotch({ side }: { side: "left" | "right" }) {
-  return (
-    <span
-      aria-hidden
-      className="absolute bottom-full bg-ink"
-      style={{
-        [side]: 0,
-        width: CORNER,
-        height: CORNER,
-        // Centered on the corner nearest the content above (top-right for the
-        // left piece, top-left for the right piece) — transparent there,
-        // opaque by the time the arc reaches the true outer corner below it.
-        maskImage: `radial-gradient(circle at top ${side === "left" ? "right" : "left"}, transparent ${CORNER - 1}px, black ${CORNER}px)`,
-        WebkitMaskImage: `radial-gradient(circle at top ${side === "left" ? "right" : "left"}, transparent ${CORNER - 1}px, black ${CORNER}px)`,
-      }}
-    />
-  );
-}
-
-/**
- * The wallpaper behind this is a genuinely fixed, unmoving background (see
- * globals.css) — the footer scrolling up over it, notched corners first, is
- * what creates the "rounded addition below the picture" look.
- */
+/** Mapier-style closer: the footer sits on the end of the painting —
+ * wordmark on the left, links stacked on the right, fine print below. */
 export function SiteFooter() {
   return (
-    // pb-3, not pb-2: at max scroll the footer's own box was landing ~0.5px
-    // short of the true viewport bottom (a sub-pixel layout rounding
-    // artifact), letting a hairline of the fixed wallpaper show through
-    // beneath it. A few extra px of padding overshoots that safely.
-    // No overflow-hidden here — the corner notches above are positioned
-    // outside this box on purpose (bottom-full), and clipping would cut
-    // them off. The glow blur is soft enough not to need containment.
-    <footer className="relative flex flex-col items-center bg-ink pb-3 text-white">
-      <CornerNotch side="left" />
-      <CornerNotch side="right" />
-
-      {/* A soft ember glow behind the mark — the one warm accent in an
-          otherwise flat black section, so it reads as a deliberate close to
-          the page instead of a plain text block floating in a void.
-          Confined to its own clipped wrapper, not the footer itself: the
-          glow (420px) is taller than the footer's own content, and with
-          nothing to clip it, that excess was inflating the page's real
-          scroll height — leaving an actual gap of wallpaper below the
-          footer at max scroll, not just a sub-pixel one. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="absolute left-1/2 top-0 h-[420px] w-[720px] -translate-x-1/2 rounded-full opacity-30 blur-[100px]"
-          style={{ background: "radial-gradient(closest-side, var(--color-ember), transparent)" }}
-        />
-      </div>
-
-      <div className="relative mt-16 flex flex-col items-center">
-        <Image src="/logica-logo-white.png" alt="LOGICA" width={64} height={64} className="h-16 w-16" />
-        <p className="type-label mt-5 text-white/50">Get in touch with us</p>
-        <div className="mt-4 flex items-center justify-center gap-6">
-          <a
-            href="mailto:logica@uic.edu"
-            className="inline-flex h-10 w-10 items-center justify-center transition-transform hover:scale-110"
-            aria-label="Email"
-          >
-            <svg viewBox="0 0 512 512" height="26" width="26" fill="currentColor" aria-hidden>
-              <path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z" />
-            </svg>
-          </a>
-          <Link href="/join" className="text-lg font-semibold leading-none text-signal hover:underline">
-            Join
-          </Link>
-          <Link href="/signin" className="text-lg font-semibold leading-none text-white hover:text-signal">
-            Sign in
-          </Link>
-        </div>
-      </div>
-
-      <div className="relative mx-auto mt-14 flex w-full max-w-7xl flex-col items-center gap-3 border-t border-ember/50 px-4 py-6 text-sm text-white/60 sm:flex-row sm:justify-between sm:px-6 lg:px-12">
-        <span>© {new Date().getFullYear()} LOGICA @ UIC</span>
-        <div className="flex items-center gap-6">
-          {legalLinks.map((item) => (
-            <Link key={item.href} href={item.href} className="text-white/70 hover:text-white">
+    <footer className="site-footer">
+      <div className="site-footer-in">
+        <Link href="/" className="site-footer-mark" aria-label="LOGICA home">
+          <Image src="/logica-logo-white.png" alt="" width={88} height={88} />
+          <span>LOGICA</span>
+        </Link>
+        <nav className="site-footer-links" aria-label="Footer">
+          {[...links, { href: "/join", label: "Join" }, { href: "/signin", label: "Sign in" }].map((item) => (
+            <Link key={item.href} href={item.href}>
               {item.label}
             </Link>
           ))}
+        </nav>
+        <div className="site-footer-fine">
+          <div>
+            <span className="type-label">Get in touch with us</span>
+            <a href="mailto:logica@uic.edu">logica@uic.edu</a>
+          </div>
+          <div>
+            {legalLinks.map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            ))}
+            <span>© {new Date().getFullYear()} LOGICA @ UIC</span>
+          </div>
         </div>
       </div>
     </footer>
@@ -223,13 +201,23 @@ export function SiteFooter() {
 }
 
 export function ClubShell({ children }: { children: React.ReactNode }) {
-  // No bg here — body already paints the fixed wallpaper. SiteFooter's own
-  // rounded-top black box is what caps it off; nothing in between needed.
+  const pathname = usePathname();
+  const scene = sceneFor(pathname);
+  // The page is at least as tall as its painting, so the art's closing landmark
+  // reaches the footer; a longer page continues in the painting's bottom colour.
+  const stage = {
+    "--art-ratio": scene.height / scene.width,
+    "--art-ground": scene.ground,
+    ...(scene.phone && { "--art-ratio-phone": scene.phone[1] / scene.phone[0], "--art-ground-phone": scene.phone[2] }),
+  } as React.CSSProperties;
   return (
-    <div className="min-h-screen text-white">
-      <SiteNav />
-      {children}
-      <SiteFooter />
+    <div className="club-shell min-h-screen text-white" data-home={pathname === "/"} data-route={pathname.split("/")[1] || "home"}>
+      <div className="journey-stage" style={stage}>
+        <JourneyBackdrop pathname={pathname} />
+        <SiteNav />
+        {children}
+        <SiteFooter />
+      </div>
     </div>
   );
 }
@@ -243,7 +231,7 @@ export function PageContainer({
   className?: string;
 }) {
   return (
-    <div className={`mb-20 px-4 sm:px-6 lg:px-12 pt-16 sm:pt-20 lg:pt-24 ${className}`}>
+    <div className={`page-container mb-20 px-4 sm:px-6 lg:px-12 pt-16 sm:pt-20 lg:pt-24 ${className}`}>
       {children}
     </div>
   );
@@ -259,7 +247,7 @@ export function SectionContainer({
 }) {
   return (
     <section
-      className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 mb-16 sm:mb-24 lg:mb-32 ${className}`}
+      className={`site-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 mb-16 sm:mb-24 lg:mb-32 ${className}`}
     >
       {children}
     </section>

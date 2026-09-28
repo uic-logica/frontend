@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { downloadIcs } from "@/lib/ics";
-import { PinkLink } from "@/components/club/Typewriter";
 
 export type ClubEvent = {
   id: string;
@@ -43,25 +42,37 @@ export function EventsList({
 
   return (
     <>
-      <div className="mb-8 flex flex-wrap items-center justify-center gap-4">
-        {(["upcoming", "past"] as const).map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setTab(t)}
-            className={`text-lg font-semibold capitalize ${
-              tab === t ? "text-signal underline" : "text-white hover:text-white"
-            }`}
-          >
-            {t === "upcoming" ? "Upcoming Events" : "Past Events"}
-          </button>
-        ))}
+      {/* Tabs and empty card follow logica.pen "30 Events — Variant E (night)". */}
+      <div className="event-tabs mb-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="event-tabs-switch">
+          {(["upcoming", "past"] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTab(t)}
+              aria-pressed={tab === t}
+              className={`text-lg font-semibold capitalize ${
+                tab === t ? "text-signal underline" : "text-white hover:text-white"
+              }`}
+            >
+              {t === "upcoming" ? "Upcoming Events" : "Past Events"}
+            </button>
+          ))}
+        </div>
+        <span className="event-tabs-dot text-white">·</span>
+        <span className="event-tabs-cal text-white">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M16 3v4M8 3v4M3 10h18" />
+          </svg>
+          Add to Calendar (soon)
+        </span>
       </div>
 
-      {error && <p className="mb-4 text-body text-signal">{error}</p>}
+      {error && <p className="mb-4 text-center text-body text-signal">{error}</p>}
 
       {list.length === 0 && (
-        <div className="club-card mx-auto w-fit max-w-xl p-8">
+        <div className="club-card mx-auto w-full max-w-xl p-8">
           <h2 className="type-h3 text-white">
             {tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}
           </h2>
@@ -69,9 +80,6 @@ export function EventsList({
             We&apos;re currently planning our next round of events. Check back soon or join
             the newsletter to be notified.
           </p>
-          <PinkLink href="#subscribe" className="mt-6 text-xl">
-            Stay Updated
-          </PinkLink>
         </div>
       )}
 

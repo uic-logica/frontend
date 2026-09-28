@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { slotsToWindows, weekStart, windowsToSlots } from "./availability";
+import { availabilityProblem, slotsToWindows, weekStart, windowsToSlots } from "./availability";
 
 describe("windowsToSlots", () => {
   it("covers every day of a multi-day window", () => {
@@ -72,5 +72,28 @@ describe("weekStart", () => {
   it("returns the Sunday on or before the date", () => {
     expect(weekStart("2026-10-07")).toBe("2026-10-04"); // Wednesday -> Sunday
     expect(weekStart("2026-10-04")).toBe("2026-10-04");
+  });
+});
+
+describe("availabilityProblem", () => {
+  const ok = { startDate: "2026-10-05", endDate: "2026-10-07", startTime: "09:00", endTime: "10:00" };
+  const blank = { startDate: "", endDate: "", startTime: "", endTime: "" };
+  it("accepts complete rows", () => {
+    expect(availabilityProblem([ok, { ...ok, startTime: "13:00", endTime: "15:30" }])).toBeNull();
+  });
+  it("needs at least one row", () => {
+    expect(availabilityProblem([])).toMatch(/at least one/);
+    expect(availabilityProblem([blank])).toMatch(/at least one/);
+  });
+  it("rejects an added row left empty or half-filled instead of dropping it", () => {
+    expect(availabilityProblem([ok, blank])).toBe("Window 2: fill it in or remove it.");
+    expect(availabilityProblem([{ ...ok, endTime: "" }])).toMatch(/both dates and both times/);
+  });
+  it("rejects end dates before start dates", () => {
+    expect(availabilityProblem([{ ...ok, endDate: "2026-10-04" }])).toMatch(/end date/);
+  });
+  it("rejects end times at or before start times, even across several days", () => {
+    expect(availabilityProblem([{ ...ok, endTime: "08:00" }])).toMatch(/end time/);
+    expect(availabilityProblem([{ ...ok, endTime: "09:00" }])).toMatch(/end time/);
   });
 });

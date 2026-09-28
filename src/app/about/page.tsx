@@ -1,3 +1,7 @@
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("About LOGICA", "Learn about LOGICA, the Latinx Organization for Growth in Computing and Academics at UIC, and our community, mission, and activities.", "/about");
+
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { PinkLink } from "@/components/club/Typewriter";
 
@@ -62,8 +66,25 @@ export default function AboutPage() {
           </ul>
         </SectionContainer>
 
-        <SectionContainer>
-          <h2 className="type-h2 text-white">Meet Our Team</h2>
+        <SectionContainer className="about-panel">
+          <h2 className="type-h2 mb-8 text-white">Timeline</h2>
+          <ol className="space-y-8">
+            {[
+              { y: "Started", d: "LOGICA formed at UIC as a space for Latinx students in computing." },
+              {
+                y: "Since",
+                d: "Speakers, company visits, and events run with WiCyS, SHPE, ACM and LUG."
+              },
+              { y: "Now", d: "We're building this site, the org's first project." },
+            ].map((t) => (
+              <li key={t.y} className="grid gap-2 md:grid-cols-[8rem_1fr]">
+                <span className="type-label text-signal">{t.y}</span>
+                <p className="text-body text-white">{t.d}</p>
+              </li>
+            ))}
+          </ol>
+
+          <h2 className="type-h2 mt-16 text-white">Meet Our Team</h2>
           <p className="mt-4 max-w-2xl text-body text-white">
             The students who make LOGICA possible — board and builders.
           </p>

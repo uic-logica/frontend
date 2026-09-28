@@ -1,7 +1,8 @@
+import { pageMetadata } from "@/lib/seo";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { PinkLink } from "@/components/club/Typewriter";
 import { EventsList, type ClubEvent } from "./EventsList";
-import { SubscribeForm } from "./SubscribeForm";
+
+export const metadata = pageMetadata("Events & Workshops", "Explore LOGICA events at UIC, including computing workshops, company visits, guest speakers, and community gatherings.", "/events");
 
 // ponytail: fetched on the server and cached, so the page arrives with the
 // events already in the HTML — no "Loading…" flash on every visit. Next
@@ -35,6 +36,7 @@ async function getEvents(): Promise<EventsData> {
   }
 }
 
+/** Layout is logica.pen "30 Events — Variant E (night)": title, tabs, events. */
 export default async function EventsPage() {
   const { upcoming, past, error } = await getEvents();
 
@@ -53,28 +55,6 @@ export default async function EventsPage() {
         <SectionContainer>
           <EventsList upcoming={upcoming} past={past} error={error} />
         </SectionContainer>
-
-        <SectionContainer>
-          <div id="speakers" className="mx-auto mb-12 max-w-3xl border-b border-white/20 pb-4 text-center">
-            <h2 className="type-h2 text-white">Upcoming Speakers</h2>
-            <p className="mt-2 text-body-lg text-white">
-              People presenting at upcoming LOGICA talks and workshops
-            </p>
-          </div>
-          <div className="club-card mx-auto w-fit max-w-xl p-8">
-            <h3 className="type-h4 text-white">To be announced</h3>
-            <p className="mt-3 text-body text-white">Check back soon for our speaker lineup this semester.</p>
-            <PinkLink href="/speak" className="mt-6 text-xl">
-              Want to speak at LOGICA? Join the speaker lineup
-            </PinkLink>
-          </div>
-        </SectionContainer>
-
-        <div id="subscribe">
-          <SectionContainer>
-            <SubscribeForm />
-          </SectionContainer>
-        </div>
       </PageContainer>
     </ClubShell>
   );

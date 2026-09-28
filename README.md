@@ -31,6 +31,26 @@ Legacy `/attendance` sends only `eventId`; the backend requires `code` too. Dash
 
 Using Claude Code? Install the [`skills`](https://github.com/uic-logica/skills) plugin for `/logica-pr`, `/logica-review`, `/logica-test`, `/logica-issue`, and `/logica-lean`.
 
+## Search and sharing setup
+
+Public pages have individual titles, descriptions, Open Graph and Twitter cards.
+The homepage includes Organization structured data. `/share-image` serves a
+1200×630 PNG, and `/sitemap.xml` lists the public content pages.
+
+Before launch, set `SITE_URL` to the final HTTPS origin (no path), then rebuild.
+Without it, pages carry `noindex`, the sitemap is empty, and canonical URLs are
+omitted. Leave this variable unset on preview deployments. At launch, verify
+`/robots.txt`, `/sitemap.xml`, and page source against the real domain, then verify
+ownership in Google Search Console and submit the sitemap.
+
+Account pages, private event/speaker details, design previews, forms, and the empty
+blog send `X-Robots-Tag: noindex, follow`. These routes remain crawlable so bots can
+read the directive; this is not access control. When real blog posts launch,
+remove the blog exclusion from both its metadata and `next.config.ts` and include
+it in the sitemap. Event details currently require sign-in, so they are excluded;
+public event landing pages can add event-specific metadata and structured data
+when a public backend endpoint exists.
+
 ## Member password sign-in
 
 `/signin` accepts a university email and generated password issued by an exec.

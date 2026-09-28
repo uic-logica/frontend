@@ -24,7 +24,7 @@ export function buttonClasses(
   variant: keyof typeof fills = "primary",
   size: keyof typeof sizes = "md",
 ) {
-  return `inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-300 ${fills[variant]} ${sizes[size]}`;
+  return `site-button site-button-${variant} inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300 ${fills[variant]} ${sizes[size]}`;
 }
 
 export function ButtonLink({

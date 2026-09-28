@@ -1,3 +1,7 @@
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("Our Team", "Meet the student leaders behind LOGICA at the University of Illinois Chicago and learn how to get involved.", "/team");
+
 import Image from "next/image";
 import Link from "next/link";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
@@ -48,10 +52,10 @@ function PersonCard({ person }: { person: Person }) {
       href={person.linkedin}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex flex-col items-center"
+      className="person-card group relative flex flex-col items-center"
     >
       <div className="relative mb-4">
-        <div className="relative h-40 w-40 overflow-hidden rounded-xl md:h-48 md:w-48 lg:h-56 lg:w-56">
+        <div className="person-photo relative h-40 w-40 overflow-hidden rounded-xl">
           <Image
             src={person.image}
             alt={person.name}
@@ -62,7 +66,7 @@ function PersonCard({ person }: { person: Person }) {
         </div>
       </div>
       <h3 className="text-center text-xl font-bold text-white group-hover:text-signal">{person.name}</h3>
-      <p className="text-center text-sm font-semibold tracking-[0.08em] text-signal">{person.role}</p>
+      <p className="person-role mt-1 text-center text-sm font-semibold tracking-[0.08em] text-signal">{person.role}</p>
     </a>
   );
 }
@@ -108,7 +112,7 @@ export default function TeamPage() {
           title="Executive Board"
           subtitle="The leadership team that guides LOGICA strategy and operations"
           people={exec}
-          className="mt-8"
+          className="on-art mt-8"
         />
 
         <SectionContainer className="mt-32">

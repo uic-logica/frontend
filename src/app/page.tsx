@@ -1,3 +1,8 @@
+import { siteUrl } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("Latinx Community in Computing", "Join LOGICA at the University of Illinois Chicago: a community supporting Latinx students in computing through workshops, mentorship, and company visits.", "/");
+
 import Link from "next/link";
 import { AnimatedLogo } from "@/components/club/AnimatedLogo";
 import type { ReactNode } from "react";
@@ -9,29 +14,14 @@ const stats = [
   {
     value: "100+",
     label: "Members building community and skill across UIC.",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ),
   },
   {
     value: "20+",
     label: "Workshops, company visits, and socials hosted each year.",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
   },
   {
     value: "1",
     label: "Mission: Latinx growth in computing and academics at UIC.",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-      </svg>
-    ),
   },
 ];
 
@@ -83,12 +73,8 @@ const PARTNER_CATEGORIES = [
       { name: "Zebra", src: "/sponsors/zebra.svg", height: 48 },
       { name: "Break Through Tech", src: "/sponsors/breakthrough.png", height: 40 },
       { name: "NASA Space Apps Challenge", src: "/sponsors/spaceapps.png", height: 72 },
+      { name: "DPI", src: "/sponsors/members/dpi-icon.png", height: 40 },
     ],
-  },
-  {
-    key: "other",
-    label: null,
-    partners: [{ name: "DPI", src: "/sponsors/members/dpi-icon.png", height: 40 }],
   },
 ] as const;
 
@@ -147,7 +133,7 @@ function LevelCard({
 }) {
   const card = (
     <div
-      className={`club-card group relative flex h-full flex-col bg-white/[0.02] p-6 ${
+      className={`pathway-card club-card group relative flex h-full flex-col bg-white/[0.02] p-6 ${
         link ? "club-card-interactive hover:bg-white/[0.04]" : ""
       }`}
     >
@@ -166,7 +152,7 @@ function LevelCard({
           </svg>
         ) : null}
       </div>
-      {icon ? <div className="mb-3 text-white/80">{icon}</div> : null}
+      {icon ? <div className="pathway-illustration mb-3 text-white/80">{icon}</div> : null}
       <h3 className="text-xl font-semibold text-white">{title}</h3>
       <span className="mt-3 block h-px w-8 bg-white/15 transition-all duration-300 group-hover:w-12 group-hover:bg-signal" />
       <p className="mt-3 text-body-sm leading-relaxed text-white">{text}</p>
@@ -183,7 +169,7 @@ function LevelCard({
 
 function Partners() {
   return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="partners-content mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="w-3/4 flex flex-col items-center mx-auto">
         <div className="type-title text-3xl text-white text-center md:text-4xl">Our Partners</div>
         <div className=" text-white lg:text-2xl text-lg mt-5 text-center">
@@ -236,48 +222,57 @@ function Partners() {
 export default function Home() {
   return (
     <ClubShell>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "LOGICA @ UIC",
+          alternateName: "Latinx Organization for Growth in Computing and Academics",
+          description: "A student organization at the University of Illinois Chicago supporting Latinx and underrepresented students in computing.",
+          email: "logica@uic.edu",
+          ...(siteUrl ? { url: siteUrl.href } : {}),
+        }).replace(/</g, "\\u003c") }}
+      />
       <PageContainer>
-        <SectionContainer className="grid items-center gap-10 pl-6 sm:pl-10 lg:grid-cols-[minmax(0,1fr)_minmax(240px,340px)] lg:gap-12 lg:pl-16">
-          <div className="min-w-0">
+        <SectionContainer className="home-hero grid items-center gap-10 pl-6 sm:pl-10 lg:grid-cols-[minmax(0,1fr)_minmax(240px,340px)] lg:gap-12 lg:pl-16">
+          <div className="hero-copy min-w-0">
             <p className="mb-3 text-xl font-semibold text-signal md:text-3xl">
               We are
             </p>
             <TypewriterLine />
-            <div className="mt-10 text-base md:text-lg">
+            <div className="hero-description mt-10 text-base md:text-lg">
               <p className="max-w-2xl text-white">
                 Increasing the participation and success of students from Latinx and underrepresented
                 communities pursuing careers in the field of computing and computer science.
               </p>
             </div>
           </div>
-          <div className="order-first mx-auto w-full max-w-[240px] text-white sm:max-w-[280px] lg:order-last lg:max-w-[340px]">
+          <div className="hero-mark order-first mx-auto w-full max-w-[240px] text-white sm:max-w-[280px] lg:order-last lg:max-w-[340px]">
             <AnimatedLogo duration={HERO_REVEAL_DURATION} />
           </div>
         </SectionContainer>
 
-        <SectionContainer className="mt-20 pl-6 sm:pl-10 lg:pl-16">
+        <SectionContainer className="home-numbers mt-20 pl-6 sm:pl-10 lg:pl-16">
           <h2 className="mb-8 type-title text-3xl text-white md:text-4xl">By the numbers</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="home-stats glass-panel grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((s) => (
               <div key={s.value} className="w-full text-left">
-                <div className="mb-3 flex items-center gap-3">
-                  <span className="text-white opacity-75">{s.icon}</span>
-                  <span className="font-display text-3xl text-white md:text-4xl">{s.value}</span>
-                </div>
+                <div className="mb-3 font-display text-3xl text-white md:text-4xl">{s.value}</div>
                 <div className="text-lg text-white">{s.label}</div>
               </div>
             ))}
           </div>
         </SectionContainer>
 
-        <SectionContainer>
+        <SectionContainer className="home-destinations light-surface">
           <h2 className="mb-10 text-center type-title text-3xl text-white md:text-4xl">
             Where Our Members Land
           </h2>
           <LogoMarquee items={membersLand} />
         </SectionContainer>
 
-        <SectionContainer>
+        <SectionContainer className="home-pathways">
           <div className="w-3/4 flex flex-col items-center mx-auto">
             <div className="type-title text-3xl text-white text-center md:text-4xl">
               Cultivating a passion for computer science, at all skill levels
@@ -294,12 +289,12 @@ export default function Home() {
           </div>
         </SectionContainer>
 
-        <SectionContainer>
+        <SectionContainer className="home-partners light-surface">
           <Partners />
         </SectionContainer>
 
-        <SectionContainer>
-          <div className="club-card mx-auto max-w-3xl bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
+        <SectionContainer className="home-join light-surface">
+          <div className="join-content mx-auto max-w-3xl bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
             <div className="flex flex-col items-center text-center">
               <h2 className="type-title text-3xl leading-tight text-white md:text-4xl">
                 Ready to join UIC&apos;s Latinx computing community?

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteDescription, siteUrl } from "@/lib/seo";
 import { Archivo_Black, DM_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -24,9 +25,10 @@ const archivoBlack = Archivo_Black({
 });
 
 export const metadata: Metadata = {
-  title: "LOGICA @ UIC",
-  description:
-    "Latinx Organization for Growth in Computing and Academics at the University of Illinois Chicago.",
+  metadataBase: siteUrl,
+  title: { default: "LOGICA @ UIC | Latinx Community in Computing", template: "%s | LOGICA @ UIC" },
+  description: siteDescription,
+  robots: { index: Boolean(siteUrl), follow: true },
 };
 
 export default function RootLayout({

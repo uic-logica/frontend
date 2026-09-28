@@ -44,7 +44,7 @@ function MemberToolNav() {
 export function AppShell({ children }: { children: React.ReactNode; tone?: string; flush?: boolean }) {
   return (
     <ClubShell>
-      <div className="min-h-[60vh] bg-paper text-ink">
+      <div className="member-well min-h-[60vh] text-ink">
         <MemberToolNav />
         {children}
       </div>
