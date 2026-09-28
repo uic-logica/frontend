@@ -106,6 +106,7 @@ export function ProfileEditor({
                   bio: draft.bio,
                   major: draft.major,
                   gradYear: draft.gradYear,
+                  linkedin: draft.linkedin || "",
                 },
           ),
         },
@@ -241,6 +242,22 @@ export function ProfileEditor({
               </>
             )}
           </div>
+          {!speaker && (
+            <label>
+              LinkedIn profile
+              {/* Plain text, not type="url": the backend accepts "linkedin.com/in/you" and adds https://. */}
+              <input
+                inputMode="url"
+                spellCheck={false}
+                autoCapitalize="none"
+                autoComplete="url"
+                value={draft.linkedin || ""}
+                onChange={(e) => field("linkedin", e.target.value)}
+                placeholder="linkedin.com/in/your-name"
+              />
+              <small>Your profile photo and experience will come from here.</small>
+            </label>
+          )}
           <label>
             About you
             <textarea
