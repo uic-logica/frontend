@@ -3,12 +3,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { ResumeUpload } from "@/components/shell/ResumeUpload";
+
+import { AvailabilityGrid } from "./AvailabilityGrid";
 import { Heading } from "./Overview";
 import {
   type Profile,
   type SessionUser,
   type Window,
   initials,
+  isConfirmedSpeaker,
   roleName,
 } from "./types";
 
@@ -22,6 +25,9 @@ export function ProfileEditor({
   onSaved: (p: Profile) => void;
 }) {
   const speaker = user.accountKind === "SPEAKER";
+  // Candidates aren't asked to prepare a talk we haven't agreed to yet; the
+  // API rejects these fields at that stage too.
+  const confirmed = isConfirmedSpeaker(profile);
   useEffect(() => {
     const target = window.location.hash.slice(1);
     if (target) document.getElementById(target)?.scrollIntoView();
@@ -30,6 +36,7 @@ export function ProfileEditor({
   const [windows, setWindows] = useState<Window[]>(
     profile.speakerSubmission?.availability || [],
   );
+  const [picker, setPicker] = useState<"grid" | "list">("grid");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
@@ -37,14 +44,24 @@ export function ProfileEditor({
     setDraft((p) => ({ ...p, [key]: value }));
     setSaved(false);
   }
-  function submission(key: "organization" | "needs" | "note", value: string) {
+  function submission(
+    key: "organization" | "needs" | "note" | "talkTitle" | "slidesUrl",
+    value: string,
+  ) {
     setDraft((p) => ({
       ...p,
       speakerSubmission: {
+        id: "",
         organization: "",
         availability: [],
         needs: "",
         note: "",
+        status: "PENDING",
+        submittedAt: null,
+        availabilityConfirmedAt: null,
+        talkTitle: "",
+        slidesUrl: "",
+        event: null,
         ...p.speakerSubmission,
         [key]: value,
       },
@@ -76,6 +93,12 @@ export function ProfileEditor({
                   organization: draft.speakerSubmission?.organization || "",
                   needs: draft.speakerSubmission?.needs || "",
                   note: draft.speakerSubmission?.note || "",
+                  ...(confirmed
+                    ? {
+                        talkTitle: draft.speakerSubmission?.talkTitle || "",
+                        slidesUrl: draft.speakerSubmission?.slidesUrl || "",
+                      }
+                    : {}),
                   availability: windows,
                 }
               : {
@@ -101,9 +124,11 @@ export function ProfileEditor({
       <Heading
         title="Make yourself known."
         description={
-          speaker
-            ? "Help the board prepare for your visit and get to know your work."
-            : "Your profile is how the LOGICA community gets to know you."
+          !speaker
+            ? "Your profile is how the LOGICA community gets to know you."
+            : confirmed
+              ? "Help the board prepare for your visit and get to know your work."
+              : "We filled in what we knew — fix anything that's wrong."
         }
       />
       <div className="d-profile-layout">
@@ -112,7 +137,7 @@ export function ProfileEditor({
             {initials(profile.name)}
           </span>
           <h2>{profile.name || "Your name"}</h2>
-          <span className="d-badge">{roleName(user)}</span>
+          <span className="d-badge">{roleName(user, profile)}</span>
           <p>{profile.email}</p>
           <hr />
           <h3>A little about you</h3>
@@ -229,83 +254,158 @@ export function ProfileEditor({
           </label>
           {speaker && (
             <>
-              <div className="d-form-section" id="availability">
-                <h2>Your availability</h2>
-                <p>
-                  Share dates and times with the board. These are availability
-                  windows, not confirmed bookings. Use Chicago local time.
-                </p>
-                {windows.map((w, i) => (
-                  <fieldset className="d-window" key={i}>
-                    <legend>Window {i + 1}</legend>
-                    <div className="d-form-grid">
-                      {(
-                        [
-                          "startDate",
-                          "endDate",
-                          "startTime",
-                          "endTime",
-                        ] as const
-                      ).map((key) => (
-                        <label key={key}>
-                          {
-                            {
-                              startDate: "From date",
-                              endDate: "Through date",
-                              startTime: "From time",
-                              endTime: "Until time",
-                            }[key]
-                          }
-                          <input
-                            required
-                            type={key.includes("Date") ? "date" : "time"}
-                            value={w[key]}
-                            onChange={(e) => {
-                              setWindows((prev) =>
-                                prev.map((v, j) =>
-                                  i === j ? { ...v, [key]: e.target.value } : v,
-                                ),
-                              );
-                              setSaved(false);
-                            }}
-                          />
-                        </label>
-                      ))}
-                    </div>
+              {confirmed && (
+                <div className="d-form-section" id="availability">
+                  <h2>Your availability</h2>
+                  <p>Windows that work for you, in Chicago local time.</p>
+                  <button
+                    type="button"
+                    className="d-text-button"
+                    onClick={() =>
+                      setPicker(picker === "grid" ? "list" : "grid")
+                    }
+                  >
+                    {picker === "grid"
+                      ? "Type dates instead"
+                      : "Pick on a calendar instead"}
+                  </button>
+                  {picker === "grid" && (
+                    <AvailabilityGrid
+                      windows={windows}
+                      onChange={(next) => {
+                        setWindows(next);
+                        setSaved(false);
+                      }}
+                    />
+                  )}
+                  {picker === "list" &&
+                    windows.map((w, i) => (
+                      <fieldset className="d-window" key={i}>
+                        <legend>Window {i + 1}</legend>
+                        <div className="d-form-grid">
+                          {(
+                            [
+                              "startDate",
+                              "endDate",
+                              "startTime",
+                              "endTime",
+                            ] as const
+                          ).map((key) => (
+                            <label key={key}>
+                              {
+                                {
+                                  startDate: "From date",
+                                  endDate: "Through date",
+                                  startTime: "From time",
+                                  endTime: "Until time",
+                                }[key]
+                              }
+                              <input
+                                required
+                                type={key.includes("Date") ? "date" : "time"}
+                                value={w[key]}
+                                onChange={(e) => {
+                                  setWindows((prev) =>
+                                    prev.map((v, j) =>
+                                      i === j
+                                        ? { ...v, [key]: e.target.value }
+                                        : v,
+                                    ),
+                                  );
+                                  setSaved(false);
+                                }}
+                              />
+                            </label>
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          className="d-text-button"
+                          onClick={() => {
+                            setWindows((prev) =>
+                              prev.filter((_, j) => i !== j),
+                            );
+                            setSaved(false);
+                          }}
+                        >
+                          Remove window {i + 1}
+                        </button>
+                      </fieldset>
+                    ))}
+                  {picker === "list" && (
                     <button
                       type="button"
-                      className="d-text-button"
+                      className="d-button secondary"
                       onClick={() => {
-                        setWindows((prev) => prev.filter((_, j) => i !== j));
+                        setWindows((prev) => [
+                          ...prev,
+                          {
+                            startDate: "",
+                            endDate: "",
+                            startTime: "",
+                            endTime: "",
+                          },
+                        ]);
                         setSaved(false);
                       }}
                     >
-                      Remove window {i + 1}
+                      + Add availability
                     </button>
-                  </fieldset>
-                ))}
-                <button
-                  type="button"
-                  className="d-button secondary"
-                  onClick={() => {
-                    setWindows((prev) => [
-                      ...prev,
-                      {
-                        startDate: "",
-                        endDate: "",
-                        startTime: "",
-                        endTime: "",
-                      },
-                    ]);
-                    setSaved(false);
-                  }}
-                >
-                  + Add availability
-                </button>
-              </div>
+                  )}
+                </div>
+              )}
+              {confirmed && (
+                <div className="d-form-section" id="talk">
+                  <h2>Your talk</h2>
+                  <p>
+                    The two things we can&apos;t print a poster or run a room
+                    without.
+                  </p>
+                  {confirmed && (
+                    <>
+                      <label>
+                        <span className="d-label-row">
+                          What should we call your talk?
+                          <span className="d-required">Required</span>
+                        </span>
+                        <input
+                          value={draft.speakerSubmission?.talkTitle || ""}
+                          onChange={(e) =>
+                            submission("talkTitle", e.target.value)
+                          }
+                          maxLength={200}
+                          placeholder="e.g. Shipping your first production service"
+                        />
+                        <small>This is the title students will see.</small>
+                      </label>
+                      <label>
+                        <span className="d-label-row">
+                          Link to your slides
+                          <span className="d-required">Required</span>
+                        </span>
+                        <input
+                          type="url"
+                          value={draft.speakerSubmission?.slidesUrl || ""}
+                          onChange={(e) =>
+                            submission("slidesUrl", e.target.value)
+                          }
+                          placeholder="https://docs.google.com/presentation/..."
+                        />
+                        <small>
+                          A link, not a file — so your deck opens on whatever
+                          laptop is plugged in that day. Google Slides, Canva, a
+                          PDF in Drive: anything we can open.
+                        </small>
+                      </label>
+                    </>
+                  )}
+                </div>
+              )}
               <div className="d-form-section">
-                <h2>Plan your visit</h2>
-                <label>
+                <h2>
+                  Anything you need <span className="d-optional">Optional</span>
+                </h2>
+                <label id="needs">
                   What do you need from us?
                   <textarea
                     rows={2}

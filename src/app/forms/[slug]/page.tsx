@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { use, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
+import { inputType } from "@/lib/formField";
 import {
   AppShell,
   EmptyState,
@@ -15,6 +16,7 @@ import {
 
 type FieldDef = { id: string; label: string; type: string };
 type Form = { id: string; title: string; fields: FieldDef[] };
+
 
 /** Forms — BRP flat fills; CONTENT #8 error summary takes focus + Error: title. */
 export default function FormPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -52,8 +54,8 @@ export default function FormPage({ params }: { params: Promise<{ slug: string }>
 
     const next: Record<string, string> = {};
     for (const f of form.fields) {
-      if (!(values[f.label] ?? "").trim()) {
-        next[f.label] = `${f.label} is required.`;
+      if (!(values[f.id] ?? "").trim()) {
+        next[f.id] = `${f.label} is required.`;
       }
     }
     if (Object.keys(next).length) {
@@ -65,9 +67,16 @@ export default function FormPage({ params }: { params: Promise<{ slug: string }>
     setFieldErrors({});
 
     try {
+      // State is keyed by field id so two fields sharing a label stay
+      // independent, but the stored submission is keyed by label — there is
+      // no review UI yet, so someone reads this raw and "Company name"
+      // beats "clx3f9q2b0001".
+      const data = Object.fromEntries(
+        form.fields.map((f) => [f.label, values[f.id] ?? ""]),
+      );
       await api(`/api/forms/${slug}/submit`, {
         method: "POST",
-        body: JSON.stringify({ data: values }),
+        body: JSON.stringify({ data }),
       });
       setSubmitted(true);
     } catch (err) {
@@ -160,18 +169,27 @@ export default function FormPage({ params }: { params: Promise<{ slug: string }>
           )}
 
           <div className="flex flex-col gap-5">
-            {form.fields.map((f) => (
-              <Field key={f.id} id={f.id} label={f.label} error={fieldErrors[f.label]}>
-                <input
-                  id={f.id}
-                  value={values[f.label] ?? ""}
-                  onChange={(e) => setValues({ ...values, [f.label]: e.target.value })}
-                  className={fieldErrors[f.label] ? inputErrorClass : inputClass}
-                  aria-invalid={Boolean(fieldErrors[f.label])}
-                  aria-describedby={fieldErrors[f.label] ? `${f.id}-error` : undefined}
-                />
-              </Field>
-            ))}
+            {form.fields.map((f) => {
+              const shared = {
+                id: f.id,
+                value: values[f.id] ?? "",
+                onChange: (
+                  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+                ) => setValues({ ...values, [f.id]: e.target.value }),
+                className: fieldErrors[f.id] ? inputErrorClass : inputClass,
+                "aria-invalid": Boolean(fieldErrors[f.id]),
+                "aria-describedby": fieldErrors[f.id] ? `${f.id}-error` : undefined,
+              };
+              return (
+                <Field key={f.id} id={f.id} label={f.label} error={fieldErrors[f.id]}>
+                  {f.type === "textarea" ? (
+                    <textarea rows={5} {...shared} />
+                  ) : (
+                    <input type={inputType(f.type)} {...shared} />
+                  )}
+                </Field>
+              );
+            })}
           </div>
 
           <button type="submit" disabled={busy} className={`${buttonClass} mt-8`}>

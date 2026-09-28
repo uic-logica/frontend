@@ -11,7 +11,7 @@ import {
   type Speaker,
   type Notice,
   roleName,
-  isBoard,
+  runsWorkspace,
   date,
   initials,
 } from "./types";
@@ -89,12 +89,11 @@ export function Overview({
   speakers: Speaker[] | null;
   notices: Notice[] | null;
 }) {
-  const speaker = user.accountKind === "SPEAKER";
-  const board = isBoard(user);
+  // Speakers never reach this — they get SpeakerHome instead.
+  const board = runsWorkspace(user);
   const upcoming = events
     ?.filter((e) => new Date(e.startsAt) >= new Date())
     .slice(0, 3);
-  const next = upcoming?.[0];
   const pending = speakers?.filter((s) => s.status === "PENDING");
   const checks = profile
     ? [
@@ -104,23 +103,12 @@ export function Overview({
           done: !!profile.name && !!profile.bio,
           href: "/dashboard/profile",
         },
-        ...(speaker
-          ? [
-              {
-                label: "Share your availability",
-                note: "Help the board find a time that works.",
-                done: !!profile.speakerSubmission?.availability?.length,
-                href: "/dashboard/profile#availability",
-              },
-            ]
-          : [
-              {
-                label: "Add your academic details",
-                note: "Let the community know what you study.",
-                done: !!profile.major && !!profile.gradYear,
-                href: "/dashboard/profile",
-              },
-            ]),
+        {
+          label: "Add your academic details",
+          note: "Let the community know what you study.",
+          done: !!profile.major && !!profile.gradYear,
+          href: "/dashboard/profile",
+        },
         {
           label: "Upload your resume",
           note: "Keep your experience ready to share.",
@@ -136,11 +124,9 @@ export function Overview({
       <Heading
         title={`Welcome back, ${name}.`}
         description={
-          speaker
-            ? "A little preparation. A meaningful connection."
-            : board
-              ? "Your community, and what needs your attention."
-              : "Make yourself part of what happens next."
+          board
+            ? "Your community, and what needs your attention."
+            : "Make yourself part of what happens next."
         }
         action={
           <span className="d-date">
@@ -156,20 +142,10 @@ export function Overview({
         <section className="d-feature">
           <div className="d-feature-label">
             <span className="d-live-dot" />
-            {speaker
-              ? "Ahead of your visit"
-              : board
-                ? "Behind the community"
-                : "Your place in LOGICA"}
+            {board ? "Behind the community" : "Your place in LOGICA"}
           </div>
           <h2>
-            {speaker ? (
-              <>
-                Good conversations
-                <br />
-                start here.
-              </>
-            ) : board ? (
+            {board ? (
               <>
                 Keep the club
                 <br />
@@ -184,27 +160,15 @@ export function Overview({
             )}
           </h2>
           <p>
-            {speaker
-              ? "Share your story, prepare for your visit, and connect with our computing community."
-              : board
-                ? "Review new speakers, bring people together, and make the next event happen."
-                : "Find your next event, meet your people, and see your involvement grow."}
+            {board
+              ? "Review new speakers, bring people together, and make the next event happen."
+              : "Find your next event, meet your people, and see your involvement grow."}
           </p>
           <Link
             className="d-button"
-            href={
-              speaker
-                ? "/dashboard/profile#availability"
-                : board
-                  ? "/dashboard/speakers"
-                  : "/dashboard/events"
-            }
+            href={board ? "/dashboard/speakers" : "/dashboard/events"}
           >
-            {speaker
-              ? "Prepare for your visit"
-              : board
-                ? "Open speaker directory"
-                : "Find your next event"}
+            {board ? "Open speaker directory" : "Find your next event"}
             <Icon name="arrow" />
           </Link>
         </section>
@@ -220,12 +184,7 @@ export function Overview({
               {initials(profile?.name || user.name)}
             </span>
             <h3>{profile?.name || user.name || "Your name"}</h3>
-            <p>
-              {speaker
-                ? profile?.speakerSubmission?.organization ||
-                  "Add your organization"
-                : profile?.major || "Add your major"}
-            </p>
+            <p>{profile?.major || "Add your major"}</p>
             <span className="d-badge">{roleName(user)}</span>
           </div>
           <div className="d-progress-label">
@@ -259,13 +218,7 @@ export function Overview({
         <div>
           <section className="d-panel">
             <div className="d-section-head">
-              <h2>
-                {board
-                  ? "Needs your attention"
-                  : speaker
-                    ? "Before your visit"
-                    : "Your next steps"}
-              </h2>
+              <h2>{board ? "Needs your attention" : "Your next steps"}</h2>
               <span className="d-muted">
                 {board && pending
                   ? `${pending.length} pending`
@@ -350,15 +303,12 @@ export function Overview({
         <div>
           <section className="d-panel d-note-panel">
             <span className="d-note-icon">
-              <Icon name={speaker ? "speakers" : "community"} />
+              <Icon name="community" />
             </span>
-            <h2>
-              {speaker ? "Make it a conversation." : "Your community is here."}
-            </h2>
+            <h2>Your community is here.</h2>
             <p>
-              {speaker
-                ? "Introduce yourself before you visit. A question or a bit of your story is a great place to start."
-                : "Share what you’re working on, ask a question, or say hello. You don’t need a finished project to join in."}
+              Share what you’re working on, ask a question, or say hello. You
+              don’t need a finished project to join in.
             </p>
             <Link href="/dashboard/community">
               Open community feed <Icon name="arrow" />
@@ -388,12 +338,6 @@ export function Overview({
               <p className="d-muted">Updates are not available yet.</p>
             )}
           </section>
-          {speaker && next && (
-            <p className="d-footnote">
-              The calendar shows club events. Your speaking date will be
-              coordinated with the board.
-            </p>
-          )}
         </div>
       </div>
     </>
@@ -473,14 +417,19 @@ export function Notifications({
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
-  async function read(id: string) {
-    setBusy(id);
+  const unread = notices?.filter((n) => !n.readAt) ?? [];
+  const earlier = notices?.filter((n) => n.readAt) ?? [];
+  async function read(ids: string[]) {
+    setBusy(ids.length === 1 ? ids[0] : "all");
     setError("");
     try {
-      await api(`/api/notifications/${id}`, { method: "PATCH" });
+      await Promise.all(
+        ids.map((id) => api(`/api/notifications/${id}`, { method: "PATCH" })),
+      );
+      const at = new Date().toISOString();
       onChange(
         (notices || []).map((n) =>
-          n.id === id ? { ...n, readAt: new Date().toISOString() } : n,
+          ids.includes(n.id) ? { ...n, readAt: at } : n,
         ),
       );
     } catch (e) {
@@ -500,25 +449,56 @@ export function Notifications({
           {error}
         </p>
       )}
-      <section className="d-panel">
-        {notices?.map((n) => (
-          <div className="d-notification" key={n.id}>
-            <span className={n.readAt ? "d-read-dot" : "d-live-dot"} />
-            <div>
-              <p>{n.message}</p>
-              <small>{date(n.createdAt)}</small>
-            </div>
-            {!n.readAt && (
+      {unread.length > 0 && (
+        <section className="d-panel">
+          <div className="d-section-head">
+            <h2>Unread</h2>
+            <button
+              className="d-text-button"
+              disabled={!!busy}
+              onClick={() => read(unread.map((n) => n.id))}
+            >
+              Mark all read
+            </button>
+          </div>
+          {unread.map((n) => (
+            <div className="d-notification is-unread" key={n.id}>
+              <span className="d-live-dot" />
+              <div>
+                <p>{n.message}</p>
+                <small>{date(n.createdAt)}</small>
+              </div>
               <button
                 disabled={!!busy}
                 className="d-text-button"
-                onClick={() => read(n.id)}
+                onClick={() => read([n.id])}
               >
                 {busy === n.id ? "Saving…" : "Mark read"}
               </button>
-            )}
+            </div>
+          ))}
+        </section>
+      )}
+      {/* Read notices move down here, which is the point of marking one —
+          the list you're working through gets shorter. */}
+      {earlier.length > 0 && (
+        <section className="d-panel">
+          <div className="d-section-head">
+            <h2>Earlier</h2>
+            <span className="d-muted">Already read</span>
           </div>
-        ))}
+          {earlier.map((n) => (
+            <div className="d-notification" key={n.id}>
+              <span className="d-read-dot" />
+              <div>
+                <p>{n.message}</p>
+                <small>{date(n.createdAt)}</small>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+      <section className="d-panel">
         {notices?.length === 0 && (
           <Empty title="All caught up">
             We’ll put club updates and reminders here when there’s something for

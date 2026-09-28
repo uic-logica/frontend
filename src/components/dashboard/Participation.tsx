@@ -9,7 +9,7 @@ import {
   type SessionUser,
   type Post,
   date,
-  isBoard,
+  runsWorkspace,
   initials,
 } from "./types";
 
@@ -65,6 +65,7 @@ export function Events({
           title: data.get("title"),
           description: data.get("description"),
           location: data.get("location"),
+          link: data.get("link"),
           startsAt: new Date(String(data.get("startsAt"))).toISOString(),
         }),
       });
@@ -82,7 +83,7 @@ export function Events({
         title="See you at the next one."
         description="Gatherings, conversations, and opportunities to get involved."
         action={
-          isBoard(user) && (
+          runsWorkspace(user) && (
             <button className="d-button" onClick={() => setCreating(!creating)}>
               {creating ? "Close event form" : "+ Create event"}
             </button>
@@ -114,6 +115,10 @@ export function Events({
           <label>
             Description
             <textarea name="description" rows={3} />
+          </label>
+          <label>
+            Event page URL (Luma, Discord, or flyer)
+            <input name="link" type="url" />
           </label>
           <button disabled={!!busy} className="d-button">
             {busy === "create" ? "Creating…" : "Create event"}

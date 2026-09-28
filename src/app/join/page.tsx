@@ -4,20 +4,16 @@ export const metadata = pageMetadata("Join LOGICA", "Join LOGICA at UIC for comp
 
 import Link from "next/link";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { buttonClasses } from "@/components/ui/ButtonLink";
+import { JoinForm } from "./JoinForm";
 
 const roles = [
-  {
-    title: "General Member",
-    body: "Attend workshops, socials, and talks; contribute to projects and the blog. Open to all UIC students.",
-  },
   {
     title: "Software Engineer",
     body: "Develop LOGICA products with a team on a weekly cadence — startup-like pace, campus impact.",
   },
   {
-    title: "Mentorship track",
-    body: "Beginner-friendly pathway to level up and eventually join a product team.",
+    title: "Board Member",
+    body: "Help run LOGICA through events, outreach, finances, and day-to-day executive board work.",
   },
 ];
 
@@ -39,7 +35,7 @@ const steps = [
 const faqs = [
   {
     q: "Do I need prior experience?",
-    a: "Not at all. Mentorship tracks are for beginners. Enthusiasm and willingness to learn matter most.",
+    a: "No. Both tracks are open to students without prior experience. Enthusiasm and willingness to learn matter most.",
   },
   {
     q: "Do I need to be a CS major?",
@@ -64,14 +60,11 @@ export default function JoinPage() {
           <p className="mt-4 max-w-3xl text-body-lg text-white">
             We are UIC&apos;s collective of Latinx developers, designers, and computing enthusiasts.
           </p>
-          <p className="mt-6 font-semibold text-signal">
-            Apply for general membership — interest forms open on a rolling basis.
-          </p>
         </SectionContainer>
 
         <SectionContainer>
           <h2 className="type-h2 mb-8 text-white">Available Roles</h2>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2">
             {roles.map((r) => (
               <article key={r.title} className="club-card p-6">
                 <h3 className="type-h4 text-white">{r.title}</h3>
@@ -109,23 +102,12 @@ export default function JoinPage() {
         </SectionContainer>
 
         <SectionContainer>
-          <div className="club-card w-fit max-w-2xl p-8 md:p-12">
-            <h2 className="type-h3 text-white">Interested in joining?</h2>
-            <p className="mt-3 max-w-2xl text-body text-white">
-              Join our community of passionate developers, designers, and tech enthusiasts.
-            </p>
-            <a
-              href="mailto:logica@uic.edu?subject=LOGICA%20membership%20interest"
-              className={`${buttonClasses()} mt-6`}
-            >
-              Apply to Join
-            </a>
-            <p className="mt-4">
-              <Link href="/events" className="font-semibold text-signal hover:underline">
-                Or attend an event first →
-              </Link>
-            </p>
-          </div>
+          <JoinForm />
+          <p className="mt-4">
+            <Link href="/events" className="font-semibold text-signal hover:underline">
+              Or attend an event first →
+            </Link>
+          </p>
         </SectionContainer>
       </PageContainer>
     </ClubShell>

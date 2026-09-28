@@ -1,0 +1,128 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { downloadIcs } from "@/lib/ics";
+
+export type ClubEvent = {
+  id: string;
+  title: string;
+  location: string | null;
+  startsAt: string;
+  description?: string | null;
+  link: string | null;
+};
+
+// ponytail: fixed to Chicago rather than the viewer's locale — the events are
+// in Chicago, and a fixed zone keeps server and client output identical so
+// this doesn't hydrate-mismatch.
+const when = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/Chicago",
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+// ponytail: the upcoming/past split is done on the server, not here — if this
+// compared against Date.now() it would read a different clock during hydration
+// than the prerender did and React would flag a mismatch.
+export function EventsList({
+  upcoming,
+  past,
+  error,
+}: {
+  upcoming: ClubEvent[];
+  past: ClubEvent[];
+  error?: string | null;
+}) {
+  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const list = tab === "upcoming" ? upcoming : past;
+
+  return (
+    <>
+      {/* Tabs and empty card follow logica.pen "30 Events — Variant E (night)". */}
+      <div className="event-tabs mb-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="event-tabs-switch">
+          {(["upcoming", "past"] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTab(t)}
+              aria-pressed={tab === t}
+              className={`text-lg font-semibold capitalize ${
+                tab === t ? "text-signal underline" : "text-white hover:text-white"
+              }`}
+            >
+              {t === "upcoming" ? "Upcoming Events" : "Past Events"}
+            </button>
+          ))}
+        </div>
+        <span className="event-tabs-dot text-white">·</span>
+        <span className="event-tabs-cal text-white">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M16 3v4M8 3v4M3 10h18" />
+          </svg>
+          Add to Calendar (soon)
+        </span>
+      </div>
+
+      {error && <p className="mb-4 text-center text-body text-signal">{error}</p>}
+
+      {list.length === 0 && (
+        <div className="club-card mx-auto w-full max-w-xl p-8">
+          <h2 className="type-h3 text-white">
+            {tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}
+          </h2>
+          <p className="mt-3 max-w-xl text-body text-white">
+            We&apos;re currently planning our next round of events. Check back soon or join
+            the newsletter to be notified.
+          </p>
+        </div>
+      )}
+
+      <ul className="mx-auto max-w-3xl space-y-4">
+        {list.map((e) => (
+          <li
+            key={e.id}
+            id={e.id}
+            className="club-card club-card-interactive p-6"
+          >
+            <Link href={`/events/${e.id}`} className="hover:underline">
+              <h2 className="type-h3 text-white">{e.title}</h2>
+            </Link>
+            <p className="mt-2 text-body-sm text-white">
+              {when.format(new Date(e.startsAt))}
+              {e.location ? ` · ${e.location}` : ""}
+            </p>
+            {e.description && <p className="mt-3 text-body text-white">{e.description}</p>}
+            <div className="mt-4 flex flex-wrap gap-4">
+              <Link href={`/events/${e.id}`} className="font-semibold text-signal hover:underline">
+                Details
+              </Link>
+              {e.link && (
+                <a
+                  href={e.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-signal hover:underline"
+                >
+                  Event page ↗
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => downloadIcs(e)}
+                className="font-semibold text-signal hover:underline"
+              >
+                Add to calendar
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}

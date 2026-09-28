@@ -1,31 +1,43 @@
 # LOGICA workspace
 
-The signed-in workspace lives at `/dashboard`. Its overview and navigation follow the authenticated account kind and membership role. Built on `codex/dashboard-rebuild` in frontend and backend.
+`src/app/dashboard/layout.tsx` mounts `src/components/dashboard/Dashboard.tsx` once. The shell reads the section from the pathname, so navigating sections preserves loaded state. The section pages render nothing themselves.
 
-## Pages
+## Who sees what
 
-- `/dashboard`: profile essentials, next actions, engagement counts, upcoming club events, and notifications.
-- `/dashboard/profile`: persisted member details or speaker details, resume, availability, equipment needs, and board notes.
-- `/dashboard/events`: upcoming/past events, personal RSVPs, materials, and check-in. Board accounts can create events.
-- `/dashboard/activity`: personal attendance, posts, and form submission history.
-- `/dashboard/community`: read and publish community posts.
-- `/dashboard/speakers`: board-only directory, search/filter, review, draft completion links, and exec-only portal invitations.
-- `/dashboard/notifications` and `/dashboard/settings`: notifications and email preferences.
+`src/components/dashboard/types.ts` owns navigation and mirrors backend stages. `runsWorkspace()` requires account kind MEMBER and role EXEC_BOARD. BOARD currently gets the member view. Guest accounts never gain workspace access from their role field.
 
-Legacy `/members` and `/speaker-portal` links redirect to the overview. `/profile` and `/admin/speakers` redirect to their workspace sections. Public pages remain outside the workspace.
+- Members/BOARD: overview, profile, events, engagement, community.
+- Exec: overview, insights, money, pipeline, speaker directory, members, applications, documents, events, community, profile.
+- Candidate guests: visit/availability first, messages, profile. Confirmed guests: profile first, their talk/workshop/visit, messages.
 
-## Data and permissions
+All get notifications, MCP Connections, and settings links. Discord is conditional on `NEXT_PUBLIC_DISCORD_URL`. Backend handlers enforce permissions independently of this navigation.
 
-The backend adds `GET /api/dashboard`, authenticated and scoped exclusively to the session user. Counts use Prisma relations. History is limited to the latest 20 records per category; form answers and credentials are never returned. All other actions reuse existing API routes and their server-side role checks. No schema migration is needed.
+## Sections and source
 
-Speaker availability is not a confirmed booking. The schema does not associate speakers with scheduled events, so the calendar is labeled as club events and does not claim that a speaker is assigned to one.
+| Section | Implementation |
+| --- | --- |
+| Overview | `Overview.tsx` for personal engagement counts and next actions; `BoardHome.tsx` for exec tiles, waiting items and events. Officer changes the pinned tiles, not access. |
+| Guest home/messages | `CandidateHome.tsx` saves and confirms availability; `SpeakerHome.tsx` shows confirmed-visit preparation and linked-event stats. `Thread.tsx` is the submission's shared thread with the board. |
+| Profile/settings | `Profile.tsx` edits member or guest details, supports resume upload, and saves email preferences. Guest talk fields depend on confirmation. |
+| Events/community/activity | `Participation.tsx` handles RSVP, materials, code check-in and community posts; `Overview.tsx` renders engagement history. |
+| Speakers | `Speakers.tsx` searches and filters guests, creates/replaces single-use links, changes decisions, attaches events, and retains the older emailed-account invitation action. |
+| Money/pipeline | `Board.tsx`, keyed by MONEY or OUTREACH. Search, stage filters, creation, edits, ownership, next steps, and archiving share one component. Money adds budgets, cents-based amounts, receipts and reimbursement tracking. |
+| Members | `Members.tsx` searches the roster, edits role/officer fields, and issues or resets a member password via `/api/board/members/password`. The generated password is shown once and must be delivered privately. |
+| Applications | `Applications.tsx` lists membership applications from `/api/join`, filters by status, and records a decision via `PATCH /api/join/:id`. Exec only. |
+| Insights | `Insights.tsx` displays member activity, RSVP versus attendance, top attendees, and guest/application totals returned by `/api/board/insights`. |
+| Documents | `Documents.tsx` browses folders and searches names through `/api/board/documents`. Files open in Drive; no editing/uploading here. Missing settings produce a not-connected panel pointing to backend `.env.example`. |
+| Connections | `AgentAccess.tsx` lists, creates, and revokes MCP bearer tokens through `/api/mcp-tokens`; displays the backend's caller-filtered tool descriptions. |
 
-## Local preview
+Paths in this table are under `src/components/dashboard/`. `types.ts` mirrors backend board stages and response shapes. Money and outreach persist in one backend `BoardItem` table, distinguished by kind; `Budget` is separate.
 
-Use the `frontend-wallpaper-preview` checkout at port 3002 with the backend on port 3001. The backend must include the new dashboard endpoint and have its existing migrations applied. Test accounts are local database records; no demo identities or credentials are bundled into the frontend.
+## Data and states
 
-## Validation
+`Dashboard.tsx` loads `/api/auth/session`, the account's profile, events, and notifications. Member accounts also load `/api/dashboard`; execs load the roster and guest directory. Board sections fetch their own data. The shell has loading, signed-out, failed-session, and partial-load error states. Accounts with `mustChangePassword` redirect to `/speaker-signin/set-password`.
 
-Frontend lint, TypeScript and production build. Backend lint, TypeScript and existing unit tests. `app/api/dashboard/route.test.ts` adds a signed-out check and real-Postgres ownership/response-privacy checks for member, exec and speaker sessions (set `DATABASE_URL` to a test database to run those).
+The backend `app/api/dashboard/route.ts` scopes history to the session user, with the latest 20 attendance/post/form records per category. Guest event counts come through `/api/speaker-profile` and the linked Event; availability alone is not a booking.
 
-Browser checks covered all three roles, mobile navigation at 390px, profile save, RSVP persistence, and directory search. Outbound invitation emails were not sent during testing.
+Legacy `/members` and `/speaker-portal` redirect to `/dashboard`; `/profile` goes to `/dashboard/profile`; `/admin/speakers` goes to `/dashboard/speakers`. Public pages keep their separate shell.
+
+## Checks
+
+Use frontend lint, Next type generation, TypeScript, and build as listed in `.github/workflows/ci.yml`. Verify roles and empty/error states against a backend with the checked-in migrations. The current `/signin` still calls retired email-code endpoints; it cannot establish a member session against the paired backend's password-only login.
