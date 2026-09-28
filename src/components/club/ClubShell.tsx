@@ -205,7 +205,11 @@ export function ClubShell({ children }: { children: React.ReactNode }) {
   const scene = sceneFor(pathname);
   // The page is at least as tall as its painting, so the art's closing landmark
   // reaches the footer; a longer page continues in the painting's bottom colour.
-  const stage = { "--art-ratio": scene.height / scene.width, "--art-ground": scene.ground } as React.CSSProperties;
+  const stage = {
+    "--art-ratio": scene.height / scene.width,
+    "--art-ground": scene.ground,
+    ...(scene.phone && { "--art-ratio-phone": scene.phone[1] / scene.phone[0], "--art-ground-phone": scene.phone[2] }),
+  } as React.CSSProperties;
   return (
     <div className="club-shell min-h-screen text-white" data-home={pathname === "/"} data-route={pathname.split("/")[1] || "home"}>
       <div className="journey-stage" style={stage}>

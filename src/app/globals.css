@@ -290,7 +290,11 @@
 /* On a real phone a full-width painting can be shorter than the screen; only then does it grow
    to the screen's height (cropping its sides). Taller paintings keep scrolling as on desktop.
    Touch-only, so desktop zoom (which also narrows the page) never triggers it. */
-@media (pointer: coarse) and (max-width: 799px) { .journey-paint { min-height: 100vh; object-fit: cover; object-position: top center; } }
+@media (pointer: coarse) and (max-width: 799px) {
+  .journey-paint { top: min(0px, calc(100vh - 100vw * var(--art-ratio-phone, var(--art-ratio, 0)))); min-height: 100vh; object-fit: cover; object-position: top center; }
+  /* Real phones get the page's phone painting (frames 37–42); the page is sized to it. */
+  .journey-stage { min-height: calc(100vw * var(--art-ratio-phone, var(--art-ratio, 0))); background: var(--art-ground-phone, var(--art-ground, #141d3a)); }
+}
 /* A light dark tint over the whole painting: calms the art a little and lifts white text. */
 .journey-backdrop::after { content: ""; position: absolute; inset: 0; background: rgb(5 8 24 / var(--art-tint, .18)); }
 .site-nav { padding: 24px 40px; gap: 24px; }
