@@ -1,6 +1,9 @@
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("Terms of Use", "Read the terms for using the LOGICA at UIC website and its membership, events, and community services.", "/terms");
+
 import { LegalPage, LSection, LList, contactLine } from "@/components/legal/LegalPage";
 
-export const metadata = { title: "Terms of Use — LOGICA @ UIC" };
 
 export default function TermsPage() {
   return (

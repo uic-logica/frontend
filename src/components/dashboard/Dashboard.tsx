@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { api, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
@@ -25,6 +25,13 @@ import {
   initials,
 } from "./types";
 import "./dashboard.css";
+
+/** Each section opens on its own part of the site's painting: [image, vertical position]. */
+const art: Record<Section, [string, string]> = {
+  overview: ["campus", "30%"], profile: ["skyline", "35%"], events: ["blue-line", "55%"],
+  activity: ["pilsen", "45%"], community: ["lake", "55%"], speakers: ["journey-c", "8%"],
+  notifications: ["golden-hour", "60%"], settings: ["journey-c", "88%"],
+};
 
 /**
  * Rendered once by `app/dashboard/layout.tsx`, not per route — the section
@@ -230,7 +237,10 @@ export function Dashboard() {
           </div>
         </div>
       </aside>
-      <div className="d-workarea">
+      <div
+        className="d-workarea"
+        style={{ "--d-art": `url(/journey/${art[section][0]}.webp)`, "--d-art-y": art[section][1] } as CSSProperties}
+      >
         <header className="d-topbar">
           <span>
             <strong>{titles[section]}</strong>

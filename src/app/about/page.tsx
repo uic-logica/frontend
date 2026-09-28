@@ -1,3 +1,7 @@
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("About LOGICA", "Learn about LOGICA, the Latinx Organization for Growth in Computing and Academics at UIC, and our community, mission, and activities.", "/about");
+
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { PinkLink } from "@/components/club/Typewriter";
 
@@ -62,7 +66,7 @@ export default function AboutPage() {
           </ul>
         </SectionContainer>
 
-        <SectionContainer>
+        <SectionContainer className="about-panel">
           <h2 className="type-h2 mb-8 text-white">Timeline</h2>
           <ol className="space-y-8">
             {[
@@ -79,10 +83,8 @@ export default function AboutPage() {
               </li>
             ))}
           </ol>
-        </SectionContainer>
 
-        <SectionContainer>
-          <h2 className="type-h2 text-white">Meet Our Team</h2>
+          <h2 className="type-h2 mt-16 text-white">Meet Our Team</h2>
           <p className="mt-4 max-w-2xl text-body text-white">
             The students who make LOGICA possible — board and builders.
           </p>

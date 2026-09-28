@@ -1,3 +1,7 @@
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("Join LOGICA", "Join LOGICA at UIC for computing workshops, mentorship, company visits, and community. All majors and experience levels are welcome.", "/join");
+
 import Link from "next/link";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { buttonClasses } from "@/components/ui/ButtonLink";
@@ -79,13 +83,13 @@ export default function JoinPage() {
 
         <SectionContainer>
           <h2 className="type-h2 mb-8 text-white">Application Process</h2>
-          <ol className="space-y-8">
+          <ol className="grid gap-6 md:grid-cols-3">
             {steps.map((s, i) => (
-              <li key={s.title} className="grid gap-2 md:grid-cols-[3rem_1fr]">
-                <span className="type-label text-signal">{String(i + 1).padStart(2, "0")}</span>
+              <li key={s.title} className="join-step club-card p-6">
+                <span className="join-step-number" aria-hidden>{i + 1}</span>
                 <div>
                   <h3 className="type-h4 text-white">{s.title}</h3>
-                  <p className="mt-2 text-body text-white">{s.body}</p>
+                  <p className="mt-3 text-body text-white">{s.body}</p>
                 </div>
               </li>
             ))}
@@ -94,9 +98,9 @@ export default function JoinPage() {
 
         <SectionContainer>
           <h2 className="type-h2 mb-8 text-white">Frequently Asked Questions</h2>
-          <div className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
             {faqs.map((f) => (
-              <div key={f.q}>
+              <div key={f.q} className="club-card p-6">
                 <h3 className="type-h4 text-white">{f.q}</h3>
                 <p className="mt-2 text-body text-white">{f.a}</p>
               </div>

@@ -6,6 +6,15 @@ import type { NextConfig } from "next";
 const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [{
+      source: "/:path(dashboard|profile|members|signin|speaker-signin|speaker-portal|admin|attendance|feed|forms|preview-a|preview-d|preview-hybrid|cardlab|blog)/:rest*",
+      headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+    }, {
+      source: "/:section(events|speak)/:id",
+      headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+    }];
+  },
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${backendUrl}/api/:path*` }];
   },

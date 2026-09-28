@@ -54,32 +54,11 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    /* Trackpad rubber-band past the bottom of the page stretches the
-       document momentarily beyond its real content — since the wallpaper
-       is a `fixed` background (anchored to the viewport, not the document),
-       that stretch reveals a sliver of it below the footer for the length
-       of the bounce. This is what actually stops it, not anything on the
-       footer itself. */
     overscroll-behavior-y: none;
   }
 
   body {
-    /* Fixed on the root: this is the one place `background-attachment: fixed`
-       is actually free. Scoping it to a smaller scrolling element (tried
-       earlier) forces the browser to repaint the visible region every
-       scroll frame instead of compositing it — that was the jitter. The
-       footer's own rounded top corners are what make it read as an
-       addition sliding up over this image, not the image itself changing. */
-    /* Tune the wallpaper's brightness here — one number, nothing else. */
-    --wallpaper-dim: 0.3;
-    background-color: var(--color-ink);
-    background-image:
-      linear-gradient(rgb(0 0 0 / var(--wallpaper-dim)), rgb(0 0 0 / var(--wallpaper-dim))),
-      url("/logicawallpaper.png");
-    background-position: center top;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background: #211b16;
     color: var(--color-paper);
     font-family: var(--font-sans);
     font-size: 1rem;
@@ -228,16 +207,15 @@
      each page keeps its own density. */
   .club-card {
     border: 1px solid rgb(255 255 255 / 0.2);
-    border-radius: 1rem;
+    border-radius: 1.75rem;
     transition:
       transform 0.3s ease,
       border-color 0.3s ease;
   }
 
-  /* Gold edge on every panel — it reads as "you're on this", not as a
-     promise you can click it. */
+  /* Quiet edge highlight, with movement reserved for clickable cards. */
   .club-card:hover {
-    border-color: var(--color-signal);
+    border-color: rgb(255 255 255 / 0.4);
   }
 
   /* The lift is the part that promises a hit target, so it's reserved for
@@ -284,4 +262,316 @@
       transform: none;
     }
   }
+}
+
+
+/* Mapier reference: clear painting, glass objects over it. */
+.club-shell {
+  --glass: rgb(58 30 14 / .45);
+  --glass-hover: rgb(40 28 16 / .52);
+  --glass-blur: blur(14px) saturate(1.3);
+  --glass-edge: inset 0 1px rgb(255 255 255 / .15);
+  --surface-ink: #2b2b2b;
+  --surface-muted: #626262;
+  --action: #b63814;
+  --card-light: 4px 6px 8px -2px rgb(106 45 13 / .20), -4px -1px 8px -2px rgb(255 220 165 / .30);
+  background: #ca6329;
+  color: white;
+}
+.journey-stage { position: relative; isolation: isolate; display: flex; flex-direction: column; min-height: calc(100vw * var(--art-ratio, 0)); }
+.journey-stage > .site-footer { margin-top: auto; }
+.journey-backdrop { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+/* On narrow screens a single scene is shorter than the viewport; cover it instead. */
+.journey-paint { display: block; width: 100%; height: auto; min-height: 100%; object-fit: cover; object-position: top; max-width: none; }
+/* A light warm-dark tint over the whole painting: calms the art a little and lifts white text. */
+.journey-backdrop::after { content: ""; position: absolute; inset: 0; background: rgb(30 12 4 / var(--art-tint, .18)); }
+.site-nav { padding: 24px 40px; gap: 24px; }
+.site-nav > a { background: white; color: var(--surface-ink); border-radius: 50%; padding: 10px; box-shadow: var(--card-light); }
+.site-nav > a img { filter: brightness(0); width: 36px; height: 36px; }
+.site-nav-links { flex: 1; justify-content: center; }
+.site-nav-capsule { padding: 6px; height: 52px; border-radius: 999px; background: rgb(40 28 16 / .55); backdrop-filter: blur(14px) saturate(1.4); box-shadow: inset 0 1px rgb(255 255 255 / .18); }
+.site-nav-capsule ul { gap: 2px; }
+.site-nav-capsule li { height: 40px; }
+.site-nav-capsule .nav-link { padding: 10px 22px; border-radius: 999px; line-height: 20px; }
+.site-nav-capsule .nav-link::after, .site-signin::after { display: none; }
+.site-nav-capsule .nav-link:hover { background: rgb(255 255 255 / .16); }
+.site-nav-capsule .nav-link-active { background: white; color: var(--surface-ink); }
+.site-nav-links .site-signin { position: absolute; right: 40px; padding: 14px 25px; height: auto; border-radius: 999px; background: white; color: var(--surface-ink); box-shadow: var(--card-light); }
+.site-nav > button { background: white; color: var(--surface-ink); border: 0; border-radius: 50%; width: 48px; height: 48px; }
+.site-mobile-menu { margin: 8px 16px; padding: 24px; border: 0; border-radius: 28px; background: white; color: var(--surface-ink); box-shadow: var(--card-light); }
+.site-mobile-menu a { color: var(--surface-ink); }
+.club-shell .club-card, .club-shell .journey-panel {
+  background: var(--glass);
+  color: #fff;
+  border: 0;
+  backdrop-filter: var(--glass-blur);
+  border-radius: 28px;
+  box-shadow: var(--card-light);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+.club-shell .club-card:hover { border: 0; }
+.club-shell .club-card-interactive:hover { transform: translateY(-3px); background: var(--glass-hover); }
+.club-shell :is(.club-card, .journey-panel, .light-surface) .text-signal { color: #ffc98a; }
+.club-shell :is(.club-card, .journey-panel, .light-surface) :is(p, .text-body-sm) { color: rgb(255 255 255 / .82); }
+.club-shell .club-card .club-card { background: rgb(255 255 255 / .08); box-shadow: none; backdrop-filter: none; }
+.club-shell .glass-panel { padding: 40px; background: var(--glass); color: #fff; border-radius: 28px; backdrop-filter: var(--glass-blur); box-shadow: var(--glass-edge); }
+.club-shell .light-surface { background: var(--glass); color: #fff; border-radius: 32px; backdrop-filter: var(--glass-blur); box-shadow: var(--glass-edge); padding: clamp(32px, 5vw, 72px); }
+.club-shell :is(h1, h2, .type-title, .type-h1, .type-h2) { font-family: var(--font-sans); font-weight: 500; letter-spacing: -.035em; line-height: 1.12; text-wrap: balance; }
+.club-shell h2 { font-size: clamp(30px, 3.8vw, 48px); }
+.club-shell .club-card h2 { font-size: 24px; letter-spacing: -.025em; }
+.club-shell p { text-wrap: pretty; font-weight: 400; }
+.club-shell a.inline-flex, .club-shell button[type="submit"] { border-radius: 999px; }
+.club-shell :is(.club-card, .light-surface) a.inline-flex:not(.text-signal) { background: var(--action); color: white; padding: 13px 24px; box-shadow: none; }
+.club-shell :is(.club-card, .light-surface) a.inline-flex + a.inline-flex { background: rgb(255 255 255 / .9); color: #973011; }
+.club-shell .site-button-primary { background: var(--action); color: white; }
+.club-shell .site-button-outline { background: #f4e7e2; color: #973011; box-shadow: none; }
+.club-shell input:not([type="checkbox"]):not([type="radio"]), .club-shell textarea, .club-shell select { border-radius: 14px; }
+.club-shell :focus-visible { outline: 3px solid #b63814; outline-offset: 4px; box-shadow: 0 0 0 2px white; }
+.home-hero .hero-copy > p { color: #fff; font-size: 20px; margin-bottom: 12px; }
+.home-hero h1 { color: #fff; font-size: clamp(42px, 5vw, 72px); font-weight: 500; line-height: 1.08; }
+.home-hero .hero-description p { color: #fff; font-size: 19px; line-height: 1.55; }
+.home-numbers > h2, .home-pathways > div:first-child { width: 100%; max-width: 800px; margin-inline: auto; text-align: center; color: white; text-shadow: 0 2px 8px rgb(40 28 16 / .65); }
+.home-stats { gap: 36px; }
+.home-stats > div + div { border-left: 1px solid rgb(255 255 255 / .25); padding-left: 32px; }
+.home-stats .font-display { font-family: var(--font-sans); font-size: 52px; font-weight: 500; }
+.home-stats .text-lg { font-size: 16px; line-height: 1.5; }
+/* Hero: copy on the left, the animated mark on the right, both on the art. */
+.club-shell[data-home="true"] .home-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 340px); align-items: center; align-content: start; gap: 48px; min-height: 48vw; padding-top: 40px; text-align: left; }
+.home-hero .hero-copy { max-width: 760px; }
+.home-hero .hero-description { margin: 20px 0 0; max-width: 620px; }
+.home-hero .hero-mark { color: #fff; filter: drop-shadow(0 4px 18px rgb(70 25 0 / .4)); }
+.club-shell[data-home="true"] .home-destinations { padding-block: 48px; }
+.home-destinations h2 { font-size: 30px; }
+.pathway-card { padding: 24px; }
+.pathway-card .pathway-illustration { display: grid; place-items: center; height: 145px; border-radius: 14px; background: rgb(255 255 255 / .1); margin-bottom: 22px; color: #fff; }
+.pathway-card .pathway-illustration svg { height: 52px; width: 52px; stroke-width: 1.4; }
+.pathway-card > .mb-4 { margin-bottom: 16px; }
+.pathway-card > .mb-4 span { color: rgb(255 255 255 / .7); letter-spacing: 0; }
+.pathway-card > .mb-4 svg { color: #ffc98a; }
+.pathway-card h3 { font-size: 23px; letter-spacing: -.025em; font-weight: 500; }
+.pathway-card > span { display: none; }
+.home-partners .partners-content { padding: 0; }
+.home-partners .partners-content > div:first-child { width: 100%; }
+.home-partners .club-card { background: rgb(255 255 255 / .08); box-shadow: none; width: 100%; max-width: none; }
+.home-join h2 { max-width: 22ch; }
+.club-shell:not([data-home="true"]) .site-section { margin-bottom: 72px; padding-inline: 32px; }
+.club-shell[data-route="events"] .site-section:first-child { text-align: center; }
+.club-shell[data-route="events"] .site-section:first-child p { margin-inline: auto; }
+.club-shell:not([data-home="true"]) h1 { font-size: clamp(38px, 4vw, 58px); }
+.club-shell[data-route="signin"] .page-container,
+.club-shell[data-route="speaker-signin"] .page-container { max-width: 560px; padding: 40px 12px 12px; }
+.club-shell[data-route="signin"] h1,
+.club-shell[data-route="speaker-signin"] h1 { font-size: 38px; }
+.club-shell[data-route="signin"] .club-card,
+.club-shell[data-route="speaker-signin"] .club-card { padding: 28px; text-align: left; }
+.club-shell .page-container button[type="submit"] { background: var(--action); color: white; }
+.club-shell .page-container input:not([type="checkbox"]):not([type="radio"]),
+.club-shell .page-container textarea, .club-shell .page-container select { background: #fff; color: #2b2b2b; border-color: #c5c5c5; }
+.club-shell .page-container input::placeholder, .club-shell .page-container textarea::placeholder { color: #676767; }
+.club-shell .page-container input[aria-invalid="true"] { border-color: #b63814; }
+.club-shell .event-tabs button { text-decoration: none; }
+.member-well { width: min(1200px, calc(100% - 40px)); margin: 40px auto 100px; background: white; color: #2b2b2b; border-radius: 28px; overflow: hidden; }
+@media (max-width: 799px) {
+  .site-nav { padding: 16px 20px; }
+  .site-nav > a img { width: 30px; height: 30px; }
+  .home-hero .hero-description p { font-size: 16px; }
+  .club-shell .glass-panel { padding: 28px; }
+  .home-stats > div + div { border-left: 0; border-top: 1px solid rgb(255 255 255 / .25); padding: 24px 0 0; }
+  .club-shell[data-home="true"] :is(.home-destinations, .home-partners, .home-join) { padding: 32px 24px; }
+  .home-pathways > div:first-child { width: 100%; }
+  .club-shell:not([data-home="true"]) .site-section { padding-inline: 0; margin-bottom: 48px; }
+  .club-shell[data-route="signin"] .club-card, .club-shell[data-route="speaker-signin"] .club-card { padding: 22px; }
+  .club-shell[data-route="signin"] h1, .club-shell[data-route="speaker-signin"] h1 { font-size: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .club-shell *, .club-shell *::after { transition-duration: 0s !important; }
+}
+
+
+/* Mapier layout: headings sit on the painting, white objects float above it. */
+/* White text on the painting: a soft warm shadow for contrast, no outline. */
+.club-shell { --on-art-text: 0 2px 8px rgb(40 28 16 / .65); }
+.club-shell :where(.page-container > .site-section) { text-shadow: var(--on-art-text); }
+.club-shell :is(.club-card, .light-surface, .glass-panel, .bg-paper, input, textarea, select, button, a.inline-flex) { text-shadow: none; }
+.club-shell .page-container :where([class*="text-white/"]) { color: rgb(255 255 255 / .92); }
+.club-shell .page-container .site-section:first-child :where(.text-signal) { color: #fecc15; }
+
+/* Inner pages: title on the art; text-only sections become glass cards. */
+.club-shell:not([data-home="true"]) .page-container { width: min(1264px, 100%); margin: 0 auto 120px; padding: 48px 32px 0; }
+.club-shell:not([data-home="true"]) .site-section:not(:first-child):not(.on-art):not(:has(.club-card, .bg-paper)) {
+  padding: clamp(28px, 4vw, 56px);
+  border-radius: 28px;
+  background: var(--glass);
+  color: #fff;
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge);
+  text-shadow: none;
+}
+.club-shell:not([data-home="true"]) .site-section:not(:first-child):not(:has(.club-card, .bg-paper)) a.inline-flex:not(.text-signal) { padding: 12px 22px; background: var(--action); color: #fff; }
+@media (max-width: 799px) {
+  .club-shell:not([data-home="true"]) .page-container { padding: 32px 16px 0; margin-bottom: 72px; }
+}
+
+/* Home, laid out in logica.pen "Home - Variant C": sections sit close together
+   and the landmarks show between and behind them. Gaps are in vw because the
+   art's height scales with the viewport width. */
+.club-shell[data-home="true"] .page-container { margin: 0; padding: 54px 40px 0; }
+.club-shell[data-home="true"] .site-section { margin: 0 auto; padding-inline: 32px; }
+.club-shell[data-home="true"] .home-destinations { max-width: 1200px; margin-top: clamp(64px, 12vw, 200px); }
+.club-shell[data-home="true"] .home-pathways { margin-top: clamp(56px, 8vw, 140px); }
+.club-shell[data-home="true"] .home-partners { max-width: 960px; margin-top: clamp(56px, 11vw, 180px); }
+.club-shell[data-home="true"] .home-join.light-surface {
+  max-width: 960px;
+  margin: clamp(64px, 14vw, 220px) auto 0;
+  padding: clamp(56px, 6vw, 88px) 32px;
+  border-radius: 40px;
+}
+.home-join .join-content { padding: 0; background: transparent; }
+.home-join h2 { font-size: clamp(34px, 3.8vw, 54px); }
+
+/* Logos keep their brand colors on the glass; only the black marks turn white so they stay visible. */
+.club-shell .light-surface .partner-logo:is([src*="zebra"], [src*="spaceapps"]) { filter: brightness(0) invert(1); }
+.club-shell .light-surface .partner-logo:is([src*="breakthrough"], [src*="ai-collective"], [src*="dpi-icon"]) { filter: brightness(1.5) saturate(1.3); }
+
+/* The capsule is centred on the page, not on the space the logo leaves. */
+.site-nav-capsule { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+/* Footer: Mapier's closer, on the last stretch of the painting. */
+.site-footer { position: relative; display: flex; align-items: flex-end; min-height: 56vw; padding: 0 48px 40px; color: #fff; text-shadow: var(--on-art-text); }
+.club-shell:not([data-home="true"]) .site-footer { min-height: 30vw; }
+.site-footer::before { content: ""; position: absolute; inset: auto 0 0; height: 70%; background: linear-gradient(transparent, rgb(42 18 6 / .6)); pointer-events: none; }
+.site-footer-in { position: relative; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "mark links" "fine fine"; align-items: end; gap: 40px 48px; }
+.site-footer-mark { grid-area: mark; display: inline-flex; align-items: center; gap: .2em; width: fit-content; font-size: clamp(56px, 7vw, 104px); font-weight: 600; letter-spacing: -.04em; line-height: 1; }
+.site-footer-mark img { width: .9em; height: .9em; }
+.site-footer-links { grid-area: links; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: 24px; font-weight: 500; }
+.site-footer-links a { color: rgb(255 255 255 / .9); }
+.site-footer-links a:hover { color: #fff; }
+/* Fine print gets its own row under a hairline: contact left, legal right. */
+.site-footer-fine { grid-area: fine; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px 32px; padding-top: 20px; border-top: 1px solid rgb(255 255 255 / .3); font-size: 14px; }
+.site-footer-fine > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 24px; }
+.site-footer-fine a { text-decoration: underline; text-decoration-color: rgb(255 255 255 / .45); text-underline-offset: .22em; }
+.site-footer-fine a:hover { text-decoration-color: #fff; }
+@media (max-width: 799px) {
+  .club-shell[data-home="true"] .page-container { padding: 32px 20px 0; }
+  .club-shell[data-home="true"] .site-section { padding-inline: 0; }
+  .club-shell[data-home="true"] .home-join.light-surface { border-radius: 32px; }
+  .club-shell[data-home="true"] .home-hero { grid-template-columns: 1fr; gap: 24px; padding-top: 8px; }
+  .home-hero .hero-mark { justify-self: center; }
+  .site-footer { min-height: 120vw; padding: 72px 20px 32px; }
+  .site-footer-in { grid-template-columns: 1fr; grid-template-areas: "links" "mark" "fine"; gap: 28px; }
+  .site-footer-links { align-items: flex-start; font-size: 20px; }
+  .site-footer-fine { flex-direction: column; gap: 14px; }
+  /* At phone width the full-width art is tiny; show the centre of it larger. */
+  .journey-paint:not([data-mobile]) { width: 230%; margin-left: -65%; }
+}
+
+/* Phone layout from logica.pen "16 Home — Variant C mock (mobile)". */
+@media (max-width: 799px) {
+  .club-shell[data-home="true"] .home-hero .hero-mark { order: -1; justify-self: start; max-width: 76px; margin: 0; }
+  /* The mock leaves a window onto the skyline between the hero and the numbers. */
+  .club-shell[data-home="true"] .home-numbers { margin-top: 240px; }
+  .home-stats > div { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 16px; }
+  .home-stats .font-display { font-size: 38px; }
+  .home-stats > div > div:first-child { margin: 0; }
+  .home-destinations .animate-marquee > div { margin-right: 40px; }
+  .home-destinations .partner-logo { max-height: 34px; }
+  .pathway-card { display: grid; grid-template-columns: 64px 1fr auto; column-gap: 16px; align-items: start; padding: 18px; }
+  .pathway-card > .mb-4 { grid-area: 1 / 3; margin: 0; }
+  .pathway-card .pathway-illustration { grid-area: 1 / 1 / 3; height: 64px; margin: 0; }
+  .pathway-card .pathway-illustration svg { width: 28px; height: 28px; }
+  .pathway-card h3 { grid-area: 1 / 2; font-size: 20px; }
+  .pathway-card p { grid-area: 2 / 2 / 3 / 4; margin-top: 4px; }
+}
+
+/* Inner pages from logica.pen "11–15 … Variant C mock". */
+/* About: timeline and "Meet our team" share one darker panel; the team link stays a gold text link. */
+.club-shell[data-route="about"] .about-panel { background: rgb(42 18 6 / .65); }
+/* Team: round portraits, gold uppercase roles. */
+.club-shell[data-route="team"] .person-photo { border-radius: 50%; box-shadow: 0 0 0 3px rgb(255 255 255 / .85); }
+.club-shell[data-route="team"] .person-role { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: #ffe7a3; }
+/* Phone header: Sign in pill next to the menu button, as in the mobile mock. */
+.site-nav-mobile { display: flex; align-items: center; gap: 10px; }
+.site-nav-mobile .site-signin { padding: 12px 20px; border-radius: 999px; background: white; color: var(--surface-ink); font-size: 14px; box-shadow: var(--card-light); }
+.site-nav-mobile > button { background: rgb(58 30 14 / .75); color: #fff; border: 0; border-radius: 50%; width: 44px; height: 44px; }
+
+/* Desktop keeps the plain text tabs and step cards from the desktop mocks. */
+.event-tabs-switch { display: contents; }
+.event-tabs-cal { display: inline-flex; align-items: center; gap: 6px; }
+.event-tabs-cal svg, .join-step-number, .blog-events-link svg { display: none; }
+
+/* Phone layout from logica.pen "16–21 … Variant C mock (mobile)". */
+@media (max-width: 799px) {
+  .journey-stage { min-height: calc(100vw * var(--art-ratio-phone, var(--art-ratio, 0))); }
+  .site-nav { padding: 16px 20px; }
+  .site-nav > a { padding: 8px; }
+  .site-nav > a img { width: 28px; height: 28px; }
+  .site-nav-mobile { gap: 8px; }
+  .site-nav-mobile .site-signin { padding: 12px 18px; font-size: 14px; font-weight: 500; }
+  .site-nav-mobile > button { display: grid; place-items: center; background: rgb(58 30 14 / .55); }
+
+  /* Inner pages: 16px gutters, 44px between sections, intro text inset 8px. */
+  .club-shell:not([data-home="true"]) .page-container { padding: 28px 16px 0; margin-bottom: 0; }
+  .club-shell:not([data-home="true"]) .site-section { margin-bottom: 44px; padding-inline: 0; }
+  .club-shell:not([data-home="true"]) .site-section:first-child,
+  .club-shell:not([data-home="true"]) .site-section > :is(h2, .mb-12) { padding-inline: 8px; }
+  .club-shell:not([data-home="true"]) h1 { font-size: 40px; }
+  .club-shell:not([data-home="true"]) .site-section:first-child p { font-size: 16px; line-height: 1.5; }
+  .club-shell[data-route="about"] .site-section:first-child .text-signal { font-size: 19px; font-weight: 500; }
+  .club-shell:not([data-home="true"]) h2.type-h2 { font-size: 28px; margin-bottom: 12px; }
+  .club-shell:not([data-home="true"]) .site-section .grid { gap: 12px; }
+  .club-shell:not([data-home="true"]) .club-card { padding: 22px; border-radius: 24px; }
+  .club-shell:not([data-home="true"]) .club-card :is(h2, h3) { font-size: 20px; font-weight: 500; }
+  .club-shell:not([data-home="true"]) .club-card p { font-size: 15px; line-height: 1.5; margin-top: 8px; }
+
+  /* About: timeline entries with a gold rule, label above text. */
+  .club-shell[data-route="about"] .about-panel { padding: 28px 22px; border-radius: 24px; }
+  .club-shell[data-route="about"] .about-panel > :is(h2, ol) { padding-inline: 0; }
+  .club-shell[data-route="about"] .about-panel ol { display: grid; gap: 20px; }
+  .club-shell[data-route="about"] .about-panel ol > li { margin: 0; gap: 6px; padding-left: 16px; border-left: 1px solid #fecc15; }
+  .club-shell[data-route="about"] .about-panel p { font-size: 16px; }
+  .club-shell[data-route="about"] .about-panel ol + h2 { margin-top: 40px; }
+
+  /* Team: each person in a glass card, two per row. */
+  .club-shell[data-route="team"] .site-section .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .club-shell[data-route="team"] .mb-12 { margin-bottom: 20px; padding-bottom: 0; border: 0; }
+  .club-shell[data-route="team"] .mb-12 p { font-size: 15px; }
+  .club-shell[data-route="team"] .person-card { height: 100%; padding: 20px 10px; gap: 10px; border-radius: 24px; background: var(--glass); backdrop-filter: var(--glass-blur); box-shadow: var(--card-light); text-shadow: none; }
+  .club-shell[data-route="team"] .person-card > div { margin: 0; }
+  .club-shell[data-route="team"] .person-photo { width: 112px; height: 112px; box-shadow: 0 0 0 1px rgb(255 255 255 / .35); }
+  .club-shell[data-route="team"] .person-card h3 { font-size: 16px; font-weight: 500; }
+  .club-shell[data-route="team"] .person-role { margin: 0; font-size: 11px; color: #fecc15; }
+  .club-shell[data-route="team"] .site-section:last-child .club-card { width: 100%; padding: 32px 22px 22px; }
+  .club-shell[data-route="team"] .site-section:last-child h2 { font-size: 26px; font-weight: 500; margin-bottom: 10px; }
+  .club-shell[data-route="team"] .site-section:last-child p { margin-bottom: 10px; }
+  .club-shell[data-route="team"] .site-section:last-child a.inline-flex { width: 100%; padding: 15px 24px; font-size: 16px; }
+
+  /* Join: numbered badge beside each step. */
+  .join-step { display: flex; gap: 16px; }
+  .join-step-number { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: rgb(255 255 255 / .12); font-size: 16px; font-weight: 600; }
+  .club-shell .join-step p { margin-top: 6px; }
+
+  /* Events: segmented Upcoming/Past switch, calendar note on its own line. */
+  .club-shell .event-tabs { flex-direction: column; gap: 12px; }
+  .event-tabs-switch { display: flex; gap: 4px; padding: 5px; border-radius: 26px; background: rgb(58 30 14 / .55); }
+  .club-shell .event-tabs .event-tabs-switch button { padding: 11px 18px; border-radius: 21px; font-size: 15px; font-weight: 600; color: #fff; text-decoration: none; }
+  .club-shell .event-tabs .event-tabs-switch button[aria-pressed="true"] { background: #fff; color: #973011; }
+  .event-tabs-dot { display: none; }
+  .event-tabs-cal { font-size: 14px; color: rgb(255 255 255 / .9); }
+  .event-tabs-cal svg { display: block; }
+
+  /* Blog: Events link with an arrow. */
+  .club-shell .blog-events-link { color: #ffc9a8; font-size: 16px; }
+  .blog-events-link svg { display: block; }
+
+  /* Footer: mark, links in two columns, then fine print under a hairline. */
+  .site-footer { min-height: 0; padding: 160px 24px 32px; text-shadow: none; }
+  .site-footer-in { grid-template-areas: "mark" "links" "fine"; gap: 28px; }
+  .site-footer-mark { font-size: 52px; gap: 12px; }
+  .site-footer-mark img { width: 52px; height: 52px; }
+  .site-footer-links { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 8px 16px; font-size: 20px; }
+  .site-footer-fine { flex-direction: row; justify-content: flex-start; gap: 10px 18px; padding-top: 18px; border-top-color: rgb(255 255 255 / .2); font-size: 13px; }
+  .site-footer-fine > div { display: contents; }
+  .site-footer-fine .type-label { display: none; }
+  .site-footer-fine a { text-decoration: none; }
+  .site-footer-fine > div:last-child > span { flex-basis: 100%; color: rgb(255 255 255 / .7); }
 }
