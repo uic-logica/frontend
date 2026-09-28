@@ -3174,9 +3174,23 @@
 .d-bubble-row.is-mine .d-ref:hover { background: rgb(11 18 48 / .5); }
 .d-invite-link code { background: rgb(5 8 24 / .45); color: #fff; }
 
-/* Fifteen items (frame 35 was drawn with eight): tighter rows so the account row stays on screen. */
-.d-sidebar nav > a { height: 38px; margin-bottom: 2px; }
-.d-brand { padding-bottom: 16px; }
+/* The rail never scrolls, sideways or up and down: up to 15 items (frame 35 was
+   drawn with eight) plus the account row always fit. Row height follows the
+   window height between 22px and 38px (--d-row), and the brand, divider and
+   account row tighten with it. The account row sits inside the rail (no
+   negative margins), which is what made it scroll sideways. */
+.d-sidebar { --d-row: clamp(22px, calc((100vh - 360px) / 15), 38px); overflow: hidden; }
+.d-sidebar-inner { overflow: hidden; }
+.d-sidebar nav > a { height: var(--d-row); margin-bottom: 2px; font-size: clamp(13px, calc(var(--d-row) * .4), 15px); }
+.d-sidebar nav svg { width: clamp(15px, calc(var(--d-row) * .45), 17px); height: clamp(15px, calc(var(--d-row) * .45), 17px); }
+.d-brand { padding-bottom: clamp(6px, calc(var(--d-row) - 22px), 16px); }
+.d-nav-divider { margin: clamp(6px, calc(var(--d-row) - 20px), 18px) 0 4px; }
+.d-sidebar-bottom { padding-top: 6px; }
+.d-account { margin: 8px 0 0; padding: clamp(8px, calc(var(--d-row) - 24px), 14px) 8px clamp(8px, calc(var(--d-row) - 22px), 18px); }
+@media (max-height: 640px) {
+  .d-brand img { width: 36px; height: 36px; padding: 6px; }
+  .d-brand small { display: none; }
+}
 
 @media (max-width: 900px) {
   .d-sidebar { position: sticky; inset: auto; top: 0; width: auto; margin: 12px; border-radius: 24px; }
