@@ -26,12 +26,8 @@ import {
 } from "./types";
 import "./dashboard.css";
 
-/** Each section opens on its own night painting (logica.pen Variant E): [image, vertical position]. */
-const art: Record<Section, [string, string]> = {
-  overview: ["campus-night", "30%"], profile: ["skyline-night", "35%"], events: ["blue-line-night", "55%"],
-  activity: ["pilsen-night", "45%"], community: ["lake-night", "55%"], speakers: ["journey-c-night", "8%"],
-  notifications: ["golden-hour-night", "60%"], settings: ["journey-c-night", "88%"],
-};
+/** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
+const art = "dashboard-night";
 
 /**
  * Rendered once by `app/dashboard/layout.tsx`, not per route — the section
@@ -175,7 +171,7 @@ export function Dashboard() {
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
   return (
-    <div className="dash" style={{ "--d-art": `url(/journey/${art[section][0]}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})`, "--d-art-y": art[section][1] } as CSSProperties}>
+    <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
       <a href="#dashboard-content" className="d-skip">
         Skip to content
       </a>
