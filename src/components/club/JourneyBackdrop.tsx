@@ -41,6 +41,26 @@ export function sceneFor(pathname: string) {
   return { source, width, height, ground, phone };
 }
 
+/** The painting URL this browser will actually use for a route (phone or desktop). */
+export function artUrl(pathname: string) {
+  const { source, phone } = sceneFor(pathname);
+  const onPhone = phone && typeof window !== "undefined" && window.matchMedia(PHONE_MEDIA).matches;
+  return `/journey/${source}${onPhone ? "-mobile" : ""}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION}`;
+}
+
+/** Download and decode the paintings for these routes ahead of time, so switching
+ * pages shows the next painting from cache instead of a blank frame while it loads.
+ * Skipped when the visitor asked to save data. */
+export function warmArt(pathnames: string[]) {
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (conn?.saveData) return;
+  for (const url of new Set(pathnames.map(artUrl))) {
+    const img = new Image();
+    img.src = url;
+    img.decode().catch(() => {});
+  }
+}
+
 /** One painting per page, as in logica.pen: always exactly the window width
  * from the top of the page, never rescaled (so browser zoom can't change it). It scrolls with the content 1:1,
  * so the glass cards and the art behind them never drift apart. */
@@ -53,7 +73,7 @@ export function JourneyBackdrop({ pathname }: { pathname: string }) {
       <picture>
         {phone ? <source media={PHONE_MEDIA} srcSet={`/journey/${source}-mobile.webp?v=${v}`} width={phone[0]} height={phone[1]} /> : null}
         { }
-        <img src={`/journey/${source}.webp?v=${v}`} width={width} height={height} alt="" fetchPriority="high" decoding="async" className="journey-paint" />
+        <img src={`/journey/${source}.webp?v=${v}`} width={width} height={height} alt="" fetchPriority="high" decoding="sync" className="journey-paint" />
       </picture>
     </div>
   );

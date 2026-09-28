@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { JourneyBackdrop, sceneFor } from "./JourneyBackdrop";
+import { JourneyBackdrop, sceneFor, warmArt } from "./JourneyBackdrop";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -200,8 +200,21 @@ export function SiteFooter() {
   );
 }
 
+/** Every route the nav and footer link to; their paintings are warmed once the page is idle. */
+const artRoutes = ["/", "/about", "/events", "/team", "/blog", "/join", "/signin"];
+let warmed = false;
+
 export function ClubShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  useEffect(() => {
+    if (warmed) return;
+    warmed = true;
+    // After this page's own painting has loaded, so the prefetch never competes with it.
+    const start = () => warmArt(artRoutes.filter((r) => r !== pathname));
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
+    if (document.readyState === "complete") idle(start);
+    else window.addEventListener("load", () => idle(start), { once: true });
+  }, [pathname]);
   const scene = sceneFor(pathname);
   // The page is at least as tall as its painting, so the art's closing landmark
   // reaches the footer; a longer page continues in the painting's bottom colour.
