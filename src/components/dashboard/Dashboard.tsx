@@ -100,6 +100,15 @@ export function Dashboard() {
   const [notices, setNotices] = useState<Notice[] | null>(null);
   const [speakers, setSpeakers] = useState<Speaker[] | null>(null);
   const [members, setMembers] = useState<Member[] | null>(null);
+  function forgetSession() {
+    setUser(null);
+    setProfile(null);
+    setEvents(null);
+    setEngagement(null);
+    setNotices(null);
+    setSpeakers(null);
+    setMembers(null);
+  }
   const [errors, setErrors] = useState<string[]>([]);
   const [authState, setAuthState] = useState<
     "loading" | "ready" | "signed-out" | "error"
@@ -173,6 +182,9 @@ export function Dashboard() {
         );
         if (!alive) return;
         if (!session?.user) {
+          // Drop anything a previous session left behind (QA #80: after
+          // signing out, Back showed the sign-in buttons next to the old avatar).
+          forgetSession();
           setAuthState("signed-out");
           return;
         }
@@ -248,6 +260,7 @@ export function Dashboard() {
     setLeaving(true);
     try {
       await signOut();
+      forgetSession();
       router.push(
         user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin",
       );
@@ -393,21 +406,25 @@ export function Dashboard() {
           </span>
           <div>
             <span className="d-campus">LOGICA @ UIC</span>
-            <Link
-              aria-label={`${unread} unread notifications`}
-              href="/dashboard/notifications"
-              className="d-bell"
-            >
-              <Icon name="notifications" />
-              {unread > 0 && <i />}
-            </Link>
-            <Link
-              className="d-avatar d-avatar-small"
-              href="/dashboard/profile"
-              aria-label="My profile"
-            >
-              {initials(profile?.name || user?.name || null)}
-            </Link>
+            {user && (
+              <>
+                <Link
+                  aria-label={`${unread} unread notifications`}
+                  href="/dashboard/notifications"
+                  className="d-bell"
+                >
+                  <Icon name="notifications" />
+                  {unread > 0 && <i />}
+                </Link>
+                <Link
+                  className="d-avatar d-avatar-small"
+                  href="/dashboard/profile"
+                  aria-label="My profile"
+                >
+                  {initials(profile?.name || user.name || null)}
+                </Link>
+              </>
+            )}
           </div>
         </header>
         <main
