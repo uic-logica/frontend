@@ -287,9 +287,10 @@
    over it, so the closing scene is always behind the footer and nothing is ever blank.
    (overflow: clip on the backdrop, not hidden, so the sticky is relative to the window.) */
 .journey-paint { position: sticky; top: min(0px, calc(100vh - 100vw * var(--art-ratio, 0))); display: block; width: 100%; height: auto; max-width: none; }
-/* On a real phone the full-width painting can be shorter than the screen: fill the screen instead.
+/* On a real phone a full-width painting can be shorter than the screen; only then does it grow
+   to the screen's height (cropping its sides). Taller paintings keep scrolling as on desktop.
    Touch-only, so desktop zoom (which also narrows the page) never triggers it. */
-@media (pointer: coarse) and (max-width: 799px) { .journey-paint { top: 0; height: 100vh; object-fit: cover; object-position: bottom; } }
+@media (pointer: coarse) and (max-width: 799px) { .journey-paint { min-height: 100vh; object-fit: cover; object-position: top center; } }
 /* A light dark tint over the whole painting: calms the art a little and lifts white text. */
 .journey-backdrop::after { content: ""; position: absolute; inset: 0; background: rgb(5 8 24 / var(--art-tint, .18)); }
 .site-nav { padding: 24px 40px; gap: 24px; }
