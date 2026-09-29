@@ -160,6 +160,12 @@ export function Applications() {
             <div><dt>Hours a week</dt><dd>{detail.hoursPerWeek ?? "Not provided"}</dd></div>
             <div><dt>Projects, ranked</dt><dd>{projects(detail) || "None picked"}</dd></div>
             <div><dt>Skills</dt><dd>{detail.skills || "Not provided"}</dd></div>
+            <div><dt>Resume</dt><dd>
+              {detail.resumeOnFile && detail.userId && <a href={`/api/resume/${detail.userId}`}>Download PDF</a>}
+              {detail.resumeOnFile && detail.resumeUrl && " · "}
+              {detail.resumeUrl && <a href={detail.resumeUrl} target="_blank" rel="noreferrer">Open link ↗</a>}
+              {!detail.resumeOnFile && !detail.resumeUrl && "Not provided"}
+            </dd></div>
           </>}
           <div><dt>Major / graduation</dt><dd>{detail.major || "Not provided"} · {detail.gradYear ?? "Year not provided"}</dd></div>
           <div><dt>Applied</dt><dd>{date(detail.createdAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>

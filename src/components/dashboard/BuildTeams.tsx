@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ResumeUpload } from "@/components/shell/ResumeUpload";
 import { api } from "@/lib/api";
 import { Heading } from "./Overview";
 import { type Profile, type SessionUser, date } from "./types";
@@ -58,13 +59,38 @@ export function retireTeamsHint() {
 const label = (value: string) => PROJECTS.find((p) => p.value === value)?.label ?? value;
 
 /** Software Team applications live here, behind sign-in, so every one is tied to a @uic.edu account. */
+type Draft = { github: string; hours: string; picks: string[]; skills: string; why: string; resumeUrl: string };
+const EMPTY: Draft = { github: "", hours: "", picks: ["", "", ""], skills: "", why: "", resumeUrl: "" };
+
+/**
+ * The application saves as a draft while they type, per account, in this
+ * browser. ponytail: localStorage, not a server draft — switching devices
+ * starts over. Add a draft row on the backend if that turns out to matter.
+ */
+const draftKey = (userId: string) => `logica.softwareTeamsDraft.${userId}`;
+function loadDraft(userId: string): Draft {
+  try {
+    return { ...EMPTY, ...JSON.parse(localStorage.getItem(draftKey(userId)) ?? "{}") };
+  } catch {
+    return EMPTY;
+  }
+}
+
 export function BuildTeams({ user, profile }: { user: SessionUser; profile: Profile | null }) {
   const [mine, setMine] = useState<Mine[] | null>(null);
-  const [github, setGithub] = useState("");
-  const [hours, setHours] = useState("");
-  const [picks, setPicks] = useState(["", "", ""]);
-  const [skills, setSkills] = useState("");
-  const [why, setWhy] = useState("");
+  // Only rendered client-side once the session has loaded, so localStorage is available here.
+  const [draft, setDraft] = useState<Draft>(() => loadDraft(user.id));
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [resumeFile, setResumeFile] = useState<string | null>(profile?.resumeFilename ?? null);
+  const { github, hours, picks, skills, why, resumeUrl } = draft;
+  const set = (patch: Partial<Draft>) => {
+    const next = { ...draft, ...patch };
+    setDraft(next);
+    try {
+      localStorage.setItem(draftKey(user.id), JSON.stringify(next));
+      setSavedAt(new Date());
+    } catch {}
+  };
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const uic = user.email.toLowerCase().endsWith("@uic.edu");
@@ -98,8 +124,12 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
           hoursPerWeek: Number(hours),
           projects: picks.filter(Boolean),
           skills: skills.trim() || null,
+          resumeUrl: resumeUrl.trim() || null,
         }),
       });
+      try {
+        localStorage.removeItem(draftKey(user.id));
+      } catch {}
       retireTeamsHint();
       setMine(await api<Mine[]>("/api/join/mine").then((rows) => rows.filter((r) => r.track === "SOFTWARE_ENGINEER")));
     } catch (err) {
@@ -150,11 +180,11 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
           <div className="d-form-grid">
             <label>
               GitHub username
-              <input required maxLength={100} autoCapitalize="none" spellCheck={false} placeholder="octocat" value={github} onChange={(e) => setGithub(e.target.value)} />
+              <input required maxLength={100} autoCapitalize="none" spellCheck={false} placeholder="octocat" value={github} onChange={(e) => set({ github: e.target.value })} />
             </label>
             <label>
               Hours a week you can commit
-              <input type="number" inputMode="numeric" required min={1} max={40} placeholder="4" value={hours} onChange={(e) => setHours(e.target.value)} />
+              <input type="number" inputMode="numeric" required min={1} max={40} placeholder="4" value={hours} onChange={(e) => set({ hours: e.target.value })} />
             </label>
             {RANKS.map((rank, i) => (
               <label key={rank}>
@@ -162,7 +192,7 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
                 <select
                   required={i === 0}
                   value={picks[i]}
-                  onChange={(e) => setPicks(picks.map((p, j) => (j === i ? e.target.value : p)))}
+                  onChange={(e) => set({ picks: picks.map((p, j) => (j === i ? e.target.value : p)) })}
                 >
                   <option value="">{i === 0 ? "Pick a project" : "None"}</option>
                   {PROJECTS.filter((p) => p.value === picks[i] || !picks.includes(p.value)).map((p) => (
@@ -174,13 +204,42 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
           </div>
           <label>
             Skills (optional)
-            <textarea rows={3} maxLength={500} placeholder="React, Python, computer vision, design…" value={skills} onChange={(e) => setSkills(e.target.value)} />
+            <textarea rows={3} maxLength={500} placeholder="React, Python, computer vision, design…" value={skills} onChange={(e) => set({ skills: e.target.value })} />
           </label>
+          <fieldset className="d-resume">
+            <legend>Resume (optional)</legend>
+            <p className="d-small">Upload a PDF to your profile, or paste a link. The board sees either one.</p>
+            <ResumeUpload
+              filename={resumeFile}
+              onChange={setResumeFile}
+              buttonClassName="d-button secondary"
+              linkClassName="d-text-button"
+              textClassName="d-small"
+            />
+            <label>
+              Or a link to your resume
+              <input
+                type="url"
+                inputMode="url"
+                spellCheck={false}
+                autoCapitalize="none"
+                placeholder="https://drive.google.com/…"
+                pattern="https://.*"
+                value={resumeUrl}
+                onChange={(e) => set({ resumeUrl: e.target.value })}
+              />
+            </label>
+          </fieldset>
           <label>
             Why do you want to build with LOGICA?
-            <textarea required rows={4} maxLength={2000} value={why} onChange={(e) => setWhy(e.target.value)} />
+            <textarea required rows={4} maxLength={2000} value={why} onChange={(e) => set({ why: e.target.value })} />
           </label>
           <div className="d-actions">
+            {savedAt && (
+              <span className="d-small" role="status">
+                Draft saved {savedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+              </span>
+            )}
             <button type="submit" className="d-button" disabled={busy}>{busy ? "Sending…" : "Submit application"}</button>
           </div>
         </form>

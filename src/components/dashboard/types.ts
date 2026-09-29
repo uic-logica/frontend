@@ -572,6 +572,9 @@ export type Application = {
   hoursPerWeek?: number | null;
   projects?: string[];
   skills?: string | null;
+  resumeUrl?: string | null;
+  resumeOnFile?: boolean;
+  userId?: string | null;
   status: "PENDING" | "INTERVIEW" | "ACCEPTED" | "DECLINED";
   createdAt: string;
 };
