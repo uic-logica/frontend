@@ -1,5 +1,7 @@
 # LOGICA website content
 
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Frontend members · **Type:** Reference
+
 This is an inventory of the checked-in pages, not a specification for pages to build. Copy lives in the named source files. Static marketing claims below describe what the page displays; they are not verified club statistics.
 
 ## Public shell and home

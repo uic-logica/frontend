@@ -1,5 +1,7 @@
 # LOGICA @ UIC — frontend
 
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Members and recruiters · **Type:** Landing page
+
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=000)](https://react.dev/) [![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=fff)](https://tailwindcss.com/) [![Vercel](https://img.shields.io/badge/Vercel-live-000000?logo=vercel)](https://logicauic-logica5.vercel.app)
 
 The club website for [LOGICA @ UIC](https://github.com/uic-logica) — Latinx and underrepresented students in computing at the University of Illinois Chicago. **[Live site →](https://logicauic-logica5.vercel.app)**

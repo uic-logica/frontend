@@ -1,5 +1,7 @@
 # Visual direction · night redesign (September 2026)
 
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Anyone building UI · **Type:** Reference
+
 **This is the source of truth for how the site looks, and it supersedes any conflicting guidance below.**
 The designs are the "Variant E (night)" frames in [`design/logica.pen`](design/logica.pen) (open it in
 [Pencil](https://pen.dev)): 28–33 for the public pages and "35 Dashboard — Variant E (night) · C clouds +

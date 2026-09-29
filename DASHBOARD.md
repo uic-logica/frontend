@@ -1,5 +1,7 @@
 # LOGICA workspace
 
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Frontend members · **Type:** Reference
+
 `src/app/dashboard/layout.tsx` mounts `src/components/dashboard/Dashboard.tsx` once. The shell reads the section from the pathname, so navigating sections preserves loaded state. The section pages render nothing themselves.
 
 ## Who sees what
