@@ -1,14 +1,15 @@
 # Visual direction · night redesign (September 2026)
 
 **This is the source of truth for how the site looks, and it supersedes any conflicting guidance below.**
-The designs are the "Variant E (night)" frames in `logica.pen`: 28–33 for the public pages and
-"35 Dashboard — Variant E (night) · C clouds + city lights" for the dashboard.
+The designs are the "Variant E (night)" frames in [`design/logica.pen`](design/logica.pen) (open it in
+[Pencil](https://pen.dev)): 28–33 for the public pages and "35 Dashboard — Variant E (night) · C clouds +
+city lights" for the dashboard. Earlier design proposals are retired; the pen and this file are the only spec.
 
 - Each page has one night painting of Chicago (`public/journey/*-night.webp`), drawn at exactly the window
   width and never rescaled, so browser zoom only resizes text and cards. It scrolls with the page and stops
   at its bottom edge if the content runs longer. See `JourneyBackdrop.tsx`.
 - Objects are navy glass (`rgb(11 18 48 / .5)` with a background blur, 28px corners), white text, gold
-  (`#fecc15`) labels and links, rust (`#b63814`) primary buttons. Form fields stay white for legibility.
+  (`#fecc15`) labels and links, rust (`#b63814`) primary buttons. Form fields are a soft grey (`#e4e6ed`) so they read without glaring on the night glass.
 - Navigation is a glass capsule with one white indicator that slides between items (mapier.ai's motion,
   360ms ease-out), including onto Sign in; the dashboard sidebar slides the same way.
 - Type is DM Sans throughout, medium weight for headings. The mapier.ai site is a reference only.
