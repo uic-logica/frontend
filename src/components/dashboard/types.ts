@@ -33,6 +33,7 @@ export type Profile = {
   major?: string | null;
   gradYear?: number | null;
   linkedin?: string | null;
+  photoUrl?: string | null;
   resumeFilename: string | null;
   speakerSubmission?: {
     id: string;

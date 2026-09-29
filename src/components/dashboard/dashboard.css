@@ -235,6 +235,7 @@
   font-weight: 600;
   flex-shrink: 0;
   color: var(--d-ink);
+  object-fit: cover;
 }
 .d-avatar-small {
   width: 30px;

@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { Icon } from "./Icon";
+import { Avatar } from "./Avatar";
 import { Heading } from "./Overview";
-import { type Profile, type SessionUser, date, initials } from "./types";
+import { type Profile, type SessionUser, date } from "./types";
 
 /**
  * A confirmed speaker's landing page: their talk, their slides, and how
@@ -130,9 +131,7 @@ export function SpeakerHome({
           </div>
         </div>
         <div className="d-talk-who">
-          <span className="d-avatar d-avatar-large">
-            {initials(profile?.name || user.name)}
-          </span>
+          <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-large" />
           <strong>{profile?.name || user.name || "Your name"}</strong>
           <small>{submission?.organization || "Add your organization"}</small>
         </div>

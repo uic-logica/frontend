@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { Icon } from "./Icon";
+import { Avatar } from "./Avatar";
 import {
   type SessionUser,
   type Profile,
@@ -13,7 +14,6 @@ import {
   roleName,
   runsWorkspace,
   date,
-  initials,
 } from "./types";
 
 export function Heading({
@@ -180,9 +180,7 @@ export function Overview({
             </Link>
           </div>
           <div className="d-identity-main">
-            <span className="d-avatar d-avatar-large">
-              {initials(profile?.name || user.name)}
-            </span>
+            <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-large" />
             <h3>{profile?.name || user.name || "Your name"}</h3>
             <p>{profile?.major || "Add your major"}</p>
             <span className="d-badge">{roleName(user)}</span>
