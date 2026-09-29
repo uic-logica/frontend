@@ -49,7 +49,7 @@ export function snoozeTeamsHint() {
     if (localStorage.getItem(HINT) !== "applied") localStorage.setItem(HINT, String(Date.now() + SNOOZE_MS));
   } catch {}
 }
-function retireTeamsHint() {
+export function retireTeamsHint() {
   try {
     localStorage.setItem(HINT, "applied");
   } catch {}

@@ -3242,3 +3242,9 @@
 @media (prefers-reduced-motion: reduce) {
   .d-callout { animation: none; }
 }
+
+/* Overview: events take the top-left slot beside the profile card. */
+.d-overview-events { margin-bottom: 0; }
+/* The glass strip needs side padding; "All time" is a caption, not display type. */
+.d-engagement-strip { padding: 22px 28px; }
+.d-stats dd span { font-family: var(--font-sans); font-size: 12px; }

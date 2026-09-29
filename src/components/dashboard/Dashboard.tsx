@@ -38,7 +38,7 @@ import {
   initials,
   PERSONAL_SECTIONS,
 } from "./types";
-import { BuildTeams, snoozeTeamsHint, teamsHintHidden } from "./BuildTeams";
+import { BuildTeams, retireTeamsHint, snoozeTeamsHint, teamsHintHidden } from "./BuildTeams";
 import "./dashboard.css";
 
 /** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
@@ -137,6 +137,19 @@ export function Dashboard() {
   // The nav (and so the pointer) only renders client-side after the session
   // loads, so reading localStorage in the initializer can't mismatch the server.
   const [hintOff, setHintOff] = useState(() => typeof window === "undefined" || teamsHintHidden());
+  // Applied on another device? The server knows; this browser doesn't yet.
+  const hintAccount = user?.accountKind === "MEMBER" ? user.id : null;
+  useEffect(() => {
+    if (hintOff || !hintAccount) return;
+    api<{ track: string }[]>("/api/join/mine")
+      .then((rows) => {
+        if (rows.some((r) => r.track === "SOFTWARE_ENGINEER")) {
+          retireTeamsHint();
+          setHintOff(true);
+        }
+      })
+      .catch(() => {});
+  }, [hintOff, hintAccount]);
   const [leaving, setLeaving] = useState(false);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
