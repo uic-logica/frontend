@@ -59,7 +59,7 @@ export default function SignInPage() {
             <h1 className="type-title text-3xl md:text-4xl text-white">Sign in to LOGICA</h1>
             <p className="mt-3 text-xl text-signal md:text-2xl">Members, board, and exec board</p>
             <div className="mt-10 club-card bg-white/[0.02] p-8 md:p-10">
-              <p className="text-body text-white">Use your UIC email and the password issued to you by the exec board.</p>
+              <p className="text-body text-white">New to LOGICA? <Link href="/signup" className="font-bold text-signal underline">Create an account</Link> with your UIC email.</p>
               {error && <p id="signin-error" role="alert" className="mt-5 rounded-lg border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white">{error}</p>}
               <form onSubmit={submit} className="mt-6 flex flex-col gap-5" aria-busy={busy} aria-describedby={error ? "signin-error" : undefined}>
                 <div className="flex flex-col gap-1.5">
@@ -73,7 +73,7 @@ export default function SignInPage() {
                 </div>
                 <button type="submit" disabled={busy} className={darkButtonClass}>{busy ? "Signing in…" : "Sign in"}</button>
               </form>
-              <p className="mt-6 text-body-sm text-white">Need a password or forgot yours? <Link href="/support" className="font-bold text-signal underline">Contact the exec board</Link> to verify your identity and receive a new password.</p>
+              <p className="mt-6 text-body-sm text-white">Forgot your password? <Link href="/support" className="font-bold text-signal underline">Contact the exec board</Link> to verify your identity and receive a new one.</p>
             </div>
             <p className="mt-8 text-body text-white">Guest or speaker? <Link href="/speaker-signin" className="font-bold text-signal underline-offset-2 hover:underline">Sign in here</Link></p>
           </div>

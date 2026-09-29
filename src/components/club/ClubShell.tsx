@@ -166,6 +166,13 @@ export function SiteNav() {
                 {account.label}
               </Link>
             </li>
+            {!signedIn && (
+              <li>
+                <Link href="/signup" className="text-white hover:text-signal" onClick={() => setOpen(false)}>
+                  Create account
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       ) : null}
@@ -190,7 +197,7 @@ export function SiteFooter() {
           <span>LOGICA</span>
         </Link>
         <nav className="site-footer-links" aria-label="Footer">
-          {[...links, { href: "/join", label: "Join" }, { href: "/signin", label: "Sign in" }].map((item) => (
+          {[...links, { href: "/join", label: "Join the team" }, { href: "/signin", label: "Sign in" }, { href: "/signup", label: "Create account" }].map((item) => (
             <Link key={item.href} href={item.href}>
               {item.label}
             </Link>
