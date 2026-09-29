@@ -151,6 +151,7 @@ export function Dashboard() {
       .catch(() => {});
   }, [hintOff, hintAccount]);
   const [leaving, setLeaving] = useState(false);
+  const leavingRef = useRef(false);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
 
@@ -221,7 +222,7 @@ export function Dashboard() {
             const value = await api<T>(path);
             if (alive) set(value);
           } catch {
-            if (alive)
+            if (alive && !leavingRef.current)
               setErrors((prev) => [...prev, `Could not load ${label}.`]);
           }
         }
@@ -256,7 +257,7 @@ export function Dashboard() {
             : []),
         ]);
       } catch {
-        if (alive) setAuthState("error");
+        if (alive && !leavingRef.current) setAuthState("error");
       }
     }
     void load();
@@ -274,14 +275,19 @@ export function Dashboard() {
   // padding and max-width for it.
   const chatFull = section === "messages" && !!submissionId;
   async function logout() {
+    if (leavingRef.current) return;
+    leavingRef.current = true;
     setLeaving(true);
+    const destination =
+      user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin";
     try {
-      await signOut();
+      await signOut(destination);
       forgetSession();
-      router.push(
-        user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin",
-      );
+      // A document-level replacement clears the dashboard/router caches and
+      // keeps Back from restoring protected UI after the cookie is gone.
+      window.location.replace(destination);
     } catch {
+      leavingRef.current = false;
       setErrors(["Could not sign out. Please try again."]);
       setLeaving(false);
     }
