@@ -18,6 +18,9 @@ const links = [
  * the new indicator start there and slide over, like mapier.ai's. */
 let lastBar: { x: number; y: number; w: number; h: number } | null = null;
 
+/** Whether this visitor is signed in, checked once per page load; every page remounts the nav. */
+let knownSignedIn: boolean | null = null;
+
 /** Floating navigation with a glass capsule and responsive menu. */
 export function SiteNav() {
   const pathname = usePathname();
@@ -26,6 +29,18 @@ export function SiteNav() {
   const bar = useRef<HTMLSpanElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [open, setOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(knownSignedIn ?? false);
+  const account = signedIn
+    ? { href: "/dashboard", label: "Dashboard" }
+    : { href: "/signin", label: "Sign in" };
+
+  // Starts from the last answer so the label doesn't flicker, then re-checks (sign-out happens in the dashboard).
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((me) => setSignedIn((knownSignedIn = !!me?.user)))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
@@ -80,8 +95,8 @@ export function SiteNav() {
 
         {isMobile ? (
           <div className="site-nav-mobile">
-            <Link href="/signin" className="site-signin">
-              Sign in
+            <Link href={account.href} className="site-signin">
+              {account.label}
             </Link>
             <button
               type="button"
@@ -123,13 +138,13 @@ export function SiteNav() {
               </ul>
             </div>
             <Link
-              href="/signin"
+              href={account.href}
               aria-current={pathname === "/signin" ? "page" : undefined}
               className={`site-signin nav-link flex h-10 items-center px-1 pb-1.5 duration-100 ${
                 pathname === "/signin" || pathname.startsWith("/members") ? "nav-link-active" : ""
               }`}
             >
-              Sign in
+              {account.label}
             </Link>
           </div>
         )}
@@ -147,8 +162,8 @@ export function SiteNav() {
               </li>
             ))}
             <li>
-              <Link href="/signin" className="text-signal" onClick={() => setOpen(false)}>
-                Sign in
+              <Link href={account.href} className="text-signal" onClick={() => setOpen(false)}>
+                {account.label}
               </Link>
             </li>
           </ul>

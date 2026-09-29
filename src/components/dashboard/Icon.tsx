@@ -7,6 +7,7 @@ const paths: Record<
   profile: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M4 21v-2a8 8 0 0 1 16 0v2",
   events: "M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2 M7 2v6 M17 2v6 M3 11h18",
   activity: "M3 20h18 M6 16v-5 M12 16V4 M18 16V8",
+  teams: "M16 18l6-6-6-6 M8 6l-6 6 6 6",
   community: "M21 11a8 8 0 0 1-8 8H7l-5 3 1-6a8 8 0 1 1 18-5",
   speakers: "M9 3h6v11H9z M5 10v3a7 7 0 0 0 14 0v-3 M12 20v3 M8 23h8",
   insights: "M21 8a9 9 0 1 1-6-5 M12 12V3a9 9 0 0 1 9 9z",

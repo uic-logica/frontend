@@ -15,6 +15,17 @@ export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  // Already signed in (the session lasts 30 days): skip the form.
+  useEffect(() => {
+    api<{ user?: unknown } | null>("/api/auth/session")
+      .then((me) => {
+        if (!me?.user) return;
+        const next = new URLSearchParams(window.location.search).get("next");
+        router.replace(next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard");
+      })
+      .catch(() => {});
+  }, [router]);
+
   useEffect(() => {
     document.title = error ? "Error: Sign in · LOGICA @ UIC" : "Sign in · LOGICA @ UIC";
   }, [error]);

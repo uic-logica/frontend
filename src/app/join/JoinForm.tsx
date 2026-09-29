@@ -11,17 +11,6 @@ const TRACKS = [
   { value: "BOARD_MEMBER", label: "Board Member" },
 ] as const;
 
-/** Matches `PROJECTS` in the backend. Order in `projects` is the applicant's ranking. */
-const PROJECTS = [
-  { value: "OPPORTUNITY_BOARD", label: "Opportunity board" },
-  { value: "RESUME_BUILDER", label: "Resume builder for each role" },
-  { value: "EVENT_REPLAYS", label: "Event replays in 3D" },
-  { value: "MOCK_INTERVIEWER", label: "Mock interviewer" },
-] as const;
-const RANKS = ["1st choice", "2nd choice", "3rd choice"];
-
-type Me = { user?: { email?: string | null } } | null;
-
 export function JoinForm() {
   const id = useId();
   const [track, setTrack] = useState<string>("SOFTWARE_ENGINEER");
@@ -30,22 +19,16 @@ export function JoinForm() {
   const [major, setMajor] = useState("");
   const [gradYear, setGradYear] = useState("");
   const [why, setWhy] = useState("");
-  const [github, setGithub] = useState("");
-  const [hours, setHours] = useState("");
-  const [picks, setPicks] = useState(["", "", ""]);
-  const [skills, setSkills] = useState("");
-  // undefined = still checking; null = signed out.
-  const [account, setAccount] = useState<string | null | undefined>(undefined);
-  const team = track === "SOFTWARE_ENGINEER";
-
-  useEffect(() => {
-    api<Me>("/api/auth/session")
-      .then((me) => setAccount(me?.user?.email ?? null))
-      .catch(() => setAccount(null));
-  }, []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  // Build teams apply from the dashboard, so every application has an account behind it.
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    api<{ user?: unknown } | null>("/api/auth/session")
+      .then((me) => setSignedIn(!!me?.user))
+      .catch(() => {});
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -56,15 +39,8 @@ export function JoinForm() {
         method: "POST",
         body: JSON.stringify({
           name: name.trim(),
-          // Build-team applications use the signed-in account's email.
-          email: team ? account : email.trim().toLowerCase(),
+          email: email.trim().toLowerCase(),
           track,
-          ...(team && {
-            github: github.trim(),
-            hoursPerWeek: Number(hours),
-            projects: picks.filter(Boolean),
-            skills: skills.trim() || null,
-          }),
           major: major.trim() || null,
           // The backend wants a number or null, never "" or NaN.
           gradYear: gradYear.trim() ? Number(gradYear) : null,
@@ -90,7 +66,7 @@ export function JoinForm() {
         <h2 className="type-h3 text-white">Application received</h2>
         <p className="mt-3 text-body text-white">
           The board can see it now. You&apos;ll hear back by email at{" "}
-          <strong>{team ? account : email}</strong>.
+          <strong>{email}</strong>.
         </p>
         <p className="mt-4">
           <Link href="/events" className="font-semibold text-signal hover:underline">
@@ -136,6 +112,29 @@ export function JoinForm() {
           </select>
         </div>
 
+        {track === "SOFTWARE_ENGINEER" ? (
+          <div className="grid gap-4">
+            <p className="text-body text-white">
+              Build team applications happen in your dashboard. You need an account with your
+              @uic.edu email, then you tell us your GitHub, hours a week and which projects you want.
+            </p>
+            <Link
+              href={signedIn ? "/dashboard/teams" : "/signup?next=/dashboard/teams"}
+              className={`${darkButtonClass} text-center`}
+            >
+              {signedIn ? "Apply in your dashboard" : "Create an account to apply"}
+            </Link>
+            {!signedIn && (
+              <p className="text-body-sm text-white">
+                Already have one?{" "}
+                <Link href="/signin?next=/dashboard/teams" className="font-semibold text-signal hover:underline">
+                  Sign in
+                </Link>
+              </p>
+            )}
+          </div>
+        ) : (
+        <>
         <div className="grid gap-2">
           <label htmlFor={`${id}-name`} className="type-label text-white">
             Full name
@@ -151,24 +150,6 @@ export function JoinForm() {
           />
         </div>
 
-        {team ? (
-          <div className="grid gap-2">
-            <span className="type-label text-white">UIC account</span>
-            {account === undefined ? (
-              <p className="text-body-sm text-white opacity-60">Checking your account…</p>
-            ) : account?.toLowerCase().endsWith("@uic.edu") ? (
-              <p className="text-body text-white">Applying as <strong>{account}</strong></p>
-            ) : (
-              <p className="text-body text-white">
-                {account ? <>You&apos;re signed in as <strong>{account}</strong>. </> : null}
-                Build teams need a @uic.edu account.{" "}
-                <Link href="/signup?next=/join" className="font-semibold text-signal hover:underline">Create one</Link>{" "}
-                or{" "}
-                <Link href="/signin?next=/join" className="font-semibold text-signal hover:underline">sign in</Link>.
-              </p>
-            )}
-          </div>
-        ) : (
         <div className="grid gap-2">
           <label htmlFor={`${id}-email`} className="type-label text-white">
             UIC email
@@ -187,7 +168,6 @@ export function JoinForm() {
             className={darkInputClass}
           />
         </div>
-        )}
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="grid gap-2">
@@ -220,86 +200,6 @@ export function JoinForm() {
           </div>
         </div>
 
-        {team && (
-          <>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div className="grid gap-2">
-                <label htmlFor={`${id}-github`} className="type-label text-white">
-                  GitHub username
-                </label>
-                <input
-                  id={`${id}-github`}
-                  required
-                  maxLength={100}
-                  autoCapitalize="none"
-                  spellCheck={false}
-                  placeholder="octocat"
-                  value={github}
-                  onChange={(e) => setGithub(e.target.value)}
-                  className={darkInputClass}
-                />
-              </div>
-              <div className="grid gap-2">
-                <label htmlFor={`${id}-hours`} className="type-label text-white">
-                  Hours a week you can commit
-                </label>
-                <input
-                  id={`${id}-hours`}
-                  type="number"
-                  inputMode="numeric"
-                  required
-                  min={1}
-                  max={40}
-                  placeholder="4"
-                  value={hours}
-                  onChange={(e) => setHours(e.target.value)}
-                  className={darkInputClass}
-                />
-              </div>
-            </div>
-
-            <fieldset className="grid gap-3">
-              <legend className="type-label text-white">Which projects do you want? Rank them.</legend>
-              {RANKS.map((rank, i) => (
-                <div key={rank} className="grid gap-2">
-                  <label htmlFor={`${id}-pick-${i}`} className="text-body-sm text-white">
-                    {rank} {i > 0 && <span className="opacity-60">(optional)</span>}
-                  </label>
-                  <select
-                    id={`${id}-pick-${i}`}
-                    required={i === 0}
-                    value={picks[i]}
-                    onChange={(e) => setPicks(picks.map((p, j) => (j === i ? e.target.value : p)))}
-                    className={darkInputClass}
-                  >
-                    <option value="">{i === 0 ? "Pick one" : "None"}</option>
-                    {PROJECTS.filter((p) => p.value === picks[i] || !picks.includes(p.value)).map((p) => (
-                      <option key={p.value} value={p.value}>
-                        {p.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ))}
-            </fieldset>
-
-            <div className="grid gap-2">
-              <label htmlFor={`${id}-skills`} className="type-label text-white">
-                Skills <span className="opacity-60">(optional)</span>
-              </label>
-              <textarea
-                id={`${id}-skills`}
-                rows={3}
-                maxLength={500}
-                placeholder="React, Python, computer vision, design…"
-                value={skills}
-                onChange={(e) => setSkills(e.target.value)}
-                className={darkInputClass}
-              />
-            </div>
-          </>
-        )}
-
         <div className="grid gap-2">
           <label htmlFor={`${id}-why`} className="type-label text-white">
             Why LOGICA?
@@ -317,14 +217,15 @@ export function JoinForm() {
             No prior experience needed — say what you want to get out of it.
           </p>
         </div>
+        </>
+        )}
       </div>
 
-      <button
-        type="submit"
-        disabled={busy || (team && !account?.toLowerCase().endsWith("@uic.edu"))}
-        className={`${darkButtonClass} mt-8`}>
-        {busy ? "Sending…" : "Submit application"}
-      </button>
+      {track !== "SOFTWARE_ENGINEER" && (
+        <button type="submit" disabled={busy} className={`${darkButtonClass} mt-8`}>
+          {busy ? "Sending…" : "Submit application"}
+        </button>
+      )}
     </form>
   );
 }

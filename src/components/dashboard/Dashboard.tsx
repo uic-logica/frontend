@@ -38,6 +38,7 @@ import {
   initials,
   PERSONAL_SECTIONS,
 } from "./types";
+import { BuildTeams } from "./BuildTeams";
 import "./dashboard.css";
 
 /** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
@@ -280,7 +281,7 @@ export function Dashboard() {
         Skip to content
       </a>
       <aside className="d-sidebar">
-        <Link className="d-brand" href="/dashboard">
+        <Link className="d-brand" href="/" aria-label="LOGICA home">
           <Image src="/logica-logo-black.png" alt="" width={40} height={40} />
           <span>
             LOGICA<small>University of Illinois Chicago</small>
@@ -550,6 +551,11 @@ export function Dashboard() {
               {seen("activity") && (
                 <Pane active={section === "activity"}>
                   <Activity engagement={engagement} />
+                </Pane>
+              )}
+              {seen("teams") && user && (
+                <Pane active={section === "teams"}>
+                  <BuildTeams user={user} profile={profile} />
                 </Pane>
               )}
               {seen("community") && (

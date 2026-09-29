@@ -349,6 +349,7 @@ export const sections = [
   "events",
   "activity",
   "community",
+  "teams",
   "speakers",
   "insights",
   "money",
@@ -368,6 +369,7 @@ export const titles: Record<Section, string> = {
   events: "Events",
   activity: "My engagement",
   community: "Community",
+  teams: "Build teams",
   speakers: "Speaker directory",
   insights: "Insights",
   money: "Money",
@@ -430,6 +432,7 @@ export function navFor(
       "documents",
       "events",
       "community",
+      "teams",
       "profile",
     ];
   }
@@ -447,6 +450,7 @@ const MEMBER_NAV: Section[] = [
   "events",
   "activity",
   "community",
+  "teams",
 ];
 
 /**
@@ -458,6 +462,7 @@ export const PERSONAL_SECTIONS: Section[] = [
   "community",
   "profile",
   "activity",
+  "teams",
 ];
 
 /**
