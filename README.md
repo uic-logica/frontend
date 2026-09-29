@@ -1,71 +1,68 @@
 # LOGICA @ UIC — frontend
 
-Next.js 16 App Router, React 19, Tailwind 4, and GSAP (`package.json`). Public pages introduce the club; `/dashboard` holds member participation, guest coordination, and the exec workspace. Auth and persistent data come from the backend.
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Members and recruiters · **Type:** Landing page
 
-## Local setup
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=000)](https://react.dev/) [![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=fff)](https://tailwindcss.com/) [![Vercel](https://img.shields.io/badge/Vercel-live-000000?logo=vercel)](https://logicauic-logica5.vercel.app)
 
-1. `npm ci`.
-2. Copy `.env.example` to `.env.local`. Set `NEXT_PUBLIC_API_URL` to the backend origin; the default is `http://localhost:3001`.
-3. `npm run dev` starts the frontend on port 3000. Run the backend separately.
+The club website for [LOGICA @ UIC](https://github.com/uic-logica) — Latinx and underrepresented students in computing at the University of Illinois Chicago. **[Live site →](https://logicauic-logica5.vercel.app)**
 
-`next.config.ts` rewrites `/api/*` to the backend. `src/lib/api.ts` makes same-origin JSON requests, keeping session cookies first-party. `NEXT_PUBLIC_DISCORD_URL` adds a dashboard Discord link only when set.
+**Software lead:** Nicolas Rufino ([@nicolasrufino](https://github.com/nicolasrufino)) — owns every product, sets deadlines, reviews and merges. Public repo, **members-only contributions** ([how we work](https://github.com/uic-logica/.github/blob/main/CONTRIBUTING.md)).
+
+<img src="docs/screenshots/home-desktop.jpg" alt="Home page: night painting of the Chicago skyline" width="70%"> <img src="docs/screenshots/home-phone.jpg" alt="Home page on a phone" width="24%">
+
+## What's live
+
+| Area | What it does |
+|---|---|
+| Public site | Home, About, Events, Team, Blog, Join, Partner, legal pages — one night painting of Chicago per page |
+| Accounts | Sign up with @uic.edu, password sign-in, 30-day sessions |
+| Member dashboard | Overview, profile (resume + LinkedIn), events and check-in, engagement, community, **Software Teams** application |
+| Exec workspace | Money, outreach pipeline, insights, documents, members, applications |
+| Speakers & guests | `/speak` intake, guest portal, availability calendar |
+
+<img src="docs/screenshots/events-desktop.jpg" alt="Events page" width="49%"> <img src="docs/screenshots/join-desktop.jpg" alt="Join page" width="49%">
+
+## How it fits together
+
+```mermaid
+flowchart LR
+  U[Browser] --> F["frontend (this repo)<br/>Next.js on Vercel"]
+  F -- "/api/* rewrite<br/>same-origin cookies" --> B["backend<br/>logica-backend.vercel.app"]
+  B --> DB[(Postgres<br/>Supabase)]
+  style F fill:#FECC15,color:#111
+```
+
+Browser calls stay same-origin (`src/lib/api.ts`); `next.config.ts` forwards `/api/*` to `NEXT_PUBLIC_API_URL`, so session cookies stay first-party.
+
+## Run it locally
+
+```bash
+npm ci
+cp .env.example .env.local    # NEXT_PUBLIC_API_URL=http://localhost:3001
+npm run dev                   # http://localhost:3000
+```
+
+Before launch, set `SITE_URL` to the final HTTPS origin and rebuild (sitemap, Open Graph and share image use it).
+
+Run the [backend](https://github.com/uic-logica/backend#readme) on port 3001 at the same time. Before a PR: `npm run lint` · `npx tsc --noEmit` · `npm test`.
 
 ## Where things are
 
-- `src/app/page.tsx`, `about/`, `team/`, `events/`, `blog/`, `join/`, `speak/` — public pages. `/join` opens an email; it does not submit the backend membership form. Blog is an empty state.
-- `src/components/club/ClubShell.tsx`, `src/app/globals.css` — public navigation, footer, wallpaper, and shared type/color styles. See [DESIGN.md](DESIGN.md).
-- `src/app/dashboard/layout.tsx`, `src/components/dashboard/Dashboard.tsx` — persistent dashboard shell, session loading, role-dependent home and sections. See [DASHBOARD.md](DASHBOARD.md).
-- `src/components/dashboard/Board.tsx` — shared money and outreach UI; `Members.tsx`, `Insights.tsx`, `Documents.tsx`, and `Speakers.tsx` cover the rest of the exec workspace.
-- `src/app/invite/[token]/page.tsx` — guest account claim with name, email, and chosen password. `/speaker-signin` uses username/password.
-- `src/app/feed/`, `attendance/`, `forms/[slug]/` — standalone tools still using `AppShell`. `/members`, `/speaker-portal`, `/profile`, and `/admin/speakers` redirect into the dashboard.
+| Path | What |
+|---|---|
+| `src/app/` | Routes: public pages, `signin`, `signup`, `dashboard/[section]`, `speak`, `invite` |
+| `src/components/club/` | Public shell, nav, night backdrop (`JourneyBackdrop.tsx`) |
+| `src/components/dashboard/` | Dashboard shell and every section (`Dashboard.tsx`, `BuildTeams.tsx`, `Board.tsx`, …) |
+| `src/lib/` | API client and pure helpers (with vitest tests) |
+| `design/logica.pen` | The design — "Variant E (night)" frames, open in [Pencil](https://pen.dev) |
+| `docs/screenshots/` | Live screenshots used here |
 
-## Current integration gaps
+## Design
 
-`/join` opens a `mailto:` rather than posting to `/api/join`, so the public cannot submit the applications the dashboard can now review.
+The night design in [`design/logica.pen`](design/logica.pen) and [DESIGN.md](DESIGN.md) is the only spec. New screens get designed there first.
 
-Legacy `/attendance` sends only `eventId`; the backend requires `code` too. Dashboard event check-in in `Participation.tsx` sends both, so there are two check-in surfaces and one of them cannot work.
+## Known gap
 
-`src/app/forms/[slug]/page.tsx` renders every field as a text input regardless of its declared `type`, and keys values by label rather than field id.
+`/events` still shows "Add to Calendar (soon)" as text.
 
-`/events` shows "Add to Calendar (soon)" as literal text.
-
-Using Claude Code? Install the [`skills`](https://github.com/uic-logica/skills) plugin for `/logica-pr`, `/logica-review`, `/logica-test`, `/logica-issue`, and `/logica-lean`.
-
-## Search and sharing setup
-
-Public pages have individual titles, descriptions, Open Graph and Twitter cards.
-The homepage includes Organization structured data. `/share-image` serves a
-1200×630 PNG, and `/sitemap.xml` lists the public content pages.
-
-Before launch, set `SITE_URL` to the final HTTPS origin (no path), then rebuild.
-Without it, pages carry `noindex`, the sitemap is empty, and canonical URLs are
-omitted. Leave this variable unset on preview deployments. At launch, verify
-`/robots.txt`, `/sitemap.xml`, and page source against the real domain, then verify
-ownership in Google Search Console and submit the sitemap.
-
-Account pages, private event/speaker details, design previews, forms, and the empty
-blog send `X-Robots-Tag: noindex, follow`. These routes remain crawlable so bots can
-read the directive; this is not access control. When real blog posts launch,
-remove the blog exclusion from both its metadata and `next.config.ts` and include
-it in the sitemap. Event details currently require sign-in, so they are excluded;
-public event landing pages can add event-specific metadata and structured data
-when a public backend endpoint exists.
-
-## Member password sign-in
-
-`/signin` accepts a university email and generated password issued by an exec.
-Execs create/reset credentials under Dashboard → Members. The generated password
-is displayed once and must be delivered privately after verifying the recipient.
-A reset ends the recipient's sessions and revokes their MCP connections.
-Forgotten passwords are handled by the exec board through `/support`.
-
-Deploy the backend password endpoints and provision an existing exec before
-switching this frontend. Backend `FRONTEND_URL` must match the frontend origin;
-see backend `AUTH.md` for rollout and administrator recovery. Passwordless code
-is archived under `archive/passwordless/` and is not active.
-
-## Deployment and checks
-
-For Vercel, build with `npm run build` and set `NEXT_PUBLIC_API_URL` to the backend origin. Set the backend's `FRONTEND_URL` to this site's origin for member password request checks. Database setup and migrations belong to the backend; see its `prisma.config.ts`, `.env.example`, and README.
-
-`.github/workflows/ci.yml` uses Node 24 and runs `npm ci`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm test`, and `npm run build`. `npm test` runs vitest over the pure helpers in `src/lib/`; nothing renders a component. See [AGENTS.md](AGENTS.md) for review instructions and [CONTENT.md](CONTENT.md) for the page inventory.
+Docs for contributors: [AGENTS.md](AGENTS.md) (rules for code changes) · [PRODUCT.md](PRODUCT.md) · [DASHBOARD.md](DASHBOARD.md) · [CONTENT.md](CONTENT.md) · [roadmap](https://github.com/uic-logica/.github/blob/main/ROADMAP.md).

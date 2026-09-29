@@ -1,5 +1,7 @@
 # Visual update · September 23, 2026
 
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Frontend members · **Type:** Reference
+
 The current visual direction follows the live Mapier site (reference only): predominantly white 28px cards with softly lit edges, pale inset surfaces, segmented pill navigation, restrained translucent glass, and white closing sheets. Chicago/UIC artwork comes from `logica.pen`, **Variant B — Generated bridge bands**. Render the complete image at its native aspect ratio and map the full painting to the page scroll; never use cropped `cover` scenes, dark scrims, or image filters. Inner routes use individual complete scenes. Preserve copy, routes, data, and interactions. Use DM Sans for the reference's lighter headline hierarchy; warm rust actions pair with the original orange painting. This direction supersedes conflicting visual guidance below.
 
 # Product

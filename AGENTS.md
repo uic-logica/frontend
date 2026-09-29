@@ -23,7 +23,7 @@ Read the affected page/component and its API calls before changing it. `PRODUCT.
 
 ## Known boundaries
 
-`src/app/signin/page.tsx` still calls retired OTP endpoints, while the backend requires issued member passwords. `Members.tsx` lacks issuance controls, and legacy `/attendance` omits the required check-in code. Do not describe these as complete flows or quietly change auth during an unrelated task. Guest invitation claims and speaker password login have separate pages.
+Sign-in posts to `/api/auth/member-login` and `/signup` creates @uic.edu accounts; `Members.tsx` issues and resets member passwords; `/attendance` redirects to the dashboard's check-in, which sends the required code. The passwordless flow stays archived — don't restore it during unrelated work. Guest invitation claims and speaker password login have separate pages.
 
 ## Checks
 

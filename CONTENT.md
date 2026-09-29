@@ -1,5 +1,7 @@
 # LOGICA website content
 
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Frontend members · **Type:** Reference
+
 This is an inventory of the checked-in pages, not a specification for pages to build. Copy lives in the named source files. Static marketing claims below describe what the page displays; they are not verified club statistics.
 
 ## Public shell and home
@@ -33,7 +35,7 @@ There is no fetched upcoming-event list, featured-post feed, product directory, 
 
 ## Authentication and invitations
 
-`src/app/signin/page.tsx` collects a university email and a password and posts them to `/api/auth/member-login`. Passwords are issued by an exec, never chosen at signup, and there is no public member signup. The old email → code screen is archived and inactive under `archive/passwordless/`. Do not promise code delivery, passkeys, or self-service reset here — a forgotten password goes through the exec board via `/support`.
+`src/app/signin/page.tsx` collects a university email and a password and posts them to `/api/auth/member-login`. Members create their own account at `/signup` with a @uic.edu email; execs can also issue or reset a password from the Members section. The old email → code screen is archived and inactive under `archive/passwordless/`. Do not promise code delivery, passkeys, or self-service reset here — a forgotten password goes through the exec board via `/support`.
 
 `src/app/speaker-signin/page.tsx` sends username/password to `/api/auth/speaker-login`. It routes temporary-password accounts to `/speaker-signin/set-password` and other guests through `/speaker-portal` to the dashboard. Its copy still says “confirmed speakers” and “invite email,” although the backend also permits candidates and accounts claimed from a link.
 
