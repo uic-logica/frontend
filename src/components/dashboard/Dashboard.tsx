@@ -20,6 +20,7 @@ import { Documents } from "./Documents";
 import { Applications } from "./Applications";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
+import { Avatar } from "./Avatar";
 import {
   type SessionUser,
   type Profile,
@@ -35,7 +36,6 @@ import {
   isConfirmedSpeaker,
   roleName,
   runsWorkspace,
-  initials,
   PERSONAL_SECTIONS,
 } from "./types";
 import { BuildTeams, retireTeamsHint, snoozeTeamsHint, teamsHintHidden } from "./BuildTeams";
@@ -398,9 +398,7 @@ export function Dashboard() {
             </nav>
             {user && (
               <div className="d-account">
-                <span className="d-avatar">
-                  {initials(profile?.name || user.name)}
-                </span>
+                <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} />
                 <span>
                   <strong>
                     {profile?.name || user.name || "Your account"}
@@ -440,11 +438,10 @@ export function Dashboard() {
                   {unread > 0 && <i />}
                 </Link>
                 <Link
-                  className="d-avatar d-avatar-small"
                   href="/dashboard/profile"
                   aria-label="My profile"
                 >
-                  {initials(profile?.name || user.name || null)}
+                  <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-small" />
                 </Link>
               </>
             )}

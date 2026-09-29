@@ -6,11 +6,11 @@ import { ResumeUpload } from "@/components/shell/ResumeUpload";
 
 import { AvailabilityGrid } from "./AvailabilityGrid";
 import { Heading } from "./Overview";
+import { Avatar } from "./Avatar";
 import {
   type Profile,
   type SessionUser,
   type Window,
-  initials,
   isConfirmedSpeaker,
   roleName,
 } from "./types";
@@ -40,6 +40,29 @@ export function ProfileEditor({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [linkedinStatus, setLinkedinStatus] = useState<"connected" | "error" | "">("");
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const result = new URLSearchParams(window.location.search).get("linkedin");
+      if (result === "connected" || result === "error") setLinkedinStatus(result);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+  async function disconnectLinkedIn() {
+    setBusy(true);
+    setError("");
+    try {
+      await api("/api/linkedin/disconnect", { method: "DELETE" });
+      const updated = { ...profile, photoUrl: null };
+      setDraft(updated);
+      onSaved(updated);
+      setLinkedinStatus("");
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
   function field(key: keyof Profile, value: string | number | null) {
     setDraft((p) => ({ ...p, [key]: value }));
     setSaved(false);
@@ -134,9 +157,7 @@ export function ProfileEditor({
       />
       <div className="d-profile-layout">
         <aside className="d-panel d-profile-card">
-          <span className="d-avatar d-avatar-large">
-            {initials(profile.name)}
-          </span>
+          <Avatar name={profile.name} photoUrl={profile.photoUrl} className="d-avatar d-avatar-large" />
           <h2>{profile.name || "Your name"}</h2>
           <span className="d-badge">{roleName(user, profile)}</span>
           <p>{profile.email}</p>
@@ -255,9 +276,23 @@ export function ProfileEditor({
                 onChange={(e) => field("linkedin", e.target.value)}
                 placeholder="linkedin.com/in/your-name"
               />
-              <small>Your profile photo and experience will come from here.</small>
+              <small>This link helps members find you. LinkedIn does not provide your experience to LOGICA.</small>
             </label>
           )}
+          <div className="d-form-section d-linkedin-connect">
+            <h2>Profile photo</h2>
+            <p>Connect LinkedIn to copy your current profile photo into LOGICA. We do not store your LinkedIn access token.</p>
+            {linkedinStatus === "connected" && <p className="d-success" role="status">LinkedIn connected. Your photo has been updated.</p>}
+            {linkedinStatus === "error" && <p className="d-error" role="alert">LinkedIn could not be connected. Please try again.</p>}
+            <div className="d-actions">
+              <a className="d-button" href="/api/linkedin/connect">{profile.photoUrl ? "Reconnect LinkedIn" : "Connect LinkedIn"}</a>
+              {profile.photoUrl && (
+                <button className="d-button secondary" type="button" onClick={disconnectLinkedIn} disabled={busy}>
+                  Remove photo
+                </button>
+              )}
+            </div>
+          </div>
           <label>
             About you
             <textarea
