@@ -115,7 +115,7 @@ export function JoinForm() {
         {track === "SOFTWARE_ENGINEER" ? (
           <div className="grid gap-4">
             <p className="text-body text-white">
-              Build team applications happen in your dashboard. You need an account with your
+              Software Team applications happen in your dashboard, under Software Teams. You need an account with your
               @uic.edu email, then you tell us your GitHub, hours a week and which projects you want.
             </p>
             <Link

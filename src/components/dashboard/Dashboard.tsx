@@ -38,7 +38,7 @@ import {
   initials,
   PERSONAL_SECTIONS,
 } from "./types";
-import { BuildTeams } from "./BuildTeams";
+import { BuildTeams, snoozeTeamsHint, teamsHintHidden } from "./BuildTeams";
 import "./dashboard.css";
 
 /** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
@@ -134,6 +134,9 @@ export function Dashboard() {
     setOpened((prev) => (prev.includes(section) ? prev : [...prev, section]));
   }, [section]);
   const [menu, setMenu] = useState(false);
+  // The nav (and so the pointer) only renders client-side after the session
+  // loads, so reading localStorage in the initializer can't mismatch the server.
+  const [hintOff, setHintOff] = useState(() => typeof window === "undefined" || teamsHintHidden());
   const [leaving, setLeaving] = useState(false);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
@@ -330,6 +333,12 @@ export function Dashboard() {
                       </span>
                     )}
                 </Link>
+                {item === "teams" && !hintOff && !seen("teams") && (
+                  <div className="d-callout" role="note">
+                    <span>Apply for the software role here!</span>
+                    <button type="button" aria-label="Dismiss" onClick={() => { snoozeTeamsHint(); setHintOff(true); }}>×</button>
+                  </div>
+                )}
               </Fragment>
             ))}
           </nav>

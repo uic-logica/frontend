@@ -29,9 +29,35 @@ type Mine = {
   createdAt: string;
 };
 
+/**
+ * The sidebar pointer to this section. × or opening the section snoozes it
+ * for a week; having applied hides it for good. Per browser — it's a nudge,
+ * not a record, so localStorage is enough.
+ */
+const HINT = "logica.softwareTeamsHint";
+const SNOOZE_MS = 7 * 24 * 60 * 60 * 1000;
+export function teamsHintHidden(): boolean {
+  try {
+    const value = localStorage.getItem(HINT);
+    return value === "applied" || Number(value) > Date.now();
+  } catch {
+    return true;
+  }
+}
+export function snoozeTeamsHint() {
+  try {
+    if (localStorage.getItem(HINT) !== "applied") localStorage.setItem(HINT, String(Date.now() + SNOOZE_MS));
+  } catch {}
+}
+function retireTeamsHint() {
+  try {
+    localStorage.setItem(HINT, "applied");
+  } catch {}
+}
+
 const label = (value: string) => PROJECTS.find((p) => p.value === value)?.label ?? value;
 
-/** Build-team applications live here, behind sign-in, so every one is tied to a @uic.edu account. */
+/** Software Team applications live here, behind sign-in, so every one is tied to a @uic.edu account. */
 export function BuildTeams({ user, profile }: { user: SessionUser; profile: Profile | null }) {
   const [mine, setMine] = useState<Mine[] | null>(null);
   const [github, setGithub] = useState("");
@@ -44,8 +70,13 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
   const uic = user.email.toLowerCase().endsWith("@uic.edu");
 
   useEffect(() => {
+    snoozeTeamsHint();
     api<Mine[]>("/api/join/mine")
-      .then((rows) => setMine(rows.filter((r) => r.track === "SOFTWARE_ENGINEER")))
+      .then((rows) => {
+        const own = rows.filter((r) => r.track === "SOFTWARE_ENGINEER");
+        if (own.length) retireTeamsHint();
+        setMine(own);
+      })
       .catch((e: Error) => setError(e.message));
   }, []);
 
@@ -69,6 +100,7 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
           skills: skills.trim() || null,
         }),
       });
+      retireTeamsHint();
       setMine(await api<Mine[]>("/api/join/mine").then((rows) => rows.filter((r) => r.track === "SOFTWARE_ENGINEER")));
     } catch (err) {
       setError((err as Error).message);
@@ -82,7 +114,7 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
   return (
     <>
       <Heading
-        title="Build teams"
+        title="Software Teams"
         description="Build open-source products that help students get hired. Apply once; we review your work, email you and set up a short interview."
       />
       {error && <p className="d-error" role="alert">{error}</p>}
@@ -104,7 +136,7 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
 
       {mine && !open && !uic && (
         <section className="d-panel">
-          <h2>Build teams need a @uic.edu account</h2>
+          <h2>Software Teams need a @uic.edu account</h2>
           <p className="d-muted">You&apos;re signed in as {user.email}. Create an account with your UIC email to apply.</p>
         </section>
       )}
@@ -112,7 +144,7 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
       {mine && !open && uic && (
         <form className="d-panel d-form" onSubmit={submit}>
           <div className="d-section-head">
-            <h2>Apply to a build team</h2>
+            <h2>Apply for the software role</h2>
             <span className="d-muted">Applying as {user.email}</span>
           </div>
           <div className="d-form-grid">

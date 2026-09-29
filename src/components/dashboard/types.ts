@@ -369,7 +369,7 @@ export const titles: Record<Section, string> = {
   events: "Events",
   activity: "My engagement",
   community: "Community",
-  teams: "Build teams",
+  teams: "Software Teams",
   speakers: "Speaker directory",
   insights: "Insights",
   money: "Money",
