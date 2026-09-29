@@ -139,38 +139,38 @@ export function Overview({
         }
       />
       <div className="d-overview-top">
-        <section className="d-feature">
-          <div className="d-feature-label">
-            <span className="d-live-dot" />
-            {board ? "Behind the community" : "Your place in LOGICA"}
+        <section className="d-panel d-overview-events">
+          <div className="d-section-head">
+            <h2>Coming up at LOGICA</h2>
+            <Link href="/dashboard/events">All events ↗</Link>
           </div>
-          <h2>
-            {board ? (
-              <>
-                Keep the club
-                <br />
-                moving forward.
-              </>
-            ) : (
-              <>
-                Show up. Connect.
-                <br />
-                Build something.
-              </>
-            )}
-          </h2>
-          <p>
-            {board
-              ? "Review new speakers, bring people together, and make the next event happen."
-              : "Find your next event, meet your people, and see your involvement grow."}
-          </p>
-          <Link
-            className="d-button"
-            href={board ? "/dashboard/speakers" : "/dashboard/events"}
-          >
-            {board ? "Open speaker directory" : "Find your next event"}
-            <Icon name="arrow" />
-          </Link>
+          {upcoming?.map((e) => (
+            <Link href="/dashboard/events" className="d-event-row" key={e.id}>
+              <span className="d-date-tile">
+                <small>{date(e.startsAt, { month: "short" })}</small>
+                <strong>{date(e.startsAt, { day: "2-digit" })}</strong>
+              </span>
+              <span>
+                <strong>{e.title}</strong>
+                <small>
+                  {e.location || "Location to be announced"} ·{" "}
+                  {new Date(e.startsAt).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                </small>
+              </span>
+              <Icon name="arrow" />
+            </Link>
+          ))}
+          {upcoming?.length === 0 && (
+            <Empty title="The next gathering is on its way">
+              New club events will appear here when they’re announced.
+            </Empty>
+          )}
+          {!events && (
+            <p className="d-muted">Events are not available yet.</p>
+          )}
         </section>
         <section className="d-panel d-identity">
           <div className="d-section-head">
@@ -266,54 +266,8 @@ export function Overview({
               </p>
             )}
           </section>
-          <section className="d-panel">
-            <div className="d-section-head">
-              <h2>Coming up at LOGICA</h2>
-              <Link href="/dashboard/events">All events ↗</Link>
-            </div>
-            {upcoming?.map((e) => (
-              <Link href="/dashboard/events" className="d-event-row" key={e.id}>
-                <span className="d-date-tile">
-                  <small>{date(e.startsAt, { month: "short" })}</small>
-                  <strong>{date(e.startsAt, { day: "2-digit" })}</strong>
-                </span>
-                <span>
-                  <strong>{e.title}</strong>
-                  <small>
-                    {e.location || "Location to be announced"} ·{" "}
-                    {new Date(e.startsAt).toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
-                  </small>
-                </span>
-                <Icon name="arrow" />
-              </Link>
-            ))}
-            {upcoming?.length === 0 && (
-              <Empty title="The next gathering is on its way">
-                New club events will appear here when they’re announced.
-              </Empty>
-            )}
-            {!events && (
-              <p className="d-muted">Events are not available yet.</p>
-            )}
-          </section>
         </div>
         <div>
-          <section className="d-panel d-note-panel">
-            <span className="d-note-icon">
-              <Icon name="community" />
-            </span>
-            <h2>Your community is here.</h2>
-            <p>
-              Share what you’re working on, ask a question, or say hello. You
-              don’t need a finished project to join in.
-            </p>
-            <Link href="/dashboard/community">
-              Open community feed <Icon name="arrow" />
-            </Link>
-          </section>
           <section className="d-panel">
             <div className="d-section-head">
               <h2>Latest updates</h2>

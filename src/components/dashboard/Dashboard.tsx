@@ -38,6 +38,7 @@ import {
   initials,
   PERSONAL_SECTIONS,
 } from "./types";
+import { BuildTeams, retireTeamsHint, snoozeTeamsHint, teamsHintHidden } from "./BuildTeams";
 import "./dashboard.css";
 
 /** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
@@ -133,6 +134,22 @@ export function Dashboard() {
     setOpened((prev) => (prev.includes(section) ? prev : [...prev, section]));
   }, [section]);
   const [menu, setMenu] = useState(false);
+  // The nav (and so the pointer) only renders client-side after the session
+  // loads, so reading localStorage in the initializer can't mismatch the server.
+  const [hintOff, setHintOff] = useState(() => typeof window === "undefined" || teamsHintHidden());
+  // Applied on another device? The server knows; this browser doesn't yet.
+  const hintAccount = user?.accountKind === "MEMBER" ? user.id : null;
+  useEffect(() => {
+    if (hintOff || !hintAccount) return;
+    api<{ track: string }[]>("/api/join/mine")
+      .then((rows) => {
+        if (rows.some((r) => r.track === "SOFTWARE_ENGINEER")) {
+          retireTeamsHint();
+          setHintOff(true);
+        }
+      })
+      .catch(() => {});
+  }, [hintOff, hintAccount]);
   const [leaving, setLeaving] = useState(false);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
@@ -280,7 +297,7 @@ export function Dashboard() {
         Skip to content
       </a>
       <aside className="d-sidebar">
-        <Link className="d-brand" href="/dashboard">
+        <Link className="d-brand" href="/" aria-label="LOGICA home">
           <Image src="/logica-logo-black.png" alt="" width={40} height={40} />
           <span>
             LOGICA<small>University of Illinois Chicago</small>
@@ -329,6 +346,12 @@ export function Dashboard() {
                       </span>
                     )}
                 </Link>
+                {item === "teams" && !hintOff && !seen("teams") && (
+                  <div className="d-callout" role="note">
+                    <span>Apply for the software role here!</span>
+                    <button type="button" aria-label="Dismiss" onClick={() => { snoozeTeamsHint(); setHintOff(true); }}>×</button>
+                  </div>
+                )}
               </Fragment>
             ))}
           </nav>
@@ -550,6 +573,11 @@ export function Dashboard() {
               {seen("activity") && (
                 <Pane active={section === "activity"}>
                   <Activity engagement={engagement} />
+                </Pane>
+              )}
+              {seen("teams") && user && (
+                <Pane active={section === "teams"}>
+                  <BuildTeams user={user} profile={profile} />
                 </Pane>
               )}
               {seen("community") && (

@@ -37,7 +37,8 @@ export default function SignupPage() {
       });
       setPassword("");
       setConfirmPassword("");
-      router.replace("/dashboard");
+      const next = new URLSearchParams(window.location.search).get("next");
+      router.replace(next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create your account. Please try again.");
     } finally {

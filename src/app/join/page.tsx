@@ -9,7 +9,7 @@ import { JoinForm } from "./JoinForm";
 const roles = [
   {
     title: "Software Engineer",
-    body: "Develop LOGICA products with a team on a weekly cadence — startup-like pace, campus impact.",
+    body: "Build open-source products that help students get hired, on a team with check-ins every two days. Needs a @uic.edu account.",
   },
   {
     title: "Board Member",
