@@ -169,7 +169,7 @@ export function Applications() {
           </>}
           <div><dt>Major / graduation</dt><dd>{detail.major || "Not provided"} · {detail.gradYear ?? "Year not provided"}</dd></div>
           <div><dt>Applied</dt><dd>{date(detail.createdAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>
-          <div><dt>Why do you want to join?</dt><dd>{detail.why || "No answer provided"}</dd></div>
+          <div><dt>{detail.track === "SOFTWARE_ENGINEER" ? "Why are you special?" : "Why do you want to join?"}</dt><dd>{detail.why || "No answer provided"}</dd></div>
         </dl>
         <div className="d-actions" aria-busy={busy}>
           {STATUSES.map((value) => <button key={value} className="d-button secondary" disabled={busy || detail.status === value} onClick={() => changeStatus(detail, value)}>{ACTION[value]}</button>)}

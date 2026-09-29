@@ -183,7 +183,7 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
               <input required maxLength={100} autoCapitalize="none" spellCheck={false} placeholder="octocat" value={github} onChange={(e) => set({ github: e.target.value })} />
             </label>
             <label>
-              Hours a week you can commit
+              Hours a week you can commit (an estimate)
               <input type="number" inputMode="numeric" required min={1} max={40} placeholder="4" value={hours} onChange={(e) => set({ hours: e.target.value })} />
             </label>
             {RANKS.map((rank, i) => (
@@ -231,8 +231,8 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
             </label>
           </fieldset>
           <label>
-            Why do you want to build with LOGICA?
-            <textarea required rows={4} maxLength={2000} value={why} onChange={(e) => set({ why: e.target.value })} />
+            Why are you special? (optional)
+            <textarea rows={4} maxLength={2000} value={why} onChange={(e) => set({ why: e.target.value })} />
           </label>
           <div className="d-actions">
             {savedAt && (
