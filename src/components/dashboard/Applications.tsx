@@ -5,11 +5,12 @@ import { api } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { type Application, date } from "./types";
 
-const STATUSES = ["PENDING", "INTERVIEW", "ACCEPTED", "DECLINED"] as const;
+const STATUSES = ["PENDING", "INTERVIEW", "NEEDS_INFO", "ACCEPTED", "DECLINED"] as const;
 const LABEL = {
   ALL: "All",
   PENDING: "Pending",
   INTERVIEW: "Interview",
+  NEEDS_INFO: "More info requested",
   ACCEPTED: "Accepted",
   DECLINED: "Declined",
 };
@@ -31,6 +32,7 @@ const githubUrl = (value: string) =>
 const ACTION = {
   PENDING: "Mark pending",
   INTERVIEW: "Move to interview",
+  NEEDS_INFO: "Ask for more info",
   ACCEPTED: "Accept application",
   DECLINED: "Decline application",
 };
@@ -46,6 +48,9 @@ export function Applications() {
   const [error, setError] = useState("");
   const [saved, setSaved] = useState("");
   const [reload, setReload] = useState(0);
+  const [note, setNote] = useState("");
+  const [asking, setAsking] = useState(false);
+  const [canReapply, setCanReapply] = useState(true);
 
   useEffect(() => {
     let alive = true;
@@ -65,30 +70,30 @@ export function Applications() {
   const needle = query.trim().toLowerCase();
   const filtered = items?.filter((item) =>
     (status === "ALL" || item.status === status) &&
-    [item.name, item.email, TRACK[item.track], item.major, item.gradYear, item.why, item.github, projects(item), item.skills]
+    [item.name, item.email, TRACK[item.track], item.major, item.gradYear, item.why, item.github, projects(item), item.skills, item.reviewNote]
       .filter(Boolean).join(" ").toLowerCase().includes(needle),
   );
   const detail = items?.find((item) => item.id === open);
   const summary = [
     ["Total", items?.length ?? "—"],
-    ["Awaiting a decision", items ? count("PENDING") + count("INTERVIEW") : "—"],
+    ["Awaiting a decision", items ? count("PENDING") + count("INTERVIEW") + count("NEEDS_INFO") : "—"],
     ["Interviewing", items ? count("INTERVIEW") : "—"],
     ["Accepted", items ? count("ACCEPTED") : "—"],
   ] as const;
 
-  async function changeStatus(item: Application, next: Application["status"]) {
+  async function changeStatus(item: Application, next: Application["status"], extra: Record<string, unknown> = {}) {
     setBusy(true);
     setError("");
     setSaved("");
     try {
       await api(`/api/join/${item.id}`, {
         method: "PATCH",
-        body: JSON.stringify({ status: next }),
+        body: JSON.stringify({ status: next, ...extra }),
       });
-      setItems((current) => current?.map((row) =>
-        row.id === item.id ? { ...row, status: next } : row,
-      ) ?? null);
+      setReload((value) => value + 1);
       setSaved(`${item.name}: status saved as ${LABEL[next].toLowerCase()}.`);
+      setAsking(false);
+      setNote("");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -169,11 +174,24 @@ export function Applications() {
           </>}
           <div><dt>Major / graduation</dt><dd>{detail.major || "Not provided"} · {detail.gradYear ?? "Year not provided"}</dd></div>
           <div><dt>Applied</dt><dd>{date(detail.createdAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>
+          {detail.reviewNote && <div><dt>Review note</dt><dd>{detail.reviewNote}</dd></div>}
+          {detail.reviewedAt && <div><dt>Info requested</dt><dd>{date(detail.reviewedAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>}
+          {detail.decidedAt && <div><dt>Decision recorded</dt><dd>{date(detail.decidedAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>}
+          {detail.status === "DECLINED" && <div><dt>May reapply</dt><dd>{detail.canReapply ? "Yes, after the waiting period" : "No"}</dd></div>}
           <div><dt>{detail.track === "SOFTWARE_ENGINEER" ? "Why are you special?" : "Why do you want to join?"}</dt><dd>{detail.why || "No answer provided"}</dd></div>
         </dl>
+        {asking && <form className="d-review-form" onSubmit={(event) => { event.preventDefault(); void changeStatus(detail, "NEEDS_INFO", { note: note.trim() }); }}>
+          <label htmlFor="application-review-note">What should the applicant add?</label>
+          <textarea id="application-review-note" required minLength={10} maxLength={1000} rows={4} value={note} onChange={(event) => setNote(event.target.value)} />
+          <div className="d-actions"><button className="d-button" type="submit" disabled={busy}>Send request</button><button className="d-button secondary" type="button" onClick={() => setAsking(false)}>Cancel</button></div>
+        </form>}
         <div className="d-actions" aria-busy={busy}>
-          {STATUSES.map((value) => <button key={value} className="d-button secondary" disabled={busy || detail.status === value} onClick={() => changeStatus(detail, value)}>{ACTION[value]}</button>)}
+          {STATUSES.filter((value) => value !== "DECLINED").map((value) => <button key={value} className="d-button secondary" disabled={busy || detail.status === value} onClick={() => value === "NEEDS_INFO" ? setAsking(true) : changeStatus(detail, value)}>{ACTION[value]}</button>)}
         </div>
+        <form className="d-decline-action" onSubmit={(event) => { event.preventDefault(); void changeStatus(detail, "DECLINED", { canReapply }); }}>
+          <label><input type="checkbox" checked={canReapply} onChange={(event) => setCanReapply(event.target.checked)} /> Can reapply later</label>
+          <button className="d-button secondary" type="submit" disabled={busy || detail.status === "DECLINED"}>{ACTION.DECLINED}</button>
+        </form>
         {busy && <p className="d-muted" role="status">Saving status…</p>}
       </section>}
     </>
