@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { Icon } from "./Icon";
-import { Avatar } from "./Avatar";
 import {
   type SessionUser,
   type Profile,
@@ -117,183 +116,63 @@ export function Overview({
         },
       ]
     : [];
-  const done = checks.filter((c) => c.done).length;
   const name = (profile?.name || user.name || "there").split(" ")[0];
+  const goingIds = new Set(
+    engagement?.rsvps.filter((r) => r.status === "GOING").map((r) => r.eventId),
+  );
+  const coming = upcoming?.filter((event) => goingIds.has(event.id)) ?? [];
+  const memberSince = profile?.gradYear ? `Class of ${profile.gradYear}` : null;
   return (
     <>
       <Heading
-        title={`Welcome back, ${name}.`}
-        description={
-          board
-            ? "Your community, and what needs your attention."
-            : "Make yourself part of what happens next."
-        }
-        action={
-          <span className="d-date">
-            {date(new Date().toISOString(), {
-              weekday: "long",
-              month: "short",
-              day: "numeric",
-            })}
-          </span>
-        }
+        title="Overview"
+        description="Your club life at a glance, without the board's operational noise."
       />
-      <div className="d-overview-top">
-        <section className="d-panel d-overview-events">
-          <div className="d-section-head">
-            <h2>Coming up at LOGICA</h2>
-            <Link href="/dashboard/events">All events ↗</Link>
-          </div>
-          {upcoming?.map((e) => (
-            <Link href="/dashboard/events" className="d-event-row" key={e.id}>
-              <span className="d-date-tile">
-                <small>{date(e.startsAt, { month: "short" })}</small>
-                <strong>{date(e.startsAt, { day: "2-digit" })}</strong>
-              </span>
-              <span>
-                <strong>{e.title}</strong>
-                <small>
-                  {e.location || "Location to be announced"} ·{" "}
-                  {new Date(e.startsAt).toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                </small>
-              </span>
-              <Icon name="arrow" />
+      <section className="d-overview-hero">
+        <div>
+          <h2>Good {daypart()}, {name}.</h2>
+          <p>{upcoming?.length ? `${upcoming.length} upcoming event${upcoming.length === 1 ? "" : "s"}${coming.length ? ` and ${coming.length} RSVP${coming.length === 1 ? "" : "s"} on your calendar` : ""}.` : "Your next LOGICA event will appear here when it is announced."}</p>
+        </div>
+        <Link className="d-button" href="/dashboard/events">Explore events</Link>
+      </section>
+      <div className="d-overview-metrics">
+        <Metric value={engagement?.involvement.eventsAttended} label="Events attended" note="All time" />
+        <Metric value={coming.length} label="Upcoming RSVPs" note="On your calendar" />
+        <Metric value={engagement?.involvement.postsMade} label="Community posts" note="All time" />
+        {memberSince && <Metric value={memberSince} label="Member profile" note={roleName(user)} />}
+      </div>
+      <div className="d-overview-lists">
+        <section className="d-panel">
+          <div className="d-section-head"><h2>Coming up</h2><span className="d-muted">{coming.length} RSVPs</span></div>
+          {(coming.length ? coming : upcoming)?.map((event) => (
+            <Link className="d-compact-row" href="/dashboard/events" key={event.id}>
+              <span className="d-live-dot" /><span><strong>{event.title}</strong><small>{date(event.startsAt, { month: "short", day: "numeric" })} · {new Date(event.startsAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</small></span>
+              <span className="d-badge">{goingIds.has(event.id) ? "Going" : "Open"}</span>
             </Link>
           ))}
-          {upcoming?.length === 0 && (
-            <Empty title="The next gathering is on its way">
-              New club events will appear here when they’re announced.
-            </Empty>
-          )}
-          {!events && (
-            <p className="d-muted">Events are not available yet.</p>
-          )}
+          {upcoming?.length === 0 && <Empty title="Nothing scheduled yet">New events will appear here when they are announced.</Empty>}
+          {!events && <p className="d-muted">Events are not available yet.</p>}
         </section>
-        <section className="d-panel d-identity">
-          <div className="d-section-head">
-            <h2>Your profile</h2>
-            <Link href="/dashboard/profile">
-              Edit <span aria-hidden="true">↗</span>
-            </Link>
-          </div>
-          <div className="d-identity-main">
-            <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-large" />
-            <h3>{profile?.name || user.name || "Your name"}</h3>
-            <p>{profile?.major || "Add your major"}</p>
-            <span className="d-badge">{roleName(user)}</span>
-          </div>
-          <div className="d-progress-label">
-            <span>Profile essentials</span>
-            <strong>
-              {profile ? `${done} of ${checks.length}` : "Loading…"}
-            </strong>
-          </div>
-          <progress
-            max={checks.length || 3}
-            value={done}
-            aria-label="Completed profile essentials"
-          />
-          <p className="d-small">
-            {done === checks.length && profile
-              ? "You’re all set. Keep your details up to date."
-              : "A few details help us get to know you."}
-          </p>
+        <section className="d-panel">
+          <div className="d-section-head"><h2>For you</h2><span className="d-muted">From your account</span></div>
+          {board && pending && pending.length > 0 && <Link className="d-compact-row" href="/dashboard/speakers"><span className="d-live-dot" /><span><strong>Review {pending.length} speaker submission{pending.length === 1 ? "" : "s"}</strong><small>Confirm guests and prepare portal access.</small></span><span className="d-badge">Open</span></Link>}
+          {notices?.slice(0, 1).map((notice) => <Link className="d-compact-row" href="/dashboard/notifications" key={notice.id}><span className={notice.readAt ? "d-read-dot" : "d-live-dot"} /><span><strong>{notice.message}</strong><small>{date(notice.createdAt)}</small></span><span className="d-badge">View</span></Link>)}
+          {checks.filter((check) => !check.done).slice(0, 2).map((check) => <Link className="d-compact-row" href={check.href} key={check.label}><span className="d-live-dot" /><span><strong>{check.label}</strong><small>{check.note}</small></span><span className="d-badge">Open</span></Link>)}
+          {checks.length > 0 && checks.every((check) => check.done) && <p className="d-muted d-notice-empty">Your profile essentials are complete. New suggestions will appear here.</p>}
+          {!profile && <p className="d-muted">Suggestions appear when your profile is available.</p>}
         </section>
-      </div>
-      <section className="d-engagement-strip">
-        <div>
-          <h2>Your engagement</h2>
-          <Link href="/dashboard/activity">
-            View your activity <span aria-hidden="true">↗</span>
-          </Link>
-        </div>
-        <Stats engagement={engagement} />
-      </section>
-      <div className="d-columns">
-        <div>
-          <section className="d-panel">
-            <div className="d-section-head">
-              <h2>{board ? "Needs your attention" : "Your next steps"}</h2>
-              <span className="d-muted">
-                {board && pending
-                  ? `${pending.length} pending`
-                  : "Make it yours"}
-              </span>
-            </div>
-            {board && pending && pending.length > 0 && (
-              <Link className="d-task" href="/dashboard/speakers">
-                <span className="d-task-circle gold">
-                  <Icon name="speakers" />
-                </span>
-                <span>
-                  <strong>
-                    Review {pending.length} speaker submission
-                    {pending.length === 1 ? "" : "s"}
-                  </strong>
-                  <small>Confirm guests and prepare their portal access.</small>
-                </span>
-                <Icon name="arrow" />
-              </Link>
-            )}
-            {checks.map((c) => (
-              <Link
-                className={`d-task ${c.done ? "complete" : ""}`}
-                href={c.href}
-                key={c.label}
-              >
-                <span className="d-task-circle">
-                  {c.done ? <Icon name="check" /> : <Icon name="profile" />}
-                </span>
-                <span>
-                  <strong>{c.label}</strong>
-                  <small>
-                    {c.done
-                      ? "Completed. You can update this anytime."
-                      : c.note}
-                  </small>
-                </span>
-                <Icon name="arrow" />
-              </Link>
-            ))}
-            {!profile && (
-              <p className="d-muted">
-                Your next steps appear when your profile is available.
-              </p>
-            )}
-          </section>
-        </div>
-        <div>
-          <section className="d-panel">
-            <div className="d-section-head">
-              <h2>Latest updates</h2>
-              <Link href="/dashboard/notifications">View all ↗</Link>
-            </div>
-            {notices?.slice(0, 3).map((n) => (
-              <div className="d-update" key={n.id}>
-                <span className={n.readAt ? "d-read-dot" : "d-live-dot"} />
-                <div>
-                  <p>{n.message}</p>
-                  <small>{date(n.createdAt)}</small>
-                </div>
-              </div>
-            ))}
-            {notices?.length === 0 && (
-              <p className="d-muted d-notice-empty">
-                You’re all caught up. Event reminders and club updates will land
-                here.
-              </p>
-            )}
-            {!notices && (
-              <p className="d-muted">Updates are not available yet.</p>
-            )}
-          </section>
-        </div>
       </div>
     </>
   );
+}
+
+function Metric({ value, label, note }: { value: React.ReactNode; label: string; note: string }) {
+  return <div><strong>{value ?? "—"}</strong><span>{label}</span><small>{note}</small></div>;
+}
+
+function daypart() {
+  const hour = new Date().getHours();
+  return hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
 }
 export function Activity({ engagement }: { engagement: Engagement | null }) {
   const items = engagement
@@ -321,8 +200,8 @@ export function Activity({ engagement }: { engagement: Engagement | null }) {
   return (
     <>
       <Heading
-        title="Every little bit adds up."
-        description="Your participation in LOGICA, all in one place."
+        title="My engagement"
+        description="A private record of participation, growth, and ways to stay connected."
       />
       <Stats engagement={engagement} />
       <section className="d-panel">
@@ -393,8 +272,8 @@ export function Notifications({
   return (
     <>
       <Heading
-        title="You’re in the loop."
-        description="Event reminders and updates from your club."
+        title="Notifications"
+        description="Choose what needs your attention and where it should reach you."
       />
       {error && (
         <p role="alert" className="d-error">

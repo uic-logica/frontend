@@ -3463,3 +3463,131 @@
 @media (prefers-reduced-motion: reduce) {
   .d-nav-bar[data-animate="true"], .dash a, .dash button { transition: none; }
 }
+
+/* Variant E section layouts. The shell above establishes the palette; these
+   rules establish the dense content rhythm shared by every Pencil frame. */
+.d-overview-hero {
+  min-height: 156px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px;
+  margin-bottom: 16px;
+  border: 1px solid rgb(64 91 180 / .28);
+  border-radius: 22px;
+  background: rgb(9 19 61 / .82);
+}
+.d-overview-hero h2 { font-size: 28px; }
+.d-overview-hero p { margin-top: 8px; color: var(--d-muted); }
+.d-overview-metrics,
+.d-directory-summary,
+.d-board-pin {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.d-overview-metrics > div,
+.d-directory-summary > div,
+.d-pin {
+  min-height: 118px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid var(--d-rule);
+  border-radius: 18px;
+  background: var(--d-panel-bg);
+}
+.d-overview-metrics strong,
+.d-directory-summary strong,
+.d-pin > strong { color: var(--d-ink); font-size: 28px; line-height: 38px; font-weight: 700; }
+.d-overview-metrics span,
+.d-directory-summary span,
+.d-pin > span:not(.d-pin-icon) { color: var(--d-muted); font-size: 12px; font-weight: 600; }
+.d-overview-metrics small,
+.d-pin small { color: #cf421a; font-size: 11px; font-weight: 600; }
+.d-overview-lists { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr); gap: 16px; }
+.d-overview-lists > .d-panel { min-height: 310px; }
+.d-compact-row { display: flex; align-items: center; gap: 12px; min-height: 66px; padding: 12px 0; border-bottom: 1px solid var(--d-rule); color: var(--d-ink); }
+.d-compact-row:last-child { border-bottom: 0; }
+.d-compact-row > span:nth-child(2) { flex: 1; min-width: 0; }
+.d-compact-row strong, .d-compact-row small { display: block; overflow-wrap: anywhere; }
+.d-compact-row strong { font-size: 13px; }
+.d-compact-row small { margin-top: 3px; }
+.d-compact-row .d-badge { flex: none; color: #cf421a; }
+
+/* Directories, boards, and event lists are two-pane work surfaces in the
+   references. Existing detail panels still follow the table in the DOM and
+   collapse naturally below it on narrow screens. */
+.d-tabs { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; padding: 0; border: 0; overflow-x: auto; }
+.d-tabs button { min-height: 34px; padding: 7px 12px; border: 1px solid transparent; border-radius: 18px; color: var(--d-muted); white-space: nowrap; font-size: 12px; font-weight: 700; }
+.d-tabs button:hover { background: rgb(255 255 255 / .05); color: #fff; }
+.d-tabs button[aria-pressed="true"] { border-color: rgb(255 255 255 / .1); background: rgb(255 255 255 / .06); color: #cf421a; }
+.d-directory-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.d-search { flex: 1; min-width: 190px; }
+.d-search input { width: 100%; }
+.d-filter { display: flex; align-items: center; gap: 8px; color: var(--d-muted); }
+.d-directory table { width: 100%; border-collapse: collapse; }
+.d-directory th, .d-directory td { padding: 12px 10px; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--d-rule); }
+.d-directory th { font-size: 11px; font-weight: 600; }
+.d-directory td { font-size: 12px; }
+.d-directory td strong, .d-directory td small { display: block; }
+.d-directory td small { margin-top: 3px; color: var(--d-muted); }
+.d-table-person { display: flex; align-items: center; gap: 10px; min-width: 180px; }
+.d-speaker-detail { min-height: 300px; }
+.d-speaker-detail dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; }
+.d-speaker-detail dl > div { padding: 12px 0; border-bottom: 1px solid var(--d-rule); }
+.d-speaker-detail dt { color: var(--d-muted); font-size: 11px; }
+.d-speaker-detail dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+
+.d-events-list { padding: 0; background: transparent; border: 0; backdrop-filter: none; }
+.d-event-item { min-height: 180px; padding: 18px; margin-bottom: 14px; border: 1px solid var(--d-rule); border-radius: 18px; background: var(--d-panel-bg); }
+.d-event-summary { display: flex; align-items: center; gap: 16px; }
+.d-event-text { flex: 1; min-width: 0; }
+.d-event-text h2 { font-size: 18px; }
+.d-event-text p { color: var(--d-muted); margin-top: 5px; }
+.d-event-item > p { margin: 14px 0; color: var(--d-muted); }
+.d-date-tile { width: 72px; height: 84px; background: #c83b12; border-radius: 18px; }
+.d-date-tile small { color: #fff !important; }
+
+.d-bars { min-height: 330px; }
+.d-bar-track { background: rgb(255 255 255 / .06); }
+.d-bar-going { background: #7183b8; }
+.d-bar-came { background: #c83b12; }
+.d-tile-grid { gap: 0; padding: 0; }
+.d-tile { border-bottom-color: var(--d-rule); }
+.d-settings .d-setting-row { min-height: 56px; }
+.d-agent-url, .d-agent-secret { border-color: var(--d-rule); background: rgb(255 255 255 / .035); }
+
+/* Messages and availability fill the usable canvas like their frames. */
+.d-chat-panel.is-full, .d-availability { min-height: calc(100dvh - 190px); }
+.d-thread-compose { border-color: rgb(255 255 255 / .14); background: #0c0d12; }
+.d-bubble { border-radius: 16px; background: rgb(255 255 255 / .07); }
+.d-bubble-row.is-mine .d-bubble { background: #c83b12; color: #fff; }
+.d-cal-body { background: rgb(255 255 255 / .025); }
+.d-cal-cell.is-on { background: #70d6a5; border-color: #70d6a5; color: #07120d; }
+
+@media (max-width: 1050px) {
+  .d-overview-metrics, .d-directory-summary, .d-board-pin { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .d-overview-hero { min-height: 0; align-items: flex-start; flex-direction: column; padding: 18px; }
+  .d-overview-hero h2 { font-size: 23px; }
+  .d-overview-lists { grid-template-columns: minmax(0, 1fr); }
+  .d-overview-lists > .d-panel { min-height: 0; }
+  .d-overview-metrics, .d-directory-summary, .d-board-pin { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .d-overview-metrics > div, .d-directory-summary > div, .d-pin { min-height: 104px; padding: 14px; }
+  .d-overview-metrics strong, .d-directory-summary strong, .d-pin > strong { font-size: 23px; line-height: 30px; overflow-wrap: anywhere; }
+  .d-directory-toolbar { align-items: stretch; flex-direction: column; }
+  .d-filter { justify-content: space-between; }
+  .d-filter select { flex: 1; }
+  .d-speaker-detail dl { grid-template-columns: minmax(0, 1fr); }
+  .d-event-summary { align-items: flex-start; flex-wrap: wrap; }
+  .d-event-summary .d-button { width: 100%; }
+  .d-date-tile { width: 58px; height: 66px; border-radius: 14px; }
+  .d-chat-panel.is-full, .d-availability { min-height: 0; }
+}

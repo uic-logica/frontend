@@ -15,7 +15,6 @@ import {
   type Speaker,
   date,
   money,
-  OFFICER_LABEL,
   personName,
   relativeDay,
   STAGE_LABEL,
@@ -71,12 +70,8 @@ export function BoardHome({ user, members, events, speakers }: Props) {
   return (
     <>
       <Heading
-        title={greeting(user.name, officer)}
-        description={
-          officer
-            ? `You're down as ${OFFICER_LABEL[officer].toLowerCase()} — that's what's pinned first. Everything else is still yours to open.`
-            : "Everything the club is carrying right now. Nothing here is hidden from anyone on the board."
-        }
+        title="Overview"
+        description="What needs your attention, what changed, and what comes next."
       />
 
       <div className="d-board-pin">
@@ -104,7 +99,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
       <div className="d-columns d-columns-top">
         <section className="d-panel">
           <div className="d-section-head">
-            <h2>What&apos;s waiting</h2>
+            <h2>Needs attention</h2>
             <Link className="d-text-link" href="/dashboard/pipeline">
               All of it ↗
             </Link>
@@ -148,7 +143,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
         <div>
           <section className="d-panel">
             <div className="d-section-head">
-              <h2>The club right now</h2>
+              <h2>Club pulse</h2>
               <Link className="d-text-link" href="/dashboard/insights">
                 Insights ↗
               </Link>
@@ -217,14 +212,6 @@ function overdue(value: string) {
 function upcoming(events: Event[] | null) {
   const now = Date.now();
   return (events ?? []).filter((e) => new Date(e.startsAt).getTime() >= now);
-}
-
-function greeting(name: string | null, officer: Officer | null) {
-  const first = name?.split(" ")[0];
-  if (officer === "TREASURER") return first ? `The money, ${first}.` : "The money.";
-  if (officer === "OUTREACH") return first ? `Who's waiting, ${first}.` : "Who's waiting.";
-  if (officer === "SECRETARY") return first ? `The record, ${first}.` : "The record.";
-  return first ? `Running the club, ${first}.` : "Running the club.";
 }
 
 type Pin = {

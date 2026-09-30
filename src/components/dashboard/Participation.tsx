@@ -80,8 +80,8 @@ export function Events({
   return (
     <>
       <Heading
-        title="See you at the next one."
-        description="Gatherings, conversations, and opportunities to get involved."
+        title="Events"
+        description={runsWorkspace(user) ? "Plan, publish, and run each event from one timeline." : "Discover what’s next, understand the commitment, and RSVP with confidence."}
         action={
           runsWorkspace(user) && (
             <button className="d-button" onClick={() => setCreating(!creating)}>
@@ -374,8 +374,8 @@ export function Community({ user }: { user: SessionUser }) {
   return (
     <>
       <Heading
-        title="A good place to say hello."
-        description="Questions, ideas, and updates from the people of LOGICA."
+        title="Community"
+        description={runsWorkspace(user) ? "Keep conversation useful, current, and connected to the work." : "Ask, share, and find the threads that help members move forward."}
       />
       <div className="d-community-layout">
         <div>

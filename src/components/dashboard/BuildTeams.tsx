@@ -145,7 +145,7 @@ export function BuildTeams({ user, profile }: { user: SessionUser; profile: Prof
     <>
       <Heading
         title="Software Teams"
-        description="Build open-source products that help students get hired. Apply once; we review your work, email you and set up a short interview."
+        description="Find a project with the right problem, people, and pace for you."
       />
       {error && <p className="d-error" role="alert">{error}</p>}
       {!mine && !error && <p className="d-muted" role="status">Loading…</p>}

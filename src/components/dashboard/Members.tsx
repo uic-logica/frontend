@@ -85,11 +85,11 @@ export function Members({
   return (
     <>
       <Heading
-        title="Who's in the club."
+        title="Members"
         description={
           isExec
-            ? "Everyone signed up, what they do, and when they last turned up. You can change roles here."
-            : "Everyone signed up, what they do, and when they last turned up."
+            ? "Find people quickly, understand engagement, and update member access."
+            : "Find people quickly and understand how they participate."
         }
       />
 
