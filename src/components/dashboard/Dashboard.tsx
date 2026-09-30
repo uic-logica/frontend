@@ -152,6 +152,7 @@ export function Dashboard() {
   }, [hintOff, hintAccount]);
   const [leaving, setLeaving] = useState(false);
   const leavingRef = useRef(false);
+  const confirmOut = useRef<HTMLDialogElement>(null);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
 
@@ -414,11 +415,27 @@ export function Dashboard() {
                 <button
                   aria-label="Sign out"
                   title="Sign out"
-                  onClick={logout}
+                  onClick={() => confirmOut.current?.showModal()}
                   disabled={leaving}
                 >
                   <Icon name="exit" />
                 </button>
+                {/* ponytail: native <dialog> gives top layer, focus trap and Esc for free */}
+                <dialog ref={confirmOut} className="d-confirm" aria-labelledby="d-confirm-title">
+                  <h2 id="d-confirm-title">Sign out of LOGICA?</h2>
+                  <p>You&apos;ll need your password to sign back in.</p>
+                  <form method="dialog" className="d-actions">
+                    <button className="d-button secondary" autoFocus>Cancel</button>
+                    <button
+                      type="button"
+                      className="d-button"
+                      disabled={leaving}
+                      onClick={logout}
+                    >
+                      {leaving ? "Signing out…" : "Sign out"}
+                    </button>
+                  </form>
+                </dialog>
               </div>
             )}
           </div>
