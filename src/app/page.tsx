@@ -50,6 +50,7 @@ const PARTNER_CATEGORIES = [
       { name: "Microsoft", src: "/sponsors/members/microsoft.svg", height: 40 },
       { name: "Google", src: "/sponsors/members/google.svg", height: 40 },
       { name: "CDW", src: "/sponsors/cdw.svg", height: 40 },
+      { name: "84.51°", src: "/sponsors/8451.png", height: 36 },
     ],
   },
   {
