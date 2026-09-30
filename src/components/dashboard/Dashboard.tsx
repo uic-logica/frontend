@@ -160,6 +160,7 @@ export function Dashboard() {
   const [query, setQuery] = useState("");
   const isMac = useSyncExternalStore(noSubscribe, () => /Mac|iPhone|iPad/.test(navigator.userAgent), () => false);
   const accountMenu = useRef<HTMLDetailsElement>(null);
+  const sideMenu = useRef<HTMLDetailsElement>(null);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
 
@@ -300,9 +301,22 @@ export function Dashboard() {
       setLeaving(false);
     }
   }
-  const nav = navFor(user, profile);
-  const isBoardNav = !!user && runsWorkspace(user);
   const unread = notices?.filter((n) => !n.readAt).length ?? 0;
+  const nav = navFor(user, profile);
+  // A speaker's profile is their visit form, so it stays in their rail.
+  // Everyone else reaches it from the account menus.
+  const sideNav = user?.accountKind === "SPEAKER" ? nav : nav.filter((item) => item !== "profile");
+  const accountLinks = (
+    <>
+      <Link href="/dashboard/profile">My profile</Link>
+      <Link href="/dashboard/notifications">
+        Notifications{unread > 0 && <span className="d-count">{unread}</span>}
+      </Link>
+      <Link href="/dashboard/connections">MCP Connections</Link>
+      <Link href="/dashboard/settings">Settings</Link>
+    </>
+  );
+  const isBoardNav = !!user && runsWorkspace(user);
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
   const searchResults = useMemo(() => {
@@ -346,8 +360,18 @@ export function Dashboard() {
         requestAnimationFrame(() => searchInput.current?.focus());
       }
     };
+    // <details> has no light dismiss; a click anywhere else closes the menus.
+    const closeMenus = (event: PointerEvent) => {
+      for (const menu of [accountMenu.current, sideMenu.current]) {
+        if (menu?.open && !menu.contains(event.target as Node)) menu.removeAttribute("open");
+      }
+    };
     window.addEventListener("keydown", openSearch);
-    return () => window.removeEventListener("keydown", openSearch);
+    window.addEventListener("pointerdown", closeMenus);
+    return () => {
+      window.removeEventListener("keydown", openSearch);
+      window.removeEventListener("pointerdown", closeMenus);
+    };
   }, []);
 
   const closeSearch = () => {
@@ -382,14 +406,14 @@ export function Dashboard() {
         >
           <span ref={bar} className="d-nav-bar" aria-hidden="true" />
           <nav aria-label="Dashboard">
-            {nav.map((item, index) => (
+            {sideNav.map((item, index) => (
               <Fragment key={item}>
                 {/* Board nav runs to ten items. A rule where the club's
                     business ends and their own begins is the difference
                     between a list you scan and one you read. */}
                 {isBoardNav &&
                   PERSONAL_SECTIONS.includes(item) &&
-                  !PERSONAL_SECTIONS.includes(nav[index - 1]) && (
+                  !PERSONAL_SECTIONS.includes(sideNav[index - 1]) && (
                     <span className="d-nav-divider" aria-hidden="true">
                       Yours
                     </span>
@@ -419,36 +443,12 @@ export function Dashboard() {
             ))}
           </nav>
           <div className="d-sidebar-bottom">
-            <nav aria-label="Account">
-              <Link
-                href="/dashboard/notifications"
-                aria-current={section === "notifications" ? "page" : undefined}
-              >
-                <Icon name="notifications" />
-                Notifications
-                {unread > 0 && <span className="d-count">{unread}</span>}
-              </Link>
-              {/* Account-level, like notifications and settings — not club
-                  business, so it sits in the bottom group rather than
-                  lengthening a main nav that already outgrew the rail. */}
-              <Link
-                href="/dashboard/connections"
-                aria-current={section === "connections" ? "page" : undefined}
-              >
-                <Icon name="connections" />
-                MCP Connections
-              </Link>
-              <Link
-                href="/dashboard/settings"
-                aria-current={section === "settings" ? "page" : undefined}
-              >
-                <Icon name="settings" />
-                Settings
-              </Link>
-              {/* Day-to-day chat is Discord's job; this dashboard holds the
-                  things that need a record. Hidden until the URL is set
-                  rather than guessed at. */}
-              {process.env.NEXT_PUBLIC_DISCORD_URL && (
+            {/* Day-to-day chat is Discord's job; this dashboard holds the
+                things that need a record. Hidden until the URL is set
+                rather than guessed at. Profile, notifications and settings
+                live in the account menus, not the rail. */}
+            {process.env.NEXT_PUBLIC_DISCORD_URL && (
+              <nav aria-label="Community">
                 <a
                   href={process.env.NEXT_PUBLIC_DISCORD_URL}
                   target="_blank"
@@ -457,17 +457,24 @@ export function Dashboard() {
                   <Icon name="community" />
                   Discord
                 </a>
-              )}
-            </nav>
+              </nav>
+            )}
             {user && (
               <div className="d-account">
-                <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} />
-                <span>
-                  <strong>
-                    {profile?.name || user.name || "Your account"}
-                  </strong>
-                  <small>{roleName(user, profile)}</small>
-                </span>
+                <details ref={sideMenu} className="d-account-menu d-side-menu">
+                  <summary>
+                    <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} />
+                    <span>
+                      <strong>
+                        {profile?.name || user.name || "Your account"}
+                      </strong>
+                      <small>{roleName(user, profile)}</small>
+                    </span>
+                  </summary>
+                  <nav aria-label="Your account" onClick={() => { sideMenu.current?.removeAttribute("open"); setMenu(false); }}>
+                    {accountLinks}
+                  </nav>
+                </details>
                 <button
                   aria-label="Sign out"
                   title="Sign out"
@@ -536,17 +543,14 @@ export function Dashboard() {
                     <Icon name="chevron" />
                   </summary>
                   <nav aria-label="Profile and preferences" onClick={() => accountMenu.current?.removeAttribute("open")}>
-                    <Link href="/dashboard/profile">My profile</Link>
-                    <Link href="/dashboard/notifications">Notifications</Link>
-                    <Link href="/dashboard/connections">MCP Connections</Link>
-                    <Link href="/dashboard/settings">Settings</Link>
+                    {accountLinks}
                   </nav>
                 </details>
               </>
             )}
           </div>
         </header>
-        <dialog ref={searchDialog} className="d-search-dialog" aria-labelledby="d-search-title" onClose={() => setQuery("")}>
+        <dialog ref={searchDialog} className="d-search-dialog" aria-labelledby="d-search-title" onClose={() => setQuery("")} onClick={(event) => { if (event.target === event.currentTarget) closeSearch(); }}>
           <div className="d-search-dialog-head">
             <Icon name="search" />
             <label id="d-search-title" className="d-sr" htmlFor="dashboard-search">Search your LOGICA workspace</label>
