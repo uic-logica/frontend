@@ -576,6 +576,11 @@ export type Application = {
   resumeUrl?: string | null;
   resumeOnFile?: boolean;
   userId?: string | null;
-  status: "PENDING" | "INTERVIEW" | "ACCEPTED" | "DECLINED";
+  status: "PENDING" | "INTERVIEW" | "NEEDS_INFO" | "ACCEPTED" | "DECLINED";
   createdAt: string;
+  updatedAt: string;
+  reviewNote: string | null;
+  reviewedAt: string | null;
+  canReapply: boolean;
+  decidedAt: string | null;
 };
