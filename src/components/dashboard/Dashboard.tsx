@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { api, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
@@ -87,6 +87,8 @@ function Pane({ active, children }: { active: boolean; children: ReactNode }) {
  * data in place; a per-page mount flashed the skeleton (and briefly the
  * signed-out panel) on every click.
  */
+const noSubscribe = () => () => {};
+
 export function Dashboard() {
   const router = useRouter();
   const pathname = usePathname();
@@ -153,6 +155,11 @@ export function Dashboard() {
   const [leaving, setLeaving] = useState(false);
   const leavingRef = useRef(false);
   const confirmOut = useRef<HTMLDialogElement>(null);
+  const searchDialog = useRef<HTMLDialogElement>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState("");
+  const isMac = useSyncExternalStore(noSubscribe, () => /Mac|iPhone|iPad/.test(navigator.userAgent), () => false);
+  const accountMenu = useRef<HTMLDetailsElement>(null);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
 
@@ -298,6 +305,55 @@ export function Dashboard() {
   const unread = notices?.filter((n) => !n.readAt).length ?? 0;
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
+  const searchResults = useMemo(() => {
+    const needle = query.trim().toLocaleLowerCase();
+    const allowed = navFor(user, profile);
+    const rows: { label: string; detail: string; href: string }[] = allowed.map((item) => ({
+      label: titleFor(item, user, profile),
+      detail: "Dashboard section",
+      href: href(item),
+    }));
+    for (const event of events ?? []) rows.push({
+      label: event.title,
+      detail: `Event${event.location ? ` · ${event.location}` : ""}`,
+      href: "/dashboard/events",
+    });
+    if (user && runsWorkspace(user)) {
+      for (const member of members ?? []) rows.push({
+        label: member.name || member.email,
+        detail: `Member · ${member.major || member.email}`,
+        href: "/dashboard/members",
+      });
+      for (const guest of speakers ?? []) rows.push({
+        label: guest.name || guest.email || "Speaker",
+        detail: `Speaker${guest.organization ? ` · ${guest.organization}` : ""}`,
+        href: "/dashboard/speakers",
+      });
+    }
+    for (const notice of notices ?? []) rows.push({
+      label: notice.message,
+      detail: "Notification",
+      href: "/dashboard/notifications",
+    });
+    return rows.filter((row) => !needle || `${row.label} ${row.detail}`.toLocaleLowerCase().includes(needle)).slice(0, 12);
+  }, [events, members, notices, profile, query, speakers, user]);
+
+  useEffect(() => {
+    const openSearch = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === "k") {
+        event.preventDefault();
+        searchDialog.current?.showModal();
+        requestAnimationFrame(() => searchInput.current?.focus());
+      }
+    };
+    window.addEventListener("keydown", openSearch);
+    return () => window.removeEventListener("keydown", openSearch);
+  }, []);
+
+  const closeSearch = () => {
+    searchDialog.current?.close();
+    setQuery("");
+  };
   return (
     <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
       <a href="#dashboard-content" className="d-skip">
@@ -305,9 +361,9 @@ export function Dashboard() {
       </a>
       <aside className="d-sidebar">
         <Link className="d-brand" href="/" aria-label="LOGICA home">
-          <Image src="/logica-logo-black.png" alt="" width={40} height={40} />
+          <span className="d-logo-chip" aria-hidden="true"><Image src="/logica-logo-black.png" alt="" width={26} height={26} /></span>
           <span>
-            LOGICA<small>University of Illinois Chicago</small>
+            LOGICA<small>{user ? roleName(user, profile) : "UIC"}</small>
           </span>
         </Link>
         <button
@@ -445,11 +501,24 @@ export function Dashboard() {
         className="d-workarea"
       >
         <header className="d-topbar">
-          <span>
+          <span className="d-crumbs">
+            <span>{speaker ? "Your visit" : user && runsWorkspace(user) ? "Workspace" : "Member home"}</span>
+            <span aria-hidden="true">›</span>
             <strong>{titleFor(section, user, profile)}</strong>
           </span>
           <div>
-            <span className="d-campus">LOGICA @ UIC</span>
+            {user?.accountKind !== "SPEAKER" && (
+              <button className="d-global-search" type="button" onClick={() => { searchDialog.current?.showModal(); requestAnimationFrame(() => searchInput.current?.focus()); }}>
+                <Icon name="search" />
+                <span>Search…</span>
+                <kbd>{isMac ? "⌘" : "Ctrl"} K</kbd>
+              </button>
+            )}
+            {user?.accountKind === "MEMBER" && (
+              <Link className="d-button d-top-action" href="/dashboard/events">
+                {runsWorkspace(user) ? "+ New" : "Find an event"}
+              </Link>
+            )}
             {user && (
               <>
                 <Link
@@ -460,16 +529,40 @@ export function Dashboard() {
                   <Icon name="notifications" />
                   {unread > 0 && <i />}
                 </Link>
-                <Link
-                  href="/dashboard/profile"
-                  aria-label="My profile"
-                >
-                  <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-small" />
-                </Link>
+                <details ref={accountMenu} className="d-account-menu">
+                  <summary>
+                    <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-small" />
+                    <span>Profile &amp; prefs</span>
+                    <Icon name="chevron" />
+                  </summary>
+                  <nav aria-label="Profile and preferences" onClick={() => accountMenu.current?.removeAttribute("open")}>
+                    <Link href="/dashboard/profile">My profile</Link>
+                    <Link href="/dashboard/notifications">Notifications</Link>
+                    <Link href="/dashboard/connections">MCP Connections</Link>
+                    <Link href="/dashboard/settings">Settings</Link>
+                  </nav>
+                </details>
               </>
             )}
           </div>
         </header>
+        <dialog ref={searchDialog} className="d-search-dialog" aria-labelledby="d-search-title" onClose={() => setQuery("")}>
+          <div className="d-search-dialog-head">
+            <Icon name="search" />
+            <label id="d-search-title" className="d-sr" htmlFor="dashboard-search">Search your LOGICA workspace</label>
+            <input ref={searchInput} id="dashboard-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search sections and your permitted data…" />
+            <button type="button" onClick={closeSearch} aria-label="Close search">Esc</button>
+          </div>
+          <div className="d-search-results">
+            {searchResults.length ? searchResults.map((result, index) => (
+              <Link key={`${result.href}-${result.label}-${index}`} href={result.href} onClick={closeSearch}>
+                <span><strong>{result.label}</strong><small>{result.detail}</small></span>
+                <Icon name="arrow" />
+              </Link>
+            )) : <p>No permitted results match “{query}”.</p>}
+          </div>
+          <p className="d-search-help">Search only includes dashboard data already loaded for your account.</p>
+        </dialog>
         <main
           id="dashboard-content"
           className={`d-main ${chatFull ? "d-main-flush" : ""}`}

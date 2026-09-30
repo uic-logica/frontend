@@ -146,7 +146,7 @@ export function ProfileEditor({
   return (
     <>
       <Heading
-        title="Make yourself known."
+        title="My profile"
         description={
           !speaker
             ? "Your profile is how the LOGICA community gets to know you."
@@ -546,8 +546,8 @@ export function Settings({ user }: { user: SessionUser }) {
   return (
     <>
       <Heading
-        title="On your terms."
-        description="Choose how you hear from LOGICA and manage your account."
+        title="Settings"
+        description="Manage your account, privacy, security, and communication defaults."
       />
       <section className="d-panel d-settings">
         <h2>Email preferences</h2>

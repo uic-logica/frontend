@@ -23,7 +23,6 @@ export function SpeakerHome({
   const submission = profile?.speakerSubmission;
   const event = submission?.event ?? null;
   const stats = profile?.talkStats ?? null;
-  const first = (profile?.name || user.name || "there").split(" ")[0];
 
   const hasAvailability = !!submission?.availability?.length;
 
@@ -78,14 +77,8 @@ export function SpeakerHome({
   return (
     <>
       <Heading
-        title={`Welcome back, ${first}.`}
-        description={
-          outstanding.length
-            ? `Next up: ${outstanding
-                .map((c) => c.label.toLowerCase())
-                .join(", then ")}.`
-            : "You've given us everything we need. Nothing else to do."
-        }
+        title="My talk"
+        description="Everything the club and audience need for your visit, in one place."
       />
 
       <section className="d-talk">
