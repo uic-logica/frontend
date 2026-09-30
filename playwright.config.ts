@@ -6,6 +6,10 @@ export default defineConfig({
   testDir: "e2e",
   testMatch: "*.e2e.ts",
   retries: process.env.CI ? 1 : 0,
-  use: { baseURL: "http://localhost:3000" },
-  webServer: { command: "npm run start", url: "http://localhost:3000", reuseExistingServer: !process.env.CI },
+  use: { baseURL: `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3100"}` },
+  webServer: {
+    command: `npm run start -- -H 127.0.0.1 -p ${process.env.PLAYWRIGHT_PORT ?? "3100"}`,
+    url: `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3100"}`,
+    reuseExistingServer: false,
+  },
 });

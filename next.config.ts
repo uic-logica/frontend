@@ -19,12 +19,33 @@ const assetCache = "public, max-age=86400, stale-while-revalidate=2592000";
 // config needed on either side.
 const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
+const contentSecurityPolicy = [
+  "default-src 'self'", "script-src 'self'", "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:", "font-src 'self'", "connect-src 'self'", "object-src 'none'",
+  "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'", "worker-src 'self' blob:",
+  "manifest-src 'self'",
+].join("; ");
+
+const securityHeaders = [
+  { key: "Content-Security-Policy", value: contentSecurityPolicy },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=()" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+];
+
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   env: { NEXT_PUBLIC_ART_VERSION: artVersion },
   // next/image's optimized copies (team photos, logos) live 30 days instead of the default 4 hours.
   images: { minimumCacheTTL: 2592000 },
   async headers() {
     return [{
+      source: "/:path*",
+      headers: securityHeaders,
+    }, {
       source: "/journey/:file*",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
     }, {
@@ -34,11 +55,11 @@ const nextConfig: NextConfig = {
       source: "/:file([^/]+\\.(?:png|svg|jpg|jpeg|webp|ico))",
       headers: [{ key: "Cache-Control", value: assetCache }],
     }, {
-      source: "/:path(dashboard|profile|members|signin|speaker-signin|speaker-portal|admin|attendance|feed|forms|preview-a|preview-d|preview-hybrid|cardlab|blog)/:rest*",
-      headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+      source: "/:path(dashboard|profile|members|signin|signup|speaker-signin|speaker-portal|invite|admin|attendance|feed|forms|preview-a|preview-d|preview-hybrid|cardlab)/:rest*",
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
     }, {
       source: "/:section(events|speak)/:id",
-      headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
     }];
   },
   async rewrites() {
