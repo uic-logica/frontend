@@ -5,7 +5,7 @@
   --d-muted: #595959;
   --d-rule: #d9d9d9;
   --d-bg: var(--color-paper-dim, #f2f2f2);
-  --d-gold: var(--color-signal, #fecc15);
+  --d-gold: #ff6a3d;
   min-height: 100vh;
   background: var(--d-bg);
   color: var(--d-ink);
@@ -448,7 +448,7 @@
   background: #9b7800;
 }
 .d-feature .d-live-dot {
-  background: #fecc15;
+  background: #ff6a3d;
 }
 .d-feature h2 {
   font-family: var(--font-display);
@@ -501,7 +501,7 @@
   color: #476036;
 }
 .d-badge.pending {
-  background: #fff6d5;
+  background: #ffe4da;
   color: #725819;
 }
 .d-badge.declined {
@@ -660,7 +660,7 @@
   width: 15px;
 }
 .d-task-circle.gold {
-  background: #fff3b0;
+  background: #ffe4da;
   color: #604900;
   border-color: var(--d-gold);
 }
@@ -675,7 +675,7 @@
   text-underline-offset: 4px;
 }
 .d-note-panel {
-  background: #fff8d6;
+  background: #ffe4da;
   border-color: var(--d-gold);
 }
 .d-note-icon {
@@ -3102,7 +3102,7 @@
 /* Night glass, per logica.pen "35 Dashboard — Variant E (night)": the section's night
    painting behind everything, navy glass panels, white text, gold accents. */
 .dash {
-  --d-ink: #ffffff; --d-muted: rgb(255 255 255 / .7); --d-rule: rgb(255 255 255 / .14); --d-gold: #fecc15;
+  --d-ink: #ffffff; --d-muted: rgb(255 255 255 / .7); --d-rule: rgb(255 255 255 / .14); --d-gold: #ff6a3d;
   --d-glass: rgb(11 18 48 / .5); --d-blur: blur(16px) saturate(1.3); --d-tile: rgb(255 255 255 / .1);
   background: #141d3a var(--d-art) center / cover no-repeat fixed;
   color: #fff; color-scheme: dark; isolation: isolate;
@@ -3151,13 +3151,13 @@
   background: var(--d-glass); backdrop-filter: var(--d-blur); color: #fff; border: 0; border-radius: 28px; box-shadow: none; }
 .d-feature-label, .d-feature p, .d-note-panel p, .d-panel p, .d-muted, .d-small, .dash small { color: rgb(255 255 255 / .72); }
 .d-section-head a, .d-text-link { color: var(--d-gold); }
-.d-text-link:hover, .d-section-head a:hover { color: #ffe27a; }
+.d-text-link:hover, .d-section-head a:hover { color: #ff9a78; }
 .d-live-dot, .d-feature .d-live-dot { background: var(--d-gold); }
 .d-note-icon { background: var(--d-tile); color: #fff; }
 .d-task, .d-event-row, .d-update, .d-directory td { border-color: rgb(255 255 255 / .12); }
 .d-task-circle { border-color: rgb(255 255 255 / .25); color: #fff; background: var(--d-tile); }
-.d-task-circle.gold { background: rgb(254 204 21 / .18); color: var(--d-gold); }
-.d-task.complete .d-task-circle { background: rgb(254 204 21 / .15); border-color: rgb(254 204 21 / .4); color: var(--d-gold); }
+.d-task-circle.gold { background: rgb(255 106 61 / .18); color: var(--d-gold); }
+.d-task.complete .d-task-circle { background: rgb(255 106 61 / .15); border-color: rgb(255 106 61 / .4); color: var(--d-gold); }
 .d-task > svg, .d-event-row > svg, .d-stats dd span { color: rgb(255 255 255 / .6); }
 .d-task:hover strong { color: var(--d-gold); }
 .d-date-tile { background: var(--d-tile); color: #fff; border: 0; border-radius: 16px; }
@@ -3165,7 +3165,7 @@
 .d-stats dt, .d-stats dt svg { color: rgb(255 255 255 / .8); }
 .d-stats dd { color: #fff; }
 .d-badge { background: var(--d-tile); color: #fff; }
-.d-badge.confirmed { background: rgb(254 204 21 / .16); color: var(--d-gold); }
+.d-badge.confirmed { background: rgb(255 106 61 / .16); color: var(--d-gold); }
 .d-badge.pending { background: rgb(255 255 255 / .12); color: #fff; }
 .d-badge.declined { background: rgb(182 56 20 / .3); color: #ffb49a; }
 .d-identity progress, .d-identity progress::-webkit-progress-bar { background: rgb(255 255 255 / .12); }
@@ -3177,7 +3177,7 @@
 .d-button.secondary { background: #fff; color: #973011; }
 .d-text-button { color: var(--d-gold); }
 .d-error { background: rgb(182 56 20 / .28); color: #ffd9cc; border: 1px solid rgb(255 180 154 / .35); border-radius: 18px; backdrop-filter: var(--d-blur); }
-.d-success { background: rgb(254 204 21 / .14); color: #fff; border: 1px solid rgb(254 204 21 / .35); border-radius: 18px; }
+.d-success { background: rgb(255 106 61 / .14); color: #fff; border: 1px solid rgb(255 106 61 / .35); border-radius: 18px; }
 .d-skeleton > div { border-radius: 28px; background: rgb(11 18 48 / .45); }
 .d-directory th { background: rgb(255 255 255 / .06); color: rgb(255 255 255 / .75); }
 .d-directory td { color: rgb(255 255 255 / .85); }
@@ -3296,7 +3296,7 @@
   --d-ink: #f7f8fc;
   --d-muted: #aeb8d0;
   --d-rule: rgb(255 255 255 / 0.07);
-  --d-gold: #ffb23e;
+  --d-gold: #ff6a3d;
   --d-rust: #b63814;
   --d-main-bg: rgb(9 10 15 / 0.8);
   --d-panel-bg: rgb(18 19 24 / 0.85);
@@ -3406,7 +3406,7 @@
 .d-task, .d-event-row { padding: 11px 0; }
 .d-badge { min-height: 26px; padding: 5px 10px; border-radius: 14px; background: rgb(255 255 255 / .04); color: var(--d-muted); font-size: 12px; font-weight: 700; }
 .d-badge.confirmed { background: rgb(54 211 153 / .08); color: #70dda8; }
-.d-badge.pending { background: rgb(255 178 62 / .08); color: #ffb23e; }
+.d-badge.pending { background: rgb(255 106 61 / .08); color: #ff6a3d; }
 .d-badge.declined { background: rgb(255 98 61 / .08); color: #ff7655; }
 .d-form input, .d-form textarea, .d-form select, .d-search input, .d-filter select, .d-link-event select, .d-thread-input textarea, .d-window-row input {
   min-height: 48px; border: 1px solid rgb(255 255 255 / .14); border-radius: 10px; background: #0c0d12; color: var(--d-ink); padding: 12px 14px; font-size: 13px;
@@ -3618,4 +3618,38 @@
   .d-event-summary .d-button { width: 100%; }
   .d-date-tile { width: 58px; height: 66px; border-radius: 14px; }
   .d-chat-panel.is-full, .d-availability { min-height: 0; }
+}
+
+/* Review fixes: orange accents only, rounded corners instead of pills, and
+   every field inside the dashboard reads as a boxed, padded input. */
+.dash { --d-gold: #ff6a3d; }
+.d-sidebar nav > a, .d-nav-bar, .d-tabs button, .d-button, .d-top-action,
+.d-sidebar nav > a[aria-current="page"] { border-radius: 10px; }
+.d-badge, .d-count { border-radius: 8px; }
+.dash textarea,
+.dash select,
+.dash input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"]) {
+  box-sizing: border-box; max-width: 100%; border: 1px solid rgb(255 255 255 / .14); border-radius: 10px;
+  background: #0c0d12; color: var(--d-ink); padding: 12px 14px; font: inherit; font-size: 13px;
+}
+.dash textarea { width: 100%; min-height: 96px; line-height: 1.5; resize: vertical; }
+.dash textarea:focus, .dash select:focus, .dash input:focus { border-color: #ff4f1f; outline: 0; box-shadow: 0 0 16px rgb(182 56 20 / .2); }
+.dash .d-search-dialog-head input { padding: 0; border: 0; background: transparent; box-shadow: none; }
+
+/* The chip is a fixed square; the logo keeps its own aspect inside it. */
+.d-logo-chip { aspect-ratio: 1; }
+.d-brand .d-logo-chip img { width: 28px; height: 28px; padding: 0; border-radius: 0; background: none; object-fit: contain; }
+
+/* The rail's account row opens the same menu as the top bar, upward. */
+.d-side-menu { flex: 1; min-width: 0; }
+.d-side-menu summary { height: auto; min-height: 44px; padding: 6px 8px; gap: 10px; border: 0; background: none; font-size: 12px; }
+.d-side-menu summary:hover { background: rgb(255 255 255 / .06); }
+.d-side-menu summary > span:not(.d-avatar) { display: block; min-width: 0; }
+.d-sidebar .d-account-menu nav a { height: auto; min-height: 0; margin: 0; padding: 9px 10px; border-radius: 8px; font-size: 12px; }
+.d-side-menu summary strong, .d-side-menu summary small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.d-side-menu nav { top: auto; bottom: calc(100% + 6px); left: 0; right: auto; width: 100%; }
+.d-account-menu nav a { display: flex; align-items: center; justify-content: space-between; }
+@media (max-width: 680px) {
+  .d-side-menu summary { width: auto; padding: 6px 8px; }
+  .d-side-menu summary > span:not(.d-avatar) { display: block; }
 }
