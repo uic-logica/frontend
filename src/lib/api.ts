@@ -27,11 +27,26 @@ export async function api<T = unknown>(path: string, init?: RequestInit): Promis
  * Auth.js's `/api/auth/signout` rejects a bare POST with `MissingCSRF` —
  * confirmed by testing, not assumed — so the token has to be fetched first.
  */
-export async function signOut(): Promise<void> {
-  const { csrfToken } = await (await fetch("/api/auth/csrf")).json();
-  await fetch("/api/auth/signout", {
+export async function signOut(callbackUrl: string): Promise<void> {
+  const csrfResponse = await fetch("/api/auth/csrf");
+  const csrf = await csrfResponse.json().catch(() => null);
+  if (!csrfResponse.ok || typeof csrf?.csrfToken !== "string") {
+    throw new ApiError("Could not start sign out.", csrfResponse.status);
+  }
+
+  const response = await fetch("/api/auth/signout", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ csrfToken, json: "true" }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-Auth-Return-Redirect": "1",
+    },
+    body: new URLSearchParams({ csrfToken: csrf.csrfToken, callbackUrl }),
   });
+  const result = await response.json().catch(() => null);
+  const errorPath =
+    typeof result?.url === "string" &&
+    new URL(result.url, "http://localhost").pathname === "/api/auth/error";
+  if (!response.ok || typeof result?.url !== "string" || errorPath) {
+    throw new ApiError("Could not sign out.", response.status);
+  }
 }

@@ -151,6 +151,8 @@ export function Dashboard() {
       .catch(() => {});
   }, [hintOff, hintAccount]);
   const [leaving, setLeaving] = useState(false);
+  const leavingRef = useRef(false);
+  const confirmOut = useRef<HTMLDialogElement>(null);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
 
@@ -221,7 +223,7 @@ export function Dashboard() {
             const value = await api<T>(path);
             if (alive) set(value);
           } catch {
-            if (alive)
+            if (alive && !leavingRef.current)
               setErrors((prev) => [...prev, `Could not load ${label}.`]);
           }
         }
@@ -256,7 +258,7 @@ export function Dashboard() {
             : []),
         ]);
       } catch {
-        if (alive) setAuthState("error");
+        if (alive && !leavingRef.current) setAuthState("error");
       }
     }
     void load();
@@ -274,14 +276,19 @@ export function Dashboard() {
   // padding and max-width for it.
   const chatFull = section === "messages" && !!submissionId;
   async function logout() {
+    if (leavingRef.current) return;
+    leavingRef.current = true;
     setLeaving(true);
+    const destination =
+      user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin";
     try {
-      await signOut();
+      await signOut(destination);
       forgetSession();
-      router.push(
-        user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin",
-      );
+      // A document-level replacement clears the dashboard/router caches and
+      // keeps Back from restoring protected UI after the cookie is gone.
+      window.location.replace(destination);
     } catch {
+      leavingRef.current = false;
       setErrors(["Could not sign out. Please try again."]);
       setLeaving(false);
     }
@@ -408,11 +415,27 @@ export function Dashboard() {
                 <button
                   aria-label="Sign out"
                   title="Sign out"
-                  onClick={logout}
+                  onClick={() => confirmOut.current?.showModal()}
                   disabled={leaving}
                 >
                   <Icon name="exit" />
                 </button>
+                {/* ponytail: native <dialog> gives top layer, focus trap and Esc for free */}
+                <dialog ref={confirmOut} className="d-confirm" aria-labelledby="d-confirm-title">
+                  <h2 id="d-confirm-title">Sign out of LOGICA?</h2>
+                  <p>You&apos;ll need your password to sign back in.</p>
+                  <form method="dialog" className="d-actions">
+                    <button className="d-button secondary" autoFocus>Cancel</button>
+                    <button
+                      type="button"
+                      className="d-button"
+                      disabled={leaving}
+                      onClick={logout}
+                    >
+                      {leaving ? "Signing out…" : "Sign out"}
+                    </button>
+                  </form>
+                </dialog>
               </div>
             )}
           </div>

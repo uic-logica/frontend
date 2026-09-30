@@ -3252,3 +3252,10 @@
 
 /* The composer's textarea had no side padding, so text touched the border. */
 .d-composer textarea { padding: 14px 16px; }
+
+/* Sign-out confirmation (native <dialog>) */
+.d-confirm { border: 0; border-radius: 20px; padding: 28px; max-width: min(380px, calc(100vw - 32px)); background: #1c1a3a; color: #fff; box-shadow: 0 24px 60px rgb(0 0 0 / .45); }
+.d-confirm::backdrop { background: rgb(8 7 20 / .6); backdrop-filter: blur(4px); }
+.d-confirm h2 { margin: 0 0 8px; font-size: 1.25rem; }
+.d-confirm p { margin: 0 0 20px; color: rgb(255 255 255 / .75); }
+.d-confirm .d-actions { justify-content: flex-end; }
