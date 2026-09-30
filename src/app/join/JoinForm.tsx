@@ -41,9 +41,8 @@ export function JoinForm() {
           name: name.trim(),
           email: email.trim().toLowerCase(),
           track,
-          major: major.trim() || null,
-          // The backend wants a number or null, never "" or NaN.
-          gradYear: gradYear.trim() ? Number(gradYear) : null,
+          major: major.trim(),
+          gradYear: Number(gradYear),
           why: why.trim(),
         }),
       });
@@ -172,10 +171,11 @@ export function JoinForm() {
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="grid gap-2">
             <label htmlFor={`${id}-major`} className="type-label text-white">
-              Major <span className="opacity-60">(optional)</span>
+              Major
             </label>
             <input
               id={`${id}-major`}
+              required
               maxLength={100}
               value={major}
               onChange={(e) => setMajor(e.target.value)}
@@ -184,11 +184,12 @@ export function JoinForm() {
           </div>
           <div className="grid gap-2">
             <label htmlFor={`${id}-year`} className="type-label text-white">
-              Graduation year <span className="opacity-60">(optional)</span>
+              Graduation year
             </label>
             <input
               id={`${id}-year`}
               type="number"
+              required
               inputMode="numeric"
               min={1900}
               max={2100}
@@ -207,6 +208,7 @@ export function JoinForm() {
           <textarea
             id={`${id}-why`}
             required
+            minLength={40}
             rows={5}
             maxLength={2000}
             value={why}
@@ -214,7 +216,7 @@ export function JoinForm() {
             className={darkInputClass}
           />
           <p className="text-body-sm text-white opacity-60">
-            No prior experience needed — say what you want to get out of it.
+            At least 40 characters. No prior experience needed; say what you want to get out of it.
           </p>
         </div>
         </>
