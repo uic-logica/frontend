@@ -31,7 +31,8 @@ export const metadata: Metadata = {
   description: siteDescription,
   applicationName: "LOGICA @ UIC",
   manifest: "/manifest.webmanifest",
-  robots: { index: true, follow: true },
+  // Vercel previews stay out of search results; production (both domains) is indexable, canonical points at logicauic.org.
+  robots: { index: process.env.VERCEL_ENV !== "preview", follow: true },
   openGraph: {
     type: "website", locale: "en_US", siteName: "LOGICA @ UIC", url: siteUrl,
     title: "LOGICA @ UIC | Latinx Community in Computing", description: siteDescription,

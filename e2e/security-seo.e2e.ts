@@ -23,3 +23,17 @@ test("publishes crawl metadata and a real 404", async ({ request }) => {
   expect((await request.get("/.well-known/security.txt")).ok()).toBeTruthy();
   expect((await request.get("/definitely-not-a-page")).status()).toBe(404);
 });
+
+test("public pages are indexable, private pages are not", async ({ request }) => {
+  const robotsMeta = async (path: string) =>
+    (await (await request.get(path)).text()).match(/<meta name="robots" content="([^"]*)"/)?.[1] ?? "";
+  for (const path of ["/", "/about", "/events", "/join"]) expect(await robotsMeta(path), path).toContain("index, follow");
+  for (const path of ["/dashboard", "/signin", "/signup", "/feed"]) expect(await robotsMeta(path), path).toContain("noindex");
+});
+
+test("public pages load with no CSP violations", async ({ page }) => {
+  const violations: string[] = [];
+  page.on("console", (m) => { if (/Content Security Policy|Refused to/i.test(m.text())) violations.push(m.text()); });
+  for (const path of ["/", "/events", "/join", "/signin"]) await page.goto(path, { waitUntil: "networkidle" });
+  expect(violations).toEqual([]);
+});
