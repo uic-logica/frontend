@@ -234,7 +234,9 @@ export default function Home() {
           alternateName: "Latinx Organization for Growth in Computing and Academics",
           description: "A student organization at the University of Illinois Chicago supporting Latinx and underrepresented students in computing.",
           email: "logica@uic.edu",
-          ...(siteUrl ? { url: siteUrl.href } : {}),
+          url: siteUrl.href,
+          logo: new URL("/icon.png", siteUrl).href,
+          sameAs: ["https://www.linkedin.com/company/logica-uic"],
         }).replace(/</g, "\\u003c") }}
       />
       <PageContainer>

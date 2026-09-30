@@ -1,4 +1,4 @@
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, siteUrl } from "@/lib/seo";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
 import { EventsList, type ClubEvent } from "./EventsList";
 
@@ -42,6 +42,21 @@ export default async function EventsPage() {
 
   return (
     <ClubShell>
+      {upcoming.map((event) => (
+        <script
+          key={event.id}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org", "@type": "Event", name: event.title,
+            startDate: event.startsAt, eventStatus: "https://schema.org/EventScheduled",
+            eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+            ...(event.description ? { description: event.description } : {}),
+            ...(event.location ? { location: { "@type": "Place", name: event.location } } : {}),
+            url: new URL(`/events/${event.id}`, siteUrl).href,
+            organizer: { "@type": "Organization", name: "LOGICA @ UIC", url: siteUrl.href },
+          }).replace(/</g, "\\u003c") }}
+        />
+      ))}
       <PageContainer>
         <SectionContainer>
           <div className="mx-auto max-w-3xl text-center">

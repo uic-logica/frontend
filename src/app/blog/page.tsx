@@ -1,6 +1,6 @@
 import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { ...pageMetadata("Blog", "Updates on what the LOGICA computing community at UIC is building, learning, and sharing.", "/blog"), robots: { index: false, follow: true } };
+export const metadata = pageMetadata("Blog", "Updates on what the LOGICA computing community at UIC is building, learning, and sharing.", "/blog");
 
 import Link from "next/link";
 import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
