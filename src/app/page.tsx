@@ -1,7 +1,11 @@
 import { siteUrl } from "@/lib/seo";
 import { pageMetadata } from "@/lib/seo";
 
-export const metadata = pageMetadata("Latinx Community in Computing", "Join LOGICA at the University of Illinois Chicago: a community supporting Latinx students in computing through workshops, mentorship, and company visits.", "/");
+// The root layout's "%s | LOGICA @ UIC" template skips its own segment, so the home page names itself in full.
+export const metadata = {
+  ...pageMetadata("Latinx Community in Computing", "LOGICA @ UIC is the Latinx computing community at the University of Illinois Chicago (UIC): workshops, mentorship, company visits, and software teams.", "/"),
+  title: { absolute: "LOGICA @ UIC | Latinx Community in Computing at UIC" },
+};
 
 import Link from "next/link";
 import { AnimatedLogo } from "@/components/club/AnimatedLogo";
@@ -229,14 +233,26 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "LOGICA @ UIC",
-          alternateName: "Latinx Organization for Growth in Computing and Academics",
-          description: "A student organization at the University of Illinois Chicago supporting Latinx and underrepresented students in computing.",
-          email: "logica@uic.edu",
-          url: siteUrl.href,
-          logo: new URL("/icon.png", siteUrl).href,
-          sameAs: ["https://www.linkedin.com/company/logica-uic"],
+          "@graph": [
+            {
+              // WebSite is what Google reads for the site name shown in results.
+              "@type": "WebSite",
+              name: "LOGICA @ UIC",
+              alternateName: ["LOGICA UIC", "UIC LOGICA", "LOGICA"],
+              url: siteUrl.href,
+            },
+            {
+              "@type": "Organization",
+              name: "LOGICA @ UIC",
+              alternateName: ["LOGICA UIC", "UIC LOGICA", "LOGICA", "Latinx Organization for Growth in Computing and Academics"],
+              description: "A student organization at the University of Illinois Chicago (UIC) supporting Latinx and underrepresented students in computing.",
+              email: "logica@uic.edu",
+              url: siteUrl.href,
+              logo: new URL("/icon.png", siteUrl).href,
+              parentOrganization: { "@type": "CollegeOrUniversity", name: "University of Illinois Chicago", url: "https://www.uic.edu/" },
+              sameAs: ["https://github.com/uic-logica"],
+            },
+          ],
         }).replace(/</g, "\\u003c") }}
       />
       <PageContainer>
