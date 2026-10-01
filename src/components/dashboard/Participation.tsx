@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { linkParts } from "@/lib/linkify";
 import { api } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
 import { Icon } from "./Icon";
@@ -184,9 +185,12 @@ export function Events({
                   </button>
                 )}
               </div>
-              <p>
-                {e.description ||
-                  "More details will be shared by the organizers."}
+              <p className="d-event-description">
+                {e.description
+                  ? linkParts(e.description).map((part, i) =>
+                      part.href ? <a key={i} href={part.href} target="_blank" rel="noopener noreferrer">{part.text}</a> : part.text,
+                    )
+                  : "More details will be shared by the organizers."}
               </p>
               <button
                 className="d-text-button"

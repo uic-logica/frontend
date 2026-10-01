@@ -3674,3 +3674,7 @@
   .d-tabbar > [aria-current="page"], .d-tabbar > button[aria-expanded="true"] { color: var(--d-gold); background: rgb(255 255 255 / .06); }
   .d-tabbar > a:focus-visible, .d-tabbar > button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
 }
+
+/* Event descriptions keep the line breaks they were written with; links are clickable. */
+.d-event-description { white-space: pre-line; }
+.d-event-description a { color: var(--d-gold); text-decoration: underline; text-underline-offset: .2em; overflow-wrap: anywhere; }
