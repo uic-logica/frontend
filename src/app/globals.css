@@ -351,8 +351,10 @@
 .club-shell .glass-panel, .club-shell .light-surface { padding: clamp(32px, 4vw, 56px); }
 .club-shell :is(.club-card, .glass, .light-surface, .glass-panel) :is(p, .text-body-sm) { color: var(--text-soft); }
 .club-shell :is(.club-card, .glass, .light-surface) .text-signal { color: #ffc98a; }
-/* Every logo is a white silhouette on the night art. */
-.club-shell .partner-logo { filter: brightness(0) invert(1); }
+/* Logos keep their brand colors (the user's call, over the mocks' white set); only
+   the all-black marks turn white, and the darkest ones get a lift, so they read on the glass. */
+.club-shell .partner-logo:is([src*="zebra"], [src*="spaceapps"]) { filter: brightness(0) invert(1); }
+.club-shell .partner-logo:is([src*="breakthrough"], [src*="ai-collective"], [src*="dpi-icon"]) { filter: brightness(1.5) saturate(1.3); }
 .club-shell .site-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 28px; background: var(--action); color: #fff; font-weight: 600; transition: transform .2s ease; }
 .club-shell .site-button:hover { transform: translateY(-1px); }
 .club-shell .site-button-soft { background: #f4e7e2; color: #973011; }

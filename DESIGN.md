@@ -12,7 +12,7 @@ for the public pages, "App · Desktop" and "App · Mobile" for the dashboard. Fr
 | Art | `public/journey/v3-<page>.webp`, 2x of the 1440 frame | `v3-<page>-mobile.webp`, 2x of the 390 frame |
 | Objects | navy glass `rgb(11 18 48 / .5)`, 16px blur, 28px corners | denser glass `rgb(8 17 38 / .85)`, 18–22px corners |
 | Type | DM Sans 500; h1 54, h2 38, card titles 23, body 15–19 | DM Sans 600; h1 34, h2 22, titles 15, body 12–14 |
-| Accents | gold `#fecc15` kickers, rust `#b63814` buttons, white logos | gold `#ffd45c`, rows with hairlines instead of cards |
+| Accents | gold `#fecc15` kickers, rust `#b63814` buttons, logos in brand colors | gold `#ffd45c`, rows with hairlines instead of cards |
 
 - Each page's painting is drawn at exactly the window width and never rescaled, so browser zoom only resizes
   text and cards. It scrolls with the page and stops at its bottom edge if the content runs longer. Real
