@@ -1,5 +1,5 @@
 import { pageMetadata, siteUrl } from "@/lib/seo";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { ClubShell } from "@/components/club/ClubShell";
 import { EventsList, type ClubEvent } from "./EventsList";
 
 export const metadata = pageMetadata("Events & Workshops", "Explore LOGICA events at UIC, including computing workshops, company visits, guest speakers, and community gatherings.", "/events");
@@ -36,7 +36,7 @@ async function getEvents(): Promise<EventsData> {
   }
 }
 
-/** Layout is logica.pen "30 Events — Variant E (night)": title, tabs, events. */
+/** Layout is logica.pen V3 "03 · Events" (desktop and mobile): title, tabs, events. */
 export default async function EventsPage() {
   const { upcoming, past, error } = await getEvents();
 
@@ -57,20 +57,16 @@ export default async function EventsPage() {
           }).replace(/</g, "\\u003c") }}
         />
       ))}
-      <PageContainer>
-        <SectionContainer>
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="type-title text-3xl text-white md:text-4xl">Events</h1>
-            <p className="mt-4 text-body-lg text-white">
-              From workshops to socials, hack nights to tech talks — we host events each semester.
-            </p>
-          </div>
-        </SectionContainer>
-
-        <SectionContainer>
-          <EventsList upcoming={upcoming} past={past} error={error} />
-        </SectionContainer>
-      </PageContainer>
+      <main className="site-page events-page">
+        <header className="page-head">
+          <h1>Events</h1>
+          <p>
+            <span className="only-d">From workshops to socials, hack nights to tech talks — we host events each semester.</span>
+            <span className="only-m">Workshops, socials, hack nights, and tech talks throughout the semester.</span>
+          </p>
+        </header>
+        <EventsList upcoming={upcoming} past={past} error={error} />
+      </main>
     </ClubShell>
   );
 }

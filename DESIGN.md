@@ -1,20 +1,28 @@
-# Visual direction · night redesign (September 2026)
+# Visual direction · V3 night design (October 2026)
 
-> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Anyone building UI · **Type:** Reference
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Oct 1, 2026 · **Audience:** Anyone building UI · **Type:** Reference
 
 **This is the source of truth for how the site looks, and it supersedes any conflicting guidance below.**
-The designs are the "Variant E (night)" frames in [`design/logica.pen`](design/logica.pen) (open it in
-[Pencil](https://pen.dev)): 28–33 for the public pages and "35 Dashboard — Variant E (night) · C clouds +
-city lights" for the dashboard. Earlier design proposals are retired; the pen and this file are the only spec.
+The designs are the frames labeled **HANDOFF · APPLY** in [`design/logica.pen`](design/logica.pen) (open it in
+[Pencil](https://pen.dev); start at "★ START HERE"): "Website · Desktop" (1440) and "Website · Mobile" (390)
+for the public pages, "App · Desktop" and "App · Mobile" for the dashboard. Frames labeled ARCHIVE are retired.
 
-- Each page has one night painting of Chicago (`public/journey/*-night.webp`), drawn at exactly the window
-  width and never rescaled, so browser zoom only resizes text and cards. It scrolls with the page and stops
-  at its bottom edge if the content runs longer. See `JourneyBackdrop.tsx`.
-- Objects are navy glass (`rgb(11 18 48 / .5)` with a background blur, 28px corners), white text, gold
-  (`#fecc15`) labels and links, rust (`#b63814`) primary buttons. Form fields are a soft grey (`#e4e6ed`) so they read without glaring on the night glass.
-- Navigation is a glass capsule with one white indicator that slides between items (mapier.ai's motion,
-  360ms ease-out), including onto Sign in; the dashboard sidebar slides the same way.
-- Type is DM Sans throughout, medium weight for headings. The mapier.ai site is a reference only.
+| | Desktop | Phone (< 800px) |
+|---|---|---|
+| Art | `public/journey/v3-<page>.webp`, 2x of the 1440 frame | `v3-<page>-mobile.webp`, 2x of the 390 frame |
+| Objects | navy glass `rgb(11 18 48 / .5)`, 16px blur, 28px corners | denser glass `rgb(8 17 38 / .85)`, 18–22px corners |
+| Type | DM Sans 500; h1 54, h2 38, card titles 23, body 15–19 | DM Sans 600; h1 34, h2 22, titles 15, body 12–14 |
+| Accents | gold `#fecc15` kickers, rust `#b63814` buttons, logos in brand colors | gold `#ffd45c`, rows with hairlines instead of cards |
+
+- Each page's painting is drawn at exactly the window width and never rescaled, so browser zoom only resizes
+  text and cards. It scrolls with the page and stops at its bottom edge if the content runs longer. Real
+  phones (coarse pointer) get the phone painting. See `JourneyBackdrop.tsx`.
+- Phones follow the separate mobile frames, including their shorter copy: `.only-d` / `.only-m` hold the two
+  versions side by side in each page. Home's vertical gaps are in vw so each section stays over its landmark.
+- Form fields are translucent with a hairline border (`src/components/ui/darkForm.ts`).
+- Navigation is a glass capsule with one white indicator that slides between items (360ms ease-out).
+- Things the design leaves out stay: the Join application form, Create account / forgot-password links on
+  Sign in, the About timeline, and "Notify me" (the newsletter form) on an empty Events list.
 
 # Frontend design in the code
 
@@ -22,11 +30,9 @@ The implementation is the reference. Public pages, the workspace, and standalone
 
 ## Public pages
 
-`src/app/globals.css` puts `/logicawallpaper.png` on the body as a fixed, cover-sized background with a 0.3 black overlay. `src/components/club/ClubShell.tsx` provides a transparent fixed nav and a black footer with corner notches and an ember glow. The shell uses `/logica-logo-white.png`.
+`src/components/club/ClubShell.tsx` mounts the painting (`JourneyBackdrop.tsx`), the fixed nav, and the footer. Navigation is About, Events, Team, Blog, and Sign in (Dashboard when signed in); below 800px it becomes the logo chip, a Sign in pill and a menu button. The footer stacks About, Events, Team, Blog, Join and Sign in on the right with email, Privacy, Terms and Support under them; on phones the links split into Explore and Connect columns.
 
-Navigation is About, Events, Team, Blog, and Sign in. Desktop links hide while scrolling down; the mobile menu is selected below 800px. The footer links email, Join, Sign in, Privacy, Terms, and Support.
-
-`PageContainer` and `SectionContainer` in `ClubShell.tsx` provide the responsive padding and section spacing. `.club-card` supplies a one-rem radius, white border, and gold hover edge. Only `.club-card-interactive` adds the four-pixel hover lift. Team cards in `src/app/team/page.tsx` use rounded photos and a name-color change, without a lift.
+The V3 pages (Home, About, Events, Team, Blog, Join, Sign in) use `.site-page`, `.page-head`, `.page-section`, `.page-grid-*` and `.page-card` from the "Public site, logica.pen V3" block of `globals.css`. Older routes (partner, speak, legal, invites, event detail) still use `PageContainer`/`SectionContainer` and `.club-card`, which share the same glass. `.club-card-interactive` adds a small hover lift.
 
 ## Tokens and type
 

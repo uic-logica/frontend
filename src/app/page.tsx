@@ -10,23 +10,14 @@ export const metadata = {
 import Link from "next/link";
 import { AnimatedLogo } from "@/components/club/AnimatedLogo";
 import type { ReactNode } from "react";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { ClubShell } from "@/components/club/ClubShell";
 import { LogoMarquee, PartnerLogo } from "@/components/club/LogoMarquee";
 import { HERO_REVEAL_DURATION, TypewriterLine } from "@/components/club/Typewriter";
 
 const stats = [
-  {
-    value: "100+",
-    label: "Members building community and skill across UIC.",
-  },
-  {
-    value: "20+",
-    label: "Workshops, company visits, and socials hosted each year.",
-  },
-  {
-    value: "1",
-    label: "Mission: Latinx growth in computing and academics at UIC.",
-  },
+  { value: "100+", label: "Members building community and skill across UIC.", short: "members" },
+  { value: "20+", label: "Workshops, company visits, and socials hosted each year.", short: "events yearly" },
+  { value: "1", label: "Mission: Latinx growth in computing and academics at UIC.", short: "shared mission" },
 ];
 
 const membersLand = [
@@ -50,11 +41,11 @@ const PARTNER_CATEGORIES = [
     key: "company-visits",
     label: "Company Visits",
     partners: [
-      { name: "Aon", src: "/sponsors/aon.svg", height: 40 },
-      { name: "Microsoft", src: "/sponsors/members/microsoft.svg", height: 40 },
-      { name: "Google", src: "/sponsors/members/google.svg", height: 40 },
-      { name: "CDW", src: "/sponsors/cdw.svg", height: 40 },
-      { name: "84.51°", src: "/sponsors/8451.png", height: 36 },
+      { name: "Aon", src: "/sponsors/aon.svg", height: 36 },
+      { name: "Microsoft", src: "/sponsors/members/microsoft.svg", height: 36 },
+      { name: "Google", src: "/sponsors/members/google.svg", height: 36 },
+      { name: "CDW", src: "/sponsors/cdw.svg", height: 36 },
+      { name: "84.51°", src: "/sponsors/8451.png", height: 32 },
     ],
   },
   {
@@ -85,141 +76,107 @@ const PARTNER_CATEGORIES = [
   },
 ] as const;
 
+const icon = (d: ReactNode) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    {d}
+  </svg>
+);
+
+/** Desktop cards and the phone list share this; `short` is the phone copy (logica.pen V3 mobile). */
 const pathways = [
   {
-    index: 1,
     title: "Development",
     text: "Project teams building this site and the club's tools.",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-      </svg>
-    ),
+    short: "Build club projects and practical tools.",
+    icon: icon(<path d="m16 18 6-6-6-6M8 6l-6 6 6 6" />),
   },
   {
-    index: 2,
     title: "Events",
     text: "Socials, hack nights, company visits, and talks.",
+    short: "Meet people at talks, visits, and socials.",
     link: "/events",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
+    icon: icon(<><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>),
   },
   {
-    index: 3,
     title: "Community",
     text: "Discord, meetups, and Latinx technologists at UIC.",
+    short: "Find peers across UIC computing programs.",
     link: "/join",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-        />
-      </svg>
-    ),
+    icon: icon(<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></>),
   },
 ];
 
-function LevelCard({
-  index,
-  title,
-  text,
-  link,
-  icon,
-}: {
-  index: number;
-  title: string;
-  text: string;
-  link?: string;
-  icon?: ReactNode;
-}) {
-  const card = (
-    <div
-      className={`pathway-card club-card group relative flex h-full flex-col bg-white/[0.02] p-6 ${
-        link ? "club-card-interactive hover:bg-white/[0.04]" : ""
-      }`}
-    >
-      <div className="mb-4 flex h-5 items-center justify-between">
-        <span className="text-xs font-semibold tracking-[0.3em] text-white transition-colors duration-300">
-          {String(index).padStart(2, "0")}
-        </span>
-        {link ? (
-          <svg
-            viewBox="0 0 24 24"
-            className="h-5 w-5 text-white/20 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:text-signal"
-            fill="currentColor"
-            aria-hidden
-          >
-            <path d="M18.25 15.5a.75.75 0 0 1-.75-.75V7.56L7.28 17.78a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L16.44 6.5H9.25a.75.75 0 0 1 0-1.5h9a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75Z" />
-          </svg>
-        ) : null}
-      </div>
-      {icon ? <div className="pathway-illustration mb-3 text-white/80">{icon}</div> : null}
-      <h3 className="text-xl font-semibold text-white">{title}</h3>
-      <span className="mt-3 block h-px w-8 bg-white/15 transition-all duration-300 group-hover:w-12 group-hover:bg-signal" />
-      <p className="mt-3 text-body-sm leading-relaxed text-white">{text}</p>
-    </div>
-  );
+const arrow = (
+  <svg viewBox="0 0 24 24" className="pathway-arrow" fill="currentColor" aria-hidden>
+    <path d="M18.25 15.5a.75.75 0 0 1-.75-.75V7.56L7.28 17.78a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L16.44 6.5H9.25a.75.75 0 0 1 0-1.5h9a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75Z" />
+  </svg>
+);
 
-  if (!link) return card;
+/** One pathway: a glass card on desktop, a row of the list panel on phones. */
+function Pathway({ index, title, text, short, link, icon }: (typeof pathways)[number] & { index: number; link?: string }) {
+  const body = (
+    <>
+      <span className="pathway-index">
+        {String(index).padStart(2, "0")}
+        {link ? arrow : null}
+      </span>
+      <span className="pathway-icon">{icon}</span>
+      <span className="pathway-copy">
+        <span className="pathway-title">{title}</span>
+        <span className="pathway-text only-d">{text}</span>
+        <span className="pathway-text only-m">{short}</span>
+      </span>
+    </>
+  );
+  return <li>{link ? <Link href={link} className="pathway">{body}</Link> : <div className="pathway">{body}</div>}</li>;
+}
+
+/** Desktop partners panel: every category, logos in white. */
+function Partners() {
   return (
-    <Link href={link} className="block h-full">
-      {card}
-    </Link>
+    <section className="home-partners glass only-d" aria-labelledby="partners-title">
+      <h2 id="partners-title">Our Partners</h2>
+      <p className="home-partners-sub">The organizations that make LOGICA possible</p>
+      {PARTNER_CATEGORIES.map((category) => (
+        <div key={category.key} className="partner-group">
+          <span className="partner-label">{category.label}</span>
+          {category.partners.length > 0 ? (
+            <div className="partner-logos">
+              {category.partners.map((partner) => (
+                <PartnerLogo key={partner.name} {...partner} />
+              ))}
+            </div>
+          ) : (
+            <p className="partner-note">{"note" in category ? category.note : "Coming soon"}</p>
+          )}
+        </div>
+      ))}
+      <div className="partner-ask">
+        <p className="partner-ask-q">Interested in partnering with LOGICA?</p>
+        <p>Join our community of innovators and tech leaders.</p>
+        <Link href="/partner" className="site-button">Become a Partner</Link>
+      </div>
+    </section>
   );
 }
 
-function Partners() {
+/** Phone partners: one compact panel, a few logos and the ask (logica.pen V3 mobile). */
+function PartnersCompact() {
+  const few = [PARTNER_CATEGORIES[0].partners[1], PARTNER_CATEGORIES[0].partners[0], PARTNER_CATEGORIES[0].partners[3], PARTNER_CATEGORIES[2].partners[0]];
   return (
-    <section className="partners-content mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="w-3/4 flex flex-col items-center mx-auto">
-        <div className="type-title text-3xl text-white text-center md:text-4xl">Our Partners</div>
-        <div className=" text-white lg:text-2xl text-lg mt-5 text-center">
-          The organizations that make LOGICA possible
+    <section className="home-partners-m only-m" aria-labelledby="partners-title-m">
+      <h2 id="partners-title-m">Our partners</h2>
+      <div className="glass-m">
+        <p>Organizations that host visits, workshops, and opportunities for LOGICA members.</p>
+        <div className="partner-logos">
+          {few.map((partner) => (
+            <PartnerLogo key={partner.name} {...partner} height={28} />
+          ))}
         </div>
-      </div>
-
-      <div className="mt-14 space-y-12">
-        {PARTNER_CATEGORIES.map((category) => (
-          <div key={category.key}>
-            {category.label ? (
-              <div className="mb-6 flex items-center justify-center gap-4">
-                <span className="h-px w-8 bg-white/15 sm:w-12" />
-                <span className="text-xs font-medium uppercase tracking-[0.25em] text-white">
-                  {category.label}
-                </span>
-                <span className="h-px w-8 bg-white/15 sm:w-12" />
-              </div>
-            ) : null}
-            {category.partners.length > 0 ? (
-              <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-                {category.partners.map((partner) => (
-                  <PartnerLogo key={partner.name} {...partner} />
-                ))}
-              </div>
-            ) : (
-              <p className="text-center text-sm italic text-white">
-                {"note" in category ? category.note : "Coming soon"}
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="club-card mx-auto mt-16 flex w-fit max-w-xl flex-col items-center gap-3 bg-white/[0.02] px-8 py-10 text-center">
-        <p className="text-lg text-white md:text-xl">Interested in partnering with LOGICA?</p>
-        <p className="text-sm text-white">Join our community of innovators and tech leaders.</p>
-        <Link
-          href="/partner"
-          className="mt-3 inline-flex items-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-black transition-transform duration-300 hover:-translate-y-0.5"
-        >
-          Become a Partner
-        </Link>
+        <p className="partner-ask-m">
+          <span>Interested in partnering?</span>
+          <Link href="/partner">Get in touch</Link>
+        </p>
       </div>
     </section>
   );
@@ -255,92 +212,79 @@ export default function Home() {
           ],
         }).replace(/</g, "\\u003c") }}
       />
-      <PageContainer>
-        <SectionContainer className="home-hero grid items-center gap-10 pl-6 sm:pl-10 lg:grid-cols-[minmax(0,1fr)_minmax(240px,340px)] lg:gap-12 lg:pl-16">
-          <div className="hero-copy min-w-0">
-            <p className="mb-3 text-xl font-semibold text-signal md:text-3xl">
-              We are
-            </p>
+      <main className="home">
+        <section className="home-hero">
+          <div className="hero-copy">
+            <p className="hero-kicker">We are</p>
             <TypewriterLine />
-            <div className="hero-description mt-10 text-base md:text-lg">
-              <p className="max-w-2xl text-white">
-                Increasing the participation and success of students from Latinx and underrepresented
-                communities pursuing careers in the field of computing and computer science.
-              </p>
-            </div>
+            <p className="hero-text only-d">
+              Increasing the participation and success of students from Latinx and underrepresented
+              communities pursuing careers in the field of computing and computer science.
+            </p>
+            <p className="hero-text only-m">
+              A community for Latinx and underrepresented students building careers in computing.
+            </p>
           </div>
-          <div className="hero-mark order-first mx-auto w-full max-w-[240px] text-white sm:max-w-[280px] lg:order-last lg:max-w-[340px]">
+          <div className="hero-mark">
             <AnimatedLogo duration={HERO_REVEAL_DURATION} />
           </div>
-        </SectionContainer>
+        </section>
 
-        <SectionContainer className="home-numbers mt-20 pl-6 sm:pl-10 lg:pl-16">
-          <h2 className="mb-8 type-title text-3xl text-white md:text-4xl">By the numbers</h2>
-          <div className="home-stats glass-panel grid grid-cols-1 md:grid-cols-3 gap-8">
+        <section className="home-numbers" aria-labelledby="numbers-title">
+          <h2 id="numbers-title">By the numbers</h2>
+          <div className="home-stats glass">
             {stats.map((s) => (
-              <div key={s.value} className="w-full text-left">
-                <div className="mb-3 font-display text-3xl text-white md:text-4xl">{s.value}</div>
-                <div className="text-lg text-white">{s.label}</div>
+              <div key={s.value}>
+                <span className="stat-value">{s.value}</span>
+                <span className="stat-label only-d">{s.label}</span>
+                <span className="stat-label only-m">{s.short}</span>
               </div>
             ))}
           </div>
-        </SectionContainer>
+        </section>
 
-        <SectionContainer className="home-destinations light-surface">
-          <h2 className="mb-10 text-center type-title text-3xl text-white md:text-4xl">
-            Where Our Members Land
+        <section className="home-land glass" aria-labelledby="land-title">
+          <h2 id="land-title">
+            <span className="only-d">Where Our Members Land</span>
+            <span className="only-m">Where our members land</span>
           </h2>
           <LogoMarquee items={membersLand} />
-        </SectionContainer>
+        </section>
 
-        <SectionContainer className="home-pathways">
-          <div className="w-3/4 flex flex-col items-center mx-auto">
-            <div className="type-title text-3xl text-white text-center md:text-4xl">
-              Cultivating a passion for computer science, at all skill levels
-            </div>
-            <div className=" text-white lg:text-2xl text-lg mt-5 text-center" />
-          </div>
-          {/* Three cards, so no `sm:grid-cols-2` step — it would leave one
-              card orphaned on its own row, which is the raggedness dropping
-              Mentorship was supposed to fix. One column, then three. */}
-          <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-5 md:grid-cols-3">
-            {pathways.map((p) => (
-              <LevelCard key={p.index} {...p} />
+        <section className="home-pathways" aria-labelledby="pathways-title">
+          <h2 id="pathways-title">
+            <span className="only-d">Cultivating a passion for computer science, at all skill levels</span>
+            <span className="only-m">Built for every skill level</span>
+          </h2>
+          <p className="home-pathways-intro only-m">Choose a way to participate, then grow from there.</p>
+          <ul className="pathways">
+            {pathways.map((p, i) => (
+              <Pathway key={p.title} index={i + 1} {...p} />
             ))}
-          </div>
-        </SectionContainer>
+          </ul>
+        </section>
 
-        <SectionContainer className="home-partners light-surface">
-          <Partners />
-        </SectionContainer>
+        <Partners />
+        <PartnersCompact />
 
-        <SectionContainer className="home-join light-surface">
-          <div className="join-content mx-auto max-w-3xl bg-white/[0.02] px-8 py-14 md:px-16 md:py-20">
-            <div className="flex flex-col items-center text-center">
-              <h2 className="type-title text-3xl leading-tight text-white md:text-4xl">
-                Ready to join UIC&apos;s Latinx computing community?
-              </h2>
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white">
-                Open to any UIC student, whatever your major.
-              </p>
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black transition-transform duration-300 hover:-translate-y-0.5"
-                >
-                  Join LOGICA
-                </Link>
-                <Link
-                  href="/events"
-                  className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-lg font-semibold text-white ring-1 ring-white/15 transition-colors duration-300 hover:bg-white/5 hover:ring-white/25"
-                >
-                  Attend an Event
-                </Link>
-              </div>
-            </div>
+        <section className="home-join glass" aria-labelledby="join-title">
+          <h2 id="join-title">
+            <span className="only-d">Ready to join UIC&apos;s Latinx computing community?</span>
+            <span className="only-m">Join LOGICA at UIC</span>
+          </h2>
+          <p>
+            <span className="only-d">Open to any UIC student, whatever your major.</span>
+            <span className="only-m">Open to every UIC student, regardless of major or experience.</span>
+          </p>
+          <div className="home-join-actions">
+            <Link href="/signup" className="site-button">Join LOGICA</Link>
+            <Link href="/events" className="site-button site-button-soft">
+              <span className="only-d">Attend an Event</span>
+              <span className="only-m">View events</span>
+            </Link>
           </div>
-        </SectionContainer>
-      </PageContainer>
+        </section>
+      </main>
     </ClubShell>
   );
 }

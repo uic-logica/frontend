@@ -1,21 +1,24 @@
-/** logica.pen "Variant E (night)" paintings (frames 28–33; Events is events-night5, the rest *-night4): [width, height, colour of its bottom edge]. */
+/** logica.pen "HANDOFF · APPLY · Website · Desktop" frames (V3), exported at 2x with only their art
+ * layers (panels, transitions, shades): [width, height, colour of its bottom edge]. */
 const art: Record<string, [number, number, string]> = {
-  "journey-c-night": [2880, 9426, "#231923"],
-  "page-about-night": [2880, 4160, "#2f2c3b"],
-  "page-events-night": [2880, 5160, "#21232e"],
-  "page-team-night": [2880, 3480, "#232233"],
-  "page-blog-night": [2880, 2240, "#171624"],
-  "page-join-night": [2880, 3980, "#241923"],
+  "v3-home": [2880, 9426, "#080b1c"],
+  "v3-about": [2880, 2832, "#191521"],
+  "v3-events": [2880, 2424, "#0e101e"],
+  "v3-team": [2880, 3480, "#080b1c"],
+  "v3-blog": [2880, 2240, "#090b1c"],
+  "v3-join": [2880, 3980, "#0d0d1c"],
+  "v3-signin": [2880, 2424, "#090d1d"],
 };
 
-/** Phone paintings from logica.pen "37–42 … Variant E (night) · mobile": [width, height, colour of its bottom edge]. */
+/** The matching "Website · Mobile" frames, also 2x: [width, height, colour of its bottom edge]. */
 const phoneArt: Record<string, [number, number, string]> = {
-  "journey-c-night": [780, 7726, "#281b24"],
-  "page-about-night": [780, 4716, "#1b2230"],
-  "page-events-night": [780, 2530, "#22212a"],
-  "page-team-night": [780, 3328, "#6a5d68"],
-  "page-blog-night": [780, 2334, "#11172a"],
-  "page-join-night": [780, 4850, "#211823"],
+  "v3-home": [780, 5640, "#0d1124"],
+  "v3-about": [780, 2670, "#0e1228"],
+  "v3-events": [780, 1690, "#070b15"],
+  "v3-team": [780, 2410, "#060a15"],
+  "v3-blog": [780, 1590, "#070a1c"],
+  "v3-join": [780, 4030, "#2c2331"],
+  "v3-signin": [780, 1830, "#0b1121"],
 };
 
 /** Only real phones get the phone painting: a narrow desktop window (for example at 200% zoom)
@@ -24,18 +27,17 @@ export const PHONE_MEDIA = "(max-width: 799px) and (pointer: coarse)";
 
 /** Which painting each route opens on. Detail routes ("events/*") share their parent's. */
 const scenes: Record<string, string> = {
-  "": "journey-c-night",
-  about: "page-about-night", events: "page-events-night", team: "page-team-night",
-  blog: "page-blog-night", join: "page-join-night",
-  signin: "page-blog-night", "speaker-signin": "page-blog-night",
-  speak: "page-events-night", attendance: "page-events-night",
-  feed: "page-team-night", forms: "page-join-night",
-  privacy: "page-about-night", terms: "page-about-night", support: "page-about-night",
+  "": "v3-home",
+  about: "v3-about", events: "v3-events", team: "v3-team", blog: "v3-blog", join: "v3-join",
+  signin: "v3-signin", signup: "v3-signin", "speaker-signin": "v3-signin", invite: "v3-signin",
+  speak: "v3-events", attendance: "v3-events", partner: "v3-events",
+  feed: "v3-team", forms: "v3-join",
+  privacy: "v3-about", terms: "v3-about", support: "v3-about",
 };
 
 /** The painting for a route: file, size, and the colour that continues below it. */
 export function sceneFor(pathname: string) {
-  const source = scenes[pathname.split("/")[1] ?? ""] ?? "page-about-night";
+  const source = scenes[pathname.split("/")[1] ?? ""] ?? "v3-about";
   const [width, height, ground] = art[source];
   const phone = phoneArt[source];
   return { source, width, height, ground, phone };
