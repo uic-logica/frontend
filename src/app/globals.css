@@ -734,3 +734,5 @@ a.pathway:hover { transform: translateY(-3px); background: var(--glass-strong); 
   .club-shell :is(.event-description, .event-card > p:not(.event-meta)) { font-size: 14px; }
   .event-back { color: var(--gold-m); font-size: 13px; }
 }
+/* Links inside a description read as links. */
+.club-shell :is(.event-description, .event-card > p:not(.event-meta)) a { color: var(--gold); text-decoration: underline; text-underline-offset: .2em; overflow-wrap: anywhere; }

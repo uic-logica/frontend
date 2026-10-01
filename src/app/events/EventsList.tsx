@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { downloadIcs } from "@/lib/ics";
+import { linkParts } from "@/lib/linkify";
 import { SubscribeForm } from "./SubscribeForm";
 
 export type ClubEvent = {
@@ -76,16 +76,13 @@ export function EventsList({
         <ul className="events-list">
           {list.map((e) => (
             <li key={e.id} id={e.id} className="event-card page-card glass">
-              <h2>
-                <Link href={`/events/${e.id}`}>{e.title}</Link>
-              </h2>
+              <h2>{e.title}</h2>
               <p className="event-meta">
                 {when.format(new Date(e.startsAt))}
                 {e.location ? ` · ${e.location}` : ""}
               </p>
-              {e.description && <p>{e.description}</p>}
+              {e.description && <Description text={e.description} />}
               <div className="event-actions">
-                <Link href={`/events/${e.id}`}>Details</Link>
                 {e.link && (
                   <a href={e.link} target="_blank" rel="noopener noreferrer">
                     RSVP ↗
@@ -100,5 +97,22 @@ export function EventsList({
         </ul>
       )}
     </>
+  );
+}
+
+/** An event description as written: line breaks kept (CSS), http(s) links clickable. */
+export function Description({ text, className }: { text: string; className?: string }) {
+  return (
+    <p className={className}>
+      {linkParts(text).map((part, i) =>
+        part.href ? (
+          <a key={i} href={part.href} target="_blank" rel="noopener noreferrer">
+            {part.text}
+          </a>
+        ) : (
+          part.text
+        ),
+      )}
+    </p>
   );
 }
