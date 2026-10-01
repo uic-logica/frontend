@@ -359,12 +359,15 @@ export function Dashboard() {
         searchDialog.current?.showModal();
         requestAnimationFrame(() => searchInput.current?.focus());
       }
+      if (event.key === "Escape") setMenu(false);
     };
-    // <details> has no light dismiss; a click anywhere else closes the menus.
+    // <details> has no light dismiss; a click anywhere else closes the menus,
+    // and the phone menu sheet, unless the click is on the sheet or its tab bar.
     const closeMenus = (event: PointerEvent) => {
       for (const menu of [accountMenu.current, sideMenu.current]) {
         if (menu?.open && !menu.contains(event.target as Node)) menu.removeAttribute("open");
       }
+      if (!(event.target as Element).closest?.(".d-sidebar, .d-tabbar")) setMenu(false);
     };
     window.addEventListener("keydown", openSearch);
     window.addEventListener("pointerdown", closeMenus);
@@ -508,6 +511,10 @@ export function Dashboard() {
         className="d-workarea"
       >
         <header className="d-topbar">
+          {/* Phones: the rail collapses into the tab bar, so the brand moves up here. */}
+          <Link className="d-topbar-brand" href="/" aria-label="LOGICA home">
+            <span className="d-logo-chip" aria-hidden="true"><Image src="/logica-logo-black.png" alt="" width={26} height={26} /></span>
+          </Link>
           <span className="d-crumbs">
             <span>{speaker ? "Your visit" : user && runsWorkspace(user) ? "Workspace" : "Member home"}</span>
             <span aria-hidden="true">›</span>
@@ -772,6 +779,28 @@ export function Dashboard() {
           )}
         </main>
       </div>
+      {/* Phones (logica.pen V3 "App · Mobile"): the three most-used sections in
+          thumb reach, and More opens the full menu as a sheet above the bar. */}
+      {user && (
+        <nav className="d-tabbar" aria-label="Quick sections">
+          {tabsFor(nav).map((item) => (
+            <Link key={item} href={href(item)} aria-current={section === item && !menu ? "page" : undefined} onClick={() => setMenu(false)}>
+              <Icon name={item} />
+              {item === "overview" ? "Home" : titleFor(item, user, profile)}
+            </Link>
+          ))}
+          <button type="button" aria-expanded={menu} aria-controls="dashboard-nav" onClick={() => setMenu(!menu)}>
+            <Icon name="menu" />
+            More
+          </button>
+        </nav>
+      )}
     </div>
   );
+}
+
+/** Up to three tabs: home, events and community when the role has them, otherwise its first sections. */
+function tabsFor(nav: Section[]) {
+  const preferred = (["overview", "events", "community"] as Section[]).filter((s) => nav.includes(s));
+  return (preferred.length === 3 ? preferred : nav).slice(0, 3);
 }
