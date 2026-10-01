@@ -4,6 +4,7 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { ClubShell } from "@/components/club/ClubShell";
 import { ApiError, api } from "@/lib/api";
+import { Description } from "../EventsList";
 
 type Event = { id: string; title: string; description: string | null; location: string | null; startsAt: string; link: string | null };
 
@@ -47,7 +48,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
             </header>
             {(event.description || event.link) && (
               <section className="event-body page-card glass">
-                {event.description && <p className="event-description">{event.description}</p>}
+                {event.description && <Description text={event.description} className="event-description" />}
                 {event.link && (
                   <a href={event.link} target="_blank" rel="noopener noreferrer" className="site-button">
                     RSVP ↗
