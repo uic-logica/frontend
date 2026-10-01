@@ -1,24 +1,24 @@
 /** logica.pen "HANDOFF · APPLY · Website · Desktop" frames (V3), exported at 2x with only their art
  * layers (panels, transitions, shades): [width, height, colour of its bottom edge]. */
 const art: Record<string, [number, number, string]> = {
-  "v3-home": [2880, 9426, "#080b1c"],
-  "v3-about": [2880, 2832, "#191521"],
-  "v3-events": [2880, 2424, "#0e101e"],
-  "v3-team": [2880, 3480, "#080b1c"],
+  "v3-home": [2880, 9426, "#090b1c"],
+  "v3-about": [2880, 2832, "#191421"],
+  "v3-events": [2880, 2424, "#0d101e"],
+  "v3-team": [2880, 3480, "#090b1c"],
   "v3-blog": [2880, 2240, "#090b1c"],
   "v3-join": [2880, 3980, "#0d0d1c"],
-  "v3-signin": [2880, 2424, "#090d1d"],
+  "v3-signin": [2880, 2424, "#090c1d"],
 };
 
-/** The matching "Website · Mobile" frames, also 2x: [width, height, colour of its bottom edge]. */
+/** The matching "Website · Mobile" frames at 3x (phones are 3x screens): [width, height, colour of its bottom edge]. */
 const phoneArt: Record<string, [number, number, string]> = {
-  "v3-home": [780, 5640, "#0d1124"],
-  "v3-about": [780, 2670, "#0e1228"],
-  "v3-events": [780, 1690, "#070b15"],
-  "v3-team": [780, 2410, "#060a15"],
-  "v3-blog": [780, 1590, "#070a1c"],
-  "v3-join": [780, 4030, "#2c2331"],
-  "v3-signin": [780, 1830, "#0b1121"],
+  "v3-home": [1170, 8460, "#0d1122"],
+  "v3-about": [1170, 4005, "#0e1228"],
+  "v3-events": [1170, 2535, "#060a14"],
+  "v3-team": [1170, 3615, "#050914"],
+  "v3-blog": [1170, 2385, "#080b1d"],
+  "v3-join": [1170, 6045, "#2c2432"],
+  "v3-signin": [1170, 2745, "#0b1122"],
 };
 
 /** Only real phones get the phone painting: a narrow desktop window (for example at 200% zoom)
