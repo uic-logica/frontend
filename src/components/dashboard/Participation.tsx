@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { linkParts } from "@/lib/linkify";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
 import { Icon } from "./Icon";
 import {
@@ -337,7 +337,7 @@ function EventDetails({
   );
 }
 export function Community({ user }: { user: SessionUser }) {
-  const [posts, setPosts] = useState<Post[] | null>(null);
+  const [posts, setPosts] = useState<Post[] | null>(() => peek<Post[]>("/api/posts") ?? null);
   const [error, setError] = useState("");
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);

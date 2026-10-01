@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { type Application, date } from "./types";
 
@@ -40,7 +40,7 @@ const tone = (status: Application["status"]) =>
   status === "ACCEPTED" ? "confirmed" : status === "DECLINED" ? "declined" : "pending";
 
 export function Applications() {
-  const [items, setItems] = useState<Application[] | null>(null);
+  const [items, setItems] = useState<Application[] | null>(() => peek<Application[]>("/api/join") ?? null);
   const [status, setStatus] = useState<Application["status"] | "ALL">("ALL");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<string | null>(null);

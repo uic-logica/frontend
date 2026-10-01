@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { Icon } from "./Icon";
 import {
@@ -38,9 +38,9 @@ type Props = {
 };
 
 export function BoardHome({ user, members, events, speakers }: Props) {
-  const [items, setItems] = useState<BoardItem[] | null>(null);
-  const [budgets, setBudgets] = useState<Budgets | null>(null);
-  const [insights, setInsights] = useState<ClubInsights | null>(null);
+  const [items, setItems] = useState<BoardItem[] | null>(() => peek<BoardItem[]>("/api/board/items") ?? null);
+  const [budgets, setBudgets] = useState<Budgets | null>(() => peek<Budgets>("/api/board/budgets") ?? null);
+  const [insights, setInsights] = useState<ClubInsights | null>(() => peek<ClubInsights>("/api/board/insights") ?? null);
 
   useEffect(() => {
     let alive = true;

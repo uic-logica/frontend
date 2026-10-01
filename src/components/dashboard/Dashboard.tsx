@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { api, signOut } from "@/lib/api";
+import { api, clearApiCache, peek, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
 import { ProfileEditor, Settings } from "./Profile";
@@ -104,6 +104,7 @@ export function Dashboard() {
   const [speakers, setSpeakers] = useState<Speaker[] | null>(null);
   const [members, setMembers] = useState<Member[] | null>(null);
   function forgetSession() {
+    clearApiCache();
     setUser(null);
     setProfile(null);
     setEvents(null);
@@ -197,6 +198,28 @@ export function Dashboard() {
       menuChanges.disconnect();
       resizes.disconnect();
     };
+  }, []);
+
+  // Paint what this tab saw last time before the first frame, then let
+  // load() below refresh it — no skeleton on every visit. Server render has
+  // no cache, so this runs as a layout effect after hydration, not in state
+  // initializers (which would mismatch the server HTML).
+  useLayoutEffect(() => {
+    const cached = peek<{ user?: SessionUser }>("/api/auth/session")?.user;
+    if (!cached || cached.mustChangePassword) return;
+    const take = <T,>(path: string, set: (v: T) => void) => {
+      const hit = peek<T>(path);
+      if (hit !== undefined) set(hit);
+    };
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- seeding from cache, refreshed by load()
+    setUser(cached);
+    take(cached.accountKind === "SPEAKER" ? "/api/speaker-profile" : "/api/profile", setProfile);
+    take("/api/events", setEvents);
+    take("/api/notifications", setNotices);
+    take("/api/dashboard", setEngagement);
+    take("/api/speakers", setSpeakers);
+    take("/api/board/members", setMembers);
+    setAuthState("ready");
   }, []);
 
   useEffect(() => {

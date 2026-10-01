@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Heading } from "./Overview";
 import { Icon } from "./Icon";
 
@@ -30,7 +30,7 @@ type Overview = {
  * the list here is what they would actually be handing over.
  */
 export function AgentAccess() {
-  const [data, setData] = useState<Overview | null>(null);
+  const [data, setData] = useState<Overview | null>(() => peek<Overview>("/api/mcp-tokens") ?? null);
   const [fresh, setFresh] = useState<{ name: string; secret: string } | null>(
     null,
   );
