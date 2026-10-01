@@ -88,7 +88,7 @@ export function EventsList({
                 <Link href={`/events/${e.id}`}>Details</Link>
                 {e.link && (
                   <a href={e.link} target="_blank" rel="noopener noreferrer">
-                    Event page ↗
+                    RSVP ↗
                   </a>
                 )}
                 <button type="button" onClick={() => downloadIcs(e)}>
