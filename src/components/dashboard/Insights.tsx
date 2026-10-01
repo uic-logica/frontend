@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { type ClubInsights, date, initials } from "./types";
 
@@ -13,7 +13,7 @@ import { type ClubInsights, date, initials } from "./types";
  * cost more than the whole feature.
  */
 export function Insights() {
-  const [data, setData] = useState<ClubInsights | null>(null);
+  const [data, setData] = useState<ClubInsights | null>(() => peek<ClubInsights>("/api/board/insights") ?? null);
   const [error, setError] = useState("");
 
   useEffect(() => {

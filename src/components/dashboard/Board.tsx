@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { Icon } from "./Icon";
 import {
@@ -71,8 +71,8 @@ export function Board({ kind, members, events }: Props) {
   const copy = COPY[kind];
   const stages = STAGES[kind];
 
-  const [items, setItems] = useState<BoardItem[] | null>(null);
-  const [budgets, setBudgets] = useState<Budgets | null>(null);
+  const [items, setItems] = useState<BoardItem[] | null>(() => peek<BoardItem[]>(`/api/board/items?kind=${kind}`) ?? null);
+  const [budgets, setBudgets] = useState<Budgets | null>(() => (kind === "MONEY" ? peek<Budgets>("/api/board/budgets") ?? null : null));
   const [stage, setStage] = useState("ALL");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<string | null>(null);
