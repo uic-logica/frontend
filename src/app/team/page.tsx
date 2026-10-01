@@ -4,7 +4,7 @@ export const metadata = pageMetadata("Our Team", "Meet the student leaders behin
 
 import Image from "next/image";
 import Link from "next/link";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { ClubShell } from "@/components/club/ClubShell";
 
 type Person = {
   id: string;
@@ -45,95 +45,52 @@ const exec: Person[] = [
   },
 ];
 
-/** Team card — LinkedIn link, no zoom/lift. */
+/** Team card: round portrait linking to LinkedIn. */
 function PersonCard({ person }: { person: Person }) {
   return (
-    <a
-      href={person.linkedin}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="person-card group relative flex flex-col items-center"
-    >
-      <div className="relative mb-4">
-        <div className="person-photo relative h-40 w-40 overflow-hidden rounded-xl">
-          <Image
-            src={person.image}
-            alt={person.name}
-            fill
-            sizes="(max-width: 768px) 40vw, (max-width: 1200px) 33vw, 20vw"
-            className="object-cover"
-          />
-        </div>
-      </div>
-      <h3 className="text-center text-xl font-bold text-white group-hover:text-signal">{person.name}</h3>
-      <p className="person-role mt-1 text-center text-sm font-semibold tracking-[0.08em] text-signal">{person.role}</p>
+    <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="person-card">
+      <span className="person-photo">
+        <Image src={person.image} alt="" fill sizes="(max-width: 799px) 76px, 160px" className="object-cover" />
+      </span>
+      <h3>{person.name}</h3>
+      <p className="person-role">{person.role}</p>
     </a>
   );
 }
 
-function BoardSection({
-  title,
-  subtitle,
-  people,
-  className = "",
-}: {
-  title: string;
-  subtitle: string;
-  people: Person[];
-  className?: string;
-}) {
-  return (
-    <SectionContainer className={className}>
-      <div className="mb-12 border-b border-white/20 pb-4">
-        <h2 className="type-h2 text-white">{title}</h2>
-        <p className="mt-2 text-body-lg text-white">{subtitle}</p>
-      </div>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
-        {people.map((m) => (
-          <PersonCard key={m.id} person={m} />
-        ))}
-      </div>
-    </SectionContainer>
-  );
-}
-
+/** Layout is logica.pen V3 "04 · Team" (desktop and mobile). */
 export default function TeamPage() {
   return (
     <ClubShell>
-      <PageContainer>
-        <SectionContainer>
-          <h1 className="type-title text-3xl md:text-4xl mb-4 text-white">Our Team</h1>
-          <p className="mb-16 max-w-2xl text-body-lg text-white">
-            Meet the talented individuals who make LOGICA possible
-          </p>
-        </SectionContainer>
+      <main className="site-page">
+        <header className="page-head">
+          <h1>Our Team</h1>
+        </header>
 
-        <BoardSection
-          title="Executive Board"
-          subtitle="The leadership team that guides LOGICA strategy and operations"
-          people={exec}
-          className="on-art mt-8"
-        />
-
-        <SectionContainer className="mt-32">
-          <div className="club-card mx-auto w-fit max-w-2xl bg-white/[0.02] p-8 md:p-10">
-            <div className="flex flex-col items-center text-center">
-              <h2 className="type-title mb-4 text-3xl text-white md:text-4xl">
-                Interested in joining the board?
-              </h2>
-              <p className="mb-8 text-body-lg text-white">
-                Board applications open each semester.
-              </p>
-              <Link
-                href="/join"
-                className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-lg font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
-              >
-                Join the Board
-              </Link>
-            </div>
+        <section className="team-board" aria-labelledby="exec-board">
+          <div className="team-board-head">
+            <h2 id="exec-board">Executive Board</h2>
+            <p>
+              <span className="only-d">The leadership team that guides LOGICA strategy and operations</span>
+              <span className="only-m">The students guiding LOGICA strategy and operations.</span>
+            </p>
           </div>
-        </SectionContainer>
-      </PageContainer>
+          <div className="team-people">
+            {exec.map((m) => (
+              <PersonCard key={m.id} person={m} />
+            ))}
+          </div>
+        </section>
+
+        <section className="team-cta glass" aria-labelledby="join-board">
+          <h2 id="join-board">Interested in joining the board?</h2>
+          <p>
+            <span className="only-d">Board applications open each semester.</span>
+            <span className="only-m">Applications open each semester.</span>
+          </p>
+          <Link href="/join" className="site-button">Join LOGICA</Link>
+        </section>
+      </main>
     </ClubShell>
   );
 }
