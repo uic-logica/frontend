@@ -513,7 +513,7 @@ a.pathway:hover { transform: translateY(-3px); background: var(--glass-strong); 
 .home-partners-sub { margin-top: -21px; font-size: 20px; }
 .partner-group { display: flex; flex-direction: column; align-items: center; gap: 18px; }
 .partner-label { font-size: 12px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--text-soft); }
-.partner-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 24px 40px; }
+.partner-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 24px 32px; }
 .partner-note { font-size: 15px; font-style: italic; }
 .partner-ask { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(454px, 100%); padding: 36px 24px; border-radius: 22px; background: rgb(255 255 255 / .1); }
 .club-shell .partner-ask .partner-ask-q { font-size: 21px; color: #fff; }
@@ -683,7 +683,9 @@ a.pathway:hover { transform: translateY(-3px); background: var(--glass-strong); 
 .join-apply .page-link { display: inline-block; margin-top: 16px; color: var(--gold); font-weight: 600; }
 @media (max-width: 799px) {
   .join-page .page-section { margin-top: 56px; }
-  .join-steps > li { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; padding: 9px 0 13px; }
+  .join-steps > li { display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 14px 0; }
+  .join-steps > li > div { gap: 2px; }
+  .join-steps p { margin-top: 0; }
   .join-step-number { display: grid; place-items: center; flex: none; width: 28px; height: 28px; margin-top: 2px; border-radius: 50%; background: rgb(255 255 255 / .08); font-size: 13px; font-weight: 600; }
   .join-page .page-section:nth-of-type(2) { margin-top: 65px; }
   .join-page .page-section:nth-of-type(3) { margin-top: 105px; }
