@@ -98,20 +98,11 @@ export function SiteNav() {
             <Link href={account.href} className="site-signin">
               {account.label}
             </Link>
-            <button
-              type="button"
-              className="rounded-lg border border-white/40 px-3 py-2 text-white"
-              aria-expanded={open}
-              onClick={() => setOpen((v) => !v)}
-            >
+            <button type="button" className="site-menu-button" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
               <span className="sr-only">Menu</span>
-              {open ? (
-                "×"
-              ) : (
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-                  <path d="M4 7h16M4 12h16M4 17h16" />
-                </svg>
-              )}
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                <path d={open ? "M6 6l12 12M18 6L6 18" : "M4 7h16M4 12h16M4 17h16"} />
+              </svg>
             </button>
           </div>
         ) : (
@@ -186,29 +177,37 @@ const legalLinks = [
   { href: "/support", label: "Support" },
 ];
 
+/** Footer link columns: one right-aligned stack on desktop, "Explore" and "Connect" on phones (logica.pen V3). */
+const footerColumns = [
+  { label: "Explore", links: links.slice(0, 3) },
+  { label: "Connect", links: [links[3], { href: "/join", label: "Join" }, { href: "/signin", label: "Sign in" }] },
+];
+
 /** Mapier-style closer: the footer sits on the end of the painting —
- * wordmark on the left, links stacked on the right, fine print below. */
+ * wordmark on the left, links stacked on the right, fine print below them. */
 export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="site-footer-in">
         <Link href="/" className="site-footer-mark" aria-label="LOGICA home">
-          <Image src="/logica-logo-white.png" alt="" width={88} height={88} />
+          <Image src="/logica-logo-white.png" alt="" width={92} height={92} />
           <span>LOGICA</span>
         </Link>
-        <nav className="site-footer-links" aria-label="Footer">
-          {[...links, { href: "/join", label: "Join the team" }, { href: "/signin", label: "Sign in" }, { href: "/signup", label: "Create account" }].map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="site-footer-fine">
-          <div>
-            <span className="type-label">Get in touch with us</span>
+        <div className="site-footer-right">
+          <nav className="site-footer-links" aria-label="Footer">
+            {footerColumns.map((column) => (
+              <div key={column.label}>
+                <span className="site-footer-col">{column.label}</span>
+                {column.links.map((item) => (
+                  <Link key={item.href} href={item.href}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            ))}
+          </nav>
+          <div className="site-footer-fine">
             <a href="mailto:logica@uic.edu">logica@uic.edu</a>
-          </div>
-          <div>
             {legalLinks.map((item) => (
               <Link key={item.href} href={item.href}>
                 {item.label}

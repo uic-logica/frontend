@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { ClubShell, PageContainer } from "@/components/club/ClubShell";
+import { MailIcon } from "@/components/ui/MailIcon";
 import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
 import { api } from "@/lib/api";
 
@@ -54,30 +55,31 @@ export default function SignInPage() {
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer>
-          <div className="mx-auto max-w-md">
-            <h1 className="type-title text-3xl md:text-4xl text-white">Sign in to LOGICA</h1>
-            <p className="mt-3 text-xl text-signal md:text-2xl">Members, board, and exec board</p>
-            <div className="mt-10 club-card bg-white/[0.02] p-8 md:p-10">
-              <p className="text-body text-white">New to LOGICA? <Link href="/signup" className="font-bold text-signal underline">Create an account</Link> with your UIC email.</p>
-              {error && <p id="signin-error" role="alert" className="mt-5 rounded-lg border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white">{error}</p>}
-              <form onSubmit={submit} className="mt-6 flex flex-col gap-5" aria-busy={busy} aria-describedby={error ? "signin-error" : undefined}>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="email" className="type-label text-white">UIC email</label>
-                  <input id="email" name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} maxLength={254} required value={email} onChange={(e) => setEmail(e.target.value)} className={darkInputClass} placeholder="netid@uic.edu" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="password" className="type-label text-white">Password</label>
-                  <input id="password" name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" maxLength={128} required value={password} onChange={(e) => setPassword(e.target.value)} className={darkInputClass} />
-                  <button type="button" aria-pressed={showPassword} aria-controls="password" className="type-label text-left text-signal hover:underline" onClick={() => setShowPassword(!showPassword)}>{showPassword ? "Hide password" : "Show password"}</button>
-                </div>
-                <button type="submit" disabled={busy} className={darkButtonClass}>{busy ? "Signing in…" : "Sign in"}</button>
-              </form>
-              <p className="mt-6 text-body-sm text-white">Forgot your password? <Link href="/support" className="font-bold text-signal underline">Contact the exec board</Link> to verify your identity and receive a new one.</p>
+        <header className="auth-head">
+          <h1>Sign in to LOGICA</h1>
+          <p>Members, board, and exec board</p>
+        </header>
+        <div className="club-card auth-card">
+          <p className="auth-intro">New to LOGICA? <Link href="/signup">Create an account</Link> with your UIC email.</p>
+          {error && <p id="signin-error" role="alert" className="mt-5 rounded-lg border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white">{error}</p>}
+          <form onSubmit={submit} className="mt-6 flex flex-col gap-5" aria-busy={busy} aria-describedby={error ? "signin-error" : undefined}>
+            <div className="auth-field">
+              <label htmlFor="email" className="type-label">UIC email</label>
+              <MailIcon />
+              <input id="email" name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} maxLength={254} required value={email} onChange={(e) => setEmail(e.target.value)} className={darkInputClass} placeholder="netid@uic.edu" />
             </div>
-            <p className="mt-8 text-body text-white">Guest or speaker? <Link href="/speaker-signin" className="font-bold text-signal underline-offset-2 hover:underline">Sign in here</Link></p>
-          </div>
-        </SectionContainer>
+            <div className="flex flex-col gap-1.5">
+              <div className="auth-field">
+                <label htmlFor="password" className="type-label">Password</label>
+                <input id="password" name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" maxLength={128} required value={password} onChange={(e) => setPassword(e.target.value)} className={darkInputClass} />
+              </div>
+              <button type="button" aria-pressed={showPassword} aria-controls="password" className="auth-toggle" onClick={() => setShowPassword(!showPassword)}>{showPassword ? "Hide password" : "Show password"}</button>
+            </div>
+            <button type="submit" disabled={busy} className={darkButtonClass}>{busy ? "Signing in…" : "Sign in"}</button>
+          </form>
+          <p className="auth-note">Forgot your password? <Link href="/support">Contact the exec board</Link> to verify your identity and receive a new one.</p>
+        </div>
+        <p className="auth-foot">Guest or speaker? <Link href="/speaker-signin">Sign in here</Link></p>
       </PageContainer>
     </ClubShell>
   );
