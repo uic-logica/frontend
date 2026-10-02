@@ -10,7 +10,6 @@ import {
   type Event,
   type Member,
   date,
-  initials,
   money,
   OUTREACH_CATEGORIES,
   OUTREACH_CHANNELS,
@@ -994,9 +993,4 @@ function Detail({
       </p>
     </section>
   );
-}
-
-/** Reused by the board home for the "waiting on you" list. */
-export function itemInitials(item: BoardItem) {
-  return initials(item.org || item.title);
 }
