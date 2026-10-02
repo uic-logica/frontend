@@ -113,20 +113,6 @@ export function AvatarMonogram({
   );
 }
 
-export function RoleChip({ role }: { role: string }) {
-  if (role === "MEMBER" || !role) return null;
-  const exec = role === "EXEC_BOARD";
-  return (
-    <span
-      className={`inline-flex h-6 items-center rounded-full px-2 type-label ${
-        exec ? "bg-ink text-paper" : "bg-signal text-paper"
-      }`}
-    >
-      {exec ? "Exec board" : "Board"}
-    </span>
-  );
-}
-
 export function EmptyState({
   title,
   body,

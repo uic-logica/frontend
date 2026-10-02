@@ -55,7 +55,7 @@ const nextConfig: NextConfig = {
       source: "/:file([^/]+\\.(?:png|svg|jpg|jpeg|webp|ico))",
       headers: [{ key: "Cache-Control", value: assetCache }],
     }, {
-      source: "/:path(dashboard|profile|members|signin|signup|speaker-signin|speaker-portal|invite|admin|attendance|feed|forms|preview-a|preview-d|preview-hybrid|cardlab)/:rest*",
+      source: "/:path(dashboard|profile|members|signin|signup|speaker-signin|speaker-portal|invite|admin|attendance|feed|forms)/:rest*",
       headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
     }, {
       source: "/:section(events|speak)/:id",

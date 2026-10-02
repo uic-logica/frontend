@@ -331,9 +331,6 @@
   color: var(--d-muted);
   white-space: nowrap;
 }
-/* Same pill as the public site's ButtonLink: white fill, 8px radius, a
-   half-pixel lift on hover. No offset shadow — that hard black copy behind
-   the button is the old flat style the rest of the site dropped. */
 .d-button {
   display: inline-flex;
   align-items: center;
