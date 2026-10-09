@@ -3357,6 +3357,12 @@
   backdrop-filter: blur(8px);
   overflow: clip;
 }
+/* Full-height chat: exactly one viewport including the 16px frame, so the page
+   never scrolls and the sticky rail can't get pushed up when switching tabs. */
+@media (min-width: 901px) {
+  .dash:has(.d-main-flush) { height: 100dvh; box-sizing: border-box; }
+  .dash:has(.d-main-flush) .d-workarea { height: calc(100dvh - 32px); min-height: 0; }
+}
 .d-topbar { height: 62px; margin: 0; padding: 22px 24px 0; flex: 0 0 62px; background: transparent; color: var(--d-muted); font-size: 12px; }
 .d-crumbs { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .d-crumbs strong { color: var(--d-ink); font-weight: 700; }

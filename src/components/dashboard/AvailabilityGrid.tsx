@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import {
-  SLOTS_PER_DAY,
   SLOT_MINUTES,
   type Window,
   addDays,
@@ -23,7 +22,9 @@ import {
  */
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const ROW_PX = 20;
+// Speaker visits happen 9 AM – 9 PM Chicago time; nobody talks at 1 AM.
+const DAY_START = 9 * 60;
+const DAY_END = 21 * 60;
 
 /** "8 AM", "1:30 PM" — what people say out loud. */
 function hourLabel(minutes: number) {
@@ -60,13 +61,6 @@ export function AvailabilityGrid({
     base: Set<string>;
   } | null>(null);
   const body = useRef<HTMLDivElement | null>(null);
-  // Opens on the morning rather than on midnight; the rest is one scroll away.
-  const mountBody = (el: HTMLDivElement | null) => {
-    // 8 AM, less half a row so the hour's label isn't clipped by the top edge.
-    if (el && !body.current)
-      el.scrollTop = ((8 * 60) / SLOT_MINUTES) * ROW_PX - ROW_PX / 2;
-    body.current = el;
-  };
 
   function commit(next: Set<string>) {
     setSlots(next);
@@ -105,8 +99,8 @@ export function AvailabilityGrid({
     const [date, time] = key.split("T");
     const minutes = Number(time.slice(0, 2)) * 60 + Number(time.slice(3));
     const target = Math.min(
-      Math.max(minutes + dy * SLOT_MINUTES, 0),
-      (SLOTS_PER_DAY - 1) * SLOT_MINUTES,
+      Math.max(minutes + dy * SLOT_MINUTES, DAY_START),
+      DAY_END - SLOT_MINUTES,
     );
     const next = slotKey(addDays(date, dx), target);
     const cell = body.current?.querySelector<HTMLButtonElement>(
@@ -124,8 +118,8 @@ export function AvailabilityGrid({
 
   const days = Array.from({ length: 7 }, (_, i) => addDays(week, i));
   const rows = Array.from(
-    { length: SLOTS_PER_DAY },
-    (_, i) => i * SLOT_MINUTES,
+    { length: (DAY_END - DAY_START) / SLOT_MINUTES },
+    (_, i) => DAY_START + i * SLOT_MINUTES,
   );
   const now = today();
   const hours = (slots.size * SLOT_MINUTES) / 60;
@@ -197,7 +191,7 @@ export function AvailabilityGrid({
         ))}
       </div>
 
-      <div ref={mountBody} className="d-cal-body">
+      <div ref={body} className="d-cal-body">
         {rows.map((minutes) => (
           <Row
             key={minutes}
