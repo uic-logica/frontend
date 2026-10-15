@@ -569,7 +569,8 @@ body:has(> .site) { background: var(--d-bg); }
 .projects-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 32px; margin: 0; padding-top: 16px; border-top: 1px solid var(--d-rule); }
 .projects-facts dt { font-size: 13px; font-weight: 600; color: var(--d-muted); }
 .projects-facts dd { margin: 4px 0 0; font-size: 15px; line-height: 1.5; }
-.projects-cta-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.projects-cta-actions { display: flex; flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
+@media (min-width: 800px) { .projects-cta-actions { flex-wrap: nowrap; } }
 .home-building { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0; padding: 0; list-style: none; }
 .home-building a { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 20px 22px; border: 1px solid var(--d-rule); border-radius: var(--d-radius); background: var(--d-surface); text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s; }
 .home-building a:hover { border-color: var(--d-rule-strong); box-shadow: var(--d-pop); }
