@@ -40,9 +40,9 @@ export default function SpeakerSignInPage() {
           <span className="site-badge auth-tag">Guests &amp; speakers</span>
           <header className="auth-head">
             <h1 className="serif">Speaker sign-in</h1>
-            <p>For confirmed speakers. No UIC email required.</p>
+            <p>For speakers and partner clubs. No UIC email required.</p>
           </header>
-          <p className="auth-intro">Use the username and password from your invite email.</p>
+          <p className="auth-intro">Use the username or email and the password LOGICA sent you.</p>
           {error && <p className="site-error" role="alert">{error}</p>}
           <form onSubmit={submit} className="site-form auth-form" noValidate>
             <label className="site-field" htmlFor="username">

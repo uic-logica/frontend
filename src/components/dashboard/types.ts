@@ -395,6 +395,7 @@ export function titleFor(
   user: SessionUser | null,
   profile?: Profile | null,
 ) {
+  if (section === "overview" && user?.accountKind === "PARTNER") return "Our events";
   if (section === "overview" && user?.accountKind === "SPEAKER") {
     // A workshop host should not be reading the word "talk" all week.
     const noun = VISIT_NOUN[profile?.speakerSubmission?.kind ?? "TALK"];
@@ -414,7 +415,8 @@ export function navFor(
   user: SessionUser | null,
   profile?: Profile | null,
 ): Section[] {
-  if (!user) return ["overview"];
+  // A partner club sees the events it was granted and nothing else.
+  if (!user || user.accountKind === "PARTNER") return ["overview"];
   if (user.accountKind === "SPEAKER") {
     return isConfirmedSpeaker(profile ?? null)
       ? ["profile", "overview", "messages"]
@@ -509,6 +511,7 @@ const STAGE_LABELS: Record<Stage, string> = {
 };
 
 export function roleName(user: SessionUser, profile?: Profile | null) {
+  if (user.accountKind === "PARTNER") return "Partner club";
   return STAGE_LABELS[stageOf(user, profile)];
 }
 export function date(
