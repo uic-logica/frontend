@@ -14,7 +14,7 @@ The club website for [LOGICA @ UIC](https://github.com/uic-logica): Latinx and u
 
 | Area | What it does |
 |---|---|
-| Public site | Home, About, Events, Team, Projects, Blog, Join, Partner, Speak, legal pages. Light and dark (follows your computer; switch it in dashboard Settings), a Chicago painting on Home and in every footer |
+| Public site | Home, About, Events, Team, Projects, Blog (members write in the dashboard, the exec board publishes), Join, Partner, Speak, legal pages. Light and dark (follows your computer; switch it in dashboard Settings), a Chicago painting on Home and in every footer |
 | Accounts | Sign up with @uic.edu, password sign-in, 30-day sessions |
 | Member dashboard | Overview, profile (resume + LinkedIn), events and one-step check-in, engagement, community. The **Software Teams** application opens from [/projects](https://logicauic.org/projects) |
 | Exec workspace | Money, outreach pipeline, insights, documents, members, applications, speakers; the board edits events in place |

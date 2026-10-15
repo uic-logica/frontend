@@ -25,7 +25,8 @@ This is an inventory of the checked-in pages, not a specification for pages to b
 | `/about` — `about/page.tsx` | Mission, what the club does, who attends, three values, the groups we work with (WiCyS, SHPE, ACM, LUG), and links to Projects and the Team. |
 | `/team` — `team/page.tsx` | Four static exec profiles with photos, titles and LinkedIn links: Diego Flores, Nicolas Rufino Pinto, Dylan Cervantes, Angelo Moises Guerrero. Join CTA below. No fetched member directory or missing-photo fallback. |
 | `/projects` — `projects/page.tsx`, `lib/projects.ts` | The five projects (what it is, the hard part, what you learn, status, demo day), each linking to its team page in the `.github` repo, and Apply to a Software Team (`/signin?next=/dashboard/teams`). |
-| `/blog` — `blog/page.tsx` | “No posts yet” and a See events link. It does not fetch the community feed. |
+| `/blog` — `blog/page.tsx` | Published posts from `/api/blog` (title, excerpt, author, date), newest first, plus a Write a post link. Empty: “No posts yet” with Write a post and See events. |
+| `/blog/[slug]` — `blog/[slug]/page.tsx` | One published post from `/api/blog/:slug`; unknown slugs 404. |
 | `/join` — `join/page.tsx`, `join/JoinForm.tsx` | Create your account / Attend an event first, Software Engineer and Board Member roles, three application steps, FAQs, and the application form: Board Member posts to `/api/join`; Software Engineer sends people to the dashboard's Software Teams. |
 | `/events` — `events/page.tsx` | Fetches `/api/events` on the server, switches upcoming/past, shows error/empty states, links event detail, and offers a per-event .ics download and RSVP link. “Never miss one” posts to `/api/subscribe`. |
 | `/events/[id]` — `events/[id]/page.tsx` | Title, date, location, RSVP link, .ics download and the description. Materials and check-in live in the dashboard. |

@@ -350,6 +350,7 @@ export const sections = [
   "events",
   "activity",
   "community",
+  "blog",
   "teams",
   "speakers",
   "insights",
@@ -370,6 +371,7 @@ export const titles: Record<Section, string> = {
   events: "Events",
   activity: "My engagement",
   community: "Community",
+  blog: "Blog",
   teams: "Software Teams",
   speakers: "Speaker directory",
   insights: "Insights",
@@ -430,6 +432,7 @@ export function navFor(
       "speakers",
       "members",
       "applications",
+      "blog",
       "documents",
       "events",
       "community",
@@ -450,6 +453,7 @@ const MEMBER_NAV: Section[] = [
   "events",
   "activity",
   "community",
+  "blog",
 ];
 
 /**
@@ -580,4 +584,20 @@ export type Application = {
   reviewedAt: string | null;
   canReapply: boolean;
   decidedAt: string | null;
+};
+
+/** Mirrors backend BlogPost. Members write and submit; exec publishes or sends back. */
+export type BlogPost = {
+  id: string;
+  authorId: string;
+  title: string;
+  body: string;
+  status: "DRAFT" | "SUBMITTED" | "PUBLISHED" | "REJECTED";
+  slug: string | null;
+  reviewNote: string | null;
+  submittedAt: string | null;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  author?: { id: string; name: string | null; photoUrl: string | null };
 };

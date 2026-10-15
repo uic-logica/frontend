@@ -18,6 +18,7 @@ import { BoardHome } from "./BoardHome";
 import { Insights } from "./Insights";
 import { Documents } from "./Documents";
 import { Applications } from "./Applications";
+import { Blog } from "./Blog";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
 import { Avatar } from "./Avatar";
@@ -752,6 +753,11 @@ export function Dashboard() {
               {seen("community") && (
                 <Pane active={section === "community"}>
                   <Community user={user} />
+                </Pane>
+              )}
+              {seen("blog") && user && (
+                <Pane active={section === "blog"}>
+                  <Blog user={user} />
                 </Pane>
               )}
               {seen("speakers") && (
