@@ -3892,3 +3892,16 @@
     padding: 0 0 12px;
   }
 }
+
+/* Events: "Edit event" sits beside "Details, materials & check-in"; the edit
+   form replaces the description in place, so it opens where you clicked. */
+.d-event-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+.d-event-item .d-event-form {
+  margin: 12px 0;
+  box-shadow: none;
+  background: var(--d-sunken);
+}

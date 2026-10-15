@@ -32,6 +32,9 @@ export function Events({
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState<string | null>(null);
+  // The backend lets the whole board (not only exec) create and edit events.
+  const board = user.accountKind === "MEMBER" && (user.role === "BOARD" || user.role === "EXEC_BOARD");
   const visible = events?.filter((e) =>
     filter === "mine"
       ? engagement?.rsvps.some(
@@ -54,14 +57,16 @@ export function Events({
       setBusy(null);
     }
   }
-  async function create(e: React.FormEvent<HTMLFormElement>) {
+  /** Create (no `event`) or edit an event from the form's fields. */
+  async function save(e: React.FormEvent<HTMLFormElement>, event?: Event) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    setBusy("create");
+    const key = event ? event.id : "create";
+    setBusy(key);
     setError("");
     try {
-      await api("/api/events", {
-        method: "POST",
+      await api(event ? `/api/events/${event.id}` : "/api/events", {
+        method: event ? "PATCH" : "POST",
         body: JSON.stringify({
           title: data.get("title"),
           description: data.get("description"),
@@ -71,7 +76,8 @@ export function Events({
         }),
       });
       onEvents(await api<Event[]>("/api/events"));
-      setCreating(false);
+      if (event) setEditing(null);
+      else setCreating(false);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -82,9 +88,9 @@ export function Events({
     <>
       <Heading
         title="Events"
-        description={runsWorkspace(user) ? "Plan, publish, and run each event from one timeline." : "Discover what’s next, understand the commitment, and RSVP with confidence."}
+        description={board ? "Plan, publish, and run each event from one timeline." : "Discover what’s next, understand the commitment, and RSVP with confidence."}
         action={
-          runsWorkspace(user) && (
+          board && (
             <button className="d-button" onClick={() => setCreating(!creating)}>
               {creating ? "Close event form" : "+ Create event"}
             </button>
@@ -97,34 +103,13 @@ export function Events({
         </p>
       )}
       {creating && (
-        <form onSubmit={create} className="d-panel d-form">
-          <h2>Create a club event</h2>
-          <div className="d-form-grid">
-            <label>
-              Event title
-              <input name="title" required />
-            </label>
-            <label>
-              Date and time (your local time)
-              <input name="startsAt" type="datetime-local" required />
-            </label>
-          </div>
-          <label>
-            Location
-            <input name="location" />
-          </label>
-          <label>
-            Description
-            <textarea name="description" rows={3} />
-          </label>
-          <label>
-            Event page URL (Luma, Discord, or flyer)
-            <input name="link" type="url" />
-          </label>
-          <button disabled={!!busy} className="d-button">
-            {busy === "create" ? "Creating…" : "Create event"}
-          </button>
-        </form>
+        <EventForm
+          heading="Create a club event"
+          busy={busy === "create"}
+          submitLabel="Create event"
+          onSubmit={(e) => save(e)}
+          onCancel={() => setCreating(false)}
+        />
       )}
       <div className="d-tabs" aria-label="Filter events">
         {[
@@ -185,6 +170,16 @@ export function Events({
                   </button>
                 )}
               </div>
+              {editing === e.id ? (
+                <EventForm
+                  event={e}
+                  heading={`Edit ${e.title}`}
+                  busy={busy === e.id}
+                  submitLabel="Save changes"
+                  onSubmit={(form) => save(form, e)}
+                  onCancel={() => setEditing(null)}
+                />
+              ) : (
               <p className="d-event-description">
                 {e.description
                   ? linkParts(e.description).map((part, i) =>
@@ -192,6 +187,13 @@ export function Events({
                     )
                   : "More details will be shared by the organizers."}
               </p>
+              )}
+              <div className="d-event-links">
+              {board && editing !== e.id && (
+                <button className="d-text-button" onClick={() => setEditing(e.id)}>
+                  Edit event<span className="sr-only"> {e.title}</span>
+                </button>
+              )}
               <button
                 className="d-text-button"
                 aria-expanded={selected === e.id}
@@ -202,6 +204,7 @@ export function Events({
                   : "Details, materials & check-in"}{" "}
                 <span aria-hidden="true">↗</span>
               </button>
+              </div>
               {selected === e.id && (
                 <EventDetails event={e} onCheckedIn={onEngagement} />
               )}
@@ -229,6 +232,66 @@ export function Events({
     </>
   );
 }
+/** `datetime-local` wants local "YYYY-MM-DDTHH:mm", not an ISO string. */
+function localInput(iso: string) {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/** The one form for creating and editing an event. Empty fields clear on save. */
+function EventForm({
+  event,
+  heading,
+  busy,
+  submitLabel,
+  onSubmit,
+  onCancel,
+}: {
+  event?: Event;
+  heading: string;
+  busy: boolean;
+  submitLabel: string;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onCancel: () => void;
+}) {
+  return (
+    <form onSubmit={onSubmit} className="d-panel d-form d-event-form">
+      <h2>{heading}</h2>
+      <div className="d-form-grid">
+        <label>
+          Event title
+          <input name="title" required defaultValue={event?.title} />
+        </label>
+        <label>
+          Date and time (your local time)
+          <input name="startsAt" type="datetime-local" required defaultValue={event ? localInput(event.startsAt) : undefined} />
+        </label>
+      </div>
+      <label>
+        Location
+        <input name="location" defaultValue={event?.location ?? ""} />
+      </label>
+      <label>
+        Description
+        <textarea name="description" rows={event ? 6 : 3} defaultValue={event?.description ?? ""} />
+      </label>
+      <label>
+        Event page URL (Luma, Discord, or flyer)
+        <input name="link" type="url" defaultValue={event?.link ?? ""} />
+      </label>
+      <div className="d-actions">
+        <button disabled={busy} className="d-button">
+          {busy ? "Saving…" : submitLabel}
+        </button>
+        <button type="button" className="d-button secondary" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
 function EventDetails({
   event,
   onCheckedIn,
