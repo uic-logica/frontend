@@ -102,11 +102,11 @@ body:has(> .site) { background: var(--d-bg); }
 .site-nav-links a:hover, .site-nav-links a[aria-current="page"] { color: var(--d-ink); }
 .site-nav-links a[aria-current="page"] { font-weight: 500; }
 .site-nav-actions { display: flex; align-items: center; gap: 10px; }
-.site-theme, .site-menu-button {
+.site-menu-button {
   display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: var(--d-radius-sm);
   border: 0; background: transparent; color: var(--d-muted); cursor: pointer;
 }
-.site-theme:hover, .site-menu-button:hover { background: var(--d-hover); color: var(--d-ink); }
+.site-menu-button:hover { background: var(--d-hover); color: var(--d-ink); }
 .site-menu-button { display: none; }
 .site-menu { position: absolute; inset: 72px 0 auto; display: flex; flex-direction: column; padding: 8px 24px 20px; background: var(--d-bg); border-bottom: 1px solid var(--d-rule); box-shadow: var(--d-pop); }
 .site-menu a { padding: 12px 0; font-size: 17px; text-decoration: none; border-bottom: 1px solid var(--d-rule); }
@@ -162,24 +162,6 @@ body:has(> .site) { background: var(--d-bg); }
   .site-section { margin-top: 64px; }
 }
 
-/* ── Star divider: four six-point Chicago stars between hairlines ── */
-.site-stars { display: flex; align-items: center; gap: 30px; margin: 0 auto; color: var(--d-ember); }
-.site-stars::before, .site-stars::after { content: ""; flex: 1; height: 1px; background: var(--d-rule); }
-.site-stars span { display: flex; gap: 14px; }
-[data-theme="dark"] .site-stars { color: var(--d-gold); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .site-stars { color: var(--d-gold); } }
-/* They appear one by one as the divider scrolls in. Where scroll-driven
-   animations aren't supported, or motion is reduced, they're simply there. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .site-stars svg { animation: site-star-in linear both; animation-timeline: view(); }
-    .site-stars svg:nth-child(1) { animation-range: entry 10% entry 45%; }
-    .site-stars svg:nth-child(2) { animation-range: entry 25% entry 60%; }
-    .site-stars svg:nth-child(3) { animation-range: entry 40% entry 75%; }
-    .site-stars svg:nth-child(4) { animation-range: entry 55% entry 90%; }
-  }
-}
-@keyframes site-star-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
 
 /* ── Logo tiles: white in both themes so every brand colour reads ── */
 .site-logo-tile { display: inline-flex; align-items: center; justify-content: center; width: 140px; height: 64px; padding: 10px 16px; border-radius: 12px; background: #fff; border: 1px solid var(--d-rule); flex-shrink: 0; }
@@ -220,8 +202,6 @@ body:has(> .site) { background: var(--d-bg); }
 
 .home-block { margin-top: 48px; }
 .home-block + .home-block { margin-top: 162px; }
-.home-stars { margin-block: 72px; }
-.home-stars + .home-block { margin-top: 0; }
 
 .home-events { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin: 0; padding: 0; list-style: none; }
 .home-event { display: flex; flex-direction: column; gap: 14px; }
@@ -230,10 +210,8 @@ body:has(> .site) { background: var(--d-bg); }
 .home-event h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .home-event-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--d-rule); display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; color: var(--d-muted); }
 
-.home-people { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.home-people-art { position: relative; aspect-ratio: 335 / 210; border-radius: var(--d-radius); overflow: hidden; }
-.home-land { margin-top: 52px; display: flex; flex-direction: column; gap: 16px; }
-.home-land h3 { margin: 0; }
+.home-land { display: flex; flex-direction: column; gap: 16px; }
+.home-land h2 { margin: 0; }
 
 .site-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin: 0; padding: 0; list-style: none; }
 .site-features .site-card { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 32px; }
@@ -267,7 +245,6 @@ body:has(> .site) { background: var(--d-bg); }
   .home-hero-copy { gap: 28px; }
   .home-events, .site-features { grid-template-columns: 1fr; gap: 16px; }
   .home-block + .home-block { margin-top: 96px; }
-  .home-stars { margin-block: 64px; }
   .home-join { padding: 36px 24px; }
   .home-join h2 { font-size: 30px; }
   .home-partner-row { grid-template-columns: 1fr; gap: 10px; }
@@ -278,27 +255,23 @@ body:has(> .site) { background: var(--d-bg); }
 .site-features.two { grid-template-columns: 1fr 1fr; }
 
 /* ── About (V4 · Site · 02 About) ── */
-.about-stars { width: 100%; margin-block: 56px; }
-.about-stars + .site-section { margin-top: 0; }
+.about-allies { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.about-allies li { display: flex; flex-direction: column; gap: 6px; padding: 24px; }
+.about-allies strong { font-size: 26px; font-weight: 400; }
+.about-allies span { font-size: 14px; line-height: 1.45; color: var(--d-muted); }
+.site-cta + .site-cta { margin-top: 20px; }
+@media (max-width: 899px) { .about-allies { grid-template-columns: 1fr 1fr; } }
 .about-values { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--d-rule); }
 .about-values li { display: flex; flex-direction: column; gap: 10px; padding: 28px 32px 0; border-left: 1px solid var(--d-rule); }
 .about-values li:first-child { padding-left: 0; border-left: 0; }
 .about-values span { font-size: 14px; font-weight: 600; color: var(--d-gold-text); }
 .about-values h3 { margin: 0; font-size: 26px; line-height: 1.35; }
 .about-values p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--d-muted); }
-.about-timeline { margin: 0; padding: 0; list-style: none; }
-.about-timeline li { display: flex; gap: 32px; padding: 22px 0; border-top: 1px solid var(--d-rule); }
-.about-timeline li:last-child { border-bottom: 1px solid var(--d-rule); }
-.about-timeline span { display: flex; align-items: center; gap: 10px; width: 160px; flex-shrink: 0; font-size: 15px; font-weight: 600; height: 26px; }
-.about-timeline span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--d-rule-strong); }
-.about-timeline li[data-now] span::before { background: var(--d-gold); }
-.about-timeline p { margin: 0; font-size: 17px; line-height: 1.55; color: var(--d-muted); }
 @media (max-width: 799px) {
   .site-features.two { grid-template-columns: 1fr; }
   .about-values { grid-template-columns: 1fr; border-top: 0; }
   .about-values li, .about-values li:first-child { padding: 24px 0; border-left: 0; border-top: 1px solid var(--d-rule); }
-  .about-timeline li { flex-direction: column; gap: 6px; }
-}
+  }
 
 .site-tabs { display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--d-radius-sm); background: var(--d-sunken); }
 .site-tabs button { padding: 7px 16px; border: 0; border-radius: 6px; background: transparent; color: var(--d-muted); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
@@ -361,15 +334,15 @@ body:has(> .site) { background: var(--d-bg); }
 @media (max-width: 799px) { .site-cta { flex-direction: column; align-items: flex-start; padding: 28px 24px; } }
 
 /* ── Team (V4 · Site · 05 Team) ── */
-.team-people { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.team-people { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 240px)); gap: 20px; }
 .team-person { padding: 0; overflow: hidden; text-decoration: none; display: flex; flex-direction: column; transition: border-color 0.15s, box-shadow 0.15s; }
 .team-person:hover { border-color: var(--d-rule-strong); box-shadow: var(--d-pop); }
-.team-photo { position: relative; aspect-ratio: 265 / 300; background: var(--d-sunken); }
+.team-photo { position: relative; aspect-ratio: 1; background: var(--d-sunken); }
 .team-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; padding: 20px; color: var(--d-muted); }
 .team-info > span:first-child { display: flex; flex-direction: column; gap: 2px; }
-.team-info strong { font-size: 17px; font-weight: 600; color: var(--d-ink); }
+.team-info strong { font-size: 15px; font-weight: 600; color: var(--d-ink); }
 .team-info small { font-size: 14px; color: var(--d-muted); }
-@media (max-width: 999px) { .team-people { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 599px) { .team-people { grid-template-columns: 1fr 1fr; } }
 
 /* ── Blog (V4 · Site · 06 Blog) ── */
 .blog-empty { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 72px 40px; text-align: center; }

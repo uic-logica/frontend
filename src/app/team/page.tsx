@@ -50,7 +50,7 @@ function PersonCard({ person }: { person: Person }) {
   return (
     <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="site-card team-person">
       <span className="team-photo">
-        <Image src={person.image} alt="" fill sizes="(max-width: 799px) 50vw, 265px" className="object-cover" />
+        <Image src={person.image} alt="" fill sizes="(max-width: 599px) 50vw, 240px" className="object-cover" />
       </span>
       <span className="team-info">
         <span>

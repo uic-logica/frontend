@@ -5,7 +5,6 @@ export const metadata = pageMetadata("Join LOGICA", "Join LOGICA at UIC for comp
 import Link from "next/link";
 import { ClubShell } from "@/components/club/ClubShell";
 import { SiteIcon, type SiteIconName } from "@/components/site/icons";
-import { StarDivider } from "@/components/site/StarDivider";
 import { JoinForm } from "./JoinForm";
 
 const roles: { title: string; body: string; note: string; icon: SiteIconName }[] = [
@@ -83,8 +82,6 @@ export default function JoinPage() {
             ))}
           </ol>
         </section>
-
-        <StarDivider className="about-stars" />
 
         <section className="site-section" aria-labelledby="faq">
           <div className="site-head"><h2 id="faq" className="serif">Frequently asked questions</h2></div>
