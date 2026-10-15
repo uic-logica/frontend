@@ -5,6 +5,7 @@ import { ClubShell, Logo } from "@/components/club/ClubShell";
 import { LogoMarquee, LogoTile, type MarqueeLogo } from "@/components/club/LogoMarquee";
 import { Painting } from "@/components/site/Painting";
 import { StarDivider } from "@/components/site/StarDivider";
+import { projects } from "@/lib/projects";
 import { SiteIcon, type SiteIconName } from "@/components/site/icons";
 
 // The root layout's "%s | LOGICA @ UIC" template skips its own segment, so the home page names itself in full.
@@ -173,6 +174,23 @@ export default async function Home() {
                 <h3>{b.title}</h3>
                 <p>{b.text}</p>
                 <Link href={b.link.href} className="site-link">{b.link.label} <SiteIcon name="arrow" /></Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="site-wrap home-block" aria-labelledby="building-title">
+          <div className="site-head">
+            <h2 id="building-title" className="serif">What we&apos;re building</h2>
+            <Link href="/projects" className="site-link">All projects <SiteIcon name="arrow" /></Link>
+          </div>
+          <ul className="home-building">
+            {projects.filter((p) => p.slug !== "site").map((p) => (
+              <li key={p.slug}>
+                <Link href={`/projects#${p.slug}`}>
+                  <strong>{p.name}</strong>
+                  <span>{p.status === "Main focus" ? `Demo ${p.demo}` : p.status}</span>
+                </Link>
               </li>
             ))}
           </ul>
