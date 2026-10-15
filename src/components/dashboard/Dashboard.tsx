@@ -758,7 +758,19 @@ export function Dashboard() {
                 )}
               </Pane>
               )}
-              {seen("events") && (
+              {/* Only for accounts whose nav has Events: a guest typing the URL
+                  (or following an old link) shouldn't land in a half-working
+                  member view. */}
+              {section === "events" && user && !nav.includes("events") && (
+                <section className="d-panel d-note-panel">
+                  <div>
+                    <h2>Your event is on your home page</h2>
+                    <p>The date, room and who&apos;s coming are on your overview.</p>
+                    <Link className="d-button" href="/dashboard">Go to my overview</Link>
+                  </div>
+                </section>
+              )}
+              {seen("events") && nav.includes("events") && (
                 <Pane active={section === "events"}>
                   <Events
                     user={user}

@@ -51,10 +51,13 @@ function Body({
   body,
   events,
   windows,
+  linkEvents,
 }: {
   body: string;
   events: Event[] | null;
   windows: Window[];
+  /** Guests have no Events section, so for them a reference is a chip, not a link. */
+  linkEvents: boolean;
 }) {
   const parts: React.ReactNode[] = [];
   let last = 0;
@@ -81,10 +84,14 @@ function Body({
     } else {
       const live = events?.some((e) => e.id === id);
       parts.push(
-        live ? (
-          <Link className="d-ref" href="/dashboard/events" key={key}>
+        live && linkEvents ? (
+          <Link className="d-ref" href={`/dashboard/events?id=${id}`} key={key}>
             {text}
           </Link>
+        ) : live ? (
+          <span className="d-ref" key={key}>
+            {text}
+          </span>
         ) : (
           <span className="d-ref is-missing" key={key}>
             {text}
@@ -330,7 +337,7 @@ export function Thread({
                       </small>
                     </span>
                   )}
-                  <Body body={m.body} events={events} windows={windows} />
+                  <Body body={m.body} events={events} windows={windows} linkEvents={user.accountKind !== "SPEAKER"} />
                   <time dateTime={m.createdAt}>{clock(m.createdAt)}</time>
                 </div>
               </div>
