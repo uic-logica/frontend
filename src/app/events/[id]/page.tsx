@@ -3,80 +3,68 @@
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { ClubShell } from "@/components/club/ClubShell";
+import { SiteIcon } from "@/components/site/icons";
 import { ApiError, api } from "@/lib/api";
+import { eventDate, type ClubEvent } from "@/lib/events";
+import { downloadIcs } from "@/lib/ics";
 import { Description } from "../EventsList";
 
-type Event = { id: string; title: string; description: string | null; location: string | null; startsAt: string; link: string | null };
-
-// Same fixed zone as the events list: the events are in Chicago.
-const when = new Intl.DateTimeFormat("en-US", {
-  timeZone: "America/Chicago",
-  weekday: "short",
-  month: "short",
-  day: "numeric",
-  hour: "numeric",
-  minute: "2-digit",
-});
-
-/** Public event details. Board tools (materials, check-in) live in the dashboard's Events section. */
+/** Public event details (logica.pen V4 "04 Event detail"). Board tools (materials, check-in) live in the dashboard's Events section. */
 export default function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [event, setEvent] = useState<Event | null>(null);
+  const [event, setEvent] = useState<ClubEvent | null>(null);
   const [eventError, setEventError] = useState<"missing" | "failed" | null>(null);
 
   useEffect(() => {
-    api<Event>(`/api/events/${id}`)
+    api<ClubEvent>(`/api/events/${id}`)
       .then(setEvent)
       // A bad or stale URL is permanent; telling someone to "try again later"
       // sends them back to the same 404 forever.
-      .catch((e: unknown) =>
-        setEventError(e instanceof ApiError && e.status === 404 ? "missing" : "failed"),
-      );
+      .catch((e: unknown) => setEventError(e instanceof ApiError && e.status === 404 ? "missing" : "failed"));
   }, [id]);
+
+  const d = event && eventDate(event.startsAt);
 
   return (
     <ClubShell>
       <main className="site-page event-page">
-        {event ? (
+        <Link href="/events" className="site-back"><SiteIcon name="arrow" /> All events</Link>
+        {event && d ? (
           <>
-            <header className="page-head">
-              <h1>{event.title}</h1>
-              <p className="page-kicker">
-                {when.format(new Date(event.startsAt))}
-                {event.location ? ` · ${event.location}` : ""}
-              </p>
+            <header className="event-head">
+              <span className="site-date event-date"><b>{d.month}</b><span>{d.day}</span></span>
+              <h1 className="serif">{event.title}</h1>
             </header>
-            {(event.description || event.link) && (
-              <section className="event-body page-card glass">
-                {event.description && <Description text={event.description} className="event-description" />}
-                {event.link && (
-                  <a href={event.link} target="_blank" rel="noopener noreferrer" className="site-button">
-                    RSVP ↗
-                  </a>
-                )}
+            <ul className="event-meta">
+              <li><SiteIcon name="calendar" /> {d.full}</li>
+              {event.location && <li><SiteIcon name="pin" /> {event.location}</li>}
+            </ul>
+            <div className="event-actions">
+              {event.link && (
+                <a href={event.link} target="_blank" rel="noopener noreferrer" className="site-btn">RSVP</a>
+              )}
+              <button type="button" className="site-btn secondary" onClick={() => downloadIcs(event)}>Add to calendar</button>
+            </div>
+            {event.description && (
+              <section className="event-about" aria-labelledby="about-event">
+                <h2 id="about-event" className="serif">About this event</h2>
+                <Description text={event.description} className="event-description" />
               </section>
             )}
-            <Link href="/events" className="event-back">← All events</Link>
           </>
         ) : eventError ? (
-          <header className="page-head">
-            <h1>{eventError === "missing" ? "Event not found" : "Event details"}</h1>
+          <header className="site-page-head event-missing">
+            <h1 className="serif">{eventError === "missing" ? "Event not found" : "Event details"}</h1>
             <p>
               {eventError === "missing" ? (
-                <>
-                  That event doesn&apos;t exist, or it&apos;s been taken down.{" "}
-                  <Link href="/events" className="font-bold text-signal hover:underline">
-                    See what&apos;s coming up
-                  </Link>
-                  .
-                </>
+                <>That event doesn&apos;t exist, or it&apos;s been taken down. <Link href="/events">See what&apos;s coming up</Link>.</>
               ) : (
                 "Event details are not available right now. Please try again later."
               )}
             </p>
           </header>
         ) : (
-          <p className="text-body-sm text-white">Loading…</p>
+          <p className="site-muted" role="status">Loading…</p>
         )}
       </main>
     </ClubShell>

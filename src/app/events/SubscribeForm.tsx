@@ -2,11 +2,8 @@
 
 import { useId, useState } from "react";
 import { ApiError, api } from "@/lib/api";
-import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
 
-/**
- * The newsletter capture, opened by "Notify me" on the events page's empty state.
- */
+/** The newsletter capture beside the events list. */
 export function SubscribeForm() {
   const id = useId();
   const [email, setEmail] = useState("");
@@ -31,14 +28,12 @@ export function SubscribeForm() {
     }
   }
 
-  if (done) return <p className="subscribe-done" role="status">You&apos;re subscribed for event updates.</p>;
+  if (done) return <p className="site-success" role="status">You&apos;re subscribed for event updates.</p>;
 
   return (
-    <form onSubmit={submit} className="subscribe-form">
-      <label htmlFor={`${id}-email`} className="type-label">
-        UIC email
-      </label>
-      <div>
+    <form onSubmit={submit} className="site-form">
+      <label className="site-field" htmlFor={`${id}-email`}>
+        <span>Email</span>
         <input
           id={`${id}-email`}
           type="email"
@@ -50,17 +45,12 @@ export function SubscribeForm() {
           placeholder="netid@uic.edu"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={darkInputClass}
         />
-        <button type="submit" disabled={busy} className={`${darkButtonClass} sm:w-auto`}>
-          {busy ? "Subscribing…" : "Subscribe"}
-        </button>
-      </div>
-      {error && (
-        <p className="text-body-sm text-signal" role="alert">
-          {error}
-        </p>
-      )}
+      </label>
+      {error && <p className="site-error" role="alert">{error}</p>}
+      <button type="submit" disabled={busy} className="site-btn block">
+        {busy ? "Subscribing…" : "Notify me"}
+      </button>
     </form>
   );
 }

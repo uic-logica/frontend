@@ -8,11 +8,11 @@ import { LegalPage, LSection, Faq, contactLine } from "@/components/legal/LegalP
 const faqs = [
   {
     q: "How do I join LOGICA?",
-    a: "Head to the Join page and fill out the interest form — it's open year-round, no application deadline.",
+    a: "Head to the Join page and fill out the interest form. It's open year-round, no application deadline.",
   },
   {
     q: "Do I need to be a CS major, or Latinx, to join?",
-    a: "No. LOGICA was founded for Latinx and underrepresented students in computing, but membership has never been limited to them — any UIC student interested in tech is welcome, from any major.",
+    a: "No. LOGICA was founded for Latinx and underrepresented students in computing, but membership has never been limited to them. Any UIC student interested in tech is welcome, from any major.",
   },
   {
     q: "How do I RSVP for an event?",
@@ -20,15 +20,15 @@ const faqs = [
   },
   {
     q: "I can't sign in, or forgot my password.",
-    a: <>Email us at <a href="mailto:logica@uic.edu" className="font-semibold underline underline-offset-2">logica@uic.edu</a> with the address you signed up with and we&apos;ll help you get back in.</>,
+    a: <>Email us at <a href="mailto:logica@uic.edu">logica@uic.edu</a> with the address you signed up with and we&apos;ll help you get back in.</>,
   },
   {
     q: "How do I become a speaker or guest?",
-    a: "There's a speaker/guest intake form linked from the site — fill it out with your topic and availability and our board will follow up.",
+    a: "There's a speaker/guest intake form linked from the site. Fill it out with your topic and availability and our board will follow up.",
   },
   {
     q: "How can my company partner or sponsor an event?",
-    a: <>Email <a href="mailto:logica@uic.edu" className="font-semibold underline underline-offset-2">logica@uic.edu</a> — company visits, workshops, and talks all start with a quick conversation about what you&apos;re looking for.</>,
+    a: <>Email <a href="mailto:logica@uic.edu">logica@uic.edu</a>. Company visits, workshops, and talks all start with a quick conversation about what you&apos;re looking for.</>,
   },
   {
     q: "Is there a membership fee?",
@@ -36,26 +36,28 @@ const faqs = [
   },
   {
     q: "How do I update my profile or resume?",
-    a: "Sign in and go to your Profile page — you can edit your info and upload or replace your resume there.",
+    a: "Sign in and go to your Profile page. You can edit your info and upload or replace your resume there.",
   },
   {
     q: "How do I stop getting emails from LOGICA?",
-    a: <>Email <a href="mailto:logica@uic.edu" className="font-semibold underline underline-offset-2">logica@uic.edu</a> and ask to be removed — we&apos;ll take care of it.</>,
+    a: <>Email <a href="mailto:logica@uic.edu">logica@uic.edu</a> and ask to be removed. We&apos;ll take care of it.</>,
   },
 ];
 
 export default function SupportPage() {
   return (
     <LegalPage
+      eyebrow="HELP"
       title="Support"
       dek="Common questions, and how to reach a person if this page doesn't cover it."
       updated="September 2026"
     >
       <LSection title="Reach us directly">
-        <p>
-          {contactLine} We&apos;re a student board, not a support team, so give us a couple of
-          business days to get back to you.
-        </p>
+        <div className="site-card legal-contact">
+          <p className="legal-contact-line">{contactLine}</p>
+          <p>We&apos;re a student board, not a support team, so give us a couple of business days to get back to you.</p>
+          <a href="mailto:logica@uic.edu" className="site-btn secondary">Email the board</a>
+        </div>
       </LSection>
 
       <LSection title="Frequently asked questions">

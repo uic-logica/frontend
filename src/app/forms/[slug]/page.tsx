@@ -4,21 +4,14 @@ import Link from "next/link";
 import { use, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { inputType } from "@/lib/formField";
-import {
-  AppShell,
-  EmptyState,
-  Field,
-  PageHeader,
-  buttonClass,
-  inputClass,
-  inputErrorClass,
-} from "@/components/shell/AppShell";
+import { ClubShell } from "@/components/club/ClubShell";
+import { SiteIcon } from "@/components/site/icons";
 
 type FieldDef = { id: string; label: string; type: string };
 type Form = { id: string; title: string; fields: FieldDef[] };
 
 
-/** Forms — BRP flat fills; CONTENT #8 error summary takes focus + Error: title. */
+/** Backend forms (logica.pen V4 "15 Forms"): the error summary takes focus and the tab title starts with "Error:". */
 export default function FormPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const [form, setForm] = useState<Form | null>(null);
@@ -68,7 +61,7 @@ export default function FormPage({ params }: { params: Promise<{ slug: string }>
 
     try {
       // State is keyed by field id so two fields sharing a label stay
-      // independent, but the stored submission is keyed by label — there is
+      // independent, but the stored submission is keyed by label: there is
       // no review UI yet, so someone reads this raw and "Company name"
       // beats "clx3f9q2b0001".
       const data = Object.fromEntries(
@@ -86,80 +79,66 @@ export default function FormPage({ params }: { params: Promise<{ slug: string }>
     }
   }
 
+  const head = (title: string) => (
+    <header className="site-page-head forms-head">
+      <p className="site-kicker">FORM · {slug.toUpperCase()}</p>
+      <h1 className="serif">{title}</h1>
+    </header>
+  );
+
   if (error && !form) {
     return (
-      <AppShell>
-        <PageHeader eyebrow="Forms" title="Form unavailable" />
-        <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
-          <EmptyState
-            title="Couldn't load this form"
-            body={error}
-            action={
-              <Link href="/" className="type-label text-signal underline-offset-4 hover:underline">
-                Home →
-              </Link>
-            }
-          />
-        </div>
-      </AppShell>
+      <ClubShell>
+        <main className="site-page forms-page">
+          {head("Form unavailable")}
+          <div className="forms-unavailable">
+            <h2 className="serif">Couldn&apos;t load this form</h2>
+            <p>{error}</p>
+            <Link href="/" className="site-link">Home <SiteIcon name="arrow" /></Link>
+          </div>
+        </main>
+      </ClubShell>
     );
   }
 
   if (!form) {
     return (
-      <AppShell>
-        <PageHeader eyebrow="Forms" title="Loading…" />
-        <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
-          <p className="text-body text-ink-muted">Loading form…</p>
-        </div>
-      </AppShell>
+      <ClubShell>
+        <main className="site-page forms-page">
+          {head("Loading…")}
+          <p className="site-muted" role="status">Loading form…</p>
+        </main>
+      </ClubShell>
     );
   }
 
   if (submitted) {
     return (
-      <AppShell>
-        <PageHeader eyebrow="Forms" title={form.title} />
-        <div className="mx-auto max-w-shell px-4 py-14 md:px-6">
-          <div className="max-w-lg rounded-lg border border-ink bg-paper-dim p-8 text-ink shadow-block">
-            <h2 className="type-h2">Submitted. Thanks!</h2>
-            <p className="mt-3 text-body">
-              We got your response for <strong>{form.title}</strong>.
-            </p>
-            <Link href="/" className={`${buttonClass} mt-6 bg-ink`}>
-              Back home
-            </Link>
+      <ClubShell>
+        <main className="site-page forms-page">
+          {head(form.title)}
+          <div className="site-card speak-card" role="status">
+            <span className="site-check" aria-hidden="true"><SiteIcon name="check" size={20} /></span>
+            <h2 className="serif">Submitted. Thanks!</h2>
+            <p className="site-muted">We got your response for <strong>{form.title}</strong>.</p>
+            <Link href="/" className="site-btn forms-home">Back home</Link>
           </div>
-        </div>
-      </AppShell>
+        </main>
+      </ClubShell>
     );
   }
 
   return (
-    <AppShell>
-      <PageHeader
-        eyebrow={`Form · ${slug}`}
-        title={form.title}
-        description="Flat fills and hard outlines — readable on first contact."
-      />
-
-      <div className="mx-auto max-w-shell px-4 py-14 md:px-6 md:py-24">
-        <form
-          onSubmit={submit}
-          className="card max-w-lg border-ink p-6 shadow-block md:p-8"
-          noValidate
-        >
+    <ClubShell>
+      <main className="site-page forms-page">
+        {head(form.title)}
+        <form onSubmit={submit} className="site-card speak-card site-form" noValidate>
           {error && (
-            <div
-              ref={summaryRef}
-              tabIndex={-1}
-              className="rounded-lg mb-5 border-2 border-signal bg-paper px-4 py-3 text-body-sm text-signal outline-none"
-              role="alert"
-            >
-              <p className="font-bold">Error</p>
-              <p className="mt-1">{error}</p>
+            <div ref={summaryRef} tabIndex={-1} className="forms-summary" role="alert">
+              <p><strong>Error</strong></p>
+              <p>{error}</p>
               {Object.keys(fieldErrors).length > 0 && (
-                <ul className="mt-2 list-disc pl-5">
+                <ul>
                   {Object.values(fieldErrors).map((msg) => (
                     <li key={msg}>{msg}</li>
                   ))}
@@ -168,46 +147,31 @@ export default function FormPage({ params }: { params: Promise<{ slug: string }>
             </div>
           )}
 
-          <div className="flex flex-col gap-5">
-            {form.fields.map((f) => {
-              const shared = {
-                id: f.id,
-                value: values[f.id] ?? "",
-                onChange: (
-                  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-                ) => setValues({ ...values, [f.id]: e.target.value }),
-                className: fieldErrors[f.id] ? inputErrorClass : inputClass,
-                "aria-invalid": Boolean(fieldErrors[f.id]),
-                "aria-describedby": fieldErrors[f.id] ? `${f.id}-error` : undefined,
-              };
-              return (
-                <Field key={f.id} id={f.id} label={f.label} error={fieldErrors[f.id]}>
-                  {f.type === "textarea" ? (
-                    <textarea rows={5} {...shared} />
-                  ) : (
-                    <input type={inputType(f.type)} {...shared} />
-                  )}
-                </Field>
-              );
-            })}
-          </div>
+          {form.fields.map((f) => {
+            const shared = {
+              id: f.id,
+              value: values[f.id] ?? "",
+              onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setValues({ ...values, [f.id]: e.target.value }),
+              className: fieldErrors[f.id] ? "site-input-error" : undefined,
+              "aria-invalid": Boolean(fieldErrors[f.id]),
+              "aria-describedby": fieldErrors[f.id] ? `${f.id}-error` : undefined,
+            };
+            return (
+              <div key={f.id} className="site-field">
+                <label htmlFor={f.id}>{f.label}</label>
+                {f.type === "textarea" ? <textarea rows={5} {...shared} /> : <input type={inputType(f.type)} {...shared} />}
+                {fieldErrors[f.id] && <small id={`${f.id}-error`} className="forms-field-error">{fieldErrors[f.id]}</small>}
+              </div>
+            );
+          })}
 
-          <button type="submit" disabled={busy} className={`${buttonClass} mt-8`}>
-            {busy ? "Submitting…" : "Submit"}
-          </button>
+          <button type="submit" disabled={busy} className="site-btn forms-submit">{busy ? "Submitting…" : "Submit"}</button>
         </form>
 
-        <p className="mt-8 text-caption text-ink-muted">
-          Other forms:{" "}
-          <Link href="/forms/startup-intake" className="font-bold text-signal hover:underline">
-            startup intake
-          </Link>
-          {" · "}
-          <Link href="/forms/company-visit-signup" className="font-bold text-signal hover:underline">
-            company visit
-          </Link>
+        <p className="auth-alt forms-other">
+          Other forms: <Link href="/forms/startup-intake">Startup intake</Link> · <Link href="/forms/company-visit-signup">Company visit</Link>
         </p>
-      </div>
-    </AppShell>
+      </main>
+    </ClubShell>
   );
 }

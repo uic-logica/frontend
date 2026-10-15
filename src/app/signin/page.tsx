@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ClubShell, PageContainer } from "@/components/club/ClubShell";
-import { MailIcon } from "@/components/ui/MailIcon";
-import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
+import { ClubShell } from "@/components/club/ClubShell";
+import { PasswordInput } from "@/components/site/PasswordInput";
+import { SiteIcon } from "@/components/site/icons";
 import { api } from "@/lib/api";
 
 export default function SignInPage() {
@@ -54,33 +54,31 @@ export default function SignInPage() {
 
   return (
     <ClubShell>
-      <PageContainer>
-        <header className="auth-head">
-          <h1>Sign in to LOGICA</h1>
-          <p>Members, board, and exec board</p>
-        </header>
-        <div className="club-card auth-card">
+      <main className="auth-wrap">
+        <div className="site-card auth-card">
+          <header className="auth-head">
+            <h1 className="serif">Sign in to LOGICA</h1>
+            <p>Members, board, and exec board</p>
+          </header>
           <p className="auth-intro">New to LOGICA? <Link href="/signup">Create an account</Link> with your UIC email.</p>
-          {error && <p id="signin-error" role="alert" className="mt-5 rounded-lg border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white">{error}</p>}
-          <form onSubmit={submit} className="mt-6 flex flex-col gap-5" aria-busy={busy} aria-describedby={error ? "signin-error" : undefined}>
-            <div className="auth-field">
-              <label htmlFor="email" className="type-label">UIC email</label>
-              <MailIcon />
-              <input id="email" name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} maxLength={254} required value={email} onChange={(e) => setEmail(e.target.value)} className={darkInputClass} placeholder="netid@uic.edu" />
+          {error && <p id="signin-error" role="alert" className="site-error">{error}</p>}
+          <form onSubmit={submit} className="site-form auth-form" aria-busy={busy} aria-describedby={error ? "signin-error" : undefined}>
+            <label className="site-field" htmlFor="email">
+              <span>UIC email</span>
+              <input id="email" name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} maxLength={254} required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="netid@uic.edu" />
+            </label>
+            <div className="site-field">
+              <label htmlFor="password">Password</label>
+              <PasswordInput id="password" name="password" show={showPassword} onToggle={() => setShowPassword(!showPassword)} autoComplete="current-password" maxLength={128} value={password} onChange={setPassword} placeholder="Your password" />
             </div>
-            <div className="flex flex-col gap-1.5">
-              <div className="auth-field">
-                <label htmlFor="password" className="type-label">Password</label>
-                <input id="password" name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" maxLength={128} required value={password} onChange={(e) => setPassword(e.target.value)} className={darkInputClass} />
-              </div>
-              <button type="button" aria-pressed={showPassword} aria-controls="password" className="auth-toggle" onClick={() => setShowPassword(!showPassword)}>{showPassword ? "Hide password" : "Show password"}</button>
-            </div>
-            <button type="submit" disabled={busy} className={darkButtonClass}>{busy ? "Signing in…" : "Sign in"}</button>
+            <button type="submit" disabled={busy} className="site-btn block">{busy ? "Signing in…" : "Sign in"}</button>
           </form>
-          <p className="auth-note">Forgot your password? <Link href="/support">Contact the exec board</Link> to verify your identity and receive a new one.</p>
+          <p className="auth-alt">Forgot your password? <Link href="/support">Contact the exec board</Link></p>
+          <p className="auth-note">We&apos;ll verify your identity and send you a new one.</p>
+          <hr className="auth-rule" />
+          <p className="auth-alt">Guest or speaker? <Link href="/speaker-signin" className="auth-arrow">Sign in here <SiteIcon name="arrow" size={14} /></Link></p>
         </div>
-        <p className="auth-foot">Guest or speaker? <Link href="/speaker-signin">Sign in here</Link></p>
-      </PageContainer>
+      </main>
     </ClubShell>
   );
 }

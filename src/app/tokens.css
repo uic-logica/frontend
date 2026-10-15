@@ -1,0 +1,88 @@
+/* V4 tokens, shared by the workspace (.dash, dashboard.css) and the public site (.site, site.css).
+   Theme: follows the system unless <html data-theme> says otherwise; the root
+   layout sets that attribute before first paint. Spec: "V4 ·" frames in logica.pen. */
+.dash, .site, body:has(> .site) {
+  --d-bg: #faf9f5;
+  --d-sidebar: #f3f1ea;
+  --d-surface: #ffffff;
+  --d-sunken: #f0eee6;
+  --d-hover: #eae7dd;
+  --d-rule: #e6e3d8;
+  --d-rule-strong: #cfcbbe;
+  --d-ink: #1a1915;
+  --d-muted: #5c5a54;
+  --d-faint: #8c897f;
+  --d-primary: #1a1915;
+  --d-on-primary: #faf9f5;
+  --d-gold: #fecc15;
+  --d-on-gold: #1a1915;
+  --d-gold-soft: #fff4c7;
+  --d-gold-text: #7a5c00;
+  --d-danger: #b42318;
+  --d-danger-soft: #fdecea;
+  --d-success: #2f7a4a;
+  --d-success-soft: #e7f4ec;
+  --d-info: #2f5fa8;
+  --d-info-soft: #e8effa;
+  --d-ember: #ca3a03;
+  --d-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+  --d-pop: 0 8px 24px rgb(0 0 0 / 0.12);
+  --d-radius: 10px;
+  --d-radius-sm: 8px;
+  --d-serif: var(--font-serif, Georgia), Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+[data-theme="dark"] .dash, [data-theme="dark"] .site, [data-theme="dark"] body:has(> .site) {
+  --d-bg: #262624;
+  --d-sidebar: #1f1e1d;
+  --d-surface: #30302e;
+  --d-sunken: #2b2a28;
+  --d-hover: #3a3936;
+  --d-rule: #3e3d39;
+  --d-rule-strong: #57554f;
+  --d-ink: #f4f2ec;
+  --d-muted: #c3c0b6;
+  --d-faint: #8e8b82;
+  --d-primary: #f4f2ec;
+  --d-on-primary: #1a1915;
+  --d-gold-soft: #3b3420;
+  --d-gold-text: #f5d45e;
+  --d-danger: #f28b82;
+  --d-danger-soft: #3d2624;
+  --d-success: #7fcb97;
+  --d-success-soft: #22352a;
+  --d-info: #8db4f0;
+  --d-info-soft: #24304a;
+  --d-ember: #f0855a;
+  --d-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  --d-pop: 0 8px 24px rgb(0 0 0 / 0.45);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dash, :root:not([data-theme="light"]) .site, :root:not([data-theme="light"]) body:has(> .site) {
+    --d-bg: #262624;
+    --d-sidebar: #1f1e1d;
+    --d-surface: #30302e;
+    --d-sunken: #2b2a28;
+    --d-hover: #3a3936;
+    --d-rule: #3e3d39;
+    --d-rule-strong: #57554f;
+    --d-ink: #f4f2ec;
+    --d-muted: #c3c0b6;
+    --d-faint: #8e8b82;
+    --d-primary: #f4f2ec;
+    --d-on-primary: #1a1915;
+    --d-gold-soft: #3b3420;
+    --d-gold-text: #f5d45e;
+    --d-danger: #f28b82;
+    --d-danger-soft: #3d2624;
+    --d-success: #7fcb97;
+    --d-success-soft: #22352a;
+    --d-info: #8db4f0;
+    --d-info-soft: #24304a;
+    --d-ember: #f0855a;
+    --d-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+    --d-pop: 0 8px 24px rgb(0 0 0 / 0.45);
+    color-scheme: dark;
+  }
+}
