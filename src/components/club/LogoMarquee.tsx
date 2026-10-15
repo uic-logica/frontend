@@ -20,7 +20,7 @@ function fit(width: number, height: number) {
   return { width: Math.round(h * ratio), height: Math.round(h) };
 }
 
-/** A logo in its brand colours on a white tile (white in dark mode too, so every brand reads). */
+/** A logo in its brand colours on a light tile (dimmed off-white in dark mode, so navy brands still read without the glare). */
 export function LogoTile({ name, src, width, height, hidden = false }: MarqueeLogo & { hidden?: boolean }) {
   return (
     <span className="site-logo-tile">

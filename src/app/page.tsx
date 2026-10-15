@@ -4,7 +4,6 @@ import { getEvents, eventDate, type ClubEvent } from "@/lib/events";
 import { ClubShell, Logo } from "@/components/club/ClubShell";
 import { LogoMarquee, LogoTile, type MarqueeLogo } from "@/components/club/LogoMarquee";
 import { Painting } from "@/components/site/Painting";
-import { StarDivider } from "@/components/site/StarDivider";
 import { projects } from "@/lib/projects";
 import { SiteIcon, type SiteIconName } from "@/components/site/icons";
 
@@ -24,7 +23,7 @@ const membersLand = [
   logo("SpotHero", "spothero", 350, 220),
   logo("PayPal", "paypal", 412, 101),
   logo("CACI", "caci-wordmark", 1197, 426),
-  logo("DPI", "dpi", 840, 312),
+  logo("DPI", "dpi-logo", 1200, 648),
   logo("Morningstar", "morningstar", 900, 189),
   logo("BMO", "bmo", 479, 167),
   logo("UIC Technology Solutions", "uic-tech-solutions", 194, 123),
@@ -46,7 +45,7 @@ const partnerGroups: { label: string; logos: MarqueeLogo[] }[] = [
   },
   {
     label: "Partners",
-    logos: [logo("Zebra", "zebra.svg", 378, 126), logo("Break Through Tech", "breakthrough", 422, 234), logo("NASA Space Apps Challenge", "spaceapps", 1050, 1056), logo("DPI", "dpi", 840, 312)],
+    logos: [logo("Zebra", "zebra.svg", 378, 126), logo("Break Through Tech", "breakthrough", 422, 234), logo("NASA Space Apps Challenge", "spaceapps", 1050, 1056)],
   },
 ];
 
@@ -111,10 +110,12 @@ export default async function Home() {
           <Painting name="hero" sizes="100vw" className="home-hero-art" high />
           <div className="home-hero-copy site-wrap">
             <div className="home-hero-brand">
-              <Logo size={56} priority />
-              <span>LOGICA @ UIC</span>
+              <Logo size={96} priority />
+              <div>
+                <h1 className="serif">LOGICA at UIC</h1>
+                <p>Latinx computing and academics community</p>
+              </div>
             </div>
-            <h1 className="serif">The Latinx computing community at UIC.</h1>
             <div className="home-hero-actions">
               <Link href="/signup" className="site-btn">Join LOGICA</Link>
               <Link href="/events" className="site-btn secondary">See upcoming events <SiteIcon name="arrow" /></Link>
@@ -147,20 +148,9 @@ export default async function Home() {
           )}
         </section>
 
-        <StarDivider className="home-stars" />
-
-        <section className="site-wrap home-block" aria-labelledby="people-title">
-          <div className="site-head">
-            <h2 id="people-title" className="serif">People, not just programs</h2>
-          </div>
-          {/* TODO(real content): the design pairs a 2x2 grid with a member quote card. The quote is mock, so the grid spans the full width until a member gives a real one. */}
-          <div className="home-people">
-            {[1, 2, 3, 4].map((n) => <Painting key={n} name={`people-${n}`} sizes="(max-width: 799px) 50vw, 550px" className="home-people-art" />)}
-          </div>
-          <div className="home-land">
-            <h3 className="site-kicker">Where our members land</h3>
-            <LogoMarquee items={membersLand} />
-          </div>
+        <section className="site-wrap home-block home-land" aria-labelledby="land-title">
+          <h2 id="land-title" className="site-kicker">Where our members land</h2>
+          <LogoMarquee items={membersLand} />
         </section>
 
         <section className="site-wrap home-block" aria-labelledby="get-title">
@@ -195,8 +185,6 @@ export default async function Home() {
             ))}
           </ul>
         </section>
-
-        <StarDivider className="home-stars" />
 
         <section className="site-wrap home-block" aria-labelledby="join-title">
           <div className="home-join">

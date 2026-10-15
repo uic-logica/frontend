@@ -21,6 +21,22 @@ const links = [
 let knownSignedIn: boolean | null = null;
 
 /** The real logo: black on paper, white on charcoal. CSS shows the one for the current theme. */
+/**
+ * Whether someone is signed in, for public pages that swap "Create account"
+ * for what a member would do instead. Starts from the last answer so labels
+ * don't flicker between pages, then re-checks (sign-out happens in the dashboard).
+ */
+export function useSignedIn() {
+  const [signedIn, setSignedIn] = useState(knownSignedIn ?? false);
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((me) => setSignedIn((knownSignedIn = !!me?.user)))
+      .catch(() => {});
+  }, []);
+  return signedIn;
+}
+
 export function Logo({ size, priority }: { size: number; priority?: boolean }) {
   return (
     <span className="site-logo" style={{ width: size, height: size }}>
@@ -30,45 +46,22 @@ export function Logo({ size, priority }: { size: number; priority?: boolean }) {
   );
 }
 
-/** Light/dark switch. Unset follows the computer; a click saves the choice the dashboard also reads. */
-function ThemeToggle() {
-  // The root layout's script applies the saved choice on a full load only;
-  // arriving by client-side navigation from the dashboard re-applies it here.
+export function SiteNav() {
+  const pathname = usePathname();
+  // Light/dark follows the computer; it's changed only in dashboard Settings.
+  // The root layout applies a saved choice on a full load; arriving by
+  // client-side navigation from the dashboard re-applies it here.
   useEffect(() => {
     try {
       const saved = localStorage.getItem("logica-theme");
       if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+      else delete document.documentElement.dataset.theme;
     } catch {}
   }, []);
-  function toggle() {
-    const root = document.documentElement;
-    const dark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
-    root.dataset.theme = dark ? "light" : "dark";
-    try {
-      localStorage.setItem("logica-theme", root.dataset.theme);
-    } catch {}
-  }
-  return (
-    <button type="button" className="site-theme" onClick={toggle} aria-label="Switch light or dark theme">
-      <span className="only-light"><SiteIcon name="moon" /></span>
-      <span className="only-dark"><SiteIcon name="sun" /></span>
-    </button>
-  );
-}
-
-export function SiteNav() {
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [signedIn, setSignedIn] = useState(knownSignedIn ?? false);
+  const signedIn = useSignedIn();
   const account = signedIn ? { href: "/dashboard", label: "Dashboard" } : { href: "/signin", label: "Sign in" };
 
-  // Starts from the last answer so the label doesn't flicker, then re-checks (sign-out happens in the dashboard).
-  useEffect(() => {
-    fetch("/api/auth/session")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((me) => setSignedIn((knownSignedIn = !!me?.user)))
-      .catch(() => {});
-  }, []);
 
   return (
     <header className="site-nav">
@@ -85,7 +78,6 @@ export function SiteNav() {
           ))}
         </nav>
         <div className="site-nav-actions">
-          <ThemeToggle />
           <Link href={account.href} className="site-btn secondary sm site-nav-account" aria-current={pathname === account.href ? "page" : undefined}>
             {account.label}
           </Link>

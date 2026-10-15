@@ -9,7 +9,6 @@ export const metadata = pageMetadata(
 import Link from "next/link";
 import { ClubShell } from "@/components/club/ClubShell";
 import { SiteIcon } from "@/components/site/icons";
-import { StarDivider } from "@/components/site/StarDivider";
 import { ORG, projects, teamPage } from "@/lib/projects";
 
 const tone: Record<string, string> = { "Main focus": "focus", Next: "next", Later: "later", Live: "live" };
@@ -59,19 +58,20 @@ export default function ProjectsPage() {
           ))}
         </ol>
 
-        <StarDivider className="about-stars" />
-
         <section className="site-section site-cta" aria-labelledby="build-title">
           <div>
             <h2 id="build-title" className="serif">Want to build one of these?</h2>
-            <p>Software Teams take members of every level. Apply from your dashboard.</p>
+            <p>
+              Software Teams take members of every level. Sign in with your UIC account, tell us your GitHub, the hours
+              you have and the projects you want, and we&apos;ll place you.
+            </p>
           </div>
           <div className="projects-cta-actions">
             <a className="site-btn secondary" href={ORG} target="_blank" rel="noopener noreferrer">
               See the code
             </a>
-            <Link className="site-btn" href="/join">
-              Join a team
+            <Link className="site-btn" href="/signin?next=/dashboard/teams">
+              Apply to a Software Team
             </Link>
           </div>
         </section>

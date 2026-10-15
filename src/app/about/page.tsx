@@ -5,7 +5,6 @@ export const metadata = pageMetadata("About LOGICA", "Learn about LOGICA, the La
 import Link from "next/link";
 import { ClubShell } from "@/components/club/ClubShell";
 import { SiteIcon, type SiteIconName } from "@/components/site/icons";
-import { StarDivider } from "@/components/site/StarDivider";
 
 const whatWeDo: { title: string; body: string; icon: SiteIconName }[] = [
   {
@@ -26,10 +25,12 @@ const values = [
   { title: "Community", body: "Students passing along lessons, opportunities, and support." },
 ];
 
-const timeline = [
-  { label: "Started", body: "LOGICA formed at UIC as a space for Latinx students in computing." },
-  { label: "Since", body: "Speakers, company visits, and events run with WiCyS, SHPE, ACM and LUG." },
-  { label: "Now", body: "We're building this site. It's the org's first project." },
+// The groups we run speakers, company visits and events with.
+const allies = [
+  { short: "WiCyS", name: "Women in Cybersecurity" },
+  { short: "SHPE", name: "Society of Hispanic Professional Engineers" },
+  { short: "ACM", name: "Association for Computing Machinery" },
+  { short: "LUG", name: "Linux Users Group" },
 ];
 
 /** Layout is logica.pen V4 "02 About". */
@@ -56,8 +57,6 @@ export default function AboutPage() {
           </ul>
         </section>
 
-        <StarDivider className="about-stars" />
-
         <section className="site-section about-values-section" aria-labelledby="values">
           <div className="site-head"><h2 id="values" className="serif">Our core values</h2></div>
           <ol className="about-values">
@@ -71,16 +70,29 @@ export default function AboutPage() {
           </ol>
         </section>
 
-        <section className="site-section" aria-labelledby="timeline">
-          <div className="site-head"><h2 id="timeline" className="serif">Timeline</h2></div>
-          <ol className="about-timeline">
-            {timeline.map((t, i) => (
-              <li key={t.label} data-now={i === timeline.length - 1 || undefined}>
-                <span>{t.label}</span>
-                <p>{t.body}</p>
+        <section className="site-section" aria-labelledby="allies">
+          <div className="site-head">
+            <div>
+              <h2 id="allies" className="serif">Who we work with</h2>
+              <p className="site-head-sub">Speakers, company visits, and events run with other UIC computing groups.</p>
+            </div>
+          </div>
+          <ul className="about-allies">
+            {allies.map((a) => (
+              <li key={a.short} className="site-card">
+                <strong className="serif">{a.short}</strong>
+                <span>{a.name}</span>
               </li>
             ))}
-          </ol>
+          </ul>
+        </section>
+
+        <section className="site-section site-cta" aria-labelledby="building">
+          <div>
+            <h2 id="building" className="serif">What we&apos;re building</h2>
+            <p>An opportunity board, a resume builder, 3D event replays and a mock interviewer, built by members.</p>
+          </div>
+          <Link href="/projects" className="site-btn secondary">See the projects</Link>
         </section>
 
         <section className="site-section site-cta">

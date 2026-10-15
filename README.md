@@ -14,9 +14,9 @@ The club website for [LOGICA @ UIC](https://github.com/uic-logica): Latinx and u
 
 | Area | What it does |
 |---|---|
-| Public site | Home, About, Events, Team, Projects, Blog, Join, Partner, Speak, legal pages. Light and dark, a Chicago painting on Home and in every footer |
+| Public site | Home, About, Events, Team, Projects, Blog (members write in the dashboard, the exec board publishes), Join, Partner, Speak, legal pages. Light and dark (follows your computer; switch it in dashboard Settings), a Chicago painting on Home and in every footer |
 | Accounts | Sign up with @uic.edu, password sign-in, 30-day sessions |
-| Member dashboard | Overview, profile (resume + LinkedIn), events and one-step check-in, engagement, community, **Software Teams** application |
+| Member dashboard | Overview, profile (resume + LinkedIn), events and one-step check-in, engagement, community. The **Software Teams** application opens from [/projects](https://logicauic.org/projects) |
 | Exec workspace | Money, outreach pipeline, insights, documents, members, applications, speakers; the board edits events in place |
 | Speakers & guests | `/speak` intake, guest portal, availability calendar |
 
@@ -52,9 +52,10 @@ Run the [backend](https://github.com/uic-logica/backend#readme) on port 3001 at 
 
 | Path | What |
 |---|---|
-| `src/app/` | Routes: public pages, `signin`, `signup`, `dashboard/[section]`, `speak`, `invite` |
-| `src/components/club/` | Public shell: nav, footer, theme toggle (`ClubShell.tsx`) |
-| `src/components/site/` | Public site styles (`site.css`), paintings, star divider, icons |
+| `src/app/` | Routes: public pages (including `projects`), `signin`, `signup`, `dashboard/[section]`, `speak`, `invite` |
+| `src/components/club/` | Public shell: nav, footer (`ClubShell.tsx`), the logo slider (`LogoMarquee.tsx`) |
+| `src/components/site/` | Public site styles (`site.css`), paintings, icons |
+| `src/lib/projects.ts` | The project list behind /projects and Home's "What we're building" |
 | `src/components/dashboard/` | Dashboard shell and every section (`Dashboard.tsx`, `Board.tsx`, `Speakers.tsx`, …) |
 | `src/app/tokens.css` | The `d-*` color tokens, light and dark, shared by the site and the dashboard |
 | `src/lib/` | API client and pure helpers (with vitest tests) |
