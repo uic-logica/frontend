@@ -4007,3 +4007,4 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 /* Applications: the times an applicant shared for their interview. */
 .d-interview-times { margin: 0 0 6px; padding-left: 18px; }
 .d-interview-times li { margin: 2px 0; }
+.d-resend { margin: 14px 0 0; font-size: 13px; }
