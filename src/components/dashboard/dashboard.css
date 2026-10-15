@@ -3966,3 +3966,6 @@ tr:has(.d-row-link[aria-current]) > td {
 .d-blog-read { margin: 20px 0; max-width: 68ch; }
 .d-blog-read h2 { font-family: var(--d-serif); font-size: 28px; font-weight: 500; line-height: 1.2; margin: 0 0 16px; }
 .d-blog-read p { font-family: var(--d-serif); font-size: 16px; line-height: 1.7; margin: 0 0 14px; white-space: pre-line; }
+.d-partner-access {
+  margin-top: 18px;
+}

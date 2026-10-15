@@ -53,7 +53,7 @@ export function PartnerAccess({ event }: { event: Event }) {
   }
 
   return (
-    <section className="d-settings" aria-label={`Partner clubs for ${event.title}`}>
+    <section className="d-settings d-partner-access" aria-label={`Partner clubs for ${event.title}`}>
       <h3>Partner clubs</h3>
       <p className="d-footnote">A partner club can see and edit only the events checked here. It can&apos;t create events or see who RSVPed.</p>
       {error && <p className="d-error" role="alert">{error}</p>}
