@@ -75,6 +75,7 @@ export function Board({ kind, members, events }: Props) {
   const [budgets, setBudgets] = useState<Budgets | null>(() => (kind === "MONEY" ? peek<Budgets>("/api/board/budgets") ?? null : null));
   const [stage, setStage] = useState("ALL");
   const [query, setQuery] = useState("");
+  const [view, setView] = useState<"table" | "board">("table");
   const [open, setOpen] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [newTerm, setNewTerm] = useState(false);
@@ -534,9 +535,80 @@ export function Board({ kind, members, events }: Props) {
               onChange={(e) => setQuery(e.target.value)}
             />
           </label>
+          <div className="d-segmented" role="group" aria-label="Layout">
+            {(["table", "board"] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                aria-pressed={view === v}
+                onClick={() => setView(v)}
+              >
+                {v === "table" ? "Table" : "Board"}
+              </button>
+            ))}
+          </div>
         </div>
+        {view === "board" && !!filtered?.length && (
+          <div
+            className="d-kanban"
+            tabIndex={0}
+            role="region"
+            aria-label={`${copy.title} by stage`}
+          >
+            {(stage === "ALL" ? stages : [stage]).map((s) => {
+              const column = filtered.filter((i) => i.stage === s);
+              return (
+                <section key={s} aria-labelledby={`stage-${s}`}>
+                  <h3 id={`stage-${s}`}>
+                    <span className={`d-badge ${stageTone(s)}`}>
+                      {STAGE_LABEL[s] ?? s}
+                    </span>
+                    <span>{column.length}</span>
+                  </h3>
+                  <ul>
+                    {column.map((item) => (
+                      <li key={item.id}>
+                        <button
+                          className="d-kanban-card"
+                          aria-expanded={open === item.id}
+                          onClick={() =>
+                            setOpen(open === item.id ? null : item.id)
+                          }
+                        >
+                          <strong>{item.title}</strong>
+                          <small>
+                            {[
+                              kind === "MONEY"
+                                ? money(item.amountCents, { cell: true })
+                                : item.org || item.category,
+                              personName(item.owner) ?? "Unassigned",
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </small>
+                          {item.nextStepAt && (
+                            <small
+                              className={
+                                isOverdue(item.nextStepAt)
+                                  ? "d-overdue"
+                                  : undefined
+                              }
+                            >
+                              Next: {relativeDay(item.nextStepAt)}
+                            </small>
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            })}
+          </div>
+        )}
         {/* Focusable: below ~680px this scrolls sideways, and a scroll
             container a keyboard can't reach is a WCAG 2.1.1 failure. */}
+        {view === "table" && (
         <div className="d-table-scroll" tabIndex={0} role="region" aria-label={copy.searchLabel}>
           <table>
             <thead>
@@ -606,6 +678,7 @@ export function Board({ kind, members, events }: Props) {
             </tbody>
           </table>
         </div>
+        )}
         {filtered?.length === 0 && (
           <Empty
             title={items?.length ? "Nothing at this stage" : copy.emptyTitle}

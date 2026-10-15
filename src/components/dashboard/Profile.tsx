@@ -40,11 +40,16 @@ export function ProfileEditor({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-  const [linkedinStatus, setLinkedinStatus] = useState<"connected" | "error" | "">("");
+  const [linkedinStatus, setLinkedinStatus] = useState<
+    "connected" | "error" | ""
+  >("");
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const result = new URLSearchParams(window.location.search).get("linkedin");
-      if (result === "connected" || result === "error") setLinkedinStatus(result);
+      const result = new URLSearchParams(window.location.search).get(
+        "linkedin",
+      );
+      if (result === "connected" || result === "error")
+        setLinkedinStatus(result);
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
@@ -143,35 +148,208 @@ export function ProfileEditor({
       setBusy(false);
     }
   }
+  const sections = [
+    ["about", "About you"],
+    ["resume", "Resume"],
+    ...(speaker && confirmed
+      ? [
+          ["availability", "Availability"],
+          ["talk", "Your talk"],
+        ]
+      : []),
+    ...(speaker ? [["needs", "Anything you need"]] : []),
+  ];
   return (
     <>
       <Heading
         title="My profile"
         description={
           !speaker
-            ? "Your profile is how the LOGICA community gets to know you."
+            ? "This is what the board and other members see."
             : confirmed
               ? "Help the board prepare for your visit and get to know your work."
               : "We filled in what we knew — fix anything that's wrong."
         }
+        action={
+          <div className="d-heading-actions">
+            <button
+              type="button"
+              className="d-button secondary"
+              disabled={busy}
+              onClick={() => {
+                setDraft(profile);
+                setWindows(profile.speakerSubmission?.availability || []);
+                setError("");
+                setSaved(false);
+              }}
+            >
+              Discard
+            </button>
+            <button form="profile-form" disabled={busy} className="d-button">
+              {busy ? "Saving…" : "Save changes"}
+            </button>
+          </div>
+        }
       />
       <div className="d-profile-layout">
-        <aside className="d-panel d-profile-card">
-          <Avatar name={profile.name} photoUrl={profile.photoUrl} className="d-avatar d-avatar-large" />
-          <h2>{profile.name || "Your name"}</h2>
-          <span className="d-badge">{roleName(user, profile)}</span>
-          <p>{profile.email}</p>
-          <hr />
-          <h3>A little about you</h3>
-          <p>
-            {profile.bio ||
-              "Add a short bio about your interests, experience, or what you want to build."}
-          </p>
-          <div id="resume" className="d-resume">
-            <h3>Your resume</h3>
-            <p>
-              PDF or Word document, up to 5 MB. Available to you and the board.
-            </p>
+        <nav className="d-section-nav" aria-label="Profile sections">
+          {sections.map(([id, label]) => (
+            <a key={id} href={`#${id}`}>
+              {label}
+            </a>
+          ))}
+        </nav>
+        <form id="profile-form" className="d-profile-sections" onSubmit={save}>
+          <section className="d-panel d-form" id="about">
+            <div className="d-section-head">
+              <h2>About you</h2>
+              <span className="d-muted">Shown on your member card</span>
+            </div>
+            <div className="d-profile-id">
+              <Avatar
+                name={profile.name}
+                photoUrl={profile.photoUrl}
+                className="d-avatar d-avatar-large"
+              />
+              <div>
+                <strong>{profile.name || "Your name"}</strong>
+                <span className="d-badge">{roleName(user, profile)}</span>
+                <small>
+                  Your photo comes from LinkedIn. We do not store your LinkedIn
+                  access token.
+                </small>
+                {linkedinStatus === "connected" && (
+                  <p className="d-success" role="status">
+                    LinkedIn connected. Your photo has been updated.
+                  </p>
+                )}
+                {linkedinStatus === "error" && (
+                  <p className="d-error" role="alert">
+                    LinkedIn could not be connected. Please try again.
+                  </p>
+                )}
+                <div className="d-actions">
+                  <a className="d-button" href="/api/linkedin/connect">
+                    {profile.photoUrl
+                      ? "Reconnect LinkedIn"
+                      : "Connect LinkedIn"}
+                  </a>
+                  {profile.photoUrl && (
+                    <button
+                      className="d-button secondary"
+                      type="button"
+                      onClick={disconnectLinkedIn}
+                      disabled={busy}
+                    >
+                      Remove photo
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="d-form-grid">
+              <label>
+                Full name
+                <input
+                  required
+                  value={draft.name || ""}
+                  onChange={(e) => field("name", e.target.value)}
+                  autoComplete="name"
+                />
+              </label>
+              <label>
+                Email address
+                <input value={profile.email} readOnly />
+                <small>Your sign-in email cannot be changed here.</small>
+              </label>
+              {speaker ? (
+                <>
+                  <label>
+                    Organization
+                    <input
+                      value={draft.speakerSubmission?.organization || ""}
+                      onChange={(e) =>
+                        submission("organization", e.target.value)
+                      }
+                      autoComplete="organization"
+                    />
+                  </label>
+                  <label>
+                    LinkedIn URL
+                    <input
+                      type="url"
+                      value={draft.linkedin || ""}
+                      onChange={(e) => field("linkedin", e.target.value)}
+                      placeholder="https://linkedin.com/in/your-name"
+                    />
+                  </label>
+                </>
+              ) : (
+                <>
+                  <label>
+                    Major
+                    <input
+                      value={draft.major || ""}
+                      onChange={(e) => field("major", e.target.value)}
+                      placeholder="e.g. Computer Science"
+                    />
+                  </label>
+                  <label>
+                    Graduation year
+                    <input
+                      type="number"
+                      min={1900}
+                      max={2100}
+                      value={draft.gradYear ?? ""}
+                      onChange={(e) =>
+                        field(
+                          "gradYear",
+                          e.target.value ? Number(e.target.value) : null,
+                        )
+                      }
+                      placeholder="e.g. 2028"
+                    />
+                  </label>
+                </>
+              )}
+            </div>
+            {!speaker && (
+              <label>
+                LinkedIn profile
+                {/* Plain text, not type="url": the backend accepts "linkedin.com/in/you" and adds https://. */}
+                <input
+                  inputMode="url"
+                  spellCheck={false}
+                  autoCapitalize="none"
+                  autoComplete="url"
+                  value={draft.linkedin || ""}
+                  onChange={(e) => field("linkedin", e.target.value)}
+                  placeholder="linkedin.com/in/your-name"
+                />
+                <small>
+                  This link helps members find you. LinkedIn does not provide
+                  your experience to LOGICA.
+                </small>
+              </label>
+            )}
+            <label>
+              About you
+              <textarea
+                rows={4}
+                maxLength={500}
+                value={draft.bio || ""}
+                onChange={(e) => field("bio", e.target.value)}
+                placeholder="What are you interested in? What would you like the community to know?"
+              />
+              <small>{draft.bio?.length || 0}/500 characters</small>
+            </label>
+          </section>
+          <section className="d-panel" id="resume">
+            <div className="d-section-head">
+              <h2>Resume</h2>
+              <span className="d-muted">PDF or Word, up to 5 MB</span>
+            </div>
+            <p className="d-small">Available to you and the board.</p>
             <ResumeUpload
               filename={profile.resumeFilename}
               onChange={(resumeFilename) => {
@@ -192,122 +370,14 @@ export function ProfileEditor({
                 Download resume ↗
               </a>
             )}
-          </div>
-        </aside>
-        <form className="d-panel d-form" onSubmit={save}>
-          <div className="d-section-head">
-            <h2>Personal details</h2>
-            <span className="d-muted">Your account</span>
-          </div>
-          <div className="d-form-grid">
-            <label>
-              Full name
-              <input
-                required
-                value={draft.name || ""}
-                onChange={(e) => field("name", e.target.value)}
-                autoComplete="name"
-              />
-            </label>
-            <label>
-              Email address
-              <input value={profile.email} readOnly />
-              <small>Your sign-in email cannot be changed here.</small>
-            </label>
-            {speaker ? (
-              <>
-                <label>
-                  Organization
-                  <input
-                    value={draft.speakerSubmission?.organization || ""}
-                    onChange={(e) => submission("organization", e.target.value)}
-                    autoComplete="organization"
-                  />
-                </label>
-                <label>
-                  LinkedIn URL
-                  <input
-                    type="url"
-                    value={draft.linkedin || ""}
-                    onChange={(e) => field("linkedin", e.target.value)}
-                    placeholder="https://linkedin.com/in/your-name"
-                  />
-                </label>
-              </>
-            ) : (
-              <>
-                <label>
-                  Major
-                  <input
-                    value={draft.major || ""}
-                    onChange={(e) => field("major", e.target.value)}
-                    placeholder="e.g. Computer Science"
-                  />
-                </label>
-                <label>
-                  Graduation year
-                  <input
-                    type="number"
-                    min={1900}
-                    max={2100}
-                    value={draft.gradYear ?? ""}
-                    onChange={(e) =>
-                      field(
-                        "gradYear",
-                        e.target.value ? Number(e.target.value) : null,
-                      )
-                    }
-                    placeholder="e.g. 2028"
-                  />
-                </label>
-              </>
-            )}
-          </div>
-          {!speaker && (
-            <label>
-              LinkedIn profile
-              {/* Plain text, not type="url": the backend accepts "linkedin.com/in/you" and adds https://. */}
-              <input
-                inputMode="url"
-                spellCheck={false}
-                autoCapitalize="none"
-                autoComplete="url"
-                value={draft.linkedin || ""}
-                onChange={(e) => field("linkedin", e.target.value)}
-                placeholder="linkedin.com/in/your-name"
-              />
-              <small>This link helps members find you. LinkedIn does not provide your experience to LOGICA.</small>
-            </label>
-          )}
-          <div className="d-form-section d-linkedin-connect">
-            <h2>Profile photo</h2>
-            <p>Connect LinkedIn to copy your current profile photo into LOGICA. We do not store your LinkedIn access token.</p>
-            {linkedinStatus === "connected" && <p className="d-success" role="status">LinkedIn connected. Your photo has been updated.</p>}
-            {linkedinStatus === "error" && <p className="d-error" role="alert">LinkedIn could not be connected. Please try again.</p>}
-            <div className="d-actions">
-              <a className="d-button" href="/api/linkedin/connect">{profile.photoUrl ? "Reconnect LinkedIn" : "Connect LinkedIn"}</a>
-              {profile.photoUrl && (
-                <button className="d-button secondary" type="button" onClick={disconnectLinkedIn} disabled={busy}>
-                  Remove photo
-                </button>
-              )}
-            </div>
-          </div>
-          <label>
-            About you
-            <textarea
-              rows={4}
-              maxLength={500}
-              value={draft.bio || ""}
-              onChange={(e) => field("bio", e.target.value)}
-              placeholder="What are you interested in? What would you like the community to know?"
-            />
-            <small>{draft.bio?.length || 0}/500 characters</small>
-          </label>
+          </section>
           {speaker && (
             <>
               {confirmed && (
-                <div className="d-form-section" id="availability">
+                <section
+                  className="d-panel d-form d-form-section"
+                  id="availability"
+                >
                   <h2>Your availability</h2>
                   <p>Windows that work for you, in Chicago local time.</p>
                   <button
@@ -404,10 +474,10 @@ export function ProfileEditor({
                       + Add availability
                     </button>
                   )}
-                </div>
+                </section>
               )}
               {confirmed && (
-                <div className="d-form-section" id="talk">
+                <section className="d-panel d-form d-form-section" id="talk">
                   <h2>Your talk</h2>
                   <p>
                     The two things we can&apos;t print a poster or run a room
@@ -451,13 +521,13 @@ export function ProfileEditor({
                       </label>
                     </>
                   )}
-                </div>
+                </section>
               )}
-              <div className="d-form-section">
+              <section className="d-panel d-form d-form-section" id="needs">
                 <h2>
                   Anything you need <span className="d-optional">Optional</span>
                 </h2>
-                <label id="needs">
+                <label>
                   What do you need from us?
                   <textarea
                     rows={2}
@@ -474,7 +544,7 @@ export function ProfileEditor({
                     onChange={(e) => submission("note", e.target.value)}
                   />
                 </label>
-              </div>
+              </section>
             </>
           )}
           {error && (
@@ -495,6 +565,61 @@ export function ProfileEditor({
         </form>
       </div>
     </>
+  );
+}
+type Theme = "light" | "dark" | "system";
+function savedTheme(): Theme {
+  try {
+    const t = localStorage.getItem("logica-theme");
+    if (t === "light" || t === "dark") return t;
+  } catch {}
+  return "system";
+}
+/** Same key and <html data-theme> as the topbar toggle in Dashboard.tsx;
+ *  "system" clears both so the CSS follows prefers-color-scheme. */
+function Appearance() {
+  const [theme, setTheme] = useState<Theme>(savedTheme);
+  useEffect(() => {
+    // The topbar toggle (and other tabs) announce changes with this event.
+    const sync = () => setTheme(savedTheme());
+    window.addEventListener("storage", sync);
+    return () => window.removeEventListener("storage", sync);
+  }, []);
+  function pick(next: Theme) {
+    setTheme(next);
+    try {
+      if (next === "system") localStorage.removeItem("logica-theme");
+      else localStorage.setItem("logica-theme", next);
+    } catch {}
+    if (next === "system")
+      document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", next);
+  }
+  return (
+    <div className="d-setting-row">
+      <span>
+        <strong id="appearance-label">Appearance</strong>
+        <small>Match your system, or pick one.</small>
+      </span>
+      <div
+        className="d-segmented"
+        role="radiogroup"
+        aria-labelledby="appearance-label"
+      >
+        {(["light", "dark", "system"] as const).map((value) => (
+          <label key={value}>
+            <input
+              type="radio"
+              name="appearance"
+              value={value}
+              checked={theme === value}
+              onChange={() => pick(value)}
+            />
+            {value[0].toUpperCase() + value.slice(1)}
+          </label>
+        ))}
+      </div>
+    </div>
   );
 }
 export function Settings({ user }: { user: SessionUser }) {
@@ -549,6 +674,10 @@ export function Settings({ user }: { user: SessionUser }) {
         title="Settings"
         description="Manage your account, privacy, security, and communication defaults."
       />
+      <section className="d-panel d-settings">
+        <h2>General</h2>
+        <Appearance />
+      </section>
       <section className="d-panel d-settings">
         <h2>Email preferences</h2>
         <p>

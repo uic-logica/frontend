@@ -424,6 +424,8 @@ export function Dashboard() {
     try {
       localStorage.setItem("logica-theme", root.dataset.theme);
     } catch {}
+    // Lets Settings → Appearance follow along while it is open.
+    window.dispatchEvent(new StorageEvent("storage", { key: "logica-theme" }));
   }
   return (
     <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
