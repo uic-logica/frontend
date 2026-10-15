@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
       source: "/journey/:file*",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
     }, {
-      source: "/:dir(sponsors|team)/:file*",
+      source: "/:dir(logos|art|team)/:file*",
       headers: [{ key: "Cache-Control", value: assetCache }],
     }, {
       source: "/:file([^/]+\\.(?:png|svg|jpg|jpeg|webp|ico))",

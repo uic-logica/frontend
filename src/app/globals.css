@@ -8,7 +8,7 @@
   --color-paper-dim: #f2f2f2;
   --color-rule: #1a1a1a;
   --color-signal: #fecc15;
-  /* Sampled from the wallpaper's own dominant orange (public/logicawallpaper.png)
+  /* Sampled from the old wallpaper's dominant orange
      — used to tie footer accents back to the image above it, distinct from
      the gold "signal" accent used for interactive links. */
   --color-ember: #ca3a03;

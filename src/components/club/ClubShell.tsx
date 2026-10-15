@@ -15,7 +15,8 @@ const links = [
   { href: "/blog", label: "Blog" },
 ];
 
-/** Whether this visitor is signed in, checked once per page load; every page remounts the nav. */
+/** Whether this visitor is signed in, checked once per page load. Every page renders its own
+ * ClubShell, so the nav (and its phone menu) remounts closed on each navigation. */
 let knownSignedIn: boolean | null = null;
 
 /** The real logo: black on paper, white on charcoal. CSS shows the one for the current theme. */
@@ -67,9 +68,6 @@ export function SiteNav() {
       .then((me) => setSignedIn((knownSignedIn = !!me?.user)))
       .catch(() => {});
   }, []);
-
-  // Close the phone menu whenever the route changes.
-  useEffect(() => setOpen(false), [pathname]);
 
   return (
     <header className="site-nav">
