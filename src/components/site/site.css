@@ -180,13 +180,15 @@ body:has(> .site) { background: var(--d-bg); }
 .home { padding-bottom: 0; }
 /* The painting runs behind the nav (hence the -72px) and fades into the page
    on the left, under the copy, and at the bottom. Fold: 1440×790 / 1280×680. */
-.home-hero { position: relative; isolation: isolate; margin-top: -72px; min-height: min(790px, max(100svh, 600px)); padding-top: calc(72px + clamp(40px, 100svh - 640px, 150px)); padding-bottom: 72px; }
+.home-hero { position: relative; isolation: isolate; margin-top: -72px; min-height: min(790px, max(100svh, 600px)); padding-top: calc(120px + clamp(40px, 100svh - 640px, 150px)); padding-bottom: 72px; }
 .home-hero-art { inset: 0; z-index: -2; }
 .home-hero::before, .home-hero::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
 .home-hero::before { inset: 0 auto 0 0; width: min(1000px, 100%); background: linear-gradient(90deg, var(--d-bg) 25%, transparent); }
 .home-hero::after { inset: auto 0 0; height: 158px; background: linear-gradient(transparent, color-mix(in srgb, var(--d-bg) 60%, transparent) 45%, var(--d-bg) 90%); }
 .home-hero-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 36px; }
-.home-hero-brand { display: flex; align-items: center; gap: 28px; }
+.home-hero-brand { display: flex; align-items: flex-start; gap: 28px; }
+/* The logo's circle runs from just above the capitals to the tagline (logica.pen hero lockup). */
+.home-hero-brand > .site-logo { margin-top: -6px; flex-shrink: 0; }
 .home-hero h1 { margin: 0; font-size: 80px; line-height: 1; letter-spacing: -1.5px; white-space: nowrap; }
 .home-hero-brand p { margin: 12px 0 0; font-size: 20px; color: var(--d-muted); }
 .home-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 6px; }
@@ -198,8 +200,18 @@ body:has(> .site) { background: var(--d-bg); }
 .home-next-text { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
 .home-next-text small { font-size: 12px; color: var(--d-muted); }
 .home-next-text strong { font-size: 14px; font-weight: 500; color: var(--d-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.home-peek { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); display: none; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--d-muted); text-decoration: none; white-space: nowrap; }
+.home-peek { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); display: none; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--d-muted); text-decoration: none; white-space: nowrap; }
 @media (min-width: 800px) and (min-height: 700px) { .home-peek { display: inline-flex; left: max(24px, (100% - 1120px) / 2); transform: none; } }
+/* The hero stays pinned while the rest of Home slides up over it; its copy fades as it gets covered.
+   ponytail: CSS only (sticky + scroll-driven animation). Browsers without animation-timeline get the pin without the fade. */
+.home-rest { position: relative; z-index: 1; display: flow-root; background: var(--d-bg); }
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero { position: sticky; top: 0; }
+  @supports (animation-timeline: scroll()) {
+    .home-hero-copy, .home-peek { animation: home-hero-out linear both; animation-timeline: scroll(root); animation-range: 0 60svh; }
+    @keyframes home-hero-out { to { opacity: 0; translate: 0 -40px; } }
+  }
+}
 
 .home-block { margin-top: 48px; }
 .home-block + .home-block { margin-top: 162px; }
@@ -244,7 +256,7 @@ body:has(> .site) { background: var(--d-bg); }
   .home-hero::before { width: 100%; background: linear-gradient(var(--d-bg) 10%, color-mix(in srgb, var(--d-bg) 70%, transparent) 60%, transparent); }
   .home-hero h1 { font-size: 44px; white-space: normal; }
   .home-hero-brand { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .home-hero-brand .site-logo { width: 64px !important; height: 64px !important; }
+  .home-hero-brand .site-logo { width: 64px !important; height: 64px !important; margin-top: 0; }
   .home-hero-brand .site-logo img { width: 100%; height: 100%; }
   .home-hero-brand p { margin-top: 8px; font-size: 16px; }
   .home-hero-copy { gap: 28px; }
