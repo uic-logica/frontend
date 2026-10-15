@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { darkButtonClass, darkInputClass, darkInputErrorClass } from "@/components/ui/darkForm";
+import { ClubShell } from "@/components/club/ClubShell";
+import { AuthSteps } from "@/components/site/AuthSteps";
 import { api } from "@/lib/api";
 
 const MIN_LENGTH = 8;
@@ -46,77 +46,33 @@ export default function SetSpeakerPasswordPage() {
 
   return (
     <ClubShell>
-      <PageContainer>
-        <SectionContainer>
-          <div className="mx-auto max-w-md">
-            <h1 className="type-title text-3xl md:text-4xl text-white">Set your password</h1>
-            <p className="mt-3 text-xl text-signal md:text-2xl">
-              First time signing in — pick a password you&apos;ll actually remember.
-            </p>
-
-            <div className="mt-10 club-card bg-white/[0.02] p-8 md:p-10">
-              {error && (
-                <div
-                  className="rounded-lg mb-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
-                  role="alert"
-                >
-                  {error}
-                </div>
-              )}
-
-              <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="currentPassword" className="type-label text-white">
-                    Temporary password
-                  </label>
-                  <p className="text-caption text-white">From your invite email.</p>
-                  <input
-                    id="currentPassword"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className={error ? darkInputErrorClass : darkInputClass}
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="newPassword" className="type-label text-white">
-                    New password
-                  </label>
-                  <p className="text-caption text-white">At least {MIN_LENGTH} characters.</p>
-                  <input
-                    id="newPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className={darkInputClass}
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="confirm" className="type-label text-white">
-                    Confirm new password
-                  </label>
-                  <input
-                    id="confirm"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                    className={darkInputClass}
-                  />
-                </div>
-                <button type="submit" disabled={busy} className={darkButtonClass}>
-                  {busy ? "Saving…" : "Set password"}
-                </button>
-              </form>
-            </div>
-          </div>
-        </SectionContainer>
-      </PageContainer>
+      <main className="auth-wrap">
+        <div className="site-card auth-card">
+          <AuthSteps steps={["Invite email", "New password", "Speaker portal"]} current={1} />
+          <header className="auth-head">
+            <h1 className="serif">Set your password</h1>
+            <p>First time signing in? Pick a password you&apos;ll actually remember.</p>
+          </header>
+          {error && <p className="site-error" role="alert">{error}</p>}
+          <form onSubmit={submit} className="site-form auth-form" noValidate>
+            <label className="site-field" htmlFor="currentPassword">
+              <span>Temporary password</span>
+              <small>From your invite email.</small>
+              <input id="currentPassword" type="password" autoComplete="current-password" required value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className={error ? "site-input-error" : undefined} />
+            </label>
+            <label className="site-field" htmlFor="newPassword">
+              <span>New password</span>
+              <small>At least {MIN_LENGTH} characters.</small>
+              <input id="newPassword" type="password" autoComplete="new-password" required value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New password" />
+            </label>
+            <label className="site-field" htmlFor="confirm">
+              <span>Confirm new password</span>
+              <input id="confirm" type="password" autoComplete="new-password" required value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Repeat it" />
+            </label>
+            <button type="submit" disabled={busy} className="site-btn block">{busy ? "Saving…" : "Set password"}</button>
+          </form>
+        </div>
+      </main>
     </ClubShell>
   );
 }

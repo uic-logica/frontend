@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ClubShell, PageContainer } from "@/components/club/ClubShell";
-import { darkButtonClass, darkInputClass, darkInputErrorClass } from "@/components/ui/darkForm";
+import { ClubShell } from "@/components/club/ClubShell";
 import { api } from "@/lib/api";
 
 type LoginResult = { id: string; username: string; mustChangePassword: boolean };
@@ -36,64 +35,29 @@ export default function SpeakerSignInPage() {
 
   return (
     <ClubShell>
-      <PageContainer>
-            <header className="auth-head">
-              <h1>Speaker sign-in</h1>
-              <p>For confirmed speakers — no UIC email required.</p>
-            </header>
-
-            <div className="club-card auth-card">
-              <p className="auth-intro">
-                Use the username and password from your invite email.
-              </p>
-
-              {error && (
-                <div
-                  className="rounded-lg mt-5 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
-                  role="alert"
-                >
-                  {error}
-                </div>
-              )}
-
-              <form onSubmit={submit} className="mt-6 flex flex-col gap-5" noValidate>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="username" className="type-label text-white">
-                    Username
-                  </label>
-                  <input
-                    id="username"
-                    autoComplete="username"
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className={error ? darkInputErrorClass : darkInputClass}
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="password" className="type-label text-white">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={error ? darkInputErrorClass : darkInputClass}
-                  />
-                </div>
-                <button type="submit" disabled={busy} className={darkButtonClass}>
-                  {busy ? "Signing in…" : "Sign in"}
-                </button>
-              </form>
-            </div>
-
-            <p className="auth-foot">
-              UIC student or board member? <Link href="/signin">Sign in here</Link>
-            </p>
-      </PageContainer>
+      <main className="auth-wrap">
+        <div className="site-card auth-card">
+          <span className="site-badge auth-tag">Guests &amp; speakers</span>
+          <header className="auth-head">
+            <h1 className="serif">Speaker sign-in</h1>
+            <p>For confirmed speakers. No UIC email required.</p>
+          </header>
+          <p className="auth-intro">Use the username and password from your invite email.</p>
+          {error && <p className="site-error" role="alert">{error}</p>}
+          <form onSubmit={submit} className="site-form auth-form" noValidate>
+            <label className="site-field" htmlFor="username">
+              <span>Username</span>
+              <input id="username" autoComplete="username" required value={username} onChange={(e) => setUsername(e.target.value)} placeholder="From your invite email" className={error ? "site-input-error" : undefined} />
+            </label>
+            <label className="site-field" htmlFor="password">
+              <span>Password</span>
+              <input id="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" className={error ? "site-input-error" : undefined} />
+            </label>
+            <button type="submit" disabled={busy} className="site-btn block">{busy ? "Signing in…" : "Sign in"}</button>
+          </form>
+          <p className="auth-alt">UIC student or board member? <Link href="/signin">Sign in here</Link></p>
+        </div>
+      </main>
     </ClubShell>
   );
 }
