@@ -96,6 +96,54 @@ export function Speakers({
         .toLowerCase()
         .includes(query.toLowerCase()),
   );
+  // Linked guests share one thread and one event; the lead is whoever the others point at.
+  const leadOf = (s: Speaker) => s.threadId ?? s.id;
+  const groupOf = (s: Speaker) => speakers?.filter((x) => x.id !== s.id && leadOf(x) === leadOf(s)) ?? [];
+
+  async function linkWith(s: Speaker, other: Speaker) {
+    const ok = await confirm({
+      title: `Link ${other.name || "this guest"} with ${s.name || "this guest"}?`,
+      body: `They'll share one thread and one event, and both get the board's messages. ${other.name || "Their"}'s messages so far move into this thread.`,
+      action: "Link",
+    });
+    if (!ok) return;
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}/link`, { method: "POST", body: JSON.stringify({ withId: other.id }) });
+      onChange(await api<Speaker[]>("/api/speakers"));
+      setMessage(`${other.name || "They"} and ${s.name || "this guest"} now share a thread.`);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function separate(s: Speaker) {
+    const lead = !s.threadId;
+    const ok = await confirm({
+      title: lead ? `Separate everyone from ${s.name || "this guest"}'s thread?` : `Separate ${s.name || "this guest"}?`,
+      body: "From now on they each have their own thread. Messages so far stay in the shared one.",
+      action: "Separate",
+    });
+    if (!ok) return;
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}/link`, { method: "DELETE" });
+      onChange(await api<Speaker[]>("/api/speakers"));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function remove(s: Speaker) {
     const ok = await confirm({
       title: `Delete ${s.name || "this guest"}?`,
@@ -403,6 +451,38 @@ export function Speakers({
             </div>
             {scope === detail.id && banners}
             <SpeakerFacts s={detail} />
+            <div className="d-speaker-link">
+              {groupOf(detail).length ? (
+                <>
+                  <p>
+                    Shares a thread and event with <strong>{groupOf(detail).map((g) => g.name || "a guest").join(", ")}</strong>.
+                  </p>
+                  <button className="d-text-button" disabled={!!busy} onClick={() => separate(detail)}>Separate</button>
+                </>
+              ) : (
+                <label className="d-link-event">
+                  Link with another guest
+                  <select
+                    value=""
+                    disabled={!!busy}
+                    onChange={(e) => {
+                      const other = speakers?.find((x) => x.id === e.target.value);
+                      if (other) void linkWith(detail, other);
+                    }}
+                  >
+                    <option value="">Pick a guest (co-founders, a panel)…</option>
+                    {speakers
+                      ?.filter((x) => x.id !== detail.id && !x.threadId && !speakers.some((y) => y.threadId === x.id))
+                      .map((x) => (
+                        <option key={x.id} value={x.id}>
+                          {x.name || "Unnamed guest"}{x.organization ? ` · ${x.organization}` : ""}
+                        </option>
+                      ))}
+                  </select>
+                  <small>They share one thread and one event; the board&apos;s messages reach both.</small>
+                </label>
+              )}
+            </div>
             <div className="d-speaker-schedule">
             <label className="d-link-event">
               Scheduled event

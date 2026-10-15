@@ -145,6 +145,8 @@ export type Speaker = {
   talkTitle: string | null;
   slidesUrl: string | null;
   event: TalkEvent | null;
+  /** Set on a guest linked into another guest's thread (co-founders, a panel): the lead's id. */
+  threadId: string | null;
   user: {
     id: string;
     username: string | null;

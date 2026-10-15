@@ -3988,3 +3988,8 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 
 /* Exec-only delete, set apart at the bottom of a detail pane. */
 .d-delete-row { display: flex; justify-content: flex-end; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--d-rule); }
+
+/* Linked guests (Speakers.tsx): who shares this guest's thread, or a picker to link one. */
+.d-speaker-link { margin-top: 24px; }
+.d-speaker-link p { margin: 0 0 6px; font-size: 14px; }
+.d-speaker-link .d-link-event { margin: 0; }
