@@ -1,10 +1,12 @@
 "use client";
 
+import "@/components/site/site.css";
 import Image from "next/image";
-import { JourneyBackdrop, sceneFor, warmArt } from "./JourneyBackdrop";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { SiteIcon } from "@/components/site/icons";
+import { Painting } from "@/components/site/Painting";
 
 const links = [
   { href: "/about", label: "About" },
@@ -13,26 +15,50 @@ const links = [
   { href: "/blog", label: "Blog" },
 ];
 
-/** Where the capsule's white indicator last sat. Every page renders its own
- * ClubShell, so the nav remounts on navigation; remembering the old spot lets
- * the new indicator start there and slide over, like mapier.ai's. */
-let lastBar: { x: number; y: number; w: number; h: number } | null = null;
-
 /** Whether this visitor is signed in, checked once per page load; every page remounts the nav. */
 let knownSignedIn: boolean | null = null;
 
-/** Floating navigation with a glass capsule and responsive menu. */
+/** The real logo: black on paper, white on charcoal. CSS shows the one for the current theme. */
+export function Logo({ size, priority }: { size: number; priority?: boolean }) {
+  return (
+    <span className="site-logo" style={{ width: size, height: size }}>
+      <Image className="only-light" src="/logica-logo-black.png" alt="" width={size} height={size} priority={priority} />
+      <Image className="only-dark" src="/logica-logo-white.png" alt="" width={size} height={size} priority={priority} />
+    </span>
+  );
+}
+
+/** Light/dark switch. Unset follows the computer; a click saves the choice the dashboard also reads. */
+function ThemeToggle() {
+  // The root layout's script applies the saved choice on a full load only;
+  // arriving by client-side navigation from the dashboard re-applies it here.
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("logica-theme");
+      if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+    } catch {}
+  }, []);
+  function toggle() {
+    const root = document.documentElement;
+    const dark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+    root.dataset.theme = dark ? "light" : "dark";
+    try {
+      localStorage.setItem("logica-theme", root.dataset.theme);
+    } catch {}
+  }
+  return (
+    <button type="button" className="site-theme" onClick={toggle} aria-label="Switch light or dark theme">
+      <span className="only-light"><SiteIcon name="moon" /></span>
+      <span className="only-dark"><SiteIcon name="sun" /></span>
+    </button>
+  );
+}
+
 export function SiteNav() {
   const pathname = usePathname();
-  const capsule = useRef<HTMLDivElement>(null);
-  const navLinks = useRef<HTMLDivElement>(null);
-  const bar = useRef<HTMLSpanElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
   const [open, setOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(knownSignedIn ?? false);
-  const account = signedIn
-    ? { href: "/dashboard", label: "Dashboard" }
-    : { href: "/signin", label: "Sign in" };
+  const account = signedIn ? { href: "/dashboard", label: "Dashboard" } : { href: "/signin", label: "Sign in" };
 
   // Starts from the last answer so the label doesn't flicker, then re-checks (sign-out happens in the dashboard).
   useEffect(() => {
@@ -42,259 +68,132 @@ export function SiteNav() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // One white indicator slides under the active item (mapier.ai's segmented capsule).
-  // Measured from the DOM: its size is the rendered text width.
-  useLayoutEffect(() => {
-    const box = capsule.current;
-    const el = bar.current;
-    if (!box || !el) return;
-    const place = (animate: boolean) => {
-      // Sign in sits outside the capsule; the indicator can travel over to it too.
-      const active = navLinks.current?.querySelector<HTMLElement>("a[aria-current=page]");
-      if (!active) {
-        el.style.opacity = "0";
-        lastBar = null;
-        return;
-      }
-      const a = active.getBoundingClientRect();
-      const c = box.getBoundingClientRect();
-      const x = a.left - c.left;
-      const y = a.top - c.top;
-      el.dataset.animate = animate ? "true" : "";
-      el.style.opacity = "1";
-      el.style.width = `${a.width}px`;
-      el.style.height = `${a.height}px`;
-      el.style.transform = `translate(${x}px, ${y}px)`;
-      lastBar = { x, y, w: a.width, h: a.height };
-    };
-    if (lastBar) {
-      // Start where the previous page's indicator was, then slide on the next frame.
-      el.style.opacity = "1";
-      el.style.width = `${lastBar.w}px`;
-      el.style.height = `${lastBar.h}px`;
-      el.style.transform = `translate(${lastBar.x}px, ${lastBar.y}px)`;
-      const frame = requestAnimationFrame(() => place(true));
-      return () => cancelAnimationFrame(frame);
-    }
-    place(false);
-  }, [pathname, isMobile]);
+  // Close the phone menu whenever the route changes.
+  useEffect(() => setOpen(false), [pathname]);
 
   return (
-    <>
-      <nav className="site-nav fixed z-20 flex w-full flex-row items-center justify-between bg-transparent p-6 text-white md:p-8">
-        <Link href="/" className="pl-2 text-3xl font-extrabold" aria-label="LOGICA home">
-          <Image src="/logica-logo-white.png" alt="LOGICA" width={56} height={56} priority />
+    <header className="site-nav">
+      <div className="site-nav-in">
+        <Link href="/" className="site-brand" aria-label="LOGICA home">
+          <Logo size={36} priority />
+          <span className="site-wordmark">LOGICA</span>
         </Link>
-
-        {isMobile ? (
-          <div className="site-nav-mobile">
-            <Link href={account.href} className="site-signin">
-              {account.label}
+        <nav className="site-nav-links" aria-label="Main">
+          {links.map((item) => (
+            <Link key={item.href} href={item.href} aria-current={pathname.startsWith(item.href) ? "page" : undefined}>
+              {item.label}
             </Link>
-            <button type="button" className="site-menu-button" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-              <span className="sr-only">Menu</span>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-                <path d={open ? "M6 6l12 12M18 6L6 18" : "M4 7h16M4 12h16M4 17h16"} />
-              </svg>
-            </button>
-          </div>
-        ) : (
-          <div ref={navLinks} className="site-nav-links flex items-center gap-5 text-sm md:gap-6">
-            <div ref={capsule} className="site-nav-capsule h-10">
-              <span ref={bar} className="site-nav-bar" aria-hidden="true" />
-              <ul className="relative flex gap-5 md:gap-6">
-                {links.map((item) => {
-                  const active = pathname === item.href;
-                  return (
-                    <li key={item.href} className="relative flex h-10 items-center">
-                      <Link
-                        href={item.href}
-                        aria-current={active ? "page" : undefined}
-                        className={`nav-link transform px-1 pb-1.5 duration-100 ${
-                          active ? "nav-link-active" : ""
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-            <Link
-              href={account.href}
-              aria-current={pathname === "/signin" ? "page" : undefined}
-              className={`site-signin nav-link flex h-10 items-center px-1 pb-1.5 duration-100 ${
-                pathname === "/signin" || pathname.startsWith("/members") ? "nav-link-active" : ""
-              }`}
-            >
-              {account.label}
+          ))}
+        </nav>
+        <div className="site-nav-actions">
+          <ThemeToggle />
+          <Link href={account.href} className="site-btn secondary sm site-nav-account" aria-current={pathname === account.href ? "page" : undefined}>
+            {account.label}
+          </Link>
+          {!signedIn && (
+            <Link href="/join" className="site-btn sm">
+              Join
             </Link>
-          </div>
-        )}
-      </nav>
-      <div className="h-20 md:h-24" />
-
-      {isMobile && open ? (
-        <div className="site-mobile-menu fixed inset-x-0 top-20 z-20 border-t border-white/10 bg-white/[0.06] backdrop-blur-md px-8 py-4 md:top-24">
-          <ul className="flex flex-col gap-4 text-lg">
-            {links.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className="text-white hover:text-signal" onClick={() => setOpen(false)}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link href={account.href} className="text-signal" onClick={() => setOpen(false)}>
-                {account.label}
-              </Link>
-            </li>
-            {!signedIn && (
-              <li>
-                <Link href="/signup" className="text-white hover:text-signal" onClick={() => setOpen(false)}>
-                  Create account
-                </Link>
-              </li>
-            )}
-          </ul>
+          )}
+          <button type="button" className="site-menu-button" aria-expanded={open} aria-controls="site-menu" onClick={() => setOpen((v) => !v)}>
+            <span className="sr-only">Menu</span>
+            <SiteIcon name={open ? "close" : "menu"} size={20} />
+          </button>
         </div>
-      ) : null}
-    </>
+      </div>
+      {open && (
+        <nav id="site-menu" className="site-menu" aria-label="Menu">
+          {links.map((item) => (
+            <Link key={item.href} href={item.href} aria-current={pathname.startsWith(item.href) ? "page" : undefined}>
+              {item.label}
+            </Link>
+          ))}
+          <Link href={account.href}>{account.label}</Link>
+          {!signedIn && <Link href="/signup">Create account</Link>}
+        </nav>
+      )}
+    </header>
   );
 }
 
-const legalLinks = [
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
-  { href: "/support", label: "Support" },
-];
-
-/** Footer link columns: one right-aligned stack on desktop, "Explore" and "Connect" on phones (logica.pen V3). */
 const footerColumns = [
-  { label: "Explore", links: links.slice(0, 3) },
-  { label: "Connect", links: [links[3], { href: "/join", label: "Join" }, { href: "/signin", label: "Sign in" }] },
+  { label: "Explore", links: links },
+  {
+    label: "Get involved",
+    links: [
+      { href: "/join", label: "Join LOGICA" },
+      { href: "/partner", label: "Partner with us" },
+      { href: "/speak", label: "Speak at LOGICA" },
+      { href: "/signin", label: "Sign in" },
+    ],
+  },
+  {
+    label: "Contact",
+    links: [
+      { href: "mailto:logica@uic.edu", label: "logica@uic.edu" },
+      { href: "/support", label: "Support" },
+      { href: "https://github.com/uic-logica", label: "GitHub" },
+    ],
+  },
 ];
 
-/** Mapier-style closer: the footer sits on the end of the painting —
- * wordmark on the left, links stacked on the right, fine print below them. */
+/** The footer sits on the skyline painting, which fades up into the page. */
 export function SiteFooter() {
   return (
     <footer className="site-footer">
+      <Painting name="footer" sizes="100vw" className="site-footer-art" />
       <div className="site-footer-in">
-        <Link href="/" className="site-footer-mark" aria-label="LOGICA home">
-          <Image src="/logica-logo-white.png" alt="" width={92} height={92} />
-          <span>LOGICA</span>
-        </Link>
-        <div className="site-footer-right">
-          <nav className="site-footer-links" aria-label="Footer">
-            {footerColumns.map((column) => (
-              <div key={column.label}>
-                <span className="site-footer-col">{column.label}</span>
-                {column.links.map((item) => (
-                  <Link key={item.href} href={item.href}>
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            ))}
-          </nav>
-          <div className="site-footer-fine">
-            <a href="mailto:logica@uic.edu">logica@uic.edu</a>
-            {legalLinks.map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
-            <span>© {new Date().getFullYear()} LOGICA @ UIC</span>
-          </div>
+        <div className="site-footer-brand">
+          <Link href="/" className="site-brand" aria-label="LOGICA home">
+            <Logo size={48} />
+            <span className="site-wordmark">LOGICA</span>
+          </Link>
+          <p>The Latinx computing community at the University of Illinois Chicago.</p>
         </div>
+        <nav className="site-footer-links" aria-label="Footer">
+          {footerColumns.map((column) => (
+            <div key={column.label}>
+              <h2>{column.label}</h2>
+              <ul>
+                {column.links.map((item) => (
+                  <li key={item.href}>
+                    {item.href.startsWith("/") ? <Link href={item.href}>{item.label}</Link> : <a href={item.href}>{item.label}</a>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </div>
+      <div className="site-footer-legal">
+        <span>© {new Date().getFullYear()} LOGICA @ UIC</span>
+        <span>
+          <Link href="/privacy">Privacy</Link> · <Link href="/terms">Terms</Link>
+        </span>
       </div>
     </footer>
   );
 }
 
-/** Every route the nav and footer link to; their paintings are warmed once the page is idle. */
-const artRoutes = ["/", "/about", "/events", "/team", "/blog", "/join", "/signin"];
-let warmed = false;
-
+/** Every public page: nav, the page, the skyline footer. */
 export function ClubShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  useEffect(() => {
-    if (warmed) return;
-    warmed = true;
-    // After this page's own painting has loaded, so the prefetch never competes with it.
-    const start = () => warmArt(artRoutes.filter((r) => r !== pathname));
-    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
-    if (document.readyState === "complete") idle(start);
-    else window.addEventListener("load", () => idle(start), { once: true });
-  }, [pathname]);
-  const scene = sceneFor(pathname);
-  // The page is at least as tall as its painting, so the art's closing landmark
-  // reaches the footer; a longer page continues in the painting's bottom colour.
-  const stage = {
-    "--art-ratio": scene.height / scene.width,
-    "--art-ground": scene.ground,
-    ...(scene.phone && { "--art-ratio-phone": scene.phone[1] / scene.phone[0], "--art-ground-phone": scene.phone[2] }),
-  } as React.CSSProperties;
   return (
-    <div className="club-shell min-h-screen text-white" data-home={pathname === "/"} data-route={pathname.split("/")[1] || "home"}>
-      <div className="journey-stage" style={stage}>
-        <JourneyBackdrop pathname={pathname} />
-        <SiteNav />
-        {children}
-        <SiteFooter />
-      </div>
+    <div className="site" data-route={pathname.split("/")[1] || "home"}>
+      <a href="#site-content" className="site-skip">Skip to content</a>
+      <SiteNav />
+      <div id="site-content" className="site-content">{children}</div>
+      <SiteFooter />
     </div>
   );
 }
 
-/** Exact YCS PageContainer classes. */
-export function PageContainer({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={`page-container mb-20 px-4 sm:px-6 lg:px-12 pt-16 sm:pt-20 lg:pt-24 ${className}`}>
-      {children}
-    </div>
-  );
+/** A page's main column. */
+export function PageContainer({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <main className={`site-page ${className}`}>{children}</main>;
 }
 
-/** Exact YCS SectionContainer classes. */
-export function SectionContainer({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <section
-      className={`site-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 mb-16 sm:mb-24 lg:mb-32 ${className}`}
-    >
-      {children}
-    </section>
-  );
-}
-
-/** @deprecated use SectionContainer — kept for other pages */
-export function Section({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <SectionContainer className={className}>{children}</SectionContainer>;
+/** One block inside a page's column. */
+export function SectionContainer({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <section className={`site-section ${className}`}>{children}</section>;
 }
