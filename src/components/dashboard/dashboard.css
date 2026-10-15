@@ -231,26 +231,7 @@
   width: 28px;
   height: 28px;
 }
-/* Brand marks stay in brand colour — the black one on paper, the white one
-   at night. Both are in the DOM; only one is ever shown. */
-.d-logo-dark {
-  display: none;
-}
-[data-theme="dark"] .dash .d-logo-light {
-  display: none;
-}
-[data-theme="dark"] .dash .d-logo-dark {
-  display: block;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .dash .d-logo-light {
-    display: none;
-  }
-  :root:not([data-theme="light"]) .dash .d-logo-dark {
-    display: block;
-  }
-}
-.d-brand > span {
+.d-brand > span:last-child {
   font-family: var(--font-display);
   font-size: 17px;
   letter-spacing: 0.02em;
@@ -385,8 +366,7 @@
   height: 72px;
   font-size: 24px;
 }
-.d-menu,
-.d-mobile-actions {
+.d-menu {
   display: none;
 }
 
@@ -2713,6 +2693,506 @@
   color: var(--d-muted);
 }
 
+/* ---- Shell pieces from main (search, account menu, logo chip) ------------ */
+.d-logo-chip {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--d-rule);
+}
+.d-brand .d-logo-chip img,
+.d-topbar-brand .d-logo-chip img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+.d-topbar-brand,
+.d-tabbar {
+  display: none;
+}
+/* The sliding indicator from the night design; V4 marks the current row
+   with its own raised background instead. */
+.d-nav-bar {
+  display: none;
+}
+.d-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--d-faint);
+}
+.d-crumbs strong {
+  color: var(--d-ink);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.d-global-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 200px;
+  height: 34px;
+  padding: 0 10px;
+  margin-right: 4px;
+  border: 1px solid var(--d-rule);
+  border-radius: var(--d-radius-sm);
+  background: var(--d-sunken);
+  color: var(--d-faint);
+  font-size: 13px;
+}
+.d-global-search:hover {
+  border-color: var(--d-rule-strong);
+  color: var(--d-muted);
+}
+.d-global-search svg {
+  width: 15px;
+  height: 15px;
+}
+.d-global-search span {
+  flex: 1;
+  text-align: left;
+}
+.d-global-search kbd {
+  font: inherit;
+  font-size: 12px;
+}
+.dash .d-top-action {
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  margin-right: 4px;
+}
+.d-account-menu {
+  position: relative;
+}
+.d-account-menu summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 8px 0 2px;
+  border-radius: var(--d-radius-sm);
+  color: var(--d-ink);
+  font-size: 13px;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+.d-account-menu summary::-webkit-details-marker {
+  display: none;
+}
+.d-account-menu summary:hover {
+  background: var(--d-hover);
+}
+.d-account-menu summary > svg {
+  width: 14px;
+  height: 14px;
+  color: var(--d-faint);
+  transform: rotate(90deg);
+}
+.d-account-menu[open] summary > svg {
+  transform: rotate(-90deg);
+}
+.d-account-menu nav {
+  position: absolute;
+  z-index: 25;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 210px;
+  padding: 4px;
+  background: var(--d-surface);
+  border: 1px solid var(--d-rule);
+  border-radius: var(--d-radius);
+  box-shadow: var(--d-pop);
+}
+.d-account-menu nav a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: var(--d-ink);
+  font-size: 14px;
+}
+.d-account-menu nav a:hover {
+  background: var(--d-sunken);
+}
+.d-account-menu nav .d-count {
+  margin-left: 0;
+  color: var(--d-ember);
+}
+/* The rail's account row opens the same menu, upward. */
+.d-side-menu {
+  flex: 1;
+  min-width: 0;
+}
+.d-side-menu summary {
+  min-height: 44px;
+  padding: 4px 6px;
+  gap: 10px;
+}
+.d-side-menu summary > span:not(.d-avatar) {
+  display: block;
+  min-width: 0;
+}
+.d-side-menu summary strong,
+.d-side-menu summary small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.d-side-menu summary small {
+  color: var(--d-faint);
+  font-weight: 400;
+}
+.d-side-menu nav {
+  top: auto;
+  bottom: calc(100% + 6px);
+  left: 0;
+  right: auto;
+  width: 100%;
+}
+.d-avatar {
+  object-fit: cover;
+}
+
+/* ⌘K search: a native <dialog>, so focus trap and Esc come free. */
+.d-search-dialog {
+  width: min(620px, calc(100vw - 32px));
+  max-height: min(640px, calc(100dvh - 48px));
+  margin: 12vh auto auto;
+  padding: 0;
+  border: 1px solid var(--d-rule);
+  border-radius: 14px;
+  background: var(--d-surface);
+  color: var(--d-ink);
+  box-shadow: var(--d-pop);
+}
+.d-search-dialog::backdrop,
+.d-confirm::backdrop {
+  background: rgb(20 20 19 / 0.4);
+}
+.d-search-dialog-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--d-rule);
+  color: var(--d-faint);
+}
+.d-search-dialog-head svg {
+  width: 17px;
+  height: 17px;
+}
+.d-search-dialog-head input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--d-ink);
+  font: inherit;
+  font-size: 16px;
+}
+.d-search-dialog-head input::placeholder {
+  color: var(--d-faint);
+}
+.d-search-dialog-head button {
+  padding: 3px 8px;
+  border: 1px solid var(--d-rule);
+  border-radius: 6px;
+  color: var(--d-faint);
+  font-size: 12px;
+}
+.d-search-results {
+  padding: 6px;
+  max-height: 440px;
+  overflow-y: auto;
+}
+.d-search-results > a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 50px;
+  padding: 6px 10px;
+  border-radius: var(--d-radius-sm);
+}
+.d-search-results > a:hover,
+.d-search-results > a:focus-visible {
+  background: var(--d-sunken);
+}
+.d-search-results > a > span {
+  flex: 1;
+  min-width: 0;
+}
+.d-search-results strong,
+.d-search-results small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.d-search-results strong {
+  font-weight: 500;
+}
+.d-search-results small {
+  color: var(--d-faint);
+}
+.d-search-results > a > svg {
+  width: 15px;
+  color: var(--d-faint);
+}
+.d-search-results > p,
+.d-search-help {
+  margin: 0;
+  padding: 14px 16px;
+  color: var(--d-muted);
+}
+.d-search-help {
+  max-width: none;
+  border-top: 1px solid var(--d-rule);
+  font-size: 12px;
+  color: var(--d-faint);
+}
+.d-confirm {
+  max-width: min(380px, calc(100vw - 32px));
+  padding: 24px;
+  border: 1px solid var(--d-rule);
+  border-radius: 14px;
+  background: var(--d-surface);
+  color: var(--d-ink);
+  box-shadow: var(--d-pop);
+}
+.d-confirm h2 {
+  margin: 0 0 6px;
+  font-size: 17px;
+}
+.d-confirm p {
+  margin: 0 0 20px;
+  color: var(--d-muted);
+}
+.d-confirm .d-actions {
+  justify-content: flex-end;
+}
+/* A one-time pointer under a nav item, arrow pointing up at it. */
+.d-callout {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 10px;
+  padding: 8px 8px 8px 12px;
+  border-radius: var(--d-radius-sm);
+  background: var(--d-gold);
+  color: var(--d-on-gold);
+  font-size: 13px;
+  font-weight: 500;
+  animation: d-callout-in 240ms ease-out;
+}
+.d-callout::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 20px;
+  border: 6px solid transparent;
+  border-top: 0;
+  border-bottom-color: var(--d-gold);
+}
+.d-callout button {
+  margin-left: auto;
+  padding: 0 6px;
+  font-size: 17px;
+  line-height: 1;
+}
+@keyframes d-callout-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+/* The session check usually answers at once; only show the loading shell if
+   it doesn't, so a signed-out visitor never sees the outline flash. */
+.d-skeleton {
+  animation: d-skeleton-late 0s linear 0.5s both;
+}
+@keyframes d-skeleton-late {
+  from {
+    visibility: hidden;
+  }
+  to {
+    visibility: visible;
+  }
+}
+
+/* ---- Overview pieces from main ------------------------------------------- */
+.d-overview-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+  background: var(--d-surface);
+  border: 1px solid var(--d-rule);
+  border-left: 4px solid var(--d-gold);
+  border-radius: var(--d-radius);
+}
+.d-overview-hero h2 {
+  font-family: var(--d-serif);
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.d-overview-hero p {
+  margin-top: 6px;
+  color: var(--d-muted);
+}
+.d-overview-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.d-overview-metrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  background: var(--d-surface);
+  border: 1px solid var(--d-rule);
+  border-radius: var(--d-radius);
+}
+.d-overview-metrics strong {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.d-overview-metrics span {
+  color: var(--d-muted);
+  font-size: 13px;
+}
+.d-overview-metrics small {
+  color: var(--d-faint);
+}
+.d-overview-lists {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr);
+  gap: 20px;
+}
+.d-overview-events {
+  margin-bottom: 0;
+}
+.d-compact-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--d-rule);
+}
+.d-compact-row:last-child {
+  border-bottom: 0;
+}
+.d-compact-row > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.d-compact-row strong,
+.d-compact-row small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.d-compact-row strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.d-compact-row small {
+  margin-top: 2px;
+  color: var(--d-faint);
+}
+.d-compact-row .d-badge {
+  flex: none;
+}
+
+/* ---- Review and decline (speakers, applications) ------------------------- */
+.d-review-form,
+.d-decline-action {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--d-rule);
+}
+.d-review-form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+.d-review-form textarea {
+  display: block;
+  width: 100%;
+  min-height: 96px;
+  margin-top: 6px;
+  padding: 9px 12px;
+  border: 1px solid var(--d-rule-strong);
+  border-radius: var(--d-radius-sm);
+  background: var(--d-surface);
+  color: var(--d-ink);
+  font: inherit;
+  line-height: 1.5;
+}
+.d-decline-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.d-decline-action label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.d-decline-action input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--d-primary);
+}
+.d-review-note {
+  margin: 18px 0 6px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in oklab, var(--d-gold) 50%, transparent);
+  border-radius: var(--d-radius);
+  background: var(--d-gold-soft);
+}
+.d-review-note p {
+  margin-top: 4px;
+  color: var(--d-muted);
+}
+.d-application-decision {
+  margin-bottom: 20px;
+}
+/* Event descriptions keep their line breaks; links are clickable. */
+.d-event-description {
+  white-space: pre-line;
+}
+.d-event-description a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
+}
+
 /* ---- Responsive ---------------------------------------------------------- */
 @media (max-width: 1150px) {
   .d-sidebar {
@@ -2753,6 +3233,12 @@
   }
 }
 @media (max-width: 900px) {
+  .d-topbar {
+    padding-inline: 20px;
+  }
+  .d-main {
+    padding: 20px 20px 36px;
+  }
   .d-columns,
   .d-overview-top,
   .d-profile-layout,
@@ -2809,82 +3295,27 @@
     font-size: 24px;
   }
 }
-/* Phone: the rail becomes a top bar with a sheet. */
+/* Phone: content stays under the top bar; sections live in the bottom tab
+   bar, and "More" opens the full rail as a sheet above it. */
 @media (max-width: 680px) {
-  .dash {
-    display: block;
-  }
-  .d-sidebar {
-    position: sticky;
-    inset: 0 0 auto;
-    width: 100%;
-    padding: 10px 16px;
-    display: block;
-    border-right: 0;
-    border-bottom: 1px solid var(--d-rule);
-  }
-  .d-brand {
-    padding: 0;
-    min-height: 40px;
-  }
-  .d-brand small {
-    display: none;
-  }
-  .d-mobile-actions {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-  }
-  .d-mobile-actions .d-theme {
-    width: 40px;
-    height: 40px;
-  }
-  .d-menu {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    min-height: 40px;
-    padding: 6px 10px;
-    border-radius: var(--d-radius-sm);
-    font-size: 14px;
-    color: var(--d-ink);
-  }
-  .d-menu svg {
-    width: 18px;
-    height: 18px;
-  }
-  .d-sidebar-inner {
-    display: none;
-  }
-  .d-sidebar-inner.is-open {
-    display: flex;
-    max-height: calc(100dvh - 60px);
-    overflow: auto;
-    padding-top: 14px;
-  }
-  .d-sidebar nav > a {
-    min-height: 44px;
-    font-size: 15px;
-  }
-  .d-account {
-    margin-inline: -16px;
-  }
-  .d-sidebar {
-    min-height: 60px;
-  }
-  .d-workarea {
-    margin: 0;
-    min-height: calc(100dvh - 60px);
-  }
-  /* Full-height chat: the work area is whatever the header leaves, so the
-     composer stays on screen (dvh tracks the mobile browser's toolbars). */
-  .dash:has(.d-main-flush) .d-workarea {
-    height: calc(100dvh - 60px);
-  }
   .d-topbar {
+    padding-inline: 14px;
+  }
+  .d-crumbs > span:first-child,
+  .d-crumbs > span:nth-child(2),
+  .d-campus,
+  .d-top-action {
+    display: none;
+  }
+  .d-global-search {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+  .d-global-search span,
+  .d-global-search kbd,
+  .d-topbar .d-account-menu summary > span:not(.d-avatar),
+  .d-topbar .d-account-menu summary > svg {
     display: none;
   }
   .d-main {
@@ -3063,6 +3494,135 @@
     width: 100%;
     margin-left: 0;
     order: 1;
+  }
+}
+/* Tablets and phones: the rail collapses into a bottom tab bar (Home, a few
+   sections, More). More opens the whole rail as a sheet above the bar, and
+   the brand moves into the top bar. */
+@media (max-width: 900px) {
+  .dash {
+    display: block;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+  .d-sidebar {
+    position: fixed;
+    inset: auto 8px calc(76px + env(safe-area-inset-bottom)) 8px;
+    z-index: 40;
+    width: auto;
+    padding: 0;
+    background: none;
+    border: 0;
+    pointer-events: none;
+  }
+  .d-sidebar > .d-brand,
+  .d-sidebar > .d-menu {
+    display: none;
+  }
+  .d-sidebar-inner {
+    display: none;
+  }
+  .d-sidebar-inner.is-open {
+    display: flex;
+    pointer-events: auto;
+    max-height: calc(100dvh - 140px);
+    overflow-y: auto;
+    padding: 10px 12px 6px;
+    background: var(--d-surface);
+    border: 1px solid var(--d-rule);
+    border-radius: 16px;
+    box-shadow: var(--d-pop);
+  }
+  .d-sidebar nav > a {
+    min-height: 44px;
+    font-size: 15px;
+  }
+  .d-sidebar nav > a[aria-current="page"] {
+    background: var(--d-sunken);
+    box-shadow: none;
+  }
+  .d-account {
+    margin-inline: -12px;
+  }
+  .d-workarea {
+    margin: 0;
+    min-height: calc(100dvh - 76px);
+  }
+  .dash:has(.d-main-flush) {
+    padding-bottom: 0;
+  }
+  /* Full-height chat: what the top bar and tab bar leave, so the composer
+     stays on screen (dvh tracks the phone browser's own toolbars). */
+  .dash:has(.d-main-flush) .d-workarea {
+    height: calc(100dvh - 76px - env(safe-area-inset-bottom));
+  }
+  .d-topbar {
+    gap: 10px;
+    border-bottom: 1px solid var(--d-rule);
+  }
+  .d-topbar-brand {
+    display: flex;
+    flex: none;
+  }
+  .d-crumbs {
+    flex: 1;
+  }
+  .d-tabbar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 41;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    height: calc(64px + env(safe-area-inset-bottom));
+    padding: 6px 8px env(safe-area-inset-bottom);
+    background: color-mix(in oklab, var(--d-sidebar) 94%, transparent);
+    border-top: 1px solid var(--d-rule);
+    backdrop-filter: blur(12px);
+  }
+  .d-tabbar > a,
+  .d-tabbar > button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+    border-radius: var(--d-radius-sm);
+    color: var(--d-faint);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .d-tabbar svg {
+    width: 20px;
+    height: 20px;
+  }
+  .d-tabbar > [aria-current="page"],
+  .d-tabbar > button[aria-expanded="true"] {
+    color: var(--d-ink);
+    background: var(--d-surface);
+    box-shadow: var(--d-shadow);
+  }
+  .d-overview-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .d-overview-lists {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 680px) {
+  .d-overview-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px;
+  }
+  .d-overview-hero h2 {
+    font-size: 22px;
+  }
+  .d-overview-metrics {
+    gap: 10px;
+  }
+  .d-overview-metrics strong {
+    font-size: 22px;
+    overflow-wrap: anywhere;
   }
 }
 @media (max-width: 760px) {

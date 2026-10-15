@@ -123,3 +123,24 @@ export function weekStart(date: string) {
 }
 
 export const today = () => new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
+
+/**
+ * What's wrong with a speaker's availability rows, or null if they can be sent.
+ * Every row must be complete: an added row left blank or half-filled is an
+ * error rather than silently dropped (QA #78). Dates are YYYY-MM-DD and times
+ * HH:MM, so plain string comparison orders them. A row is a daily interval
+ * across its dates, so its end time must come after its start time.
+ */
+export function availabilityProblem(windows: Window[]): string | null {
+  if (windows.length === 0) return "Add at least one day/time range you're available.";
+  for (const [i, w] of windows.entries()) {
+    const row = windows.length > 1 ? `Window ${i + 1}: ` : "";
+    const blanks = [w.startDate, w.endDate, w.startTime, w.endTime].filter((v) => !v).length;
+    if (blanks === 4 && windows.length === 1) return "Add at least one day/time range you're available.";
+    if (blanks === 4) return `${row}fill it in or remove it.`;
+    if (blanks > 0) return `${row}fill in both dates and both times.`;
+    if (w.endDate < w.startDate) return `${row}the end date is before the start date.`;
+    if (w.endTime <= w.startTime) return `${row}the end time has to be after the start time.`;
+  }
+  return null;
+}

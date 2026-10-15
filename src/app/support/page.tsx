@@ -1,6 +1,9 @@
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("Support & Contact", "Get help with LOGICA membership, event RSVPs, your account, speaking opportunities, and partnerships at UIC.", "/support");
+
 import { LegalPage, LSection, Faq, contactLine } from "@/components/legal/LegalPage";
 
-export const metadata = { title: "Support — LOGICA @ UIC" };
 
 const faqs = [
   {

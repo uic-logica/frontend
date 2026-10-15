@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { type ClubInsights, date, initials } from "./types";
 
@@ -13,7 +13,7 @@ import { type ClubInsights, date, initials } from "./types";
  * cost more than the whole feature.
  */
 export function Insights() {
-  const [data, setData] = useState<ClubInsights | null>(null);
+  const [data, setData] = useState<ClubInsights | null>(() => peek<ClubInsights>("/api/board/insights") ?? null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -57,8 +57,8 @@ export function Insights() {
   return (
     <>
       <Heading
-        title="How the club is doing."
-        description={`Everyone who's signed up, and who's still turning up. "Active" means at least one check-in in the last ${members.activeWindowDays} days.`}
+        title="Insights"
+        description={`A readable pulse of participation, attendance, and member health. Active means a check-in in the last ${members.activeWindowDays} days.`}
       />
 
       <div className="d-directory-summary">
@@ -82,7 +82,7 @@ export function Insights() {
 
       <section className="d-panel">
         <div className="d-section-head">
-          <h2>Who showed up</h2>
+          <h2>Attendance trend</h2>
           <span className="d-muted">
             <i className="d-key d-key-going" /> said they&apos;d come{" "}
             <i className="d-key d-key-came" /> came

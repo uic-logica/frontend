@@ -129,17 +129,13 @@ export function CandidateHome({
   return (
     <>
       <Heading
-        title={`Hi, ${first}.`}
-        description={
-          confirmedAt
-            ? "That's everything we need for now. We'll come back to you with a date."
-            : "One thing to do: tell us when you could come in."
-        }
+        title="Share your availability"
+        description="Choose every time that could work. More options make it easier to find a date."
       />
 
       <section className="d-panel d-availability">
         <div className="d-section-head">
-          <h2>When are you free?</h2>
+          <h2>When could you visit?</h2>
           {confirmedAt && !editing && (
             <span className="d-badge confirmed">
               Confirmed {date(confirmedAt)}

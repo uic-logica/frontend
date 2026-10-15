@@ -3,42 +3,32 @@ export type MarqueeLogo = {
   src: string;
   /** Render height in px */
   height?: number;
-  /** If true, stay monochrome on hover (like some YCS logos). */
-  mono?: boolean;
-  /** If true, skip the grayscale filter — for full-color photo-style artwork that has no transparent silhouette to reveal. */
+  /** Photo-style artwork with no transparent silhouette: round its corners. */
   photo?: boolean;
 };
 
-/** Shared grayscale-by-default, brand-colors-on-hover logo treatment. */
+/** A partner logo in its brand colors. */
 export function PartnerLogo({
   name,
   src,
   height = 40,
-  mono,
   photo = false,
   hidden = false,
 }: MarqueeLogo & { hidden?: boolean }) {
-  const colorOnHover = mono
-    ? "hover:opacity-100"
-    : "hover:opacity-100 hover:brightness-100 hover:invert-0";
-  const filterClasses = photo
-    ? "opacity-80 hover:opacity-100"
-    : `opacity-50 brightness-0 invert ${colorOnHover}`;
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={hidden ? "" : `${name} logo`}
       aria-hidden={hidden}
-      className={`shrink-0 cursor-pointer object-contain transition duration-300 ${photo ? "rounded-md" : ""} ${filterClasses}`}
+      className={`partner-logo shrink-0 object-contain ${photo ? "rounded-md" : ""}`}
       style={{ height, width: "auto" }}
     />
   );
 }
 
 /**
- * YCS-style logo strip: white/gray by default, brand colors on hover.
- * The strip keeps sliding while hovered; the color reveal is per-logo.
+ * Logo strip in brand colors that keeps sliding.
  */
 export function LogoMarquee({
   items,

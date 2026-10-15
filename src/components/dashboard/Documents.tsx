@@ -52,8 +52,8 @@ export function Documents() {
   return (
     <>
       <Heading
-        title="Everything, findable."
-        description="The club's Drive — the constitution, budgets, decks, run-of-shows. Opens in Drive; edits happen there."
+        title="Documents"
+        description="One shared index for current files, decisions, and event materials."
       />
 
       {error && (

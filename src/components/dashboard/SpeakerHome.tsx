@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { Icon } from "./Icon";
+import { Avatar } from "./Avatar";
 import { Heading } from "./Overview";
-import { type Profile, type SessionUser, date, initials } from "./types";
+import { type Profile, type SessionUser, date } from "./types";
 
 /**
  * A confirmed speaker's landing page: their talk, their slides, and how
@@ -22,7 +23,6 @@ export function SpeakerHome({
   const submission = profile?.speakerSubmission;
   const event = submission?.event ?? null;
   const stats = profile?.talkStats ?? null;
-  const first = (profile?.name || user.name || "there").split(" ")[0];
 
   const hasAvailability = !!submission?.availability?.length;
 
@@ -77,14 +77,8 @@ export function SpeakerHome({
   return (
     <>
       <Heading
-        title={`Welcome back, ${first}.`}
-        description={
-          outstanding.length
-            ? `Next up: ${outstanding
-                .map((c) => c.label.toLowerCase())
-                .join(", then ")}.`
-            : "You've given us everything we need. Nothing else to do."
-        }
+        title="My talk"
+        description="Everything the club and audience need for your visit, in one place."
       />
 
       <section className="d-talk">
@@ -130,9 +124,7 @@ export function SpeakerHome({
           </div>
         </div>
         <div className="d-talk-who">
-          <span className="d-avatar d-avatar-large">
-            {initials(profile?.name || user.name)}
-          </span>
+          <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-large" />
           <strong>{profile?.name || user.name || "Your name"}</strong>
           <small>{submission?.organization || "Add your organization"}</small>
         </div>

@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Fragment, type ReactNode, useEffect, useState } from "react";
-import { api, signOut } from "@/lib/api";
+import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { api, clearApiCache, peek, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
 import { ProfileEditor, Settings } from "./Profile";
@@ -20,6 +20,7 @@ import { Documents } from "./Documents";
 import { Applications } from "./Applications";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
+import { Avatar } from "./Avatar";
 import {
   type SessionUser,
   type Profile,
@@ -35,10 +36,13 @@ import {
   isConfirmedSpeaker,
   roleName,
   runsWorkspace,
-  initials,
   PERSONAL_SECTIONS,
 } from "./types";
+import { BuildTeams, retireTeamsHint, snoozeTeamsHint, teamsHintHidden } from "./BuildTeams";
 import "./dashboard.css";
+
+/** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
+const art = "dashboard-night";
 
 /**
  * A section, once opened, stays mounted and is hidden rather than torn down.
@@ -83,6 +87,8 @@ function Pane({ active, children }: { active: boolean; children: ReactNode }) {
  * data in place; a per-page mount flashed the skeleton (and briefly the
  * signed-out panel) on every click.
  */
+const noSubscribe = () => () => {};
+
 export function Dashboard() {
   const router = useRouter();
   const pathname = usePathname();
@@ -97,6 +103,16 @@ export function Dashboard() {
   const [notices, setNotices] = useState<Notice[] | null>(null);
   const [speakers, setSpeakers] = useState<Speaker[] | null>(null);
   const [members, setMembers] = useState<Member[] | null>(null);
+  function forgetSession() {
+    clearApiCache();
+    setUser(null);
+    setProfile(null);
+    setEvents(null);
+    setEngagement(null);
+    setNotices(null);
+    setSpeakers(null);
+    setMembers(null);
+  }
   const [errors, setErrors] = useState<string[]>([]);
   const [authState, setAuthState] = useState<
     "loading" | "ready" | "signed-out" | "error"
@@ -121,28 +137,90 @@ export function Dashboard() {
     setOpened((prev) => (prev.includes(section) ? prev : [...prev, section]));
   }, [section]);
   const [menu, setMenu] = useState(false);
-  // The saved choice is applied to <html> before paint by the root layout's
-  // script; that only runs on a full load, so arriving here by client-side
-  // navigation re-applies it. Unset means "follow the system".
+  // The nav (and so the pointer) only renders client-side after the session
+  // loads, so reading localStorage in the initializer can't mismatch the server.
+  const [hintOff, setHintOff] = useState(() => typeof window === "undefined" || teamsHintHidden());
+  // Applied on another device? The server knows; this browser doesn't yet.
+  const hintAccount = user?.accountKind === "MEMBER" ? user.id : null;
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("logica-theme");
-      if (saved === "light" || saved === "dark")
-        document.documentElement.dataset.theme = saved;
-    } catch {}
-  }, []);
-  function toggleTheme() {
-    const root = document.documentElement;
-    const dark =
-      root.dataset.theme === "dark" ||
-      (!root.dataset.theme &&
-        matchMedia("(prefers-color-scheme: dark)").matches);
-    root.dataset.theme = dark ? "light" : "dark";
-    try {
-      localStorage.setItem("logica-theme", root.dataset.theme);
-    } catch {}
-  }
+    if (hintOff || !hintAccount) return;
+    api<{ track: string }[]>("/api/join/mine")
+      .then((rows) => {
+        if (rows.some((r) => r.track === "SOFTWARE_ENGINEER")) {
+          retireTeamsHint();
+          setHintOff(true);
+        }
+      })
+      .catch(() => {});
+  }, [hintOff, hintAccount]);
   const [leaving, setLeaving] = useState(false);
+  const leavingRef = useRef(false);
+  const confirmOut = useRef<HTMLDialogElement>(null);
+  const searchDialog = useRef<HTMLDialogElement>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState("");
+  const isMac = useSyncExternalStore(noSubscribe, () => /Mac|iPhone|iPad/.test(navigator.userAgent), () => false);
+  const accountMenu = useRef<HTMLDetailsElement>(null);
+  const sideMenu = useRef<HTMLDetailsElement>(null);
+  const sidebar = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLSpanElement>(null);
+
+  // One white indicator slides between sidebar items as the section changes,
+  // the same motion as the site nav's capsule. Measured from the DOM because
+  // it depends on rendered layout, and re-measured whenever the menu itself
+  // changes (a guest's items change once their profile loads). Not animated
+  // on first placement.
+  useLayoutEffect(() => {
+    const box = sidebar.current;
+    const el = bar.current;
+    if (!box || !el) return;
+    const place = () => {
+      const active = box.querySelector<HTMLElement>("a[aria-current=page]");
+      if (!active || !active.offsetParent) {
+        el.style.opacity = "0";
+        return;
+      }
+      const a = active.getBoundingClientRect();
+      // The sidebar scrolls when the menu is long, so measure in its content box.
+      const top = a.top - box.getBoundingClientRect().top + box.scrollTop;
+      el.style.opacity = "1";
+      el.style.height = `${a.height}px`;
+      el.style.transform = `translateY(${top}px)`;
+    };
+    place();
+    const frame = requestAnimationFrame(() => (el.dataset.animate = "true"));
+    const menuChanges = new MutationObserver(place);
+    menuChanges.observe(box, { subtree: true, childList: true, attributeFilter: ["aria-current"] });
+    const resizes = new ResizeObserver(place);
+    resizes.observe(box);
+    return () => {
+      cancelAnimationFrame(frame);
+      menuChanges.disconnect();
+      resizes.disconnect();
+    };
+  }, []);
+
+  // Paint what this tab saw last time before the first frame, then let
+  // load() below refresh it — no skeleton on every visit. Server render has
+  // no cache, so this runs as a layout effect after hydration, not in state
+  // initializers (which would mismatch the server HTML).
+  useLayoutEffect(() => {
+    const cached = peek<{ user?: SessionUser }>("/api/auth/session")?.user;
+    if (!cached || cached.mustChangePassword) return;
+    const take = <T,>(path: string, set: (v: T) => void) => {
+      const hit = peek<T>(path);
+      if (hit !== undefined) set(hit);
+    };
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- seeding from cache, refreshed by load()
+    setUser(cached);
+    take(cached.accountKind === "SPEAKER" ? "/api/speaker-profile" : "/api/profile", setProfile);
+    take("/api/events", setEvents);
+    take("/api/notifications", setNotices);
+    take("/api/dashboard", setEngagement);
+    take("/api/speakers", setSpeakers);
+    take("/api/board/members", setMembers);
+    setAuthState("ready");
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -154,6 +232,9 @@ export function Dashboard() {
         );
         if (!alive) return;
         if (!session?.user) {
+          // Drop anything a previous session left behind (QA #80: after
+          // signing out, Back showed the sign-in buttons next to the old avatar).
+          forgetSession();
           setAuthState("signed-out");
           return;
         }
@@ -173,7 +254,7 @@ export function Dashboard() {
             const value = await api<T>(path);
             if (alive) set(value);
           } catch {
-            if (alive)
+            if (alive && !leavingRef.current)
               setErrors((prev) => [...prev, `Could not load ${label}.`]);
           }
         }
@@ -208,7 +289,7 @@ export function Dashboard() {
             : []),
         ]);
       } catch {
-        if (alive) setAuthState("error");
+        if (alive && !leavingRef.current) setAuthState("error");
       }
     }
     void load();
@@ -226,80 +307,160 @@ export function Dashboard() {
   // padding and max-width for it.
   const chatFull = section === "messages" && !!submissionId;
   async function logout() {
+    if (leavingRef.current) return;
+    leavingRef.current = true;
     setLeaving(true);
+    const destination =
+      user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin";
     try {
-      await signOut();
-      router.push(
-        user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin",
-      );
+      await signOut(destination);
+      forgetSession();
+      // A document-level replacement clears the dashboard/router caches and
+      // keeps Back from restoring protected UI after the cookie is gone.
+      window.location.replace(destination);
     } catch {
+      leavingRef.current = false;
       setErrors(["Could not sign out. Please try again."]);
       setLeaving(false);
     }
   }
-  const nav = navFor(user, profile);
-  const isBoardNav = !!user && runsWorkspace(user);
   const unread = notices?.filter((n) => !n.readAt).length ?? 0;
+  const nav = navFor(user, profile);
+  // A speaker's profile is their visit form, so it stays in their rail.
+  // Everyone else reaches it from the account menus.
+  const sideNav = user?.accountKind === "SPEAKER" ? nav : nav.filter((item) => item !== "profile");
+  const accountLinks = (
+    <>
+      <Link href="/dashboard/profile">My profile</Link>
+      <Link href="/dashboard/notifications">
+        Notifications{unread > 0 && <span className="d-count">{unread}</span>}
+      </Link>
+      <Link href="/dashboard/connections">MCP Connections</Link>
+      <Link href="/dashboard/settings">Settings</Link>
+    </>
+  );
+  const isBoardNav = !!user && runsWorkspace(user);
   const href = (item: Section) =>
     item === "overview" ? "/dashboard" : `/dashboard/${item}`;
+  const searchResults = useMemo(() => {
+    const needle = query.trim().toLocaleLowerCase();
+    const allowed = navFor(user, profile);
+    const rows: { label: string; detail: string; href: string }[] = allowed.map((item) => ({
+      label: titleFor(item, user, profile),
+      detail: "Dashboard section",
+      href: href(item),
+    }));
+    for (const event of events ?? []) rows.push({
+      label: event.title,
+      detail: `Event${event.location ? ` · ${event.location}` : ""}`,
+      href: "/dashboard/events",
+    });
+    if (user && runsWorkspace(user)) {
+      for (const member of members ?? []) rows.push({
+        label: member.name || member.email,
+        detail: `Member · ${member.major || member.email}`,
+        href: "/dashboard/members",
+      });
+      for (const guest of speakers ?? []) rows.push({
+        label: guest.name || guest.email || "Speaker",
+        detail: `Speaker${guest.organization ? ` · ${guest.organization}` : ""}`,
+        href: "/dashboard/speakers",
+      });
+    }
+    for (const notice of notices ?? []) rows.push({
+      label: notice.message,
+      detail: "Notification",
+      href: "/dashboard/notifications",
+    });
+    return rows.filter((row) => !needle || `${row.label} ${row.detail}`.toLocaleLowerCase().includes(needle)).slice(0, 12);
+  }, [events, members, notices, profile, query, speakers, user]);
+
+  useEffect(() => {
+    const openSearch = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === "k") {
+        event.preventDefault();
+        searchDialog.current?.showModal();
+        requestAnimationFrame(() => searchInput.current?.focus());
+      }
+      if (event.key === "Escape") setMenu(false);
+    };
+    // <details> has no light dismiss; a click anywhere else closes the menus,
+    // and the phone menu sheet, unless the click is on the sheet or its tab bar.
+    const closeMenus = (event: PointerEvent) => {
+      for (const menu of [accountMenu.current, sideMenu.current]) {
+        if (menu?.open && !menu.contains(event.target as Node)) menu.removeAttribute("open");
+      }
+      if (!(event.target as Element).closest?.(".d-sidebar, .d-tabbar")) setMenu(false);
+    };
+    window.addEventListener("keydown", openSearch);
+    window.addEventListener("pointerdown", closeMenus);
+    return () => {
+      window.removeEventListener("keydown", openSearch);
+      window.removeEventListener("pointerdown", closeMenus);
+    };
+  }, []);
+
+  const closeSearch = () => {
+    searchDialog.current?.close();
+    setQuery("");
+  };
+  // The saved choice is applied to <html> before paint by the root layout's
+  // script; that only runs on a full load, so arriving here by client-side
+  // navigation re-applies it. Unset means "follow the system".
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("logica-theme");
+      if (saved === "light" || saved === "dark")
+        document.documentElement.dataset.theme = saved;
+    } catch {}
+  }, []);
+  function toggleTheme() {
+    const root = document.documentElement;
+    const dark =
+      root.dataset.theme === "dark" ||
+      (!root.dataset.theme &&
+        matchMedia("(prefers-color-scheme: dark)").matches);
+    root.dataset.theme = dark ? "light" : "dark";
+    try {
+      localStorage.setItem("logica-theme", root.dataset.theme);
+    } catch {}
+  }
   return (
-    <div className="dash">
+    <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
       <a href="#dashboard-content" className="d-skip">
         Skip to content
       </a>
       <aside className="d-sidebar">
-        <Link className="d-brand" href="/dashboard">
-          <Image
-            className="d-logo-light"
-            src="/logica-logo-black.png"
-            alt=""
-            width={28}
-            height={28}
-          />
-          <Image
-            className="d-logo-dark"
-            src="/logica-logo-white.png"
-            alt=""
-            width={28}
-            height={28}
-          />
+        <Link className="d-brand" href="/" aria-label="LOGICA home">
+          <span className="d-logo-chip" aria-hidden="true"><Image src="/logica-logo-black.png" alt="" width={26} height={26} /></span>
           <span>
-            LOGICA<small>University of Illinois Chicago</small>
+            LOGICA<small>{user ? roleName(user, profile) : "UIC"}</small>
           </span>
         </Link>
-        {/* Phones lose the top bar, so its theme switch rides along here. */}
-        <div className="d-mobile-actions">
-          <button
-            type="button"
-            className="d-theme"
-            onClick={toggleTheme}
-            aria-label="Switch light or dark theme"
-          >
-            <Icon name="sun" />
-          </button>
-          <button
-            className="d-menu"
-            aria-expanded={menu}
-            aria-controls="dashboard-nav"
-            onClick={() => setMenu(!menu)}
-          >
-            <Icon name="menu" />
-            <span>Menu</span>
-          </button>
-        </div>
+        <button
+          className="d-menu"
+          aria-expanded={menu}
+          aria-controls="dashboard-nav"
+          onClick={() => setMenu(!menu)}
+        >
+          <Icon name="menu" />
+          <span>Menu</span>
+        </button>
         <div
           id="dashboard-nav"
+          ref={sidebar}
           className={`d-sidebar-inner ${menu ? "is-open" : ""}`}
         >
+          <span ref={bar} className="d-nav-bar" aria-hidden="true" />
           <nav aria-label="Dashboard">
-            {nav.map((item, index) => (
+            {sideNav.map((item, index) => (
               <Fragment key={item}>
                 {/* Board nav runs to ten items. A rule where the club's
                     business ends and their own begins is the difference
                     between a list you scan and one you read. */}
                 {isBoardNav &&
                   PERSONAL_SECTIONS.includes(item) &&
-                  !PERSONAL_SECTIONS.includes(nav[index - 1]) && (
+                  !PERSONAL_SECTIONS.includes(sideNav[index - 1]) && (
                     <span className="d-nav-divider" aria-hidden="true">
                       Yours
                     </span>
@@ -319,40 +480,22 @@ export function Dashboard() {
                       </span>
                     )}
                 </Link>
+                {item === "teams" && !hintOff && !seen("teams") && (
+                  <div className="d-callout" role="note">
+                    <span>Apply for the software role here!</span>
+                    <button type="button" aria-label="Dismiss" onClick={() => { snoozeTeamsHint(); setHintOff(true); }}>×</button>
+                  </div>
+                )}
               </Fragment>
             ))}
           </nav>
           <div className="d-sidebar-bottom">
-            <nav aria-label="Account">
-              <Link
-                href="/dashboard/notifications"
-                aria-current={section === "notifications" ? "page" : undefined}
-              >
-                <Icon name="notifications" />
-                Notifications
-                {unread > 0 && <span className="d-count">{unread}</span>}
-              </Link>
-              {/* Account-level, like notifications and settings — not club
-                  business, so it sits in the bottom group rather than
-                  lengthening a main nav that already outgrew the rail. */}
-              <Link
-                href="/dashboard/connections"
-                aria-current={section === "connections" ? "page" : undefined}
-              >
-                <Icon name="connections" />
-                MCP Connections
-              </Link>
-              <Link
-                href="/dashboard/settings"
-                aria-current={section === "settings" ? "page" : undefined}
-              >
-                <Icon name="settings" />
-                Settings
-              </Link>
-              {/* Day-to-day chat is Discord's job; this dashboard holds the
-                  things that need a record. Hidden until the URL is set
-                  rather than guessed at. */}
-              {process.env.NEXT_PUBLIC_DISCORD_URL && (
+            {/* Day-to-day chat is Discord's job; this dashboard holds the
+                things that need a record. Hidden until the URL is set
+                rather than guessed at. Profile, notifications and settings
+                live in the account menus, not the rail. */}
+            {process.env.NEXT_PUBLIC_DISCORD_URL && (
+              <nav aria-label="Community">
                 <a
                   href={process.env.NEXT_PUBLIC_DISCORD_URL}
                   target="_blank"
@@ -361,39 +504,79 @@ export function Dashboard() {
                   <Icon name="community" />
                   Discord
                 </a>
-              )}
-            </nav>
+              </nav>
+            )}
             {user && (
               <div className="d-account">
-                <span className="d-avatar">
-                  {initials(profile?.name || user.name)}
-                </span>
-                <span>
-                  <strong>
-                    {profile?.name || user.name || "Your account"}
-                  </strong>
-                  <small>{roleName(user, profile)}</small>
-                </span>
+                <details ref={sideMenu} className="d-account-menu d-side-menu">
+                  <summary>
+                    <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} />
+                    <span>
+                      <strong>
+                        {profile?.name || user.name || "Your account"}
+                      </strong>
+                      <small>{roleName(user, profile)}</small>
+                    </span>
+                  </summary>
+                  <nav aria-label="Your account" onClick={() => { sideMenu.current?.removeAttribute("open"); setMenu(false); }}>
+                    {accountLinks}
+                  </nav>
+                </details>
                 <button
                   aria-label="Sign out"
                   title="Sign out"
-                  onClick={logout}
+                  onClick={() => confirmOut.current?.showModal()}
                   disabled={leaving}
                 >
                   <Icon name="exit" />
                 </button>
+                {/* ponytail: native <dialog> gives top layer, focus trap and Esc for free */}
+                <dialog ref={confirmOut} className="d-confirm" aria-labelledby="d-confirm-title">
+                  <h2 id="d-confirm-title">Sign out of LOGICA?</h2>
+                  <p>You&apos;ll need your password to sign back in.</p>
+                  <form method="dialog" className="d-actions">
+                    <button className="d-button secondary" autoFocus>Cancel</button>
+                    <button
+                      type="button"
+                      className="d-button"
+                      disabled={leaving}
+                      onClick={logout}
+                    >
+                      {leaving ? "Signing out…" : "Sign out"}
+                    </button>
+                  </form>
+                </dialog>
               </div>
             )}
           </div>
         </div>
       </aside>
-      <div className="d-workarea">
+      <div
+        className="d-workarea"
+      >
         <header className="d-topbar">
-          <span>
+          {/* Phones: the rail collapses into the tab bar, so the brand moves up here. */}
+          <Link className="d-topbar-brand" href="/" aria-label="LOGICA home">
+            <span className="d-logo-chip" aria-hidden="true"><Image src="/logica-logo-black.png" alt="" width={26} height={26} /></span>
+          </Link>
+          <span className="d-crumbs">
+            <span>{speaker ? "Your visit" : user && runsWorkspace(user) ? "Workspace" : "Member home"}</span>
+            <span aria-hidden="true">›</span>
             <strong>{titleFor(section, user, profile)}</strong>
           </span>
           <div>
-            <span className="d-campus">LOGICA @ UIC</span>
+            {user?.accountKind !== "SPEAKER" && (
+              <button className="d-global-search" type="button" onClick={() => { searchDialog.current?.showModal(); requestAnimationFrame(() => searchInput.current?.focus()); }}>
+                <Icon name="search" />
+                <span>Search…</span>
+                <kbd>{isMac ? "⌘" : "Ctrl"} K</kbd>
+              </button>
+            )}
+            {user?.accountKind === "MEMBER" && (
+              <Link className="d-button d-top-action" href="/dashboard/events">
+                {runsWorkspace(user) ? "+ New" : "Find an event"}
+              </Link>
+            )}
             <button
               type="button"
               className="d-theme"
@@ -403,23 +586,47 @@ export function Dashboard() {
             >
               <Icon name="sun" />
             </button>
-            <Link
-              aria-label={`${unread} unread notifications`}
-              href="/dashboard/notifications"
-              className="d-bell"
-            >
-              <Icon name="notifications" />
-              {unread > 0 && <i />}
-            </Link>
-            <Link
-              className="d-avatar d-avatar-small"
-              href="/dashboard/profile"
-              aria-label="My profile"
-            >
-              {initials(profile?.name || user?.name || null)}
-            </Link>
+            {user && (
+              <>
+                <Link
+                  aria-label={`${unread} unread notifications`}
+                  href="/dashboard/notifications"
+                  className="d-bell"
+                >
+                  <Icon name="notifications" />
+                  {unread > 0 && <i />}
+                </Link>
+                <details ref={accountMenu} className="d-account-menu">
+                  <summary>
+                    <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-small" />
+                    <span>Profile &amp; prefs</span>
+                    <Icon name="chevron" />
+                  </summary>
+                  <nav aria-label="Profile and preferences" onClick={() => accountMenu.current?.removeAttribute("open")}>
+                    {accountLinks}
+                  </nav>
+                </details>
+              </>
+            )}
           </div>
         </header>
+        <dialog ref={searchDialog} className="d-search-dialog" aria-labelledby="d-search-title" onClose={() => setQuery("")} onClick={(event) => { if (event.target === event.currentTarget) closeSearch(); }}>
+          <div className="d-search-dialog-head">
+            <Icon name="search" />
+            <label id="d-search-title" className="d-sr" htmlFor="dashboard-search">Search your LOGICA workspace</label>
+            <input ref={searchInput} id="dashboard-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search sections and your permitted data…" />
+            <button type="button" onClick={closeSearch} aria-label="Close search">Esc</button>
+          </div>
+          <div className="d-search-results">
+            {searchResults.length ? searchResults.map((result, index) => (
+              <Link key={`${result.href}-${result.label}-${index}`} href={result.href} onClick={closeSearch}>
+                <span><strong>{result.label}</strong><small>{result.detail}</small></span>
+                <Icon name="arrow" />
+              </Link>
+            )) : <p>No permitted results match “{query}”.</p>}
+          </div>
+          <p className="d-search-help">Search only includes dashboard data already loaded for your account.</p>
+        </dialog>
         <main
           id="dashboard-content"
           className={`d-main ${chatFull ? "d-main-flush" : ""}`}
@@ -545,6 +752,11 @@ export function Dashboard() {
                   <Activity engagement={engagement} />
                 </Pane>
               )}
+              {seen("teams") && user && (
+                <Pane active={section === "teams"}>
+                  <BuildTeams user={user} profile={profile} />
+                </Pane>
+              )}
               {seen("community") && (
                 <Pane active={section === "community"}>
                   <Community user={user} />
@@ -620,6 +832,28 @@ export function Dashboard() {
           )}
         </main>
       </div>
+      {/* Phones (logica.pen V3 "App · Mobile"): the three most-used sections in
+          thumb reach, and More opens the full menu as a sheet above the bar. */}
+      {user && (
+        <nav className="d-tabbar" aria-label="Quick sections">
+          {tabsFor(nav).map((item) => (
+            <Link key={item} href={href(item)} aria-current={section === item && !menu ? "page" : undefined} onClick={() => setMenu(false)}>
+              <Icon name={item} />
+              {item === "overview" ? "Home" : titleFor(item, user, profile)}
+            </Link>
+          ))}
+          <button type="button" aria-expanded={menu} aria-controls="dashboard-nav" onClick={() => setMenu(!menu)}>
+            <Icon name="menu" />
+            More
+          </button>
+        </nav>
+      )}
     </div>
   );
+}
+
+/** Up to three tabs: home, events and community when the role has them, otherwise its first sections. */
+function tabsFor(nav: Section[]) {
+  const preferred = (["overview", "events", "community"] as Section[]).filter((s) => nav.includes(s));
+  return (preferred.length === 3 ? preferred : nav).slice(0, 3);
 }

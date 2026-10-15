@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { ClubShell, PageContainer } from "@/components/club/ClubShell";
 import { darkButtonClass, darkInputClass, darkInputErrorClass } from "@/components/ui/darkForm";
 import { api } from "@/lib/api";
 
@@ -37,15 +37,13 @@ export default function SpeakerSignInPage() {
   return (
     <ClubShell>
       <PageContainer>
-        <SectionContainer>
-          <div className="mx-auto max-w-md">
-            <h1 className="type-title text-3xl md:text-4xl text-white">Speaker sign-in</h1>
-            <p className="mt-3 text-xl text-signal md:text-2xl">
-              For confirmed speakers — no UIC email required.
-            </p>
+            <header className="auth-head">
+              <h1>Speaker sign-in</h1>
+              <p>For confirmed speakers — no UIC email required.</p>
+            </header>
 
-            <div className="mt-10 club-card bg-white/[0.02] p-8 md:p-10">
-              <p className="text-body text-white">
+            <div className="club-card auth-card">
+              <p className="auth-intro">
                 Use the username and password from your invite email.
               </p>
 
@@ -92,14 +90,9 @@ export default function SpeakerSignInPage() {
               </form>
             </div>
 
-            <p className="mt-8 text-caption text-white">
-              UIC student or board member?{" "}
-              <Link href="/signin" className="font-bold text-signal underline-offset-2 hover:underline">
-                Sign in here
-              </Link>
+            <p className="auth-foot">
+              UIC student or board member? <Link href="/signin">Sign in here</Link>
             </p>
-          </div>
-        </SectionContainer>
       </PageContainer>
     </ClubShell>
   );

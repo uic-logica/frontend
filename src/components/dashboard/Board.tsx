@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { Icon } from "./Icon";
 import {
@@ -42,9 +42,8 @@ type Props = {
 
 const COPY = {
   MONEY: {
-    title: "Where the money goes.",
-    description:
-      "Every cost the club takes on, from the moment someone asks for it to the moment it's paid back.",
+    title: "Money",
+    description: "Know what is available, committed, reimbursable, and waiting for approval.",
     add: "+ Log a cost",
     formTitle: "Log a cost",
     formHelp:
@@ -55,9 +54,8 @@ const COPY = {
     emptyBody: "Log the first cost and the budget starts keeping itself.",
   },
   OUTREACH: {
-    title: "Who we're talking to.",
-    description:
-      "Companies, speakers and partners — where each conversation got to, and whose move it is next.",
+    title: "Pipeline",
+    description: "Move conversations forward with an owner, a next step, and a date.",
     add: "+ Add a contact",
     formTitle: "Add a contact",
     formHelp:
@@ -73,8 +71,8 @@ export function Board({ kind, members, events }: Props) {
   const copy = COPY[kind];
   const stages = STAGES[kind];
 
-  const [items, setItems] = useState<BoardItem[] | null>(null);
-  const [budgets, setBudgets] = useState<Budgets | null>(null);
+  const [items, setItems] = useState<BoardItem[] | null>(() => peek<BoardItem[]>(`/api/board/items?kind=${kind}`) ?? null);
+  const [budgets, setBudgets] = useState<Budgets | null>(() => (kind === "MONEY" ? peek<Budgets>("/api/board/budgets") ?? null : null));
   const [stage, setStage] = useState("ALL");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<string | null>(null);

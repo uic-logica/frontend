@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { downloadIcs } from "@/lib/ics";
-import { PinkLink } from "@/components/club/Typewriter";
+import { linkParts } from "@/lib/linkify";
+import { SubscribeForm } from "./SubscribeForm";
 
 export type ClubEvent = {
   id: string;
@@ -43,78 +43,76 @@ export function EventsList({
 
   return (
     <>
-      <div className="mb-8 flex flex-wrap items-center justify-center gap-4">
+      <div className="event-tabs" role="group" aria-label="Which events">
         {(["upcoming", "past"] as const).map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setTab(t)}
-            className={`text-lg font-semibold capitalize ${
-              tab === t ? "text-signal underline" : "text-white hover:text-white"
-            }`}
-          >
-            {t === "upcoming" ? "Upcoming Events" : "Past Events"}
+          <button key={t} type="button" onClick={() => setTab(t)} aria-pressed={tab === t}>
+            <span className="only-d">{t === "upcoming" ? "Upcoming Events" : "Past Events"}</span>
+            <span className="only-m">{t === "upcoming" ? "Upcoming" : "Past events"}</span>
           </button>
         ))}
+        <span className="only-d" aria-hidden>·</span>
+        <span className="only-d">Add to Calendar (soon)</span>
       </div>
 
-      {error && <p className="mb-4 text-body text-signal">{error}</p>}
+      {error && <p className="events-error">{error}</p>}
 
-      {list.length === 0 && (
-        <div className="club-card mx-auto w-fit max-w-xl p-8">
-          <h2 className="type-h3 text-white">
-            {tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}
-          </h2>
-          <p className="mt-3 max-w-xl text-body text-white">
-            We&apos;re currently planning our next round of events. Check back soon or join
-            the newsletter to be notified.
-          </p>
-          <PinkLink href="#subscribe" className="mt-6 text-xl">
-            Stay Updated
-          </PinkLink>
-        </div>
-      )}
-
-      <ul className="mx-auto max-w-3xl space-y-4">
-        {list.map((e) => (
-          <li
-            key={e.id}
-            id={e.id}
-            className="club-card club-card-interactive p-6"
-          >
-            <Link href={`/events/${e.id}`} className="hover:underline">
-              <h2 className="type-h3 text-white">{e.title}</h2>
-            </Link>
-            <p className="mt-2 text-body-sm text-white">
-              {when.format(new Date(e.startsAt))}
-              {e.location ? ` · ${e.location}` : ""}
+      {list.length === 0 ? (
+        <div className="events-empty">
+          <div className="page-card glass">
+            <h2>{tab === "upcoming" ? "No upcoming events scheduled" : "No past events listed"}</h2>
+            <p className="only-d">
+              We&apos;re currently planning our next round of events. Check back soon or join the
+              newsletter to be notified.
             </p>
-            {e.description && <p className="mt-3 text-body text-white">{e.description}</p>}
-            <div className="mt-4 flex flex-wrap gap-4">
-              <Link href={`/events/${e.id}`} className="font-semibold text-signal hover:underline">
-                Details
-              </Link>
-              {e.link && (
-                <a
-                  href={e.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-signal hover:underline"
-                >
-                  Event page ↗
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={() => downloadIcs(e)}
-                className="font-semibold text-signal hover:underline"
-              >
-                Add to calendar
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+            <p className="only-m">We&apos;re planning the next round. Check back soon or join the newsletter for updates.</p>
+            {/* The design's "Notify me": opens the newsletter form in place. */}
+            <details>
+              <summary className="site-button">Notify me</summary>
+              <SubscribeForm />
+            </details>
+          </div>
+        </div>
+      ) : (
+        <ul className="events-list">
+          {list.map((e) => (
+            <li key={e.id} id={e.id} className="event-card page-card glass">
+              <h2>{e.title}</h2>
+              <p className="event-meta">
+                {when.format(new Date(e.startsAt))}
+                {e.location ? ` · ${e.location}` : ""}
+              </p>
+              {e.description && <Description text={e.description} />}
+              <div className="event-actions">
+                {e.link && (
+                  <a href={e.link} target="_blank" rel="noopener noreferrer">
+                    RSVP ↗
+                  </a>
+                )}
+                <button type="button" onClick={() => downloadIcs(e)}>
+                  Add to calendar
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </>
+  );
+}
+
+/** An event description as written: line breaks kept (CSS), http(s) links clickable. */
+export function Description({ text, className }: { text: string; className?: string }) {
+  return (
+    <p className={className}>
+      {linkParts(text).map((part, i) =>
+        part.href ? (
+          <a key={i} href={part.href} target="_blank" rel="noopener noreferrer">
+            {part.text}
+          </a>
+        ) : (
+          part.text
+        ),
+      )}
+    </p>
   );
 }

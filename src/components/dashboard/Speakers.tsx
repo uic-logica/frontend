@@ -176,8 +176,8 @@ export function Speakers({
   return (
     <>
       <Heading
-        title="Bring new voices in."
-        description="From the first introduction to a confirmed guest. Keep every speaker in view."
+        title="Speakers"
+        description="Compare fit, availability, and readiness without losing the human story."
         action={
           <button className="d-button" onClick={() => setAdding(!adding)}>
             {adding ? "Close draft form" : "+ Add speaker"}

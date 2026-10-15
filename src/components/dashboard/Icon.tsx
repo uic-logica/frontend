@@ -1,12 +1,13 @@
 import type { Section } from "./types";
 const paths: Record<
-  Section | "arrow" | "exit" | "check" | "menu" | "clock" | "sun" | "moon",
+  Section | "arrow" | "exit" | "check" | "menu" | "clock" | "search" | "chevron" | "sun" | "moon",
   string
 > = {
   overview: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
   profile: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M4 21v-2a8 8 0 0 1 16 0v2",
   events: "M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2 M7 2v6 M17 2v6 M3 11h18",
   activity: "M3 20h18 M6 16v-5 M12 16V4 M18 16V8",
+  teams: "M16 18l6-6-6-6 M8 6l-6 6 6 6",
   community: "M21 11a8 8 0 0 1-8 8H7l-5 3 1-6a8 8 0 1 1 18-5",
   speakers: "M9 3h6v11H9z M5 10v3a7 7 0 0 0 14 0v-3 M12 20v3 M8 23h8",
   insights: "M21 8a9 9 0 1 1-6-5 M12 12V3a9 9 0 0 1 9 9z",
@@ -27,6 +28,8 @@ const paths: Record<
   exit: "M9 3H3v18h6 M10 12h11 M17 8l4 4-4 4",
   check: "m5 12 4 4 10-10",
   menu: "M3 6h18 M3 12h18 M3 18h18",
+  search: "m21 21-4.35-4.35 M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
+  chevron: "m9 18 6-6-6-6",
   sun: "M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8 M12 2v2 M12 20v2 M4.9 4.9l1.4 1.4 M17.7 17.7l1.4 1.4 M2 12h2 M20 12h2 M4.9 19.1l1.4-1.4 M17.7 6.3l1.4-1.4",
   moon: "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5",
 };

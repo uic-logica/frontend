@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Heading } from "./Overview";
 import { Icon } from "./Icon";
 
@@ -30,7 +30,7 @@ type Overview = {
  * the list here is what they would actually be handing over.
  */
 export function AgentAccess() {
-  const [data, setData] = useState<Overview | null>(null);
+  const [data, setData] = useState<Overview | null>(() => peek<Overview>("/api/mcp-tokens") ?? null);
   const [fresh, setFresh] = useState<{ name: string; secret: string } | null>(
     null,
   );
@@ -104,12 +104,8 @@ export function AgentAccess() {
   return (
     <>
       <Heading
-        title="Let your assistant do it."
-        description={
-          data
-            ? `Connect Claude, or any assistant that speaks MCP, and it can act here as you. It only ever gets the tools for your role — ${data.role.toLowerCase()} — and the permissions are worked out fresh on every call, so a connection can never outrank you.`
-            : "Connect Claude, or any assistant that speaks MCP, and it can act here as you."
-        }
+        title="MCP Connections"
+        description={data ? `Let trusted agents work with only the LOGICA tools approved for your ${data.role.toLowerCase()} role.` : "Let trusted agents work with only the LOGICA tools you approve."}
       />
 
       <section className="d-panel d-settings">

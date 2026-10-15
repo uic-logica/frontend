@@ -23,11 +23,11 @@ Read the affected page/component and its API calls before changing it. `PRODUCT.
 
 ## Known boundaries
 
-`src/app/signin/page.tsx` still calls retired OTP endpoints, while the backend requires issued member passwords. `Members.tsx` lacks issuance controls, and legacy `/attendance` omits the required check-in code. Do not describe these as complete flows or quietly change auth during an unrelated task. Guest invitation claims and speaker password login have separate pages.
+Sign-in posts to `/api/auth/member-login` and `/signup` creates @uic.edu accounts; `Members.tsx` issues and resets member passwords; `/attendance` redirects to the dashboard's check-in, which sends the required code. The passwordless flow stays archived — don't restore it during unrelated work. Guest invitation claims and speaker password login have separate pages.
 
 ## Checks
 
-`.github/workflows/ci.yml` uses Node 24: `npm ci`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm test`, `npm run build`. Run lint, typecheck and tests before pushing; generate route types first in a fresh checkout. The runner is vitest (`npm test` → `vitest run`), added in #56; it covers pure helpers in `src/lib/` only — there is no component or browser testing set up, so do not reach for one without asking. For UI work, check the affected role, keyboard flow, narrow layout, and error/empty states against the backend.
+`.github/workflows/ci.yml` uses the Node version in `.node-version`: `npm ci`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm test`, `npm run build`, then `npx playwright test`. Run lint, typecheck and tests before pushing; generate route types first in a fresh checkout. Unit tests are vitest (`npm test` → `vitest run`) for pure helpers in `src/lib/`. Browser smoke tests are Playwright (`e2e/*.e2e.ts`): public pages must render with no backend running. There are no component tests; do not add a framework for them without asking. For UI work, check the affected role, keyboard flow, narrow layout, and error/empty states against the backend.
 
 ## Branches and PRs
 

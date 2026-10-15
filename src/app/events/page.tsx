@@ -1,7 +1,8 @@
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { PinkLink } from "@/components/club/Typewriter";
+import { pageMetadata, siteUrl } from "@/lib/seo";
+import { ClubShell } from "@/components/club/ClubShell";
 import { EventsList, type ClubEvent } from "./EventsList";
-import { SubscribeForm } from "./SubscribeForm";
+
+export const metadata = pageMetadata("Events & Workshops", "Explore LOGICA events at UIC, including computing workshops, company visits, guest speakers, and community gatherings.", "/events");
 
 // ponytail: fetched on the server and cached, so the page arrives with the
 // events already in the HTML — no "Loading…" flash on every visit. Next
@@ -35,47 +36,37 @@ async function getEvents(): Promise<EventsData> {
   }
 }
 
+/** Layout is logica.pen V3 "03 · Events" (desktop and mobile): title, tabs, events. */
 export default async function EventsPage() {
   const { upcoming, past, error } = await getEvents();
 
   return (
     <ClubShell>
-      <PageContainer>
-        <SectionContainer>
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="type-title text-3xl text-white md:text-4xl">Events</h1>
-            <p className="mt-4 text-body-lg text-white">
-              From workshops to socials, hack nights to tech talks — we host events each semester.
-            </p>
-          </div>
-        </SectionContainer>
-
-        <SectionContainer>
-          <EventsList upcoming={upcoming} past={past} error={error} />
-        </SectionContainer>
-
-        <SectionContainer>
-          <div id="speakers" className="mx-auto mb-12 max-w-3xl border-b border-white/20 pb-4 text-center">
-            <h2 className="type-h2 text-white">Upcoming Speakers</h2>
-            <p className="mt-2 text-body-lg text-white">
-              People presenting at upcoming LOGICA talks and workshops
-            </p>
-          </div>
-          <div className="club-card mx-auto w-fit max-w-xl p-8">
-            <h3 className="type-h4 text-white">To be announced</h3>
-            <p className="mt-3 text-body text-white">Check back soon for our speaker lineup this semester.</p>
-            <PinkLink href="/speak" className="mt-6 text-xl">
-              Want to speak at LOGICA? Join the speaker lineup
-            </PinkLink>
-          </div>
-        </SectionContainer>
-
-        <div id="subscribe">
-          <SectionContainer>
-            <SubscribeForm />
-          </SectionContainer>
-        </div>
-      </PageContainer>
+      {upcoming.map((event) => (
+        <script
+          key={event.id}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org", "@type": "Event", name: event.title,
+            startDate: event.startsAt, eventStatus: "https://schema.org/EventScheduled",
+            eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+            ...(event.description ? { description: event.description } : {}),
+            ...(event.location ? { location: { "@type": "Place", name: event.location } } : {}),
+            url: new URL(`/events/${event.id}`, siteUrl).href,
+            organizer: { "@type": "Organization", name: "LOGICA @ UIC", url: siteUrl.href },
+          }).replace(/</g, "\\u003c") }}
+        />
+      ))}
+      <main className="site-page events-page">
+        <header className="page-head">
+          <h1>Events</h1>
+          <p>
+            <span className="only-d">From workshops to socials, hack nights to tech talks — we host events each semester.</span>
+            <span className="only-m">Workshops, socials, hack nights, and tech talks throughout the semester.</span>
+          </p>
+        </header>
+        <EventsList upcoming={upcoming} past={past} error={error} />
+      </main>
     </ClubShell>
   );
 }

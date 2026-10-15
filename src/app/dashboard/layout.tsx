@@ -1,4 +1,7 @@
 import { Dashboard } from "@/components/dashboard/Dashboard";
+import { noIndexMetadata } from "@/lib/seo";
+
+export const metadata = noIndexMetadata;
 
 // The shell lives in the layout so it survives navigation between sections —
 // see Dashboard.tsx. `children` is the matched page, which renders nothing:

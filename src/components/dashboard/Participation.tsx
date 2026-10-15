@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { linkParts } from "@/lib/linkify";
+import { api, peek } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
 import { Icon } from "./Icon";
 import {
@@ -80,8 +81,8 @@ export function Events({
   return (
     <>
       <Heading
-        title="See you at the next one."
-        description="Gatherings, conversations, and opportunities to get involved."
+        title="Events"
+        description={runsWorkspace(user) ? "Plan, publish, and run each event from one timeline." : "Discover what’s next, understand the commitment, and RSVP with confidence."}
         action={
           runsWorkspace(user) && (
             <button className="d-button" onClick={() => setCreating(!creating)}>
@@ -184,9 +185,12 @@ export function Events({
                   </button>
                 )}
               </div>
-              <p>
-                {e.description ||
-                  "More details will be shared by the organizers."}
+              <p className="d-event-description">
+                {e.description
+                  ? linkParts(e.description).map((part, i) =>
+                      part.href ? <a key={i} href={part.href} target="_blank" rel="noopener noreferrer">{part.text}</a> : part.text,
+                    )
+                  : "More details will be shared by the organizers."}
               </p>
               <button
                 className="d-text-button"
@@ -333,7 +337,7 @@ function EventDetails({
   );
 }
 export function Community({ user }: { user: SessionUser }) {
-  const [posts, setPosts] = useState<Post[] | null>(null);
+  const [posts, setPosts] = useState<Post[] | null>(() => peek<Post[]>("/api/posts") ?? null);
   const [error, setError] = useState("");
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
@@ -374,8 +378,8 @@ export function Community({ user }: { user: SessionUser }) {
   return (
     <>
       <Heading
-        title="A good place to say hello."
-        description="Questions, ideas, and updates from the people of LOGICA."
+        title="Community"
+        description={runsWorkspace(user) ? "Keep conversation useful, current, and connected to the work." : "Ask, share, and find the threads that help members move forward."}
       />
       <div className="d-community-layout">
         <div>

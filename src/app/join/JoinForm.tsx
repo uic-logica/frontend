@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
 import { ApiError, api } from "@/lib/api";
@@ -22,6 +22,13 @@ export function JoinForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  // Build teams apply from the dashboard, so every application has an account behind it.
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    api<{ user?: unknown } | null>("/api/auth/session")
+      .then((me) => setSignedIn(!!me?.user))
+      .catch(() => {});
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,9 +41,8 @@ export function JoinForm() {
           name: name.trim(),
           email: email.trim().toLowerCase(),
           track,
-          major: major.trim() || null,
-          // The backend wants a number or null, never "" or NaN.
-          gradYear: gradYear.trim() ? Number(gradYear) : null,
+          major: major.trim(),
+          gradYear: Number(gradYear),
           why: why.trim(),
         }),
       });
@@ -105,6 +111,29 @@ export function JoinForm() {
           </select>
         </div>
 
+        {track === "SOFTWARE_ENGINEER" ? (
+          <div className="grid gap-4">
+            <p className="text-body text-white">
+              Software Team applications happen in your dashboard, under Software Teams. You need an account with your
+              @uic.edu email, then you tell us your GitHub, hours a week and which projects you want.
+            </p>
+            <Link
+              href={signedIn ? "/dashboard/teams" : "/signup?next=/dashboard/teams"}
+              className={`${darkButtonClass} text-center`}
+            >
+              {signedIn ? "Apply in your dashboard" : "Create an account to apply"}
+            </Link>
+            {!signedIn && (
+              <p className="text-body-sm text-white">
+                Already have one?{" "}
+                <Link href="/signin?next=/dashboard/teams" className="font-semibold text-signal hover:underline">
+                  Sign in
+                </Link>
+              </p>
+            )}
+          </div>
+        ) : (
+        <>
         <div className="grid gap-2">
           <label htmlFor={`${id}-name`} className="type-label text-white">
             Full name
@@ -142,10 +171,11 @@ export function JoinForm() {
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="grid gap-2">
             <label htmlFor={`${id}-major`} className="type-label text-white">
-              Major <span className="opacity-60">(optional)</span>
+              Major
             </label>
             <input
               id={`${id}-major`}
+              required
               maxLength={100}
               value={major}
               onChange={(e) => setMajor(e.target.value)}
@@ -154,11 +184,12 @@ export function JoinForm() {
           </div>
           <div className="grid gap-2">
             <label htmlFor={`${id}-year`} className="type-label text-white">
-              Graduation year <span className="opacity-60">(optional)</span>
+              Graduation year
             </label>
             <input
               id={`${id}-year`}
               type="number"
+              required
               inputMode="numeric"
               min={1900}
               max={2100}
@@ -177,6 +208,7 @@ export function JoinForm() {
           <textarea
             id={`${id}-why`}
             required
+            minLength={40}
             rows={5}
             maxLength={2000}
             value={why}
@@ -184,14 +216,18 @@ export function JoinForm() {
             className={darkInputClass}
           />
           <p className="text-body-sm text-white opacity-60">
-            No prior experience needed — say what you want to get out of it.
+            At least 40 characters. No prior experience needed; say what you want to get out of it.
           </p>
         </div>
+        </>
+        )}
       </div>
 
-      <button type="submit" disabled={busy} className={`${darkButtonClass} mt-8`}>
-        {busy ? "Sending…" : "Submit application"}
-      </button>
+      {track !== "SOFTWARE_ENGINEER" && (
+        <button type="submit" disabled={busy} className={`${darkButtonClass} mt-8`}>
+          {busy ? "Sending…" : "Submit application"}
+        </button>
+      )}
     </form>
   );
 }

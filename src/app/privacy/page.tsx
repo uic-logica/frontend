@@ -1,6 +1,9 @@
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("Privacy Policy", "Read how LOGICA at UIC handles personal information, membership data, and information submitted through the website.", "/privacy");
+
 import { LegalPage, LSection, LList, contactLine } from "@/components/legal/LegalPage";
 
-export const metadata = { title: "Privacy Policy — LOGICA @ UIC" };
 
 export default function PrivacyPage() {
   return (

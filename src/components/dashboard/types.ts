@@ -33,6 +33,7 @@ export type Profile = {
   major?: string | null;
   gradYear?: number | null;
   linkedin?: string | null;
+  photoUrl?: string | null;
   resumeFilename: string | null;
   speakerSubmission?: {
     id: string;
@@ -349,6 +350,7 @@ export const sections = [
   "events",
   "activity",
   "community",
+  "teams",
   "speakers",
   "insights",
   "money",
@@ -368,6 +370,7 @@ export const titles: Record<Section, string> = {
   events: "Events",
   activity: "My engagement",
   community: "Community",
+  teams: "Software Teams",
   speakers: "Speaker directory",
   insights: "Insights",
   money: "Money",
@@ -430,6 +433,7 @@ export function navFor(
       "documents",
       "events",
       "community",
+      "teams",
       "profile",
     ];
   }
@@ -447,6 +451,7 @@ const MEMBER_NAV: Section[] = [
   "events",
   "activity",
   "community",
+  "teams",
 ];
 
 /**
@@ -458,6 +463,7 @@ export const PERSONAL_SECTIONS: Section[] = [
   "community",
   "profile",
   "activity",
+  "teams",
 ];
 
 /**
@@ -562,6 +568,19 @@ export type Application = {
   major: string | null;
   gradYear: number | null;
   why: string | null;
-  status: "PENDING" | "INTERVIEW" | "ACCEPTED" | "DECLINED";
+  // Build-team (SOFTWARE_ENGINEER) applications only; `projects` is ranked.
+  github?: string | null;
+  hoursPerWeek?: number | null;
+  projects?: string[];
+  skills?: string | null;
+  resumeUrl?: string | null;
+  resumeOnFile?: boolean;
+  userId?: string | null;
+  status: "PENDING" | "INTERVIEW" | "NEEDS_INFO" | "ACCEPTED" | "DECLINED";
   createdAt: string;
+  updatedAt: string;
+  reviewNote: string | null;
+  reviewedAt: string | null;
+  canReapply: boolean;
+  decidedAt: string | null;
 };

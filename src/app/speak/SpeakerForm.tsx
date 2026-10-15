@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
 import { api } from "@/lib/api";
+import { availabilityProblem } from "@/lib/availability";
 
 export type AvailabilityWindow = {
   startDate: string;
@@ -75,9 +76,9 @@ export function SpeakerForm({
     e.preventDefault();
     setError(null);
 
-    const filled = windows.filter((w) => w.startDate && w.endDate && w.startTime && w.endTime);
-    if (filled.length === 0) {
-      setError("Add at least one day/time range you're available.");
+    const problem = availabilityProblem(windows);
+    if (problem) {
+      setError(problem);
       return;
     }
 
@@ -90,7 +91,7 @@ export function SpeakerForm({
           email: email.trim() || undefined,
           organization: organization.trim() || undefined,
           referredBy: referredBy.trim() || undefined,
-          availability: filled,
+          availability: windows,
           needs: needs.trim() || undefined,
           note: note.trim() || undefined,
           publicOptIn,
