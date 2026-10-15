@@ -3948,3 +3948,12 @@ tr:has(.d-row-link[aria-current]) > td {
 .d-password-dialog {
   max-width: min(460px, calc(100vw - 32px));
 }
+
+/* Blog: members write, exec reviews (Blog.tsx). */
+.d-blog-new { padding: 12px; border-bottom: 1px solid var(--d-rule); }
+.d-blog-new .d-button { width: 100%; }
+.d-blog-status { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font-size: 13px; }
+.d-blog-body { min-height: 320px !important; font-family: var(--d-serif); font-size: 16px !important; line-height: 1.65 !important; }
+.d-blog-read { margin: 20px 0; max-width: 68ch; }
+.d-blog-read h2 { font-family: var(--d-serif); font-size: 28px; font-weight: 500; line-height: 1.2; margin: 0 0 16px; }
+.d-blog-read p { font-family: var(--d-serif); font-size: 16px; line-height: 1.7; margin: 0 0 14px; white-space: pre-line; }
