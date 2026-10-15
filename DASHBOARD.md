@@ -40,6 +40,16 @@ The backend `app/api/dashboard/route.ts` scopes history to the session user, wit
 
 Legacy `/members` and `/speaker-portal` redirect to `/dashboard`; `/profile` goes to `/dashboard/profile`; `/admin/speakers` goes to `/dashboard/speakers`. Public pages keep their separate shell.
 
+## Opening things
+
+| Pattern | Where | Rule |
+|---|---|---|
+| List + detail split (`.d-split`, `.d-board-split`) | Applications, Speakers, Money, Pipeline | The open item sits beside the list; it stacks below under 900px (1200px for the board) and scrolls into view. |
+| URL state (`useUrlState`) | Applications, Speakers, Money, Pipeline, Events, Members | `?id=` is the open item, plus `?status=` / `?stage=` / `?filter=` / `?q=`. Refresh, Back and a pasted link land on the same view; home tiles, rows and search link straight to them. |
+| Confirm (`useConfirm`, native `<dialog>`) | decline, replace link, archive, exec role changes, revoke token | Anything hard to undo asks first. |
+| Feedback next to the action | every detail panel | "Saved", errors, new links and credentials show inside the item you acted on, not at the top of the page. |
+| Read cache (`src/lib/api.ts`) | everywhere | GETs paint from localStorage (per account) and refresh behind it; a write only forgets its own resource; the dashboard warms the other sections' reads in idle time. |
+
 ## Checks
 
 Use frontend lint, Next type generation, TypeScript, and build as listed in `.github/workflows/ci.yml`. Verify roles and empty/error states against a backend with the checked-in migrations. The current `/signin` still calls retired email-code endpoints; it cannot establish a member session against the paired backend's password-only login.
