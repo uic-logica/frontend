@@ -185,6 +185,21 @@ export function Thread({
     };
   }, [submissionId]);
 
+  // Replies show up without a reload: re-read when the tab comes back into
+  // focus, and every 30s while it's open and visible.
+  useEffect(() => {
+    const read = () => {
+      if (document.visibilityState !== "visible") return;
+      api<SpeakerMessage[]>(`/api/speakers/${submissionId}/messages`).then(setMessages).catch(() => {});
+    };
+    const timer = window.setInterval(read, 30_000);
+    window.addEventListener("focus", read);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", read);
+    };
+  }, [submissionId]);
+
   useEffect(() => {
     if (log.current) log.current.scrollTop = log.current.scrollHeight;
   }, [messages]);

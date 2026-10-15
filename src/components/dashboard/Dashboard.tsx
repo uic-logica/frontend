@@ -859,7 +859,7 @@ export function Dashboard() {
               )}
               {seen("settings") && (
                 <Pane active={section === "settings"}>
-                  <Settings user={user} />
+                  <Settings user={user} profile={profile} />
                 </Pane>
               )}
             </>

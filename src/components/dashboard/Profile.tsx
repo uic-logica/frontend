@@ -48,8 +48,13 @@ export function ProfileEditor({
       const result = new URLSearchParams(window.location.search).get(
         "linkedin",
       );
-      if (result === "connected" || result === "error")
+      if (result === "connected" || result === "error") {
         setLinkedinStatus(result);
+        // Read once: a refresh shouldn't show "connected" again.
+        const url = new URL(window.location.href);
+        url.searchParams.delete("linkedin");
+        window.history.replaceState(window.history.state, "", url);
+      }
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
@@ -622,7 +627,7 @@ function Appearance() {
     </div>
   );
 }
-export function Settings({ user }: { user: SessionUser }) {
+export function Settings({ user, profile }: { user: SessionUser; profile?: Profile | null }) {
   const [prefs, setPrefs] = useState<{
     eventReminders: boolean;
     announcements: boolean;
@@ -722,7 +727,7 @@ export function Settings({ user }: { user: SessionUser }) {
           <span>
             <strong>{user.email}</strong>
             <small>
-              {roleName(user)} ·{" "}
+              {roleName(user, profile)} ·{" "}
               {user.accountKind === "SPEAKER"
                 ? "Username and password"
                 : "Email and password"}
