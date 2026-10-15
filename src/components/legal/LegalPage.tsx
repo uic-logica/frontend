@@ -52,7 +52,7 @@ export function LegalPage({
 export function LSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section id={slug(title)} className="legal-section">
-      <h2 className="serif">{title}</h2>
+      <h2><span className="serif">{title}</span></h2>
       {children}
     </section>
   );

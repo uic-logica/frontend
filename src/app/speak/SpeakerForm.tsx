@@ -171,7 +171,7 @@ export function SpeakerForm({
           </div>
         ))}
         <button type="button" onClick={() => setWindows((prev) => [...prev, EMPTY_WINDOW])} className="site-btn secondary sm speak-add">
-          Add another window
+          <SiteIcon name="plus" size={14} /> Add another window
         </button>
       </fieldset>
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ClubShell } from "@/components/club/ClubShell";
 import { PasswordInput } from "@/components/site/PasswordInput";
+import { SiteIcon } from "@/components/site/icons";
 import { api } from "@/lib/api";
 
 export default function SignInPage() {
@@ -75,7 +76,7 @@ export default function SignInPage() {
           <p className="auth-alt">Forgot your password? <Link href="/support">Contact the exec board</Link></p>
           <p className="auth-note">We&apos;ll verify your identity and send you a new one.</p>
           <hr className="auth-rule" />
-          <p className="auth-alt">Guest or speaker? <Link href="/speaker-signin">Sign in here</Link></p>
+          <p className="auth-alt">Guest or speaker? <Link href="/speaker-signin" className="auth-arrow">Sign in here <SiteIcon name="arrow" size={14} /></Link></p>
         </div>
       </main>
     </ClubShell>

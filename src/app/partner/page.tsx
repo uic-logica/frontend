@@ -54,8 +54,8 @@ export default function PartnerPage() {
             sponsorships. Tell us what you would like to build with LOGICA.
           </p>
           <ul className="partner-ways">
-            {["Company visits", "Talks", "Workshops", "Sponsorships"].map((way) => (
-              <li key={way}>{way}</li>
+            {([["Company visits", "building"], ["Talks", "mic"], ["Workshops", "wrench"], ["Sponsorships", "handshake"]] as const).map(([way, icon]) => (
+              <li key={way}><SiteIcon name={icon} size={20} />{way}</li>
             ))}
           </ul>
         </header>
@@ -91,7 +91,7 @@ export default function PartnerPage() {
             </label>
             <label className="site-field" htmlFor={`${id}-message`}>
               <span>What are you interested in doing with LOGICA?</span>
-              <textarea id={`${id}-message`} required rows={4} maxLength={2000} placeholder="A talk in the spring, a visit for 20 students, a sponsored hackathon prize…" value={message} onChange={(event) => setMessage(event.target.value)} />
+              <textarea id={`${id}-message`} required rows={3} maxLength={2000} placeholder="A talk in the spring, a visit for 20 students, a sponsored hackathon prize…" value={message} onChange={(event) => setMessage(event.target.value)} />
             </label>
             <button type="submit" disabled={busy} className="site-btn block">{busy ? "Sending…" : "Send partnership inquiry"}</button>
             <p className="auth-alt">Prefer email? <a href="mailto:logica@uic.edu">logica@uic.edu</a></p>

@@ -1,7 +1,7 @@
 /* V4 tokens, shared by the workspace (.dash, dashboard.css) and the public site (.site, site.css).
    Theme: follows the system unless <html data-theme> says otherwise; the root
    layout sets that attribute before first paint. Spec: "V4 ·" frames in logica.pen. */
-.dash, .site {
+.dash, .site, body:has(> .site) {
   --d-bg: #faf9f5;
   --d-sidebar: #f3f1ea;
   --d-surface: #ffffff;
@@ -32,7 +32,7 @@
   --d-serif: var(--font-serif, Georgia), Georgia, "Times New Roman", serif;
   color-scheme: light;
 }
-[data-theme="dark"] .dash, [data-theme="dark"] .site {
+[data-theme="dark"] .dash, [data-theme="dark"] .site, [data-theme="dark"] body:has(> .site) {
   --d-bg: #262624;
   --d-sidebar: #1f1e1d;
   --d-surface: #30302e;
@@ -59,7 +59,7 @@
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .dash, :root:not([data-theme="light"]) .site {
+  :root:not([data-theme="light"]) .dash, :root:not([data-theme="light"]) .site, :root:not([data-theme="light"]) body:has(> .site) {
     --d-bg: #262624;
     --d-sidebar: #1f1e1d;
     --d-surface: #30302e;
