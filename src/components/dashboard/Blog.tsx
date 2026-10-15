@@ -6,6 +6,7 @@ import { Empty, Heading } from "./Overview";
 import { useConfirm } from "./useConfirm";
 import { useUrlState } from "./useUrlState";
 import { type BlogPost, type SessionUser, date, initials, runsWorkspace } from "./types";
+import { Arrow } from "./Icon";
 
 const LABEL: Record<BlogPost["status"], string> = {
   DRAFT: "Draft",
@@ -169,7 +170,7 @@ function Editor({
         <div className="d-blog-status">
           <span className={`d-badge ${tone(post.status)}`}>{LABEL[post.status]}</span>
           {post.status === "SUBMITTED" && <span className="d-muted">The exec board has it. You can still edit it.</span>}
-          {live && post.slug && <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer">View on the site ↗</a>}
+          {live && post.slug && <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer">View on the site <Arrow /></a>}
         </div>
       )}
       {post?.reviewNote && post.status === "REJECTED" && (
@@ -331,7 +332,7 @@ function Review() {
                   {detail.author?.name ?? "Member"}
                   {detail.submittedAt && ` · sent ${date(detail.submittedAt, { month: "long", day: "numeric" })}`}
                 </span>
-                {detail.status === "PUBLISHED" && detail.slug && <a href={`/blog/${detail.slug}`} target="_blank" rel="noreferrer">View on the site ↗</a>}
+                {detail.status === "PUBLISHED" && detail.slug && <a href={`/blog/${detail.slug}`} target="_blank" rel="noreferrer">View on the site <Arrow /></a>}
               </div>
               {saved && <p className="d-success" role="status">{saved}</p>}
               {error && items && <p className="d-error" role="alert">{error}</p>}

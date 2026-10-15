@@ -52,3 +52,12 @@ export function Icon({ name }: { name: keyof typeof paths }) {
     </svg>
   );
 }
+
+/** The trailing arrow on a text link, sized to the text (replaces the old ↗ and → characters). */
+export function Arrow() {
+  return (
+    <span className="d-arrow" aria-hidden="true">
+      <Icon name="arrow" />
+    </span>
+  );
+}

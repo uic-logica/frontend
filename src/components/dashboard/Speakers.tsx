@@ -6,6 +6,7 @@ import { EventForm, eventBody } from "./Participation";
 import { Thread } from "./Thread";
 import { useConfirm } from "./useConfirm";
 import { useUrlState } from "./useUrlState";
+import { Arrow } from "./Icon";
 import {
   type Event,
   type Speaker,
@@ -379,6 +380,7 @@ export function Speakers({
             </div>
             {scope === detail.id && banners}
             <SpeakerFacts s={detail} />
+            <div className="d-speaker-schedule">
             <label className="d-link-event">
               Scheduled event
               <select value={detail.event?.id ?? ""} disabled={busy === detail.id} onChange={(e) => link(detail, e.target.value)}>
@@ -408,19 +410,20 @@ export function Speakers({
                   onCancel={() => setCreatingEvent(null)}
                 />
               ) : (
-                <button className="d-text-button" onClick={() => setCreatingEvent(detail.id)}>
-                  Create an event for this talk
+                <button className="d-button secondary" onClick={() => setCreatingEvent(detail.id)}>
+                  + Create an event for this talk
                 </button>
               ))}
-            <div className="d-actions">
+            </div>
+            <div className="d-actions d-speaker-actions">
               {detail.user?.resumeFilename && (
                 <a className="d-button secondary" href={`/api/resume/${detail.user.id}`} target="_blank" rel="noreferrer">
-                  Download resume ↗
+                  Download resume <Arrow />
                 </a>
               )}
               {detail.user?.linkedin && /^https?:\/\//i.test(detail.user.linkedin) && (
                 <a className="d-button secondary" href={detail.user.linkedin} target="_blank" rel="noreferrer">
-                  LinkedIn ↗
+                  LinkedIn <Arrow />
                 </a>
               )}
               {/* The link itself is unrecoverable by design, so the only honest
@@ -541,7 +544,7 @@ function SpeakerFacts({ s }: { s: Speaker }) {
             "Unlocks when confirmed"
           ) : s.slidesUrl ? (
             <a href={s.slidesUrl} target="_blank" rel="noreferrer">
-              Open slides ↗
+              Open slides <Arrow />
             </a>
           ) : (
             "Not shared yet"

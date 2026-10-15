@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
-import { Icon } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 import {
   type BoardItem,
   type Budgets,
@@ -101,7 +101,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
           <div className="d-section-head">
             <h2>Needs attention</h2>
             <Link className="d-text-link" href="/dashboard/pipeline">
-              All of it ↗
+              All of it <Arrow />
             </Link>
           </div>
           {items === null ? (
@@ -145,7 +145,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
             <div className="d-section-head">
               <h2>Club pulse</h2>
               <Link className="d-text-link" href="/dashboard/insights">
-                Insights →
+                Insights <Arrow />
               </Link>
             </div>
             {insights ? (
@@ -175,7 +175,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
             <div className="d-section-head">
               <h2>Next up</h2>
               <Link className="d-text-link" href="/dashboard/events">
-                Calendar →
+                Calendar <Arrow />
               </Link>
             </div>
             {upcoming(events).length === 0 ? (

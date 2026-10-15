@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Icon } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 import { Avatar } from "./Avatar";
 import { Heading } from "./Overview";
 import { type Profile, type SessionUser, date } from "./types";
@@ -111,7 +111,7 @@ export function SpeakerHome({
                 target="_blank"
                 rel="noreferrer"
               >
-                Open slides ↗
+                Open slides <Arrow />
               </a>
             ) : (
               <Link

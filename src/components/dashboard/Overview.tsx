@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "@/lib/api";
-import { Icon } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 import {
   type SessionUser,
   type Profile,
@@ -229,7 +229,7 @@ export function Activity({ engagement }: { engagement: Engagement | null }) {
         {engagement && !items.length && (
           <Empty title="Your story starts with showing up">
             Join an event or post in the community. Your activity will appear
-            here. <Link href="/dashboard/events">Explore events →</Link>
+            here. <Link href="/dashboard/events">Explore events <Arrow /></Link>
           </Empty>
         )}
         {!engagement && (
