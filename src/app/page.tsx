@@ -13,7 +13,7 @@ export const metadata = {
   title: { absolute: "LOGICA @ UIC | Latinx Community in Computing at UIC" },
 };
 
-const logo = (name: string, file: string, width: number, height: number): MarqueeLogo => ({ name, src: `/logos/${file}.png`, width, height });
+const logo = (name: string, file: string, width: number, height: number): MarqueeLogo => ({ name, src: `/logos/${file.includes(".") ? file : `${file}.png`}`, width, height });
 
 const membersLand = [
   logo("Google", "google", 899, 297),
@@ -27,8 +27,8 @@ const membersLand = [
   logo("Morningstar", "morningstar", 900, 189),
   logo("BMO", "bmo", 479, 167),
   logo("UIC Technology Solutions", "uic-tech-solutions", 194, 123),
-  logo("Invenergy", "invenergy", 50, 61),
-  logo("Accenture", "accenture", 130, 138),
+  logo("Invenergy", "invenergy.svg", 154, 32),
+  logo("Accenture", "accenture.svg", 204, 56),
 ];
 
 const partnerGroups: { label: string; logos: MarqueeLogo[] }[] = [
@@ -45,7 +45,7 @@ const partnerGroups: { label: string; logos: MarqueeLogo[] }[] = [
   },
   {
     label: "Partners",
-    logos: [logo("Zebra", "zebra", 857, 955), logo("Break Through Tech", "breakthrough", 422, 234), logo("NASA Space Apps Challenge", "spaceapps", 1050, 1056), logo("DPI", "dpi", 840, 312)],
+    logos: [logo("Zebra", "zebra.svg", 378, 126), logo("Break Through Tech", "breakthrough", 422, 234), logo("NASA Space Apps Challenge", "spaceapps", 1050, 1056), logo("DPI", "dpi", 840, 312)],
   },
 ];
 

@@ -9,11 +9,22 @@ export type MarqueeLogo = {
   height: number;
 };
 
+/**
+ * Optical size: every logo gets about the same ink area, so a long wordmark
+ * (Morningstar) and a square mark (Space Apps) look equally heavy. Capped to
+ * the tile's inner box (104×44).
+ */
+function fit(width: number, height: number) {
+  const ratio = width / height;
+  const h = Math.min(44, Math.sqrt(2600 / ratio), 104 / ratio);
+  return { width: Math.round(h * ratio), height: Math.round(h) };
+}
+
 /** A logo in its brand colours on a white tile (white in dark mode too, so every brand reads). */
 export function LogoTile({ name, src, width, height, hidden = false }: MarqueeLogo & { hidden?: boolean }) {
   return (
     <span className="site-logo-tile">
-      <Image src={src} alt={hidden ? "" : name} width={width} height={height} sizes="200px" />
+      <Image src={src} alt={hidden ? "" : name} {...fit(width, height)} sizes="208px" />
     </span>
   );
 }
