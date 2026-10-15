@@ -653,13 +653,13 @@ export function Dashboard() {
               </button>
             </div>
           )}
-          {user && authState === "ready" && (
+          {/* A partner club gets one page whatever the URL; no other section is theirs. */}
+          {partner && authState === "ready" && <PartnerHome />}
+          {user && !partner && authState === "ready" && (
             <>
               {seen("overview") && (
               <Pane active={section === "overview"}>
-                {partner ? (
-                  <PartnerHome />
-                ) : speaker ? (
+                {speaker ? (
                   isConfirmedSpeaker(profile) ? (
                     <SpeakerHome user={user} profile={profile} />
                   ) : (
