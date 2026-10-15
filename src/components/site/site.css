@@ -91,7 +91,8 @@ body:has(> .site) { background: var(--d-bg); }
 .site-success { padding: 12px 14px; border-radius: var(--d-radius-sm); background: var(--d-success-soft); color: var(--d-success); font-size: 14px; }
 
 /* ── Nav ── */
-.site-nav { position: relative; z-index: 10; height: 72px; }
+.site-nav { position: sticky; top: 0; z-index: 10; height: 72px; background: color-mix(in srgb, var(--d-bg) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+/* Stays at the top while you scroll; translucent so the Home painting still shows under it. */
 .site-nav-in { height: 100%; display: flex; align-items: center; gap: 28px; padding: 0 48px; }
 .site-brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--d-ink); }
 .site-logo { position: relative; display: inline-block; flex-shrink: 0; }
@@ -202,16 +203,6 @@ body:has(> .site) { background: var(--d-bg); }
 .home-next-text strong { font-size: 14px; font-weight: 500; color: var(--d-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .home-peek { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); display: none; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--d-muted); text-decoration: none; white-space: nowrap; }
 @media (min-width: 800px) and (min-height: 700px) { .home-peek { display: inline-flex; left: max(24px, (100% - 1120px) / 2); transform: none; } }
-/* The hero stays pinned while the rest of Home slides up over it; its copy fades as it gets covered.
-   ponytail: CSS only (sticky + scroll-driven animation). Browsers without animation-timeline get the pin without the fade. */
-.home-rest { position: relative; z-index: 1; display: flow-root; background: var(--d-bg); }
-@media (prefers-reduced-motion: no-preference) {
-  .home-hero { position: sticky; top: 0; }
-  @supports (animation-timeline: scroll()) {
-    .home-hero-copy, .home-peek { animation: home-hero-out linear both; animation-timeline: scroll(root); animation-range: 0 60svh; }
-    @keyframes home-hero-out { to { opacity: 0; translate: 0 -40px; } }
-  }
-}
 
 .home-block { margin-top: 48px; }
 .home-block + .home-block { margin-top: 162px; }
