@@ -580,12 +580,12 @@ function savedTheme(): Theme {
   } catch {}
   return "system";
 }
-/** Same key and <html data-theme> as the topbar toggle in Dashboard.tsx;
+/** Same key and <html data-theme> the root layout and the public site read;
  *  "system" clears both so the CSS follows prefers-color-scheme. */
 function Appearance() {
   const [theme, setTheme] = useState<Theme>(savedTheme);
   useEffect(() => {
-    // The topbar toggle (and other tabs) announce changes with this event.
+    // Other tabs announce changes with this event.
     const sync = () => setTheme(savedTheme());
     window.addEventListener("storage", sync);
     return () => window.removeEventListener("storage", sync);

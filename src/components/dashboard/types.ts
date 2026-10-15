@@ -433,7 +433,6 @@ export function navFor(
       "documents",
       "events",
       "community",
-      "teams",
       "profile",
     ];
   }
@@ -451,7 +450,6 @@ const MEMBER_NAV: Section[] = [
   "events",
   "activity",
   "community",
-  "teams",
 ];
 
 /**
@@ -463,7 +461,6 @@ export const PERSONAL_SECTIONS: Section[] = [
   "community",
   "profile",
   "activity",
-  "teams",
 ];
 
 /**

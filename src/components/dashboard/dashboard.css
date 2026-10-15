@@ -168,6 +168,8 @@
   /* The rail is fixed to the viewport; a nav taller than the screen has to
      scroll or the bottom group becomes unreachable. */
   overflow-y: auto;
+  /* Never sideways: the rail stays put. */
+  overflow-x: hidden;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--d-rule-strong) transparent;
