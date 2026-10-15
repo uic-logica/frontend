@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo_Black, DM_Sans } from "next/font/google";
+import { Archivo_Black, DM_Sans, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 
 /** Body copy and UI. */
@@ -23,6 +23,14 @@ const archivoBlack = Archivo_Black({
   display: "swap",
 });
 
+/** Workspace page titles — the dashboard's one serif voice. */
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "LOGICA @ UIC",
   description:
@@ -33,7 +41,17 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${archivoBlack.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${archivoBlack.variable} ${sourceSerif.variable} h-full antialiased`}>
+      <head>
+        {/* The dashboard's saved light/dark choice, applied before first paint
+            so it never flashes the system theme. Only .dash reads it. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var t=localStorage.getItem("logica-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}',
+          }}
+        />
+      </head>
       <body className={`${dmSans.className} bg-[#000000] text-white`}>
         {children}
       </body>

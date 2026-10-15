@@ -121,6 +121,27 @@ export function Dashboard() {
     setOpened((prev) => (prev.includes(section) ? prev : [...prev, section]));
   }, [section]);
   const [menu, setMenu] = useState(false);
+  // The saved choice is applied to <html> before paint by the root layout's
+  // script; that only runs on a full load, so arriving here by client-side
+  // navigation re-applies it. Unset means "follow the system".
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("logica-theme");
+      if (saved === "light" || saved === "dark")
+        document.documentElement.dataset.theme = saved;
+    } catch {}
+  }, []);
+  function toggleTheme() {
+    const root = document.documentElement;
+    const dark =
+      root.dataset.theme === "dark" ||
+      (!root.dataset.theme &&
+        matchMedia("(prefers-color-scheme: dark)").matches);
+    root.dataset.theme = dark ? "light" : "dark";
+    try {
+      localStorage.setItem("logica-theme", root.dataset.theme);
+    } catch {}
+  }
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
@@ -228,7 +249,20 @@ export function Dashboard() {
       </a>
       <aside className="d-sidebar">
         <Link className="d-brand" href="/dashboard">
-          <Image src="/logica-logo-white.png" alt="" width={40} height={40} />
+          <Image
+            className="d-logo-light"
+            src="/logica-logo-black.png"
+            alt=""
+            width={28}
+            height={28}
+          />
+          <Image
+            className="d-logo-dark"
+            src="/logica-logo-white.png"
+            alt=""
+            width={28}
+            height={28}
+          />
           <span>
             LOGICA<small>University of Illinois Chicago</small>
           </span>
@@ -349,6 +383,15 @@ export function Dashboard() {
           </span>
           <div>
             <span className="d-campus">LOGICA @ UIC</span>
+            <button
+              type="button"
+              className="d-theme"
+              onClick={toggleTheme}
+              aria-label="Switch light or dark theme"
+              title="Switch light or dark theme"
+            >
+              <Icon name="sun" />
+            </button>
             <Link
               aria-label={`${unread} unread notifications`}
               href="/dashboard/notifications"
