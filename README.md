@@ -1,4 +1,4 @@
-# LOGICA @ UIC — frontend
+# LOGICA @ UIC · frontend
 
 > **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Oct 15, 2026 · **Audience:** Members and recruiters · **Type:** Landing page
 
