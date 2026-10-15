@@ -2966,6 +2966,8 @@
   color: var(--d-faint);
 }
 .d-confirm {
+  /* The global reset zeroes dialog margins; auto re-centres it. */
+  margin: auto;
   max-width: min(380px, calc(100vw - 32px));
   padding: 24px;
   border: 1px solid var(--d-rule);
@@ -3379,6 +3381,20 @@
   .d-text-link {
     margin-top: 6px;
   }
+  .d-note-panel a {
+    min-height: 40px;
+  }
+  /* A link inside a sentence stays inline; the line height carries it. */
+  p .d-text-button,
+  p .d-text-link {
+    display: inline;
+    min-height: 0;
+  }
+  /* The full-height chat stays edge to edge; the phone padding above is for
+     ordinary pages. */
+  .d-main.d-main-flush {
+    padding: 0;
+  }
   .dash .d-setting-row input[type="checkbox"] {
     width: 46px;
     height: 28px;
@@ -3486,9 +3502,17 @@
     --cal-row: 26px;
     --cal-gutter: 44px;
   }
+  /* Week label on its own line, then the arrows and "This week", then the
+     date jump — instead of all five squeezed into one row. */
+  .d-cal-head {
+    flex-wrap: wrap;
+  }
   .d-cal-head strong {
+    order: -1;
+    flex-basis: 100%;
     min-width: 0;
-    font-size: 14px;
+    font-size: 15px;
+    text-align: left;
   }
   .d-cal-jump {
     width: 100%;
