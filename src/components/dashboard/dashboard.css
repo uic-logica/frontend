@@ -1717,6 +1717,15 @@
 .d-speaker-detail .d-form-grid {
   margin-top: 20px;
 }
+/* The speaker panel is one narrow column: the new-event form stacks. */
+.d-speaker-detail .d-event-form {
+  margin: 12px 0;
+  box-shadow: none;
+  background: var(--d-sunken);
+}
+.d-speaker-detail .d-event-form .d-form-grid {
+  grid-template-columns: 1fr;
+}
 /* ---- Board view (Pipeline / Money) ------------------------------------- */
 .d-kanban {
   display: grid;
