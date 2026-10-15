@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { api, clearApiCache, peek, prefetch, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
@@ -315,9 +315,12 @@ export function Dashboard() {
     };
   }, [reload, router]);
 
+  // The query changes (?id=, ?status=) re-apply the route's metadata title,
+  // so this runs on those too.
+  const search = useSearchParams();
   useEffect(() => {
     document.title = `${titleFor(section, user, profile)} · LOGICA`;
-  }, [section, user, profile]);
+  }, [section, user, profile, search]);
   const speaker = user?.accountKind === "SPEAKER";
   const submissionId = profile?.speakerSubmission?.id;
   // The standalone thread is the whole page, so the work area gives up its

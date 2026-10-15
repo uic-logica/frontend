@@ -3905,3 +3905,27 @@
   box-shadow: none;
   background: var(--d-sunken);
 }
+.d-button.danger {
+  background: var(--d-danger);
+  border-color: var(--d-danger);
+  color: var(--d-surface);
+}
+
+/* Split view: "← All …" only matters once the detail stacks under the list. */
+.d-split-back {
+  display: none;
+  margin-bottom: 8px;
+}
+.d-split-empty {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+}
+@media (max-width: 900px) {
+  .d-split-back {
+    display: inline-flex;
+  }
+  .d-split-empty {
+    display: none;
+  }
+}
