@@ -239,10 +239,10 @@
 .site-features p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--d-muted); }
 .site-features .site-link { margin-top: auto; padding-top: 6px; }
 
-.home-join { display: flex; flex-direction: column; gap: 18px; padding: 64px 80px; border: 1px solid var(--d-rule); border-radius: var(--d-radius); background: var(--d-sunken); }
+.home-join { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding: 64px 80px; border: 1px solid var(--d-rule); border-radius: var(--d-radius); background: var(--d-sunken); }
 .home-join h2 { max-width: 700px; margin: 0; font-size: 40px; line-height: 1.375; }
 .home-join p { margin: 0; font-size: 18px; color: var(--d-muted); }
-.home-join .home-hero-actions { margin-top: 0; padding-top: 10px; }
+.home-join .home-hero-actions { margin-top: 0; padding-top: 10px; justify-content: center; }
 
 .home-partners { margin-top: 120px; padding-block: 28px; border-block: 1px solid var(--d-rule); }
 .home-partners-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
