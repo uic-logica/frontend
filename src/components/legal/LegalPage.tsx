@@ -1,5 +1,6 @@
 import { Children, isValidElement, type ReactNode } from "react";
 import { ClubShell } from "@/components/club/ClubShell";
+import { LegalToc } from "./LegalToc";
 
 const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -36,11 +37,7 @@ export function LegalPage({
         <div className="legal-columns">
           <nav className="legal-toc" aria-label="On this page">
             <h2>ON THIS PAGE</h2>
-            <ul>
-              {toc.map((t) => (
-                <li key={t}><a href={`#${slug(t)}`}>{t}</a></li>
-              ))}
-            </ul>
+            <LegalToc items={toc.map((t) => ({ id: slug(t), title: t }))} />
           </nav>
           <div className={`legal-content${numbered ? " numbered" : ""}`}>{children}</div>
         </div>

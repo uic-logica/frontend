@@ -152,9 +152,9 @@ export default async function Home() {
           <div className="site-head">
             <h2 id="people-title" className="serif">People, not just programs</h2>
           </div>
-          {/* TODO(real content): the design pairs these with a member quote. Add it once a member gives one. */}
+          {/* TODO(real content): the design pairs a 2x2 grid with a member quote card. The quote is mock, so the grid spans the full width until a member gives a real one. */}
           <div className="home-people">
-            {[1, 2, 3, 4].map((n) => <Painting key={n} name={`people-${n}`} sizes="(max-width: 799px) 50vw, 280px" className="home-people-art" />)}
+            {[1, 2, 3, 4].map((n) => <Painting key={n} name={`people-${n}`} sizes="(max-width: 799px) 50vw, 550px" className="home-people-art" />)}
           </div>
           <div className="home-land">
             <h3 className="site-kicker">Where our members land</h3>

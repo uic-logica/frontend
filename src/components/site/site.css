@@ -130,8 +130,8 @@ body:has(> .site) { background: var(--d-bg); }
 .site-footer-brand p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--d-muted); }
 .site-footer-links { display: flex; gap: 80px; }
 .site-footer-links > div { width: 180px; }
-.site-footer-links h2 { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--d-muted); }
-.site-footer-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.site-footer-links h2 { margin: 0 0 10px; font-size: 13px; font-weight: 600; line-height: 17px; color: var(--d-muted); }
+.site-footer-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; line-height: 18px; }
 .site-footer-links a { font-size: 14px; color: var(--d-muted); text-decoration: none; }
 .site-footer-links a:hover { color: var(--d-ink); text-decoration: underline; text-underline-offset: 3px; }
 .site-footer-legal { position: absolute; left: 0; right: 0; bottom: 33px; width: min(1120px, 100% - 48px); margin: 0 auto; display: flex; justify-content: space-between; font-size: 13px; color: #f4f2ec; text-shadow: 0 1px 8px rgb(0 0 0 / 0.45); }
@@ -230,7 +230,7 @@ body:has(> .site) { background: var(--d-bg); }
 .home-event h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .home-event-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--d-rule); display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; color: var(--d-muted); }
 
-.home-people { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.home-people { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .home-people-art { position: relative; aspect-ratio: 335 / 210; border-radius: var(--d-radius); overflow: hidden; }
 .home-land { margin-top: 52px; display: flex; flex-direction: column; gap: 16px; }
 .home-land h3 { margin: 0; }
@@ -258,7 +258,6 @@ body:has(> .site) { background: var(--d-bg); }
 
 @media (max-width: 1099px) {
   .home-events, .site-features { grid-template-columns: 1fr 1fr; }
-  .home-people { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 799px) {
   .home-hero { min-height: 0; padding-top: 112px; padding-bottom: 96px; }
@@ -453,7 +452,8 @@ body:has(> .site) { background: var(--d-bg); }
 .legal-toc { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 10px; }
 .legal-toc h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--d-muted); }
 .legal-toc ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; border-left: 1px solid var(--d-rule); }
-.legal-toc a { display: block; padding: 2px 0 2px 12px; font-size: 14px; color: var(--d-muted); text-decoration: none; }
+.legal-toc a { display: block; margin-left: -1px; padding: 2px 0 2px 12px; border-left: 2px solid transparent; font-size: 14px; color: var(--d-muted); text-decoration: none; }
+.legal-toc a[aria-current] { border-left-color: var(--d-ink); color: var(--d-ink); font-weight: 600; }
 .legal-toc a:hover { color: var(--d-ink); }
 .legal-content { display: flex; flex-direction: column; gap: 56px; max-width: 760px; counter-reset: legal; }
 .legal-content.numbered { gap: 40px; }
@@ -465,7 +465,7 @@ body:has(> .site) { background: var(--d-bg); }
 .legal-section p { margin: 0; }
 .legal-section a { color: var(--d-ink); text-underline-offset: 3px; }
 .legal-section strong { font-weight: inherit; }
-.legal-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+.legal-list { margin: 0; padding-left: 20px; list-style: disc; display: flex; flex-direction: column; gap: 8px; }
 .legal-contact { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .legal-contact p { font-size: 15px; }
 .legal-contact .legal-contact-line { font-size: 17px; color: var(--d-ink); }
@@ -489,6 +489,7 @@ body:has(> .site) { background: var(--d-bg); }
 .partner-card.site-form { gap: 16px; }
 .partner-card h2 { margin: 0; font-size: 30px; line-height: 1.35; }
 .partner-card > p { margin: 0; }
+.site .partner-card textarea { min-height: 92px; }
 .partner-card .auth-alt a { color: var(--d-ink); font-weight: 600; }
 @media (max-width: 999px) { .partner-page { grid-template-columns: 1fr; } }
 @media (max-width: 599px) { .partner-card { padding: 28px 20px; } }
