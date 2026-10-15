@@ -18,6 +18,7 @@ import { BoardHome } from "./BoardHome";
 import { Insights } from "./Insights";
 import { Documents } from "./Documents";
 import { Applications } from "./Applications";
+import { Emails } from "./Emails";
 import { Blog } from "./Blog";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
@@ -68,6 +69,7 @@ const EXEC_SECTIONS = [
   "pipeline",
   "applications",
   "documents",
+  "emails",
   "members",
 ] as const satisfies readonly Section[];
 
@@ -802,6 +804,8 @@ export function Dashboard() {
                     <Applications />
                   ) : item === "documents" ? (
                     <Documents />
+                  ) : item === "emails" ? (
+                    <Emails />
                   ) : (
                     <Members
                       user={user}

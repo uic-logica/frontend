@@ -3993,3 +3993,13 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 .d-speaker-link { margin-top: 24px; }
 .d-speaker-link p { margin: 0 0 6px; font-size: 14px; }
 .d-speaker-link .d-link-event { margin: 0; }
+
+/* Exec email log (Emails.tsx). */
+.d-email-log { padding: 0; overflow-x: auto; }
+.d-email-log table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.d-email-log th { text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 500; color: var(--d-muted); border-bottom: 1px solid var(--d-rule); white-space: nowrap; }
+.d-email-log td { padding: 12px 16px; border-bottom: 1px solid var(--d-rule); vertical-align: top; }
+.d-email-log tr:last-child td { border-bottom: 0; }
+.d-email-log td:first-child { white-space: nowrap; }
+.d-email-log td small { display: block; margin-top: 4px; font-size: 12px; color: var(--d-muted); }
+.d-email-log .d-empty, .d-email-log > p { padding: 24px 16px; }
