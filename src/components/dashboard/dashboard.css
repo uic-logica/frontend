@@ -3980,3 +3980,11 @@ tr:has(.d-row-link[aria-current]) > td {
 .d-arrow svg { width: 0.95em; height: 0.95em; transition: transform 0.15s ease; }
 a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px); }
 @media (prefers-reduced-motion: reduce) { .d-arrow svg { transition: none; } }
+
+/* Event form: "Date TBD" sits under the date field and disables it. */
+.d-event-when > label { margin-bottom: 8px; }
+.d-form .d-event-tbd { flex-direction: row; align-items: center; gap: 8px; margin: 0 0 16px; font-weight: 400; }
+.d-form .d-event-tbd input { width: auto; min-height: 0; accent-color: var(--d-gold); }
+
+/* Exec-only delete, set apart at the bottom of a detail pane. */
+.d-delete-row { display: flex; justify-content: flex-end; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--d-rule); }

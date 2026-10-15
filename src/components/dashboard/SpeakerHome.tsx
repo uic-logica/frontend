@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Arrow, Icon } from "./Icon";
 import { Avatar } from "./Avatar";
 import { Heading } from "./Overview";
-import { type Profile, type SessionUser, date } from "./types";
+import { type Profile, type SessionUser, when } from "./types";
 
 /**
  * A confirmed speaker's landing page: their talk, their slides, and how
@@ -90,14 +90,7 @@ export function SpeakerHome({
           <h2>{submission?.talkTitle || "Your talk needs a name."}</h2>
           <p>
             {event
-              ? `${date(event.startsAt, {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                })} · ${new Date(event.startsAt).toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "2-digit",
-                })}${event.location ? ` · ${event.location}` : ""}`
+              ? `${when(event.startsAt, { weekday: "long", month: "long", day: "numeric" })}${event.location ? ` · ${event.location}` : ""}`
               : "You're confirmed. The board will lock in the exact date and room with you."}
           </p>
           <div className="d-actions">

@@ -227,6 +227,29 @@ export function Applications() {
           <button className="d-button secondary" type="submit" disabled={busy || detail.status === "DECLINED"}>{ACTION.DECLINED}</button>
         </form>
         {busy && <p className="d-muted" role="status">Saving status…</p>}
+        <div className="d-delete-row">
+          <button
+            className="d-button secondary danger"
+            disabled={busy}
+            onClick={async () => {
+              if (!(await confirm({ title: `Delete ${detail.name}'s application?`, body: "It's gone for good. Their account, if they have one, stays.", action: "Delete", danger: true }))) return;
+              setBusy(true);
+              setError("");
+              try {
+                await api(`/api/join/${detail.id}`, { method: "DELETE" });
+                setOpenId("");
+                setSaved("");
+                setReload((value) => value + 1);
+              } catch (e) {
+                setError((e as Error).message);
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            Delete application
+          </button>
+        </div>
       </section>}
       </div>}
     </>

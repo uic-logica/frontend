@@ -14,6 +14,8 @@ import {
   date,
   runsWorkspace,
   initials,
+  isUpcoming,
+  when,
 } from "./types";
 
 export function Events({
@@ -51,7 +53,7 @@ export function Events({
       ? engagement?.rsvps.some(
           (r) => r.eventId === e.id && r.status === "GOING",
         )
-      : new Date(e.startsAt) >= new Date() === (filter === "upcoming")),
+      : isUpcoming(e.startsAt) === (filter === "upcoming")),
   );
   // A linked event scrolls into view once the list is there.
   useEffect(() => {
@@ -155,7 +157,7 @@ export function Events({
             engagement?.rsvps.some(
               (r) => r.eventId === e.id && r.status === "GOING",
             ) ?? false;
-          const past = new Date(e.startsAt) < new Date();
+          const past = !isUpcoming(e.startsAt);
           return (
             <article key={e.id} id={`event-${e.id}`} className="d-event-item" aria-current={selected === e.id ? "true" : undefined}>
               <div className="d-event-summary">
@@ -166,16 +168,7 @@ export function Events({
                 <div className="d-event-text">
                   <h2>{e.title}</h2>
                   <p>
-                    {date(e.startsAt, {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                    })}{" "}
-                    ·{" "}
-                    {new Date(e.startsAt).toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
+                    {when(e.startsAt, { weekday: "long", month: "long", day: "numeric" })}
                   </p>
                   <small>
                     {e.location || "Location to be announced"}
@@ -282,7 +275,8 @@ export function eventBody(data: FormData) {
     description: data.get("description"),
     location: data.get("location"),
     link: data.get("link"),
-    startsAt: new Date(String(data.get("startsAt"))).toISOString(),
+    // "Date TBD" ticked, or left empty: the backend stores no date yet.
+    startsAt: data.get("dateTbd") || !data.get("startsAt") ? null : new Date(String(data.get("startsAt"))).toISOString(),
   };
 }
 
@@ -303,6 +297,7 @@ export function EventForm({
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onCancel: () => void;
 }) {
+  const [tbd, setTbd] = useState(event?.startsAt === null);
   return (
     <form onSubmit={onSubmit} className="d-panel d-form d-event-form">
       <h2>{heading}</h2>
@@ -311,10 +306,16 @@ export function EventForm({
           Event title
           <input name="title" required defaultValue={event?.title} />
         </label>
-        <label>
-          Date and time (your local time)
-          <input name="startsAt" type="datetime-local" required defaultValue={event?.startsAt ? localInput(event.startsAt) : undefined} />
-        </label>
+        <div className="d-event-when">
+          <label>
+            Date and time (your local time)
+            <input name="startsAt" type="datetime-local" required={!tbd} disabled={tbd} defaultValue={event?.startsAt ? localInput(event.startsAt) : undefined} />
+          </label>
+          <label className="d-event-tbd">
+            <input type="checkbox" name="dateTbd" checked={tbd} onChange={(e) => setTbd(e.target.checked)} />
+            Date TBD
+          </label>
+        </div>
       </div>
       <label>
         Location
@@ -341,7 +342,8 @@ export function EventForm({
 }
 
 /** Within 12 hours either side of the start: the day check-in makes sense. */
-function isToday(iso: string) {
+function isToday(iso: string | null) {
+  if (!iso) return false;
   return Math.abs(new Date(iso).getTime() - new Date().getTime()) < 12 * 3_600_000;
 }
 
@@ -361,8 +363,8 @@ function CheckInDialog({
   onCheckedIn: (e: Engagement) => void;
 }) {
   const near = [...(events ?? [])]
-    .filter((e) => Math.abs(new Date(e.startsAt).getTime() - new Date().getTime()) < 3 * 86_400_000)
-    .sort((a, b) => Math.abs(new Date(a.startsAt).getTime() - new Date().getTime()) - Math.abs(new Date(b.startsAt).getTime() - new Date().getTime()));
+    .filter((e) => e.startsAt && Math.abs(new Date(e.startsAt).getTime() - new Date().getTime()) < 3 * 86_400_000)
+    .sort((a, b) => Math.abs(new Date(a.startsAt!).getTime() - new Date().getTime()) - Math.abs(new Date(b.startsAt!).getTime() - new Date().getTime()));
   const [eventId, setEventId] = useState("");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
