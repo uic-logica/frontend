@@ -186,8 +186,9 @@ body:has(> .site) { background: var(--d-bg); }
 .home-hero::before { inset: 0 auto 0 0; width: min(1000px, 100%); background: linear-gradient(90deg, var(--d-bg) 25%, transparent); }
 .home-hero::after { inset: auto 0 0; height: 158px; background: linear-gradient(transparent, color-mix(in srgb, var(--d-bg) 60%, transparent) 45%, var(--d-bg) 90%); }
 .home-hero-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 36px; }
-.home-hero-brand { display: flex; align-items: center; gap: 16px; font-size: 14px; font-weight: 600; letter-spacing: 1.2px; color: var(--d-muted); }
-.home-hero h1 { max-width: 720px; margin: 0; font-size: 68px; line-height: 1.04; letter-spacing: -1px; }
+.home-hero-brand { display: flex; align-items: center; gap: 28px; }
+.home-hero h1 { margin: 0; font-size: 80px; line-height: 1; letter-spacing: -1.5px; white-space: nowrap; }
+.home-hero-brand p { margin: 12px 0 0; font-size: 20px; color: var(--d-muted); }
 .home-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 6px; }
 .home-next { display: flex; align-items: center; gap: 12px; width: min(428px, 100%); padding: 10px 16px 10px 10px; border: 1px solid var(--d-rule); border-radius: var(--d-radius); background: var(--d-surface); text-decoration: none; color: var(--d-muted); }
 .home-next:hover { border-color: var(--d-rule-strong); }
@@ -241,7 +242,11 @@ body:has(> .site) { background: var(--d-bg); }
   .home-hero { min-height: 0; padding-top: 112px; padding-bottom: 96px; }
   .home-hero::after { height: 240px; }
   .home-hero::before { width: 100%; background: linear-gradient(var(--d-bg) 10%, color-mix(in srgb, var(--d-bg) 70%, transparent) 60%, transparent); }
-  .home-hero h1 { font-size: 42px; }
+  .home-hero h1 { font-size: 44px; white-space: normal; }
+  .home-hero-brand { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .home-hero-brand .site-logo { width: 64px !important; height: 64px !important; }
+  .home-hero-brand .site-logo img { width: 100%; height: 100%; }
+  .home-hero-brand p { margin-top: 8px; font-size: 16px; }
   .home-hero-copy { gap: 28px; }
   .home-events, .site-features { grid-template-columns: 1fr; gap: 16px; }
   .home-block + .home-block { margin-top: 96px; }

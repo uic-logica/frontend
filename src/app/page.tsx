@@ -110,10 +110,12 @@ export default async function Home() {
           <Painting name="hero" sizes="100vw" className="home-hero-art" high />
           <div className="home-hero-copy site-wrap">
             <div className="home-hero-brand">
-              <Logo size={56} priority />
-              <span>LOGICA @ UIC</span>
+              <Logo size={96} priority />
+              <div>
+                <h1 className="serif">LOGICA at UIC</h1>
+                <p>Latinx computing and academics community</p>
+              </div>
             </div>
-            <h1 className="serif">The Latinx computing community at UIC.</h1>
             <div className="home-hero-actions">
               <Link href="/signup" className="site-btn">Join LOGICA</Link>
               <Link href="/events" className="site-btn secondary">See upcoming events <SiteIcon name="arrow" /></Link>
