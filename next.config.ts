@@ -40,7 +40,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   env: { NEXT_PUBLIC_ART_VERSION: artVersion },
   // next/image's optimized copies (team photos, logos) live 30 days instead of the default 4 hours.
-  images: { minimumCacheTTL: 2592000 },
+  images: { minimumCacheTTL: 2592000, formats: ["image/avif", "image/webp"] },
   async headers() {
     return [{
       source: "/:path*",
