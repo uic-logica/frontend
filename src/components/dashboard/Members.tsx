@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { api } from "@/lib/api";
+import { useUrlState } from "./useUrlState";
 import { Empty, Heading } from "./Overview";
 import {
   type Member,
@@ -32,7 +33,8 @@ export function Members({
   const [issued, setIssued] = useState<{ email: string; password: string } | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [issuing, setIssuing] = useState(false);
-  const [query, setQuery] = useState("");
+  // In the URL, so a search result or a pasted link lands on that member.
+  const [query, setQuery] = useUrlState("q");
   const [filter, setFilter] = useState("ALL");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");

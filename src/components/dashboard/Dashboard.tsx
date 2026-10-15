@@ -373,18 +373,18 @@ export function Dashboard() {
     for (const event of events ?? []) rows.push({
       label: event.title,
       detail: `Event${event.location ? ` · ${event.location}` : ""}`,
-      href: "/dashboard/events",
+      href: `/dashboard/events?id=${event.id}`,
     });
     if (user && runsWorkspace(user)) {
       for (const member of members ?? []) rows.push({
         label: member.name || member.email,
         detail: `Member · ${member.major || member.email}`,
-        href: "/dashboard/members",
+        href: `/dashboard/members?q=${encodeURIComponent(member.email)}`,
       });
       for (const guest of speakers ?? []) rows.push({
         label: guest.name || guest.email || "Speaker",
         detail: `Speaker${guest.organization ? ` · ${guest.organization}` : ""}`,
-        href: "/dashboard/speakers",
+        href: `/dashboard/speakers?id=${guest.id}`,
       });
     }
     for (const notice of notices ?? []) rows.push({

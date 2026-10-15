@@ -4011,3 +4011,16 @@ tr:has(.d-row-link[aria-current]) > td {
 .d-checkin {
   width: min(420px, calc(100vw - 32px));
 }
+.d-event-row-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.d-event-row-link:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
