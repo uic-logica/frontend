@@ -31,7 +31,9 @@ export async function getEvents(): Promise<EventsData> {
   // there's no origin to be relative to, so hit the backend directly.
   const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
   try {
-    const res = await fetch(`${base}/api/events`, { next: { revalidate: REVALIDATE_SECONDS } });
+    // A backend that accepts the connection but never answers would hang the
+    // build's prerender past Next's 60s limit (it did, on Vercel); give up early.
+    const res = await fetch(`${base}/api/events`, { next: { revalidate: REVALIDATE_SECONDS }, signal: AbortSignal.timeout(8000) });
     if (!res.ok) throw new Error(`Request failed: ${res.status}`);
     const body = await res.json();
     return splitEvents(Array.isArray(body) ? body : [], null);
