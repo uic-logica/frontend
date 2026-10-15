@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { api, peek } from "@/lib/api";
+import { useConfirm } from "./useConfirm";
 import { Heading } from "./Overview";
 import { Icon } from "./Icon";
 
@@ -30,6 +31,7 @@ type Overview = {
  * the list here is what they would actually be handing over.
  */
 export function AgentAccess() {
+  const [confirm, confirmDialog] = useConfirm();
   const [data, setData] = useState<Overview | null>(() => peek<Overview>("/api/mcp-tokens") ?? null);
   const [fresh, setFresh] = useState<{ name: string; secret: string } | null>(
     null,
@@ -79,6 +81,15 @@ export function AgentAccess() {
   }
 
   async function revoke(id: string) {
+    if (
+      !(await confirm({
+        title: "Revoke this connection?",
+        body: "Any agent using this token stops working at once. You can make a new one any time.",
+        action: "Revoke",
+        danger: true,
+      }))
+    )
+      return;
     setBusy(true);
     setError("");
     try {
@@ -103,6 +114,7 @@ export function AgentAccess() {
 
   return (
     <>
+      {confirmDialog}
       <Heading
         title="MCP Connections"
         description={data ? `Let trusted agents work with only the LOGICA tools approved for your ${data.role.toLowerCase()} role.` : "Let trusted agents work with only the LOGICA tools you approve."}
@@ -186,7 +198,8 @@ export function AgentAccess() {
           <input
             id="agent-name"
             value={name}
-            placeholder="Name it — “Claude on my laptop”"
+            required
+            placeholder="Name it, e.g. “Claude on my laptop”"
             maxLength={60}
             onChange={(e) => setName(e.target.value)}
           />

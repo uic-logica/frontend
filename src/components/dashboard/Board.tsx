@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
+import { useConfirm } from "./useConfirm";
+import { useUrlState } from "./useUrlState";
 import { Icon } from "./Icon";
 import {
   type BoardItem,
@@ -73,10 +75,32 @@ export function Board({ kind, members, events }: Props) {
 
   const [items, setItems] = useState<BoardItem[] | null>(() => peek<BoardItem[]>(`/api/board/items?kind=${kind}`) ?? null);
   const [budgets, setBudgets] = useState<Budgets | null>(() => (kind === "MONEY" ? peek<Budgets>("/api/board/budgets") ?? null : null));
-  const [stage, setStage] = useState("ALL");
-  const [query, setQuery] = useState("");
-  const [view, setView] = useState<"table" | "board">("table");
-  const [open, setOpen] = useState<string | null>(null);
+  // In the URL, so refresh, Back and a pasted link keep the open item and filters.
+  const [stage, setStage] = useUrlState("stage", "ALL");
+  const [query, setQuery] = useUrlState("q");
+  const [openId, setOpenId] = useUrlState("id");
+  // Table or board is a per-person habit, so it's remembered on this device.
+  const [view, setViewState] = useState<"table" | "board">(() => {
+    try {
+      return localStorage.getItem(`logica-board-view-${kind}`) === "board" ? "board" : "table";
+    } catch {
+      return "table";
+    }
+  });
+  const setView = (v: "table" | "board") => {
+    setViewState(v);
+    try {
+      localStorage.setItem(`logica-board-view-${kind}`, v);
+    } catch {}
+  };
+  const [saved, setSaved] = useState("");
+  const [confirm, confirmDialog] = useConfirm();
+  const open = openId || null;
+  const setOpen = (id: string | null) => {
+    setSaved("");
+    setError("");
+    setOpenId(id ?? "", { push: !!id });
+  };
   const [adding, setAdding] = useState(false);
   const [newTerm, setNewTerm] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
@@ -196,23 +220,37 @@ export function Board({ kind, members, events }: Props) {
     }
   }
 
-  async function patch(id: string, body: Record<string, unknown>) {
+  async function patch(id: string, body: Record<string, unknown>, note = "Saved.") {
     setBusy(id);
     setError("");
+    setSaved("");
     try {
-      await api(`/api/board/items/${id}`, {
+      const updated = await api<BoardItem>(`/api/board/items/${id}`, {
         method: "PATCH",
         body: JSON.stringify(body),
       });
+      // Show the saved row at once; the refresh below catches anything else.
+      setItems((rows) => rows?.map((row) => (row.id === id ? updated : row)) ?? rows);
+      setSaved(note);
       refresh();
+      return true;
     } catch (e) {
       setError((e as Error).message);
+      return false;
     } finally {
       setBusy(null);
     }
   }
 
   async function archive(id: string) {
+    if (
+      !(await confirm({
+        title: "Archive this?",
+        body: "It comes off the board. The record is kept, nothing is deleted.",
+        action: "Archive",
+      }))
+    )
+      return;
     setBusy(id);
     setError("");
     try {
@@ -259,9 +297,16 @@ export function Board({ kind, members, events }: Props) {
   }
 
   const detail = items?.find((i) => i.id === open) ?? null;
+  const hasDetail = !!detail;
+  // When the detail stacks under the list, bring it into view.
+  useEffect(() => {
+    if (open && matchMedia("(max-width: 1200px)").matches)
+      requestAnimationFrame(() => document.getElementById("board-detail")?.scrollIntoView());
+  }, [open, hasDetail]);
 
   return (
     <>
+      {confirmDialog}
       <Heading
         title={copy.title}
         description={copy.description}
@@ -495,7 +540,7 @@ export function Board({ kind, members, events }: Props) {
         </form>
       )}
 
-      {error && (
+      {error && !detail && (
         <p className="d-error" role="alert">
           {error}
         </p>
@@ -525,6 +570,7 @@ export function Board({ kind, members, events }: Props) {
         })}
       </div>
 
+      <div className={detail ? "d-board-split" : undefined}>
       <section className="d-panel d-directory">
         <div className="d-directory-toolbar">
           <label className="d-search">
@@ -571,9 +617,8 @@ export function Board({ kind, members, events }: Props) {
                         <button
                           className="d-kanban-card"
                           aria-expanded={open === item.id}
-                          onClick={() =>
-                            setOpen(open === item.id ? null : item.id)
-                          }
+                          aria-current={open === item.id ? "true" : undefined}
+                          onClick={() => setOpen(item.id)}
                         >
                           <strong>{item.title}</strong>
                           <small>
@@ -627,7 +672,9 @@ export function Board({ kind, members, events }: Props) {
               {filtered?.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <strong>{item.title}</strong>
+                    <button className="d-row-link" aria-current={open === item.id ? "true" : undefined} onClick={() => setOpen(item.id)}>
+                      <strong>{item.title}</strong>
+                    </button>
                     {kind === "OUTREACH" && item.org && (
                       <small>{item.org}</small>
                     )}
@@ -670,7 +717,7 @@ export function Board({ kind, members, events }: Props) {
                       onClick={() => setOpen(open === item.id ? null : item.id)}
                     >
                       {open === item.id ? "Close" : "Open"}
-                      <span className="sr-only"> {item.title}</span> ↗
+                      <span className="sr-only"> {item.title}</span>
                     </button>
                   </td>
                 </tr>
@@ -693,16 +740,21 @@ export function Board({ kind, members, events }: Props) {
 
       {detail && (
         <Detail
+          key={detail.id}
           item={detail}
           kind={kind}
           members={members}
+          events={events}
           busy={busy === detail.id}
+          saved={saved}
+          error={error}
           onClose={() => setOpen(null)}
           budgets={budgets}
-          onPatch={(body) => patch(detail.id, body)}
+          onPatch={(body, note) => patch(detail.id, body, note)}
           onArchive={() => archive(detail.id)}
         />
       )}
+      </div>
     </>
   );
 }
@@ -767,12 +819,18 @@ function BudgetBar({
   );
 }
 
+/** A <input type="date"> value from an ISO timestamp, or "". */
+const day = (iso: string | null) => (iso ? iso.slice(0, 10) : "");
+
 function Detail({
   item,
   kind,
   members,
+  events,
   budgets,
   busy,
+  saved,
+  error,
   onClose,
   onPatch,
   onArchive,
@@ -780,10 +838,13 @@ function Detail({
   item: BoardItem;
   kind: BoardKind;
   members: Member[] | null;
+  events: Event[] | null;
   budgets: Budgets | null;
   busy: boolean;
+  saved: string;
+  error: string;
   onClose: () => void;
-  onPatch: (body: Record<string, unknown>) => void;
+  onPatch: (body: Record<string, unknown>, note?: string) => Promise<boolean>;
   onArchive: () => void;
 }) {
   const stages = STAGES[kind];
@@ -794,250 +855,71 @@ function Detail({
   // Nothing to pay back on a club-card purchase; that path only exists for
   // someone who was out of pocket.
   if (next === "REIMBURSED" && !item.paidByUserId) next = undefined;
+  // Bumped on Cancel so the uncontrolled fields reset to the saved values.
+  const [formKey, setFormKey] = useState(0);
+  const [dirty, setDirty] = useState(false);
+
+  // One explicit Save for every field, instead of saving on each blur:
+  // nothing is disabled while you type, and a half-typed date never saves.
+  async function save(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (busy || !dirty) return;
+    const f = new FormData(e.currentTarget);
+    const get = (name: string) => String(f.get(name) ?? "");
+    const body: Record<string, unknown> = {
+      title: get("title"),
+      detail: get("detail"),
+      ownerId: get("ownerId"),
+      nextStepAt: get("nextStepAt"),
+      eventId: get("eventId"),
+    };
+    if (kind === "MONEY") {
+      body.amountCents = get("amount") === "" ? null : Math.round(Number(get("amount")) * 100);
+      body.budgetId = get("budgetId");
+      body.paidByUserId = get("paidByUserId");
+      body.receiptUrl = get("receiptUrl");
+    } else {
+      for (const name of ["org", "contactName", "contactEmail", "channel", "category", "link", "lastTouchAt"]) body[name] = get(name);
+    }
+    if (await onPatch(body)) setDirty(false);
+  }
 
   return (
-    <section className="d-panel d-speaker-detail">
+    <section id="board-detail" className="d-panel d-speaker-detail d-board-detail" aria-labelledby="board-detail-title">
       <div className="d-section-head">
-        <h2>{item.title}</h2>
+        <h2 id="board-detail-title">{item.title}</h2>
         <button className="d-text-button" onClick={onClose}>
-          Close details
+          Close
         </button>
       </div>
-
-      <dl>
-        <div>
-          <dt>Stage</dt>
-          <dd>
-            <span className={`d-badge ${stageTone(item.stage)}`}>
-              {STAGE_LABEL[item.stage] ?? item.stage}
-            </span>
-            {item.stageChangedBy && (
-              <small className="d-muted">
-                {" "}
-                by {personName(item.stageChangedBy)}
-                {item.stageChangedAt && ` · ${date(item.stageChangedAt)}`}
-              </small>
-            )}
-          </dd>
-        </div>
-        {kind === "MONEY" ? (
-          <>
-            <div>
-              <dt>Amount</dt>
-              <dd className="d-money">
-                {money(item.amountCents, { cell: true })}
-              </dd>
-            </div>
-            <div>
-              <dt>Budget</dt>
-              <dd>{item.budget?.label ?? "Not counted against a budget"}</dd>
-            </div>
-            <div>
-              <dt>Paid out of pocket by</dt>
-              <dd>{personName(item.paidBy) ?? "Nobody — club card"}</dd>
-            </div>
-            <div>
-              <dt>Receipt</dt>
-              <dd>
-                {item.receiptUrl ? (
-                  <a
-                    href={item.receiptUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    Open receipt ↗
-                  </a>
-                ) : (
-                  "None attached"
-                )}
-              </dd>
-            </div>
-          </>
-        ) : (
-          <>
-            <div>
-              <dt>Company</dt>
-              <dd>{item.org ?? "—"}</dd>
-            </div>
-            <div>
-              <dt>Contact</dt>
-              <dd>
-                {item.contactName ?? "—"}
-                {item.contactEmail && (
-                  <>
-                    {" · "}
-                    <a href={`mailto:${item.contactEmail}`}>
-                      {item.contactEmail}
-                    </a>
-                  </>
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Reached via</dt>
-              <dd>
-                {item.channel ?? "—"}
-                {item.link && (
-                  <>
-                    {" · "}
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      Open ↗
-                    </a>
-                  </>
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>What for</dt>
-              <dd>{item.category ?? "—"}</dd>
-            </div>
-            <div>
-              <dt>Last spoke</dt>
-              <dd>
-                {item.lastTouchAt ? date(item.lastTouchAt) : "Not recorded"}
-              </dd>
-            </div>
-          </>
+      <p className="d-board-stage">
+        <span className={`d-badge ${stageTone(item.stage)}`}>{STAGE_LABEL[item.stage] ?? item.stage}</span>
+        {item.stageChangedBy && (
+          <small className="d-muted">
+            {" "}
+            by {personName(item.stageChangedBy)}
+            {item.stageChangedAt && ` · ${date(item.stageChangedAt)}`}
+          </small>
         )}
-        <div>
-          <dt>Event</dt>
-          <dd>{item.event?.title ?? "Not tied to one"}</dd>
-        </div>
-        <div>
-          <dt>Added by</dt>
-          <dd>
-            {item.createdBy
-              ? personName(item.createdBy)
-              : item.channel === "Website"
-                ? "From the website"
-                : "Former board member"}
-          </dd>
-        </div>
-        <div>
-          <dt>Notes</dt>
-          <dd>{item.detail || "None"}</dd>
-        </div>
-      </dl>
+        <small className="d-muted">
+          {" · "}added by{" "}
+          {item.createdBy
+            ? personName(item.createdBy)
+            : item.channel === "Website"
+              ? "the website"
+              : "a former board member"}
+        </small>
+      </p>
 
-      {/* `d-form` as well as the grid: the label-stacking and input styling
-          both hang off .d-form, and this panel isn't a form element.
-
-          Everything the API accepts on a PATCH is editable here. Three of
-          these were read-only rows in the <dl> above with no way to set
-          them, while the page told you to "open a cost to put it on a
-          budget" and the detail showed "Receipt — none attached". */}
-      <div className="d-form d-form-grid">
-        {kind === "MONEY" && (
-          <>
-            <label>
-              Counts against
-              <select
-                value={item.budgetId ?? ""}
-                disabled={busy}
-                onChange={(e) => onPatch({ budgetId: e.target.value })}
-              >
-                <option value="">No budget</option>
-                {budgets?.budgets.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Fronted by
-              <select
-                value={item.paidByUserId ?? ""}
-                disabled={busy}
-                onChange={(e) => onPatch({ paidByUserId: e.target.value })}
-              >
-                <option value="">Nobody — club card</option>
-                {members?.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name || m.email}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Receipt link
-              {/* Keyed on the saved value: these are uncontrolled, so
-                  without it they keep whatever was typed and go stale when
-                  the row changes underneath — another exec editing, or the
-                  same person's agent doing it over MCP. */}
-              <input
-                key={item.receiptUrl ?? ""}
-                type="url"
-                defaultValue={item.receiptUrl ?? ""}
-                disabled={busy}
-                placeholder="https://drive.google.com/…"
-                onBlur={(e) =>
-                  e.target.value !== (item.receiptUrl ?? "") &&
-                  onPatch({ receiptUrl: e.target.value })
-                }
-              />
-            </label>
-            <label>
-              Amount
-              <input
-                key={item.amountCents ?? ""}
-                type="number"
-                step="0.01"
-                min="0"
-                defaultValue={
-                  item.amountCents === null
-                    ? ""
-                    : (item.amountCents / 100).toFixed(2)
-                }
-                disabled={busy}
-                onBlur={(e) => {
-                  const cents =
-                    e.target.value === ""
-                      ? null
-                      : Math.round(Number(e.target.value) * 100);
-                  if (cents !== item.amountCents)
-                    onPatch({ amountCents: cents });
-                }}
-              />
-            </label>
-          </>
+      <div className="d-actions">
+        {next && (
+          <button className="d-button" disabled={busy} onClick={() => onPatch({ stage: next }, `Moved to ${STAGE_LABEL[next!] ?? next}.`)}>
+            <Icon name="check" /> {STAGE_LABEL[next] ?? next}
+          </button>
         )}
-        <label>
-          Whose move is it
-          <select
-            value={item.ownerId ?? ""}
-            disabled={busy}
-            onChange={(e) => onPatch({ ownerId: e.target.value })}
-          >
-            <option value="">Nobody yet</option>
-            {members?.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name || m.email}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Next move due
-          <input
-            key={item.nextStepAt ?? ""}
-            type="date"
-            disabled={busy}
-            defaultValue={item.nextStepAt ? item.nextStepAt.slice(0, 10) : ""}
-            onChange={(e) => onPatch({ nextStepAt: e.target.value })}
-          />
-        </label>
-        <label>
-          Move to
-          <select
-            value={item.stage}
-            disabled={busy}
-            onChange={(e) => onPatch({ stage: e.target.value })}
-          >
+        <label className="d-inline-select">
+          <span>Move to</span>
+          <select value={item.stage} disabled={busy} onChange={(e) => onPatch({ stage: e.target.value }, `Moved to ${STAGE_LABEL[e.target.value] ?? e.target.value}.`)}>
             {stages.map((s) => (
               <option key={s} value={s}>
                 {STAGE_LABEL[s] ?? s}
@@ -1047,24 +929,159 @@ function Detail({
         </label>
       </div>
 
-      <div className="d-actions">
-        {next && (
-          <button
-            className="d-button"
-            disabled={busy}
-            onClick={() => onPatch({ stage: next })}
-          >
-            <Icon name="check" /> {STAGE_LABEL[next] ?? next}
+      {saved && !dirty && <p className="d-success" role="status">{saved}</p>}
+      {error && <p className="d-error" role="alert">{error}</p>}
+
+      <form key={formKey} className="d-form" onSubmit={save} onChange={() => setDirty(true)}>
+        <label>
+          {kind === "MONEY" ? "What for" : "Who"}
+          <input name="title" required maxLength={200} defaultValue={item.title} />
+        </label>
+        <div className="d-form-grid">
+          {kind === "MONEY" ? (
+            <>
+              <label>
+                Amount
+                <input
+                  name="amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  defaultValue={item.amountCents === null ? "" : (item.amountCents / 100).toFixed(2)}
+                />
+              </label>
+              <label>
+                Counts against
+                <select name="budgetId" defaultValue={item.budgetId ?? ""}>
+                  <option value="">No budget</option>
+                  {budgets?.budgets.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Fronted by
+                <select name="paidByUserId" defaultValue={item.paidByUserId ?? ""}>
+                  <option value="">Nobody, club card</option>
+                  {members?.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name || m.email}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Receipt link
+                <input name="receiptUrl" type="url" defaultValue={item.receiptUrl ?? ""} placeholder="https://drive.google.com/…" />
+                {item.receiptUrl && (
+                  <a href={item.receiptUrl} target="_blank" rel="noreferrer noopener">
+                    Open receipt ↗
+                  </a>
+                )}
+              </label>
+            </>
+          ) : (
+            <>
+              <label>
+                Company
+                <input name="org" maxLength={200} defaultValue={item.org ?? ""} />
+              </label>
+              <label>
+                What for
+                <select name="category" defaultValue={item.category ?? ""}>
+                  <option value="">Not set</option>
+                  {[...new Set([...OUTREACH_CATEGORIES, ...(item.category ? [item.category] : [])])].map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Contact name
+                <input name="contactName" maxLength={200} defaultValue={item.contactName ?? ""} />
+              </label>
+              <label>
+                Contact email
+                <input name="contactEmail" type="email" maxLength={320} defaultValue={item.contactEmail ?? ""} />
+              </label>
+              <label>
+                Reached via
+                <select name="channel" defaultValue={item.channel ?? ""}>
+                  <option value="">Not set</option>
+                  {[...new Set([...OUTREACH_CHANNELS, ...(item.channel ? [item.channel] : [])])].map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Link
+                <input name="link" type="url" defaultValue={item.link ?? ""} placeholder="https://" />
+              </label>
+              <label>
+                Last spoke
+                <input name="lastTouchAt" type="date" defaultValue={day(item.lastTouchAt)} />
+              </label>
+            </>
+          )}
+          <label>
+            Whose move is it
+            <select name="ownerId" defaultValue={item.ownerId ?? ""}>
+              <option value="">Nobody yet</option>
+              {members?.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name || m.email}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Next move due
+            <input name="nextStepAt" type="date" defaultValue={day(item.nextStepAt)} />
+          </label>
+          <label>
+            Event
+            <select name="eventId" defaultValue={item.eventId ?? ""}>
+              <option value="">Not tied to one</option>
+              {events?.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.title} · {date(e.startsAt)}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <label>
+          Notes
+          <textarea name="detail" rows={4} maxLength={5000} defaultValue={item.detail ?? ""} />
+        </label>
+        <div className="d-actions">
+          {/* Never disabled: a disabled button drops keyboard focus to the page. */}
+          <button className="d-button" aria-busy={busy}>
+            {busy ? "Saving…" : "Save changes"}
           </button>
-        )}
-        <button className="d-text-button" disabled={busy} onClick={onArchive}>
-          Archive
-        </button>
-      </div>
-      <p className="d-footnote">
-        Archiving keeps the record and takes it off the board — nothing here is
-        ever deleted.
-      </p>
+          {dirty && (
+            <button
+              type="button"
+              className="d-button secondary"
+              onClick={() => {
+                setFormKey((k) => k + 1);
+                setDirty(false);
+              }}
+            >
+              Cancel
+            </button>
+          )}
+          <button type="button" className="d-text-button d-push-right" disabled={busy} onClick={onArchive}>
+            Archive
+          </button>
+        </div>
+      </form>
+      <p className="d-footnote">Archiving keeps the record and takes it off the board. Nothing here is ever deleted.</p>
     </section>
   );
 }

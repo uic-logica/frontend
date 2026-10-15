@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { api, clearApiCache, peek, signOut } from "@/lib/api";
+import { api, clearApiCache, peek, prefetch, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
 import { ProfileEditor, Settings } from "./Profile";
@@ -288,6 +288,23 @@ export function Dashboard() {
               ]
             : []),
         ]);
+        // Warm what the other sections read, so their first visit paints
+        // at once instead of "Loading…". Idle-time, and only what this
+        // account is allowed to open.
+        if (alive)
+          prefetch([
+            ...(current.accountKind === "SPEAKER" ? [] : ["/api/posts", "/api/email-preferences", "/api/mcp-tokens"]),
+            ...(runsWorkspace(current)
+              ? [
+                  "/api/board/items",
+                  "/api/board/items?kind=MONEY",
+                  "/api/board/items?kind=OUTREACH",
+                  "/api/board/budgets",
+                  "/api/board/insights",
+                  "/api/join",
+                ]
+              : []),
+          ]);
       } catch {
         if (alive && !leavingRef.current) setAuthState("error");
       }
@@ -298,9 +315,12 @@ export function Dashboard() {
     };
   }, [reload, router]);
 
+  // The query changes (?id=, ?status=) re-apply the route's metadata title,
+  // so this runs on those too.
+  const search = useSearchParams();
   useEffect(() => {
     document.title = `${titleFor(section, user, profile)} · LOGICA`;
-  }, [section, user, profile]);
+  }, [section, user, profile, search]);
   const speaker = user?.accountKind === "SPEAKER";
   const submissionId = profile?.speakerSubmission?.id;
   // The standalone thread is the whole page, so the work area gives up its
@@ -353,18 +373,18 @@ export function Dashboard() {
     for (const event of events ?? []) rows.push({
       label: event.title,
       detail: `Event${event.location ? ` · ${event.location}` : ""}`,
-      href: "/dashboard/events",
+      href: `/dashboard/events?id=${event.id}`,
     });
     if (user && runsWorkspace(user)) {
       for (const member of members ?? []) rows.push({
         label: member.name || member.email,
         detail: `Member · ${member.major || member.email}`,
-        href: "/dashboard/members",
+        href: `/dashboard/members?q=${encodeURIComponent(member.email)}`,
       });
       for (const guest of speakers ?? []) rows.push({
         label: guest.name || guest.email || "Speaker",
         detail: `Speaker${guest.organization ? ` · ${guest.organization}` : ""}`,
-        href: "/dashboard/speakers",
+        href: `/dashboard/speakers?id=${guest.id}`,
       });
     }
     for (const notice of notices ?? []) rows.push({
@@ -575,8 +595,8 @@ export function Dashboard() {
               </button>
             )}
             {user?.accountKind === "MEMBER" && (
-              <Link className="d-button d-top-action" href="/dashboard/events">
-                {runsWorkspace(user) ? "+ New" : "Find an event"}
+              <Link className="d-button d-top-action" href={runsWorkspace(user) ? "/dashboard/events?new=1" : "/dashboard/events"}>
+                {runsWorkspace(user) ? "+ New event" : "Find an event"}
               </Link>
             )}
             <button
@@ -738,7 +758,19 @@ export function Dashboard() {
                 )}
               </Pane>
               )}
-              {seen("events") && (
+              {/* Only for accounts whose nav has Events: a guest typing the URL
+                  (or following an old link) shouldn't land in a half-working
+                  member view. */}
+              {section === "events" && user && !nav.includes("events") && (
+                <section className="d-panel d-note-panel">
+                  <div>
+                    <h2>Your event is on your home page</h2>
+                    <p>The date, room and who&apos;s coming are on your overview.</p>
+                    <Link className="d-button" href="/dashboard">Go to my overview</Link>
+                  </div>
+                </section>
+              )}
+              {seen("events") && nav.includes("events") && (
                 <Pane active={section === "events"}>
                   <Events
                     user={user}
@@ -809,7 +841,7 @@ export function Dashboard() {
                     <Members
                       user={user}
                       members={members}
-                      onChange={() => setReload((v) => v + 1)}
+                      onChange={(roster) => (roster ? setMembers(roster) : setReload((v) => v + 1))}
                     />
                   )}
                 </Pane>
@@ -827,7 +859,7 @@ export function Dashboard() {
               )}
               {seen("settings") && (
                 <Pane active={section === "settings"}>
-                  <Settings user={user} />
+                  <Settings user={user} profile={profile} />
                 </Pane>
               )}
             </>

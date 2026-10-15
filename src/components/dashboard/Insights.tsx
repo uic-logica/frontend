@@ -166,15 +166,15 @@ export function Insights() {
           <div className="d-section-head">
             <h2>Pipelines</h2>
           </div>
-          <Tally title="Guest speakers" counts={data.speakers} />
-          <Tally title="Membership applications" counts={data.applications} />
+          <Tally title="Guest speakers" counts={data.speakers} labels={{ PENDING: "Candidates", CONFIRMED: "Speakers", DECLINED: "Declined" }} />
+          <Tally title="Membership applications" counts={data.applications} labels={{ NEEDS_INFO: "More info requested" }} />
         </section>
       </div>
     </>
   );
 }
 
-function Tally({ title, counts }: { title: string; counts: Record<string, number> }) {
+function Tally({ title, counts, labels = {} }: { title: string; counts: Record<string, number>; labels?: Record<string, string> }) {
   const rows = Object.entries(counts);
   return (
     <div className="d-tally">
@@ -185,7 +185,7 @@ function Tally({ title, counts }: { title: string; counts: Record<string, number
         <dl>
           {rows.map(([status, count]) => (
             <div key={status}>
-              <dt>{status.charAt(0) + status.slice(1).toLowerCase()}</dt>
+              <dt>{labels[status] ?? status.charAt(0) + status.slice(1).toLowerCase().replace(/_/g, " ")}</dt>
               <dd>{count}</dd>
             </div>
           ))}

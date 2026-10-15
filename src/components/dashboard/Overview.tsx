@@ -145,7 +145,7 @@ export function Overview({
         <section className="d-panel">
           <div className="d-section-head"><h2>Coming up</h2><span className="d-muted">{coming.length} RSVPs</span></div>
           {(coming.length ? coming : upcoming)?.map((event) => (
-            <Link className="d-compact-row" href="/dashboard/events" key={event.id}>
+            <Link className="d-compact-row" href={`/dashboard/events?id=${event.id}`} key={event.id}>
               <span className="d-live-dot" /><span><strong>{event.title}</strong><small>{date(event.startsAt, { month: "short", day: "numeric" })} · {new Date(event.startsAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</small></span>
               <span className="d-badge">{goingIds.has(event.id) ? "Going" : "Open"}</span>
             </Link>
