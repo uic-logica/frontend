@@ -245,6 +245,34 @@ export function Applications() {
           <button className="d-button secondary" type="submit" disabled={busy || detail.status === "DECLINED"}>{ACTION.DECLINED}</button>
         </form>
         {busy && <p className="d-muted" role="status">Saving status…</p>}
+        {detail.status !== "PENDING" && (
+          <p className="d-resend">
+            <button
+              className="d-text-button"
+              disabled={busy}
+              onClick={async () => {
+                if (!(await confirm({
+                  title: `Email ${detail.name} again?`,
+                  body: `They get their "${LABEL[detail.status]}" email again${detail.status === "INTERVIEW" ? ", with a new link to share their availability" : ""}.`,
+                  action: "Send email",
+                }))) return;
+                setBusy(true);
+                setError("");
+                setSaved("");
+                try {
+                  await api(`/api/join/${detail.id}/notify`, { method: "POST" });
+                  setSaved(`${detail.name}: "${LABEL[detail.status]}" email sent again.`);
+                } catch (e) {
+                  setError((e as Error).message);
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            >
+              Resend status email
+            </button>
+          </p>
+        )}
         <div className="d-delete-row">
           <button
             className="d-button secondary danger"
