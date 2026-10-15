@@ -6,23 +6,25 @@ This is an inventory of the checked-in pages, not a specification for pages to b
 
 ## Public shell and home
 
-`src/components/club/ClubShell.tsx`: nav with About, Events, Team, Blog, a theme toggle, Sign in (Dashboard when signed in) and Join. Footer columns: Explore (About, Events, Team, Blog), Get involved (Join LOGICA, Partner with us, Speak at LOGICA, Sign in), Contact (`logica@uic.edu`, Support, GitHub), then Privacy and Terms.
+`src/components/club/ClubShell.tsx`: nav with About, Events, Team, Projects, Blog, Sign in (Dashboard when signed in) and Join. Footer columns: Explore (About, Events, Team, Blog), Get involved (Join LOGICA, Partner with us, Speak at LOGICA, Sign in), Contact (`logica@uic.edu`, Support, GitHub), then Privacy and Terms.
 
 `src/app/page.tsx` renders, in order:
 
 1. Hero: logo, "LOGICA @ UIC", "The Latinx computing community at UIC.", Join LOGICA (`/signup`), See upcoming events, and the next event from `/api/events` (hidden when there is none).
 2. "Coming up": the next three events from `/api/events`, or "No upcoming events scheduled".
-3. "People, not just programs": four generated Chicago scenes (no people) and the "Where our members land" logo slider. The design's member quote is left out until a real one exists.
+3. "Where our members land": the logo slider.
 4. "What you get": Get hired, Learn by building, Find your people.
-5. Join card: Join LOGICA and Attend an event first.
-6. "Supported by": partner logos in four rows (Company visits, Talks "Coming soon", Workshops, Partners) and Partner with us.
+5. "What we're building": the four products from `src/lib/projects.ts`, linking to /projects.
+6. Join card: Join LOGICA and Attend an event first.
+7. "Supported by": partner logos in four rows (Company visits, Talks "Coming soon", Workshops, Partners) and Partner with us.
 
 ## Public pages
 
 | Route and source under `src/app/` | Current content and action |
 | --- | --- |
-| `/about` — `about/page.tsx` | Mission, what the club does, who attends, three values, a Started/Since/Now timeline, and a Team link. |
+| `/about` — `about/page.tsx` | Mission, what the club does, who attends, three values, the groups we work with (WiCyS, SHPE, ACM, LUG), and links to Projects and the Team. |
 | `/team` — `team/page.tsx` | Four static exec profiles with photos, titles and LinkedIn links: Diego Flores, Nicolas Rufino Pinto, Dylan Cervantes, Angelo Moises Guerrero. Join CTA below. No fetched member directory or missing-photo fallback. |
+| `/projects` — `projects/page.tsx`, `lib/projects.ts` | The five projects (what it is, the hard part, what you learn, status, demo day), each linking to its team page in the `.github` repo, and Apply to a Software Team (`/signin?next=/dashboard/teams`). |
 | `/blog` — `blog/page.tsx` | “No posts yet” and a See events link. It does not fetch the community feed. |
 | `/join` — `join/page.tsx`, `join/JoinForm.tsx` | Create your account / Attend an event first, Software Engineer and Board Member roles, three application steps, FAQs, and the application form: Board Member posts to `/api/join`; Software Engineer sends people to the dashboard's Software Teams. |
 | `/events` — `events/page.tsx` | Fetches `/api/events` on the server, switches upcoming/past, shows error/empty states, links event detail, and offers a per-event .ics download and RSVP link. “Never miss one” posts to `/api/subscribe`. |

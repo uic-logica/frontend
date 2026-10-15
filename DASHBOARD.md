@@ -40,6 +40,8 @@ The backend `app/api/dashboard/route.ts` scopes history to the session user, wit
 
 Legacy `/members` and `/speaker-portal` redirect to `/dashboard`; `/profile` goes to `/dashboard/profile`; `/admin/speakers` goes to `/dashboard/speakers`. Public pages keep their separate shell.
 
+Software Teams (`/dashboard/teams`, the build-team application) isn't in the sidebar; members reach it from /projects and /join. The light/dark choice lives only in Settings → Appearance.
+
 ## Opening things
 
 | Pattern | Where | Rule |
