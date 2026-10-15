@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { useConfirm } from "./useConfirm";
+import { windowLabel } from "./Thread";
 import { useUrlState } from "./useUrlState";
 import { type Application, date, initials } from "./types";
 import { Arrow } from "./Icon";
@@ -202,6 +203,23 @@ export function Applications() {
           <div><dt>Applied</dt><dd>{date(detail.createdAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>
           {detail.reviewNote && <div><dt>Review note</dt><dd>{detail.reviewNote}</dd></div>}
           {detail.reviewedAt && <div><dt>Info requested</dt><dd>{date(detail.reviewedAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>}
+          {detail.status === "INTERVIEW" && (
+            <div className="d-split-wide">
+              <dt>Interview availability</dt>
+              <dd>
+                {detail.interviewAvailability?.length ? (
+                  <>
+                    <ul className="d-interview-times">
+                      {detail.interviewAvailability.map((w, i) => <li key={i}>{windowLabel(w)}</li>)}
+                    </ul>
+                    {detail.interviewAvailabilityAt && <small className="d-muted">Shared {date(detail.interviewAvailabilityAt, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</small>}
+                  </>
+                ) : (
+                  <span className="d-muted">Waiting on them. Their interview email has a link to share times.</span>
+                )}
+              </dd>
+            </div>
+          )}
           {detail.decidedAt && <div><dt>Decision recorded</dt><dd>{date(detail.decidedAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>}
           {detail.status === "DECLINED" && <div><dt>May reapply</dt><dd>{detail.canReapply ? "Yes, after the waiting period" : "No"}</dd></div>}
           <div className="d-split-wide"><dt>{detail.track === "SOFTWARE_ENGINEER" ? "Why are you special?" : "Why do you want to join?"}</dt><dd>{detail.why || "No answer provided"}</dd></div>

@@ -611,6 +611,9 @@ export type Application = {
   reviewedAt: string | null;
   canReapply: boolean;
   decidedAt: string | null;
+  /** Times the applicant shared from their interview link (status INTERVIEW). */
+  interviewAvailability?: Window[] | null;
+  interviewAvailabilityAt?: string | null;
 };
 
 /** Mirrors backend BlogPost. Members write and submit; exec publishes or sends back. */
