@@ -21,6 +21,22 @@ const links = [
 let knownSignedIn: boolean | null = null;
 
 /** The real logo: black on paper, white on charcoal. CSS shows the one for the current theme. */
+/**
+ * Whether someone is signed in, for public pages that swap "Create account"
+ * for what a member would do instead. Starts from the last answer so labels
+ * don't flicker between pages, then re-checks (sign-out happens in the dashboard).
+ */
+export function useSignedIn() {
+  const [signedIn, setSignedIn] = useState(knownSignedIn ?? false);
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((me) => setSignedIn((knownSignedIn = !!me?.user)))
+      .catch(() => {});
+  }, []);
+  return signedIn;
+}
+
 export function Logo({ size, priority }: { size: number; priority?: boolean }) {
   return (
     <span className="site-logo" style={{ width: size, height: size }}>
@@ -43,16 +59,9 @@ export function SiteNav() {
     } catch {}
   }, []);
   const [open, setOpen] = useState(false);
-  const [signedIn, setSignedIn] = useState(knownSignedIn ?? false);
+  const signedIn = useSignedIn();
   const account = signedIn ? { href: "/dashboard", label: "Dashboard" } : { href: "/signin", label: "Sign in" };
 
-  // Starts from the last answer so the label doesn't flicker, then re-checks (sign-out happens in the dashboard).
-  useEffect(() => {
-    fetch("/api/auth/session")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((me) => setSignedIn((knownSignedIn = !!me?.user)))
-      .catch(() => {});
-  }, []);
 
   return (
     <header className="site-nav">

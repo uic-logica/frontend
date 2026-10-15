@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import Link from "next/link";
+import { useSignedIn } from "@/components/club/ClubShell";
 import { SiteIcon } from "@/components/site/icons";
 import { ApiError, api } from "@/lib/api";
 
@@ -10,6 +11,21 @@ const TRACKS = [
   { value: "SOFTWARE_ENGINEER", label: "Software Engineer" },
   { value: "BOARD_MEMBER", label: "Board Member" },
 ] as const;
+
+/** Signed out: make an account first. Signed in: skip straight to the application. */
+export function JoinActions() {
+  const signedIn = useSignedIn();
+  return (
+    <div className="join-actions">
+      {signedIn ? (
+        <a href="#apply" className="site-btn">Apply</a>
+      ) : (
+        <Link href="/signup" className="site-btn">Create your account</Link>
+      )}
+      <Link href="/events" className="site-btn secondary">Attend an event first</Link>
+    </div>
+  );
+}
 
 export function JoinForm() {
   const id = useId();
@@ -23,12 +39,7 @@ export function JoinForm() {
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   // Build teams apply from the dashboard, so every application has an account behind it.
-  const [signedIn, setSignedIn] = useState(false);
-  useEffect(() => {
-    api<{ user?: unknown } | null>("/api/auth/session")
-      .then((me) => setSignedIn(!!me?.user))
-      .catch(() => {});
-  }, []);
+  const signedIn = useSignedIn();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();

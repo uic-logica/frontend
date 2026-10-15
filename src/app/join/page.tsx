@@ -2,10 +2,9 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata("Join LOGICA", "Join LOGICA at UIC for computing workshops, mentorship, company visits, and community. All majors and experience levels are welcome.", "/join");
 
-import Link from "next/link";
 import { ClubShell } from "@/components/club/ClubShell";
 import { SiteIcon, type SiteIconName } from "@/components/site/icons";
-import { JoinForm } from "./JoinForm";
+import { JoinActions, JoinForm } from "./JoinForm";
 
 const roles: { title: string; body: string; note: string; icon: SiteIconName }[] = [
   {
@@ -45,10 +44,7 @@ export default function JoinPage() {
           <h1 className="serif">Find your place in UIC&apos;s Latinx computing community.</h1>
           <p>Free, all majors, any experience. Come to an event, or apply to build with us.</p>
         </header>
-        <div className="join-actions">
-          <Link href="/signup" className="site-btn">Create your account</Link>
-          <Link href="/events" className="site-btn secondary">Attend an event first</Link>
-        </div>
+        <JoinActions />
 
         <section className="site-section join-first" aria-labelledby="roles">
           <div className="site-head">
