@@ -1,11 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { Icon } from "./Icon";
+import { useUrlState } from "./useUrlState";
 import { type Documents as Listing, type DriveFile, date } from "./types";
 
 const FOLDER = "application/vnd.google-apps.folder";
+
+/** `?path=` is the folder stack as JSON; anything malformed means the root. */
+function parseTrail(raw: string): { id: string; name: string }[] {
+  if (!raw) return [];
+  try {
+    const value = JSON.parse(raw);
+    return Array.isArray(value) ? value.filter((c) => typeof c?.id === "string" && typeof c?.name === "string") : [];
+  } catch {
+    return [];
+  }
+}
 
 /**
  * The club's Drive, from inside the dashboard. Everything is already in
@@ -14,11 +26,18 @@ const FOLDER = "application/vnd.google-apps.folder";
  * Read-only on purpose — editing happens in Drive, which is better at it.
  */
 export function Documents() {
-  const [data, setData] = useState<Listing | null>(null);
+  const [data, setData] = useState<Listing | null>(() => peek<Listing>("/api/board/documents") ?? null);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
-  // A stack, so "back" is honest — Drive's API gives children, not a path.
-  const [trail, setTrail] = useState<{ id: string; name: string }[]>([]);
+  const [query, setQuery] = useUrlState("q");
+  // A stack, so "back" is honest: Drive's API gives children, not a path.
+  // Kept in the URL, so the browser's Back goes up a folder and a refresh or
+  // a pasted link opens the same folder.
+  const [path, setPath] = useUrlState("path");
+  const trail = parseTrail(path);
+  const setTrail = (next: { id: string; name: string }[], push = false) =>
+    setPath(next.length ? JSON.stringify(next) : "", { push });
+  // The next folder's tiles aren't cached yet: keep the current ones, dimmed.
+  const [stale, setStale] = useState(false);
 
   const folder = trail.length ? trail[trail.length - 1].id : "";
   const searching = query.trim();
@@ -36,9 +55,13 @@ export function Documents() {
         // Cleared here rather than in the effect body so the old folder's
         // tiles don't linger under a new heading, without a second render
         // pass on every keystroke.
-        if (alive) setData(null);
+        const hit = peek<Listing>(`/api/board/documents${params}`);
+        if (alive) {
+          if (hit) setData(hit);
+          setStale(!hit);
+        }
         api<Listing>(`/api/board/documents${params}`)
-          .then((d) => alive && (setData(d), setError("")))
+          .then((d) => alive && (setData(d), setError(""), setStale(false)))
           .catch((e: Error) => alive && setError(e.message));
       },
       searching ? 350 : 0,
@@ -95,7 +118,7 @@ export function Documents() {
               </label>
               {!searching && (
                 <nav className="d-crumbs" aria-label="Folder">
-                  <button className="d-text-button" onClick={() => setTrail([])}>
+                  <button className="d-text-button" onClick={() => setTrail([], true)}>
                     LOGICA
                   </button>
                   {trail.map((crumb, i) => (
@@ -103,7 +126,7 @@ export function Documents() {
                       {" / "}
                       <button
                         className="d-text-button"
-                        onClick={() => setTrail(trail.slice(0, i + 1))}
+                        onClick={() => setTrail(trail.slice(0, i + 1), true)}
                       >
                         {crumb.name}
                       </button>
@@ -124,13 +147,13 @@ export function Documents() {
             )}
 
             {!!data?.files.length && (
-              <ul className="d-tile-grid">
+              <ul className="d-tile-grid" aria-busy={stale} data-stale={stale || undefined}>
                 {data.files.map((file) => (
                   <Tile
                     key={file.id}
                     file={file}
                     onOpenFolder={() =>
-                      setTrail([...trail, { id: file.id, name: file.name }])
+                      setTrail([...trail, { id: file.id, name: file.name }], true)
                     }
                   />
                 ))}

@@ -3892,3 +3892,142 @@
     padding: 0 0 12px;
   }
 }
+
+/* Events: "Edit event" sits beside "Details, materials & check-in"; the edit
+   form replaces the description in place, so it opens where you clicked. */
+.d-event-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+.d-event-item .d-event-form {
+  margin: 12px 0;
+  box-shadow: none;
+  background: var(--d-sunken);
+}
+.d-button.danger {
+  background: var(--d-danger);
+  border-color: var(--d-danger);
+  color: var(--d-surface);
+}
+
+/* Split view: "← All …" only matters once the detail stacks under the list. */
+.d-split-back {
+  display: none;
+  margin-bottom: 8px;
+}
+.d-split-empty {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+}
+@media (max-width: 900px) {
+  .d-split-back {
+    display: inline-flex;
+  }
+  .d-split-empty {
+    display: none;
+  }
+}
+
+/* Money and Pipeline: the open item sits beside the table or board, sticky,
+   instead of below everything. Stacks under 1200px. */
+.d-board-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+  gap: 16px;
+  align-items: start;
+}
+.d-board-split > .d-directory {
+  margin: 0;
+  min-width: 0;
+}
+.d-board-detail {
+  position: sticky;
+  top: 72px;
+  margin: 0;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  scroll-margin-top: 72px;
+}
+.d-board-detail .d-form-grid {
+  grid-template-columns: 1fr 1fr;
+}
+.d-board-stage {
+  margin: 0 0 12px;
+}
+.d-inline-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--d-muted);
+}
+.d-inline-select select {
+  width: auto;
+}
+.d-push-right {
+  margin-left: auto;
+}
+@media (max-width: 1200px) {
+  .d-board-split {
+    grid-template-columns: 1fr;
+  }
+  .d-board-detail {
+    position: static;
+    max-height: none;
+  }
+}
+@media (max-width: 600px) {
+  .d-board-detail .d-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.d-row-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.d-row-link:hover strong,
+.d-row-link[aria-current] strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+tr:has(.d-row-link[aria-current]) > td {
+  background: var(--d-gold-soft);
+}
+.d-kanban-card[aria-current] {
+  outline: 2px solid var(--d-gold);
+}
+/* The event a link pointed at. */
+.d-event-item[aria-current] {
+  box-shadow: inset 3px 0 0 var(--d-gold);
+  scroll-margin-top: 72px;
+}
+.d-checkin {
+  width: min(420px, calc(100vw - 32px));
+}
+.d-event-row-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.d-event-row-link:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.d-tile-grid[data-stale] {
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+.d-password-dialog {
+  max-width: min(460px, calc(100vw - 32px));
+}

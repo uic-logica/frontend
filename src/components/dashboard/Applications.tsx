@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
+import { useConfirm } from "./useConfirm";
+import { useUrlState } from "./useUrlState";
 import { type Application, date, initials } from "./types";
 
 const STATUSES = ["PENDING", "INTERVIEW", "NEEDS_INFO", "ACCEPTED", "DECLINED"] as const;
@@ -41,9 +43,14 @@ const tone = (status: Application["status"]) =>
 
 export function Applications() {
   const [items, setItems] = useState<Application[] | null>(() => peek<Application[]>("/api/join") ?? null);
-  const [status, setStatus] = useState<Application["status"] | "ALL">("ALL");
-  const [query, setQuery] = useState("");
-  const [open, setOpen] = useState<string | null>(null);
+  // In the URL, so refresh, Back and a pasted link keep the applicant and filters.
+  const [statusParam, setStatus] = useUrlState("status", "ALL");
+  const status = statusParam as Application["status"] | "ALL";
+  const [query, setQuery] = useUrlState("q");
+  const [openId, setOpenId] = useUrlState("id");
+  const open = openId || null;
+  const setOpen = (id: string) => setOpenId(id, { push: true });
+  const [confirm, confirmDialog] = useConfirm();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState("");
@@ -73,9 +80,11 @@ export function Applications() {
     [item.name, item.email, TRACK[item.track], item.major, item.gradYear, item.why, item.github, projects(item), item.skills, item.reviewNote]
       .filter(Boolean).join(" ").toLowerCase().includes(needle),
   );
-  // The first match stays selected until you pick another, so the detail
-  // pane is never empty while there is something to read.
-  const detail = filtered?.find((item) => item.id === open) ?? filtered?.[0];
+  // The open applicant stays in the detail even after a decision moves them
+  // out of the current tab, so the next click never lands on someone else.
+  // With nothing picked, the first match shows, so the pane is never empty.
+  const detail = items?.find((item) => item.id === open) ?? filtered?.[0];
+  const next = filtered?.find((item) => item.id !== detail?.id);
 
   async function changeStatus(item: Application, next: Application["status"], extra: Record<string, unknown> = {}) {
     setBusy(true);
@@ -86,6 +95,7 @@ export function Applications() {
         method: "PATCH",
         body: JSON.stringify({ status: next, ...extra }),
       });
+      setOpenId(item.id);
       setReload((value) => value + 1);
       setSaved(`${item.name}: status saved as ${LABEL[next].toLowerCase()}.`);
       setAsking(false);
@@ -99,11 +109,11 @@ export function Applications() {
 
   return (
     <>
+      {confirmDialog}
       <Heading title="Applications" description="Review membership applications and record the next decision." />
       {error && <p className="d-error" role="alert">{error}{" "}
         {!items && <button className="d-text-button" onClick={() => setReload((value) => value + 1)}>Retry loading</button>}
       </p>}
-      {saved && <p className="d-muted" role="status">{saved}</p>}
       <div className="d-split-toolbar">
         <div className="d-tabs d-stage-tabs" aria-label="Filter applications by status">
           {(["ALL", ...STATUSES] as const).map((value) => (
@@ -131,6 +141,7 @@ export function Applications() {
                   aria-controls="application-detail"
                   onClick={() => {
                     setOpen(item.id);
+                    setSaved("");
                     setAsking(false);
                     setNote("");
                     // Stacked on narrow screens: bring the detail into view.
@@ -161,6 +172,17 @@ export function Applications() {
           </div>
           <span className={`d-badge ${tone(detail.status)}`}>{LABEL[detail.status]}</span>
         </div>
+        {saved && (
+          <p className="d-success" role="status">
+            {saved}{" "}
+            {next && (
+              <button className="d-text-button" onClick={() => { setSaved(""); setOpen(next.id); }}>
+                Next: {next.name} →
+              </button>
+            )}
+          </p>
+        )}
+        {error && items && <p className="d-error" role="alert">{error}</p>}
         <dl>
           <div><dt>Track</dt><dd>{TRACK[detail.track]}</dd></div>
           {detail.track === "SOFTWARE_ENGINEER" && detail.github && <>
@@ -191,7 +213,15 @@ export function Applications() {
         <div className="d-actions" aria-busy={busy}>
           {STATUSES.filter((value) => value !== "DECLINED").map((value) => <button key={value} className="d-button secondary" disabled={busy || detail.status === value} onClick={() => value === "NEEDS_INFO" ? setAsking(true) : changeStatus(detail, value)}>{ACTION[value]}</button>)}
         </div>
-        <form className="d-decline-action" onSubmit={(event) => { event.preventDefault(); void changeStatus(detail, "DECLINED", { canReapply }); }}>
+        <form className="d-decline-action" onSubmit={async (event) => {
+          event.preventDefault();
+          if (await confirm({
+            title: `Decline ${detail.name}?`,
+            body: canReapply ? "They'll be told, and can apply again after the waiting period." : "They'll be told, and can't apply again.",
+            action: "Decline",
+            danger: true,
+          })) void changeStatus(detail, "DECLINED", { canReapply });
+        }}>
           <label><input type="checkbox" checked={canReapply} onChange={(event) => setCanReapply(event.target.checked)} /> Can reapply later</label>
           <button className="d-button secondary" type="submit" disabled={busy || detail.status === "DECLINED"}>{ACTION.DECLINED}</button>
         </form>

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Icon } from "./Icon";
 import {
   type Event,
@@ -51,10 +51,13 @@ function Body({
   body,
   events,
   windows,
+  linkEvents,
 }: {
   body: string;
   events: Event[] | null;
   windows: Window[];
+  /** Guests have no Events section, so for them a reference is a chip, not a link. */
+  linkEvents: boolean;
 }) {
   const parts: React.ReactNode[] = [];
   let last = 0;
@@ -81,10 +84,14 @@ function Body({
     } else {
       const live = events?.some((e) => e.id === id);
       parts.push(
-        live ? (
-          <Link className="d-ref" href="/dashboard/events" key={key}>
+        live && linkEvents ? (
+          <Link className="d-ref" href={`/dashboard/events?id=${id}`} key={key}>
             {text}
           </Link>
+        ) : live ? (
+          <span className="d-ref" key={key}>
+            {text}
+          </span>
         ) : (
           <span className="d-ref is-missing" key={key}>
             {text}
@@ -153,7 +160,7 @@ export function Thread({
   /** Fills the work area instead of sitting in a boxed panel. */
   full?: boolean;
 }) {
-  const [messages, setMessages] = useState<SpeakerMessage[] | null>(null);
+  const [messages, setMessages] = useState<SpeakerMessage[] | null>(() => peek<SpeakerMessage[]>(`/api/speakers/${submissionId}/messages`) ?? null);
   const [draft, setDraft] = useState("");
   const [picker, setPicker] = useState<{ start: number; query: string } | null>(
     null,
@@ -175,6 +182,21 @@ export function Thread({
       });
     return () => {
       alive = false;
+    };
+  }, [submissionId]);
+
+  // Replies show up without a reload: re-read when the tab comes back into
+  // focus, and every 30s while it's open and visible.
+  useEffect(() => {
+    const read = () => {
+      if (document.visibilityState !== "visible") return;
+      api<SpeakerMessage[]>(`/api/speakers/${submissionId}/messages`).then(setMessages).catch(() => {});
+    };
+    const timer = window.setInterval(read, 30_000);
+    window.addEventListener("focus", read);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", read);
     };
   }, [submissionId]);
 
@@ -330,7 +352,7 @@ export function Thread({
                       </small>
                     </span>
                   )}
-                  <Body body={m.body} events={events} windows={windows} />
+                  <Body body={m.body} events={events} windows={windows} linkEvents={user.accountKind !== "SPEAKER"} />
                   <time dateTime={m.createdAt}>{clock(m.createdAt)}</time>
                 </div>
               </div>
