@@ -21,6 +21,7 @@ import { Applications } from "./Applications";
 import { Blog } from "./Blog";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
+import { PartnerHome } from "./Partners";
 import { Avatar } from "./Avatar";
 import {
   type SessionUser,
@@ -230,6 +231,8 @@ export function Dashboard() {
         }
         setUser(current);
         setAuthState("ready");
+        // A partner club's page loads its own events; nothing else is theirs to read.
+        if (current.accountKind === "PARTNER") return;
         async function read<T>(
           path: string,
           label: string,
@@ -307,6 +310,7 @@ export function Dashboard() {
     document.title = `${titleFor(section, user, profile)} · LOGICA`;
   }, [section, user, profile, search]);
   const speaker = user?.accountKind === "SPEAKER";
+  const partner = user?.accountKind === "PARTNER";
   const submissionId = profile?.speakerSubmission?.id;
   // The standalone thread is the whole page, so the work area gives up its
   // padding and max-width for it.
@@ -316,7 +320,7 @@ export function Dashboard() {
     leavingRef.current = true;
     setLeaving(true);
     const destination =
-      user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin";
+      speaker || partner ? "/speaker-signin" : "/signin";
     try {
       await signOut(destination);
       forgetSession();
@@ -334,7 +338,9 @@ export function Dashboard() {
   // A speaker's profile is their visit form, so it stays in their rail.
   // Everyone else reaches it from the account menus.
   const sideNav = user?.accountKind === "SPEAKER" ? nav : nav.filter((item) => item !== "profile");
-  const accountLinks = (
+  const accountLinks = partner ? (
+    <Link href="/speaker-signin/set-password">Change password</Link>
+  ) : (
     <>
       <Link href="/dashboard/profile">My profile</Link>
       <Link href="/dashboard/notifications">
@@ -549,12 +555,12 @@ export function Dashboard() {
             <span className="d-logo-chip" aria-hidden="true"><Image src="/logica-logo-black.png" alt="" width={26} height={26} /></span>
           </Link>
           <span className="d-crumbs">
-            <span>{speaker ? "Your visit" : user && runsWorkspace(user) ? "Workspace" : "Member home"}</span>
+            <span>{partner ? "Partner club" : speaker ? "Your visit" : user && runsWorkspace(user) ? "Workspace" : "Member home"}</span>
             <span aria-hidden="true">›</span>
             <strong>{titleFor(section, user, profile)}</strong>
           </span>
           <div>
-            {user?.accountKind !== "SPEAKER" && (
+            {user?.accountKind === "MEMBER" && (
               <button className="d-global-search" type="button" onClick={() => { searchDialog.current?.showModal(); requestAnimationFrame(() => searchInput.current?.focus()); }}>
                 <Icon name="search" />
                 <span>Search…</span>
@@ -566,7 +572,7 @@ export function Dashboard() {
                 {runsWorkspace(user) ? "+ New event" : "Find an event"}
               </Link>
             )}
-            {user && (
+            {user && !partner && (
               <>
                 <Link
                   aria-label={`${unread} unread notifications`}
@@ -651,7 +657,9 @@ export function Dashboard() {
             <>
               {seen("overview") && (
               <Pane active={section === "overview"}>
-                {speaker ? (
+                {partner ? (
+                  <PartnerHome />
+                ) : speaker ? (
                   isConfirmedSpeaker(profile) ? (
                     <SpeakerHome user={user} profile={profile} />
                   ) : (

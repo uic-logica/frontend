@@ -5,6 +5,7 @@ import { api, peek } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
 import { Icon } from "./Icon";
 import { useUrlState } from "./useUrlState";
+import { PartnerAccess } from "./Partners";
 import {
   type Event,
   type Engagement,
@@ -242,6 +243,7 @@ export function Events({
               {selected === e.id && (
                 <EventDetails event={e} onCheckedIn={onEngagement} />
               )}
+              {selected === e.id && runsWorkspace(user) && <PartnerAccess event={e} />}
             </article>
           );
         })}
