@@ -2165,18 +2165,9 @@
   flex-direction: column;
 }
 .d-tool-list li {
-  display: grid;
-  grid-template-columns: minmax(150px, 200px) 1fr;
-  gap: 14px;
   padding: 10px 0;
   border-top: 1px solid var(--d-rule);
   font-size: 13px;
-}
-.d-tool-list code {
-  color: var(--d-ink);
-}
-.d-tool-list span {
-  color: var(--d-muted);
 }
 .d-link-event {
   display: block;
@@ -3619,10 +3610,6 @@
   }
   .d-nav-divider {
     margin-top: 12px;
-  }
-  .d-tool-list li {
-    grid-template-columns: 1fr;
-    gap: 4px;
   }
   .d-thread-compose {
     padding-inline: 16px;
