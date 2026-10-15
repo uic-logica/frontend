@@ -297,11 +297,12 @@ export function Board({ kind, members, events }: Props) {
   }
 
   const detail = items?.find((i) => i.id === open) ?? null;
+  const hasDetail = !!detail;
   // When the detail stacks under the list, bring it into view.
   useEffect(() => {
     if (open && matchMedia("(max-width: 1200px)").matches)
       requestAnimationFrame(() => document.getElementById("board-detail")?.scrollIntoView());
-  }, [open]);
+  }, [open, hasDetail]);
 
   return (
     <>

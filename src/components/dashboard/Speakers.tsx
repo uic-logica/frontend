@@ -186,11 +186,12 @@ export function Speakers({
     }
   }
   const detail = speakers?.find((s) => s.id === open) ?? null;
+  const hasDetail = !!detail;
   // On a narrow screen the detail stacks under the list: bring it into view.
   useEffect(() => {
     if (open && matchMedia("(max-width: 900px)").matches)
       requestAnimationFrame(() => document.getElementById("speaker-detail")?.scrollIntoView());
-  }, [open]);
+  }, [open, hasDetail]);
   const stage = (s: Speaker) =>
     !s.submittedAt ? "Draft" : s.status === "PENDING" ? "Candidate" : s.status === "CONFIRMED" ? "Speaker" : "Declined";
   const banners = (
