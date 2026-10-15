@@ -829,7 +829,7 @@ export function Dashboard() {
                     <Members
                       user={user}
                       members={members}
-                      onChange={() => setReload((v) => v + 1)}
+                      onChange={(roster) => (roster ? setMembers(roster) : setReload((v) => v + 1))}
                     />
                   )}
                 </Pane>

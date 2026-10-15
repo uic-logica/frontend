@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { api } from "@/lib/api";
+import { useConfirm } from "./useConfirm";
 import { useUrlState } from "./useUrlState";
 import { Empty, Heading } from "./Overview";
 import {
@@ -26,8 +27,10 @@ export function Members({
 }: {
   user: SessionUser;
   members: Member[] | null;
-  onChange: () => void;
+  /** The new roster, or nothing when your own access changed and the whole session must reload. */
+  onChange: (roster?: Member[]) => void;
 }) {
+  const [confirm, confirmDialog] = useConfirm();
   const isExec = user.role === "EXEC_BOARD";
   const [credentialEmail, setCredentialEmail] = useState("");
   const [issued, setIssued] = useState<{ email: string; password: string } | null>(null);
@@ -52,11 +55,33 @@ export function Members({
   }, [members, query, filter]);
 
   async function update(id: string, body: Record<string, unknown>) {
+    const person = members?.find((m) => m.id === id);
+    const who = person?.name || person?.email || "this member";
+    // Exec means the club's money and everyone's access: confirm going to or
+    // from it, and any change to your own role.
+    if (
+      typeof body.role === "string" &&
+      (body.role === "EXEC_BOARD" || person?.role === "EXEC_BOARD" || id === user.id) &&
+      !(await confirm({
+        title: id === user.id ? "Change your own role?" : `Make ${who} ${body.role === "EXEC_BOARD" ? "exec" : body.role === "BOARD" ? "board" : "a member"}?`,
+        body:
+          id === user.id
+            ? "You may lose access to this page right away."
+            : body.role === "EXEC_BOARD"
+              ? "Exec can see and change the club's money, applications and everyone's access."
+              : "They lose exec access (money, applications, member roles) right away.",
+        action: "Change role",
+        danger: true,
+      }))
+    )
+      return;
     setBusy(id);
     setError("");
     try {
       await api("/api/board/members", { method: "PATCH", body: JSON.stringify({ id, ...body }) });
-      onChange();
+      // Only the roster changed, unless it was you: then the session did too.
+      if (id === user.id) onChange();
+      else onChange(await api<Member[]>("/api/board/members"));
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -76,7 +101,7 @@ export function Members({
       });
       setIssued(result);
       setConfirmed(false);
-      onChange();
+      onChange(await api<Member[]>("/api/board/members"));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not issue password.");
     } finally {
@@ -86,6 +111,7 @@ export function Members({
 
   return (
     <>
+      {confirmDialog}
       <Heading
         title="Members"
         description={
