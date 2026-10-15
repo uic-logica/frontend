@@ -1,42 +1,12 @@
 import { pageMetadata, siteUrl } from "@/lib/seo";
+import { getEvents } from "@/lib/events";
 import { ClubShell } from "@/components/club/ClubShell";
-import { EventsList, type ClubEvent } from "./EventsList";
+import { EventsList } from "./EventsList";
+import { SubscribeForm } from "./SubscribeForm";
 
 export const metadata = pageMetadata("Events & Workshops", "Explore LOGICA events at UIC, including computing workshops, company visits, guest speakers, and community gatherings.", "/events");
 
-// ponytail: fetched on the server and cached, so the page arrives with the
-// events already in the HTML — no "Loading…" flash on every visit. Next
-// revalidates in the background, so a new event shows up within 5 minutes
-// without anyone redeploying.
-const REVALIDATE_SECONDS = 300;
-
-type EventsData = { upcoming: ClubEvent[]; past: ClubEvent[]; error: string | null };
-
-function split(events: ClubEvent[], error: string | null): EventsData {
-  const now = Date.now();
-  return {
-    upcoming: events.filter((e) => new Date(e.startsAt).getTime() >= now),
-    past: events.filter((e) => new Date(e.startsAt).getTime() < now),
-    error,
-  };
-}
-
-async function getEvents(): Promise<EventsData> {
-  // The browser goes through next.config.ts's /api/* rewrite; on the server
-  // there's no origin to be relative to, so hit the backend directly.
-  const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-  try {
-    const res = await fetch(`${base}/api/events`, { next: { revalidate: REVALIDATE_SECONDS } });
-    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-    const body = await res.json();
-    return split(Array.isArray(body) ? body : [], null);
-  } catch {
-    // A backend blip shouldn't blank the whole page — the rest is static copy.
-    return split([], "Couldn't load events right now.");
-  }
-}
-
-/** Layout is logica.pen V3 "03 · Events" (desktop and mobile): title, tabs, events. */
+/** Layout is logica.pen V4 "03 Events": tabs, the list, the newsletter beside it. */
 export default async function EventsPage() {
   const { upcoming, past, error } = await getEvents();
 
@@ -57,15 +27,18 @@ export default async function EventsPage() {
           }).replace(/</g, "\\u003c") }}
         />
       ))}
-      <main className="site-page events-page">
-        <header className="page-head">
-          <h1>Events</h1>
-          <p>
-            <span className="only-d">From workshops to socials, hack nights to tech talks — we host events each semester.</span>
-            <span className="only-m">Workshops, socials, hack nights, and tech talks throughout the semester.</span>
-          </p>
+      <main className="site-page">
+        <header className="site-page-head">
+          <h1 className="serif">Events</h1>
         </header>
-        <EventsList upcoming={upcoming} past={past} error={error} />
+        <div className="events-columns">
+          <EventsList upcoming={upcoming} past={past} error={error} />
+          <aside className="site-card events-aside" aria-labelledby="notify-title">
+            <h2 id="notify-title">Never miss one</h2>
+            <p>One email a week with what&apos;s coming up. No spam, unsubscribe any time.</p>
+            <SubscribeForm />
+          </aside>
+        </div>
       </main>
     </ClubShell>
   );

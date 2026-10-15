@@ -12,6 +12,10 @@ const paths = {
   external: "M14 4h6v6M20 4l-9 9M18 14v6H4V6h6",
   mail: "M3 6h18v12H3zM3 7l9 6 9-6",
   check: "M5 12.5l4.5 4.5L19 7",
+  mic: "M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3M19 11a7 7 0 0 1-14 0M12 18v3",
+  calendar: "M4 6h16v15H4zM4 10h16M8 3v4M16 3v4",
+  pin: "M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5",
+  download: "M12 4v11M7 10l5 5 5-5M5 20h14",
 };
 
 export type SiteIconName = keyof typeof paths;
