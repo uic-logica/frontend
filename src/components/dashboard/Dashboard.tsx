@@ -307,7 +307,7 @@ export function Dashboard() {
   // so this runs on those too.
   const search = useSearchParams();
   useEffect(() => {
-    document.title = `${titleFor(section, user, profile)} · LOGICA`;
+    document.title = `${titleFor(user?.accountKind === "PARTNER" ? "overview" : section, user, profile)} · LOGICA`;
   }, [section, user, profile, search]);
   const speaker = user?.accountKind === "SPEAKER";
   const partner = user?.accountKind === "PARTNER";
@@ -557,7 +557,7 @@ export function Dashboard() {
           <span className="d-crumbs">
             <span>{partner ? "Partner club" : speaker ? "Your visit" : user && runsWorkspace(user) ? "Workspace" : "Member home"}</span>
             <span aria-hidden="true">›</span>
-            <strong>{titleFor(section, user, profile)}</strong>
+            <strong>{titleFor(partner ? "overview" : section, user, profile)}</strong>
           </span>
           <div>
             {user?.accountKind === "MEMBER" && (
