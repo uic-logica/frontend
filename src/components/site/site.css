@@ -467,3 +467,54 @@
   .legal-columns { grid-template-columns: 1fr; gap: 32px; }
   .legal-toc { position: static; }
 }
+
+.site-check { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--d-success-soft); color: var(--d-success); }
+
+/* ── Partner (V4 · Site · 12 Partner) ── */
+.partner-page { padding-top: 56px; display: grid; grid-template-columns: minmax(0, 504px) minmax(0, 520px); justify-content: space-between; gap: 48px 96px; align-items: start; }
+.partner-intro { margin-bottom: 0; }
+.partner-ways { margin: 8px 0 0 !important; padding: 0; list-style: none; border-top: 1px solid var(--d-rule); }
+.partner-ways li { padding: 18px 0; border-bottom: 1px solid var(--d-rule); font-size: 17px; font-weight: 600; }
+.partner-card { padding: 36px; display: flex; flex-direction: column; gap: 16px; }
+.partner-card h2 { margin: 0; font-size: 30px; line-height: 1.35; }
+.partner-card > p { margin: 0; }
+.partner-card .auth-alt a { color: var(--d-ink); font-weight: 600; }
+@media (max-width: 999px) { .partner-page { grid-template-columns: 1fr; } }
+@media (max-width: 599px) { .partner-card { padding: 28px 20px; } }
+
+/* ── Speak (V4 · Site · 13 Speak, 13b states) ── */
+.site-req { color: var(--d-ember); font-weight: 600; }
+.site fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.site fieldset legend { padding: 0; margin-bottom: 6px; }
+.site-check.bad { background: var(--d-danger-soft); color: var(--d-danger); }
+.site-check.info { background: var(--d-info-soft); color: var(--d-info); }
+.speak-intro { display: flex; flex-direction: column; gap: 32px; }
+.speak-intro .site-page-head { margin-bottom: 0; }
+.site-page-head .speak-lead { font-size: 24px !important; line-height: 1.4 !important; color: var(--d-ink) !important; }
+.speak-confirmed h2 { margin: 0 0 12px; font-size: 26px; }
+.speak-confirmed ul { margin: 0; padding: 0; list-style: none; }
+.speak-confirmed li { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--d-rule); }
+.speak-confirmed li > span:last-child { display: flex; flex-direction: column; }
+.speak-confirmed strong { font-size: 16px; font-weight: 600; }
+.speak-confirmed small { font-size: 14px; color: var(--d-faint); }
+.speak-initials { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--d-gold-soft); color: var(--d-gold-text); font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.speak-forms { display: flex; flex-direction: column; gap: 24px; }
+.speak-card { padding: 40px; display: flex; flex-direction: column; gap: 20px; }
+.speak-card h2 { margin: 0; font-size: 30px; line-height: 1.35; }
+.speak-card > p { margin: 0; }
+.speak-windows { display: flex; flex-direction: column; gap: 10px; }
+.speak-window { display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--d-rule); border-radius: var(--d-radius-sm); background: var(--d-sunken); }
+.speak-window-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; }
+.speak-window-head button { display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent; color: var(--d-faint); cursor: pointer; }
+.speak-window-head button:hover { background: var(--d-hover); color: var(--d-ink); }
+.speak-window small { font-size: 12px; }
+.speak-add { align-self: flex-start; }
+.speak-optin > div { display: flex; gap: 24px; }
+.speak-optin label { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; }
+.speak-link-row { display: flex; gap: 8px; }
+.site .speak-link-row input { background: var(--d-sunken); }
+.speak-another { align-self: flex-start; padding: 0; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--d-ink); cursor: pointer; }
+.speak-another:hover { text-decoration: underline; text-underline-offset: 3px; }
+.speak-draft { max-width: 600px; }
+.speak-prefilled { padding: 10px 12px; border-radius: var(--d-radius-sm); background: var(--d-gold-soft); color: var(--d-gold-text) !important; font-size: 14px !important; }
+@media (max-width: 599px) { .speak-card { padding: 28px 20px; } }

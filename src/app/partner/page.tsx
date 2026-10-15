@@ -1,8 +1,8 @@
 "use client";
 
 import { useId, useState } from "react";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
+import { ClubShell } from "@/components/club/ClubShell";
+import { SiteIcon } from "@/components/site/icons";
 import { ApiError, api } from "@/lib/api";
 
 export default function PartnerPage() {
@@ -45,126 +45,59 @@ export default function PartnerPage() {
 
   return (
     <ClubShell>
-      <PageContainer>
-        <SectionContainer>
-          <h1 className="type-title text-3xl text-white md:text-4xl">Partner with LOGICA</h1>
-          <p className="mt-4 max-w-3xl text-body-lg text-white">
-            Companies and organisations can help UIC students learn through company visits,
-            talks, workshops, and sponsorships. Tell us what you would like to build with LOGICA.
+      <main className="site-page partner-page">
+        <header className="site-page-head partner-intro">
+          <p className="site-kicker">PARTNERS</p>
+          <h1 className="serif">Partner with LOGICA</h1>
+          <p>
+            Companies and organisations can help UIC students learn through company visits, talks, workshops, and
+            sponsorships. Tell us what you would like to build with LOGICA.
           </p>
-        </SectionContainer>
+          <ul className="partner-ways">
+            {["Company visits", "Talks", "Workshops", "Sponsorships"].map((way) => (
+              <li key={way}>{way}</li>
+            ))}
+          </ul>
+        </header>
 
-        <SectionContainer>
-          {done ? (
-            <div className="club-card max-w-2xl p-8 md:p-12">
-              <h2 className="type-h3 text-white">Inquiry received</h2>
-              <p className="mt-3 text-body text-white">
-                Thank you for reaching out. Your message is now with the LOGICA board.
-              </p>
+        {done ? (
+          <div className="site-card partner-card" role="status">
+            <span className="site-check" aria-hidden="true"><SiteIcon name="check" size={20} /></span>
+            <h2 className="serif">Inquiry received</h2>
+            <p className="site-muted">Thank you for reaching out. Your message is now with the LOGICA board.</p>
+          </div>
+        ) : (
+          <form onSubmit={submit} className="site-card partner-card site-form">
+            <h2 className="serif">Tell us about it</h2>
+            <p className="site-muted">Share a contact and a short note about the partnership you have in mind.</p>
+            {error && <p className="site-error" role="alert">{error}</p>}
+            <label className="site-field" htmlFor={`${id}-organisation`}>
+              <span>Organisation</span>
+              <input id={`${id}-organisation`} required maxLength={100} autoComplete="organization" placeholder="Company or group" value={organisation} onChange={(event) => setOrganisation(event.target.value)} />
+            </label>
+            <div className="site-form-row">
+              <label className="site-field" htmlFor={`${id}-name`}>
+                <span>Your name</span>
+                <input id={`${id}-name`} required maxLength={100} autoComplete="name" placeholder="Full name" value={contactName} onChange={(event) => setContactName(event.target.value)} />
+              </label>
+              <label className="site-field" htmlFor={`${id}-email`}>
+                <span>Your email</span>
+                <input id={`${id}-email`} type="email" required maxLength={100} autoComplete="email" autoCapitalize="none" spellCheck={false} placeholder="you@company.com" value={contactEmail} onChange={(event) => setContactEmail(event.target.value)} />
+              </label>
             </div>
-          ) : (
-            <form onSubmit={submit} className="club-card max-w-2xl p-8 md:p-12">
-              <h2 className="type-h3 text-white">Start a conversation</h2>
-              <p className="mt-3 text-body text-white">
-                Share a contact and a short note about the partnership you have in mind.
-              </p>
-
-              {error && (
-                <div
-                  className="mt-6 rounded-lg border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
-                  role="alert"
-                >
-                  {error}
-                </div>
-              )}
-
-              <div className="mt-6 grid gap-5">
-                <div className="grid gap-2">
-                  <label htmlFor={`${id}-organisation`} className="type-label text-white">
-                    Organisation
-                  </label>
-                  <input
-                    id={`${id}-organisation`}
-                    required
-                    maxLength={100}
-                    autoComplete="organization"
-                    value={organisation}
-                    onChange={(event) => setOrganisation(event.target.value)}
-                    className={darkInputClass}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <label htmlFor={`${id}-name`} className="type-label text-white">
-                    Your name
-                  </label>
-                  <input
-                    id={`${id}-name`}
-                    required
-                    maxLength={100}
-                    autoComplete="name"
-                    value={contactName}
-                    onChange={(event) => setContactName(event.target.value)}
-                    className={darkInputClass}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <label htmlFor={`${id}-email`} className="type-label text-white">
-                    Your email
-                  </label>
-                  <input
-                    id={`${id}-email`}
-                    type="email"
-                    required
-                    maxLength={100}
-                    autoComplete="email"
-                    autoCapitalize="none"
-                    spellCheck={false}
-                    value={contactEmail}
-                    onChange={(event) => setContactEmail(event.target.value)}
-                    className={darkInputClass}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <label htmlFor={`${id}-link`} className="type-label text-white">
-                    Website or profile <span className="opacity-60">(optional)</span>
-                  </label>
-                  <input
-                    id={`${id}-link`}
-                    type="url"
-                    maxLength={2000}
-                    placeholder="https://example.com"
-                    value={link}
-                    onChange={(event) => setLink(event.target.value)}
-                    className={darkInputClass}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <label htmlFor={`${id}-message`} className="type-label text-white">
-                    What are you interested in doing with LOGICA?
-                  </label>
-                  <textarea
-                    id={`${id}-message`}
-                    required
-                    rows={6}
-                    maxLength={2000}
-                    value={message}
-                    onChange={(event) => setMessage(event.target.value)}
-                    className={darkInputClass}
-                  />
-                </div>
-              </div>
-
-              <button type="submit" disabled={busy} className={`${darkButtonClass} mt-8`}>
-                {busy ? "Sending…" : "Send partnership inquiry"}
-              </button>
-            </form>
-          )}
-        </SectionContainer>
-      </PageContainer>
+            <label className="site-field" htmlFor={`${id}-link`}>
+              <span>Website or profile (optional)</span>
+              <input id={`${id}-link`} type="url" maxLength={2000} placeholder="https://" value={link} onChange={(event) => setLink(event.target.value)} />
+            </label>
+            <label className="site-field" htmlFor={`${id}-message`}>
+              <span>What are you interested in doing with LOGICA?</span>
+              <textarea id={`${id}-message`} required rows={4} maxLength={2000} placeholder="A talk in the spring, a visit for 20 students, a sponsored hackathon prize…" value={message} onChange={(event) => setMessage(event.target.value)} />
+            </label>
+            <button type="submit" disabled={busy} className="site-btn block">{busy ? "Sending…" : "Send partnership inquiry"}</button>
+            <p className="auth-alt">Prefer email? <a href="mailto:logica@uic.edu">logica@uic.edu</a></p>
+          </form>
+        )}
+      </main>
     </ClubShell>
   );
 }
