@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { Icon } from "./Icon";
 import { type Documents as Listing, type DriveFile, date } from "./types";
@@ -14,7 +14,7 @@ const FOLDER = "application/vnd.google-apps.folder";
  * Read-only on purpose — editing happens in Drive, which is better at it.
  */
 export function Documents() {
-  const [data, setData] = useState<Listing | null>(null);
+  const [data, setData] = useState<Listing | null>(() => peek<Listing>("/api/board/documents") ?? null);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   // A stack, so "back" is honest — Drive's API gives children, not a path.
@@ -36,7 +36,7 @@ export function Documents() {
         // Cleared here rather than in the effect body so the old folder's
         // tiles don't linger under a new heading, without a second render
         // pass on every keystroke.
-        if (alive) setData(null);
+        if (alive) setData(peek<Listing>(`/api/board/documents${params}`) ?? null);
         api<Listing>(`/api/board/documents${params}`)
           .then((d) => alive && (setData(d), setError("")))
           .catch((e: Error) => alive && setError(e.message));

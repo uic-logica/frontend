@@ -238,7 +238,7 @@ function EventDetails({
 }) {
   const [materials, setMaterials] = useState<
     { id: string; filename: string; visibility: string }[] | null
-  >(null);
+  >(() => peek(`/api/events/${event.id}/materials`) ?? null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [code, setCode] = useState("");

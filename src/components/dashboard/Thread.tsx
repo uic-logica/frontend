@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Icon } from "./Icon";
 import {
   type Event,
@@ -153,7 +153,7 @@ export function Thread({
   /** Fills the work area instead of sitting in a boxed panel. */
   full?: boolean;
 }) {
-  const [messages, setMessages] = useState<SpeakerMessage[] | null>(null);
+  const [messages, setMessages] = useState<SpeakerMessage[] | null>(() => peek<SpeakerMessage[]>(`/api/speakers/${submissionId}/messages`) ?? null);
   const [draft, setDraft] = useState("");
   const [picker, setPicker] = useState<{ start: number; query: string } | null>(
     null,

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { api, clearApiCache, peek, signOut } from "@/lib/api";
+import { api, clearApiCache, peek, prefetch, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
 import { ProfileEditor, Settings } from "./Profile";
@@ -288,6 +288,23 @@ export function Dashboard() {
               ]
             : []),
         ]);
+        // Warm what the other sections read, so their first visit paints
+        // at once instead of "Loading…". Idle-time, and only what this
+        // account is allowed to open.
+        if (alive)
+          prefetch([
+            ...(current.accountKind === "SPEAKER" ? [] : ["/api/posts", "/api/email-preferences", "/api/mcp-tokens"]),
+            ...(runsWorkspace(current)
+              ? [
+                  "/api/board/items",
+                  "/api/board/items?kind=MONEY",
+                  "/api/board/items?kind=OUTREACH",
+                  "/api/board/budgets",
+                  "/api/board/insights",
+                  "/api/join",
+                ]
+              : []),
+          ]);
       } catch {
         if (alive && !leavingRef.current) setAuthState("error");
       }

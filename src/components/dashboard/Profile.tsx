@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { ResumeUpload } from "@/components/shell/ResumeUpload";
 
 import { AvailabilityGrid } from "./AvailabilityGrid";
@@ -626,7 +626,7 @@ export function Settings({ user }: { user: SessionUser }) {
   const [prefs, setPrefs] = useState<{
     eventReminders: boolean;
     announcements: boolean;
-  } | null>(null);
+  } | null>(() => peek("/api/email-preferences") ?? null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);

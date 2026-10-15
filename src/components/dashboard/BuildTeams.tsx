@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ResumeUpload } from "@/components/shell/ResumeUpload";
-import { api } from "@/lib/api";
+import { api, peek } from "@/lib/api";
 import { Heading } from "./Overview";
 import { type Profile, type SessionUser, date } from "./types";
 
@@ -81,7 +81,7 @@ function reapplyDate(value: string) {
 
 export function BuildTeams({ user, profile }: { user: SessionUser; profile: Profile | null }) {
   const initial = loadDraft(user.id);
-  const [mine, setMine] = useState<Mine[] | null>(null);
+  const [mine, setMine] = useState<Mine[] | null>(() => peek<Mine[]>("/api/join/mine")?.filter((row) => row.track === "SOFTWARE_ENGINEER") ?? null);
   const [draft, setDraft] = useState<Draft>({
     ...initial,
     name: initial.name || profile?.name || user.name || "",
