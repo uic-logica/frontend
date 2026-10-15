@@ -134,9 +134,6 @@ export default async function Home() {
           <a href="#coming-up" className="home-peek"><SiteIcon name="chevronDown" /> Coming up this month</a>
         </section>
 
-        {/* Slides up over the pinned hero (site.css, .home-rest). */}
-        <div className="home-rest">
-
         <section id="coming-up" className="site-wrap home-block" aria-labelledby="coming-up-title">
           <div className="site-head">
             <h2 id="coming-up-title" className="serif">Coming up</h2>
@@ -216,7 +213,6 @@ export default async function Home() {
             ))}
           </dl>
         </section>
-        </div>
       </main>
     </ClubShell>
   );
