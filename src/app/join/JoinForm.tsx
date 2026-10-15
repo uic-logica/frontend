@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import Link from "next/link";
-import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
+import { SiteIcon } from "@/components/site/icons";
 import { ApiError, api } from "@/lib/api";
 
 /** Matches `TRACKS` in the backend's lib/membership-application.ts. */
@@ -61,172 +61,97 @@ export function JoinForm() {
 
   if (done) {
     return (
-      <div className="club-card max-w-2xl p-8 md:p-12">
-        <h2 className="type-h3 text-white">Application received</h2>
-        <p className="mt-3 text-body text-white">
-          The board can see it now. You&apos;ll hear back by email at{" "}
-          <strong>{email}</strong>.
+      <div className="site-card join-form" role="status">
+        <h2 className="serif">Application received</h2>
+        <p className="site-muted">
+          The board can see it now. You&apos;ll hear back by email at <strong>{email}</strong>.
         </p>
-        <p className="mt-4">
-          <Link href="/events" className="font-semibold text-signal hover:underline">
-            Come to an event while you wait →
-          </Link>
-        </p>
+        <Link href="/events" className="site-link">Come to an event while you wait <SiteIcon name="arrow" /></Link>
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} className="club-card max-w-2xl p-8 md:p-12">
-      <h2 className="type-h3 text-white">Apply to join</h2>
-      <p className="mt-3 text-body text-white">
-        Rolling basis — there is no deadline to miss.
-      </p>
+    <form onSubmit={submit} className="site-card join-form site-form">
+      <h2 className="serif">Apply to join</h2>
+      <p className="site-muted">Rolling basis, so there&apos;s no deadline to miss.</p>
 
-      {error && (
-        <div
-          className="rounded-lg mt-6 border-2 border-signal bg-signal/10 px-4 py-3 text-body-sm text-white"
-          role="alert"
-        >
-          {error}
-        </div>
-      )}
+      {error && <p className="site-error" role="alert">{error}</p>}
 
-      <div className="mt-6 grid gap-5">
-        <div className="grid gap-2">
-          <label htmlFor={`${id}-track`} className="type-label text-white">
-            Which track?
-          </label>
-          <select
-            id={`${id}-track`}
-            value={track}
-            onChange={(e) => setTrack(e.target.value)}
-            className={darkInputClass}
-          >
-            {TRACKS.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </div>
+      <label className="site-field" htmlFor={`${id}-track`}>
+        <span>Which track?</span>
+        <select id={`${id}-track`} value={track} onChange={(e) => setTrack(e.target.value)}>
+          {TRACKS.map((t) => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+        </select>
+      </label>
 
-        {track === "SOFTWARE_ENGINEER" ? (
-          <div className="grid gap-4">
-            <p className="text-body text-white">
-              Software Team applications happen in your dashboard, under Software Teams. You need an account with your
-              @uic.edu email, then you tell us your GitHub, hours a week and which projects you want.
-            </p>
-            <Link
-              href={signedIn ? "/dashboard/teams" : "/signup?next=/dashboard/teams"}
-              className={`${darkButtonClass} text-center`}
-            >
-              {signedIn ? "Apply in your dashboard" : "Create an account to apply"}
-            </Link>
-            {!signedIn && (
-              <p className="text-body-sm text-white">
-                Already have one?{" "}
-                <Link href="/signin?next=/dashboard/teams" className="font-semibold text-signal hover:underline">
-                  Sign in
-                </Link>
-              </p>
-            )}
-          </div>
-        ) : (
+      {track === "SOFTWARE_ENGINEER" ? (
         <>
-        <div className="grid gap-2">
-          <label htmlFor={`${id}-name`} className="type-label text-white">
-            Full name
-          </label>
-          <input
-            id={`${id}-name`}
-            required
-            maxLength={100}
-            autoComplete="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={darkInputClass}
-          />
-        </div>
-
-        <div className="grid gap-2">
-          <label htmlFor={`${id}-email`} className="type-label text-white">
-            UIC email
-          </label>
-          <input
-            id={`${id}-email`}
-            type="email"
-            required
-            maxLength={254}
-            autoComplete="email"
-            autoCapitalize="none"
-            spellCheck={false}
-            placeholder="netid@uic.edu"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={darkInputClass}
-          />
-        </div>
-
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div className="grid gap-2">
-            <label htmlFor={`${id}-major`} className="type-label text-white">
-              Major
-            </label>
-            <input
-              id={`${id}-major`}
-              required
-              maxLength={100}
-              value={major}
-              onChange={(e) => setMajor(e.target.value)}
-              className={darkInputClass}
-            />
-          </div>
-          <div className="grid gap-2">
-            <label htmlFor={`${id}-year`} className="type-label text-white">
-              Graduation year
-            </label>
-            <input
-              id={`${id}-year`}
-              type="number"
-              required
-              inputMode="numeric"
-              min={1900}
-              max={2100}
-              placeholder="2028"
-              value={gradYear}
-              onChange={(e) => setGradYear(e.target.value)}
-              className={darkInputClass}
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-2">
-          <label htmlFor={`${id}-why`} className="type-label text-white">
-            Why LOGICA?
-          </label>
-          <textarea
-            id={`${id}-why`}
-            required
-            minLength={40}
-            rows={5}
-            maxLength={2000}
-            value={why}
-            onChange={(e) => setWhy(e.target.value)}
-            className={darkInputClass}
-          />
-          <p className="text-body-sm text-white opacity-60">
-            At least 40 characters. No prior experience needed; say what you want to get out of it.
+          <p className="site-muted">
+            Software Team applications happen in your dashboard, under Software Teams. You need an account with your
+            @uic.edu email, then you tell us your GitHub, hours a week and which projects you want.
           </p>
-        </div>
+          <Link href={signedIn ? "/dashboard/teams" : "/signup?next=/dashboard/teams"} className="site-btn block">
+            {signedIn ? "Apply in your dashboard" : "Create an account to apply"}
+          </Link>
+          {!signedIn && (
+            <p className="site-hint">
+              Already have one? <Link href="/signin?next=/dashboard/teams">Sign in</Link>
+            </p>
+          )}
         </>
-        )}
-      </div>
-
-      {track !== "SOFTWARE_ENGINEER" && (
-        <button type="submit" disabled={busy} className={`${darkButtonClass} mt-8`}>
-          {busy ? "Sending…" : "Submit application"}
-        </button>
+      ) : (
+        <>
+          <label className="site-field" htmlFor={`${id}-name`}>
+            <span>Full name</span>
+            <input id={`${id}-name`} required maxLength={100} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+          </label>
+          <label className="site-field" htmlFor={`${id}-email`}>
+            <span>UIC email</span>
+            <input
+              id={`${id}-email`}
+              type="email"
+              required
+              maxLength={254}
+              autoComplete="email"
+              autoCapitalize="none"
+              spellCheck={false}
+              placeholder="netid@uic.edu"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
+          <div className="site-form-row">
+            <label className="site-field" htmlFor={`${id}-major`}>
+              <span>Major</span>
+              <input id={`${id}-major`} required maxLength={100} value={major} onChange={(e) => setMajor(e.target.value)} />
+            </label>
+            <label className="site-field" htmlFor={`${id}-year`}>
+              <span>Graduation year</span>
+              <input
+                id={`${id}-year`}
+                type="number"
+                required
+                inputMode="numeric"
+                min={1900}
+                max={2100}
+                placeholder="2028"
+                value={gradYear}
+                onChange={(e) => setGradYear(e.target.value)}
+              />
+            </label>
+          </div>
+          <label className="site-field" htmlFor={`${id}-why`}>
+            <span>Why LOGICA?</span>
+            <textarea id={`${id}-why`} required minLength={40} rows={5} maxLength={2000} value={why} onChange={(e) => setWhy(e.target.value)} />
+            <small>At least 40 characters. No prior experience needed; say what you want to get out of it.</small>
+          </label>
+          <button type="submit" disabled={busy} className="site-btn block">
+            {busy ? "Sending…" : "Submit application"}
+          </button>
+        </>
       )}
     </form>
   );

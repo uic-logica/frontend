@@ -166,10 +166,10 @@ export default async function Home() {
           <div className="site-head">
             <h2 id="get-title" className="serif">What you get</h2>
           </div>
-          <ul className="home-benefits">
+          <ul className="site-features">
             {benefits.map((b) => (
               <li key={b.title} className="site-card">
-                <span className="home-benefit-icon"><SiteIcon name={b.icon} size={20} /></span>
+                <span className="site-feature-icon"><SiteIcon name={b.icon} size={20} /></span>
                 <h3>{b.title}</h3>
                 <p>{b.text}</p>
                 <Link href={b.link.href} className="site-link">{b.link.label} <SiteIcon name="arrow" /></Link>
