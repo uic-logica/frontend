@@ -136,11 +136,13 @@
   font-size: 14px;
   font-weight: 600;
 }
-.dash a {
+/* Resets sit at zero specificity (:where) so any component class — .d-button,
+   .d-cal-step, .d-send — beats them without needing a .dash prefix. */
+:where(.dash) a {
   color: inherit;
   text-decoration: none;
 }
-.dash button {
+:where(.dash) button {
   cursor: pointer;
   font: inherit;
   color: inherit;
@@ -383,7 +385,8 @@
   height: 72px;
   font-size: 24px;
 }
-.d-menu {
+.d-menu,
+.d-mobile-actions {
   display: none;
 }
 
@@ -399,12 +402,12 @@
 /* A full-height chat sizes itself to the viewport rather than growing the
    page — the log scrolls, the rest stays put. */
 .dash:has(.d-main-flush) {
-  height: 100vh;
+  height: 100dvh;
   min-height: 0;
 }
 .dash:has(.d-main-flush) .d-workarea {
   min-height: 0;
-  height: 100vh;
+  height: 100dvh;
 }
 .d-topbar {
   position: sticky;
@@ -1272,7 +1275,7 @@
   margin-left: 8px;
   padding: 1px 8px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   vertical-align: middle;
 }
@@ -1635,6 +1638,13 @@
   min-height: 36px;
   min-width: 150px;
 }
+/* position: relative makes the scroller the containing block for anything
+   absolutely positioned inside it (screen-reader-only labels in cells).
+   Without it those escape to the page and widen it on phones. */
+.d-table-scroll,
+.d-stage-tabs {
+  position: relative;
+}
 .d-table-scroll {
   overflow: auto;
   scrollbar-width: thin;
@@ -1684,6 +1694,20 @@
 }
 .d-directory .d-detail-row:hover > td {
   background: none;
+}
+/* Inline edits inside a row (role, title) get the field look, compact. */
+.d-directory td select {
+  min-height: 32px;
+  padding: 4px 30px 4px 10px;
+  border: 1px solid var(--d-rule-strong);
+  border-radius: var(--d-radius-sm);
+  background: var(--d-surface)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238c897f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5M7 9l5-5 5 5'/%3E%3C/svg%3E")
+    no-repeat right 9px center;
+  appearance: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--d-ink);
 }
 .d-table-person {
   display: flex;
@@ -2187,7 +2211,7 @@
   position: absolute;
   right: 12px;
   bottom: 8px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--d-faint);
 }
 /* A resolved [[event:…]] reference. */
@@ -2638,7 +2662,7 @@
   height: var(--cal-row);
   padding-right: 9px;
   text-align: right;
-  font-size: 11px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
   color: var(--d-faint);
   transform: translateY(-0.55em);
@@ -2801,17 +2825,28 @@
   }
   .d-brand {
     padding: 0;
+    min-height: 40px;
   }
   .d-brand small {
     display: none;
+  }
+  .d-mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  .d-mobile-actions .d-theme {
+    width: 40px;
+    height: 40px;
   }
   .d-menu {
     display: flex;
     gap: 8px;
     align-items: center;
-    position: absolute;
-    right: 12px;
-    top: 10px;
+    min-height: 40px;
     padding: 6px 10px;
     border-radius: var(--d-radius-sm);
     font-size: 14px;
@@ -2837,9 +2872,17 @@
   .d-account {
     margin-inline: -16px;
   }
+  .d-sidebar {
+    min-height: 60px;
+  }
   .d-workarea {
     margin: 0;
-    min-height: calc(100vh - 56px);
+    min-height: calc(100dvh - 60px);
+  }
+  /* Full-height chat: the work area is whatever the header leaves, so the
+     composer stays on screen (dvh tracks the mobile browser's toolbars). */
+  .dash:has(.d-main-flush) .d-workarea {
+    height: calc(100dvh - 60px);
   }
   .d-topbar {
     display: none;
@@ -2888,6 +2931,54 @@
   }
   .d-panel {
     padding: 18px;
+  }
+  /* A directory is edge-to-edge inside its card; the generic panel padding
+     above would otherwise inset the table and double the toolbar's. */
+  .d-panel.d-directory {
+    padding: 0;
+  }
+  /* Thumb-sized targets: text actions grow to 40px tall without changing
+     how they look, and switches get bigger. */
+  .d-text-button,
+  .d-text-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+  .d-text-link {
+    margin-top: 6px;
+  }
+  .dash .d-setting-row input[type="checkbox"] {
+    width: 46px;
+    height: 28px;
+    border-radius: 14px;
+  }
+  .d-setting-row input[type="checkbox"]::after {
+    width: 24px;
+    height: 24px;
+  }
+  .d-setting-row input[type="checkbox"]:checked::after {
+    transform: translateX(18px);
+  }
+  .d-form input[type="checkbox"],
+  .d-form input[type="radio"] {
+    width: 22px;
+    height: 22px;
+  }
+  .d-directory td select {
+    min-height: 40px;
+  }
+  /* 16px stops iOS Safari zooming the page when a field takes focus. */
+  .d-form input,
+  .d-form textarea,
+  .d-form select,
+  .d-search input,
+  .d-filter select,
+  .d-thread-input textarea,
+  .d-window-row input,
+  .d-agent-new input,
+  .d-cal-jump input {
+    font-size: 16px;
   }
   .d-form-grid {
     grid-template-columns: 1fr;

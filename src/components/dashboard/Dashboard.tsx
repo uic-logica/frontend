@@ -267,15 +267,26 @@ export function Dashboard() {
             LOGICA<small>University of Illinois Chicago</small>
           </span>
         </Link>
-        <button
-          className="d-menu"
-          aria-expanded={menu}
-          aria-controls="dashboard-nav"
-          onClick={() => setMenu(!menu)}
-        >
-          <Icon name="menu" />
-          <span>Menu</span>
-        </button>
+        {/* Phones lose the top bar, so its theme switch rides along here. */}
+        <div className="d-mobile-actions">
+          <button
+            type="button"
+            className="d-theme"
+            onClick={toggleTheme}
+            aria-label="Switch light or dark theme"
+          >
+            <Icon name="sun" />
+          </button>
+          <button
+            className="d-menu"
+            aria-expanded={menu}
+            aria-controls="dashboard-nav"
+            onClick={() => setMenu(!menu)}
+          >
+            <Icon name="menu" />
+            <span>Menu</span>
+          </button>
+        </div>
         <div
           id="dashboard-nav"
           className={`d-sidebar-inner ${menu ? "is-open" : ""}`}
