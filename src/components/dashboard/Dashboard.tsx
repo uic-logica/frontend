@@ -404,6 +404,27 @@ export function Dashboard() {
     searchDialog.current?.close();
     setQuery("");
   };
+  // The saved choice is applied to <html> before paint by the root layout's
+  // script; that only runs on a full load, so arriving here by client-side
+  // navigation re-applies it. Unset means "follow the system".
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("logica-theme");
+      if (saved === "light" || saved === "dark")
+        document.documentElement.dataset.theme = saved;
+    } catch {}
+  }, []);
+  function toggleTheme() {
+    const root = document.documentElement;
+    const dark =
+      root.dataset.theme === "dark" ||
+      (!root.dataset.theme &&
+        matchMedia("(prefers-color-scheme: dark)").matches);
+    root.dataset.theme = dark ? "light" : "dark";
+    try {
+      localStorage.setItem("logica-theme", root.dataset.theme);
+    } catch {}
+  }
   return (
     <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
       <a href="#dashboard-content" className="d-skip">
@@ -556,6 +577,15 @@ export function Dashboard() {
                 {runsWorkspace(user) ? "+ New" : "Find an event"}
               </Link>
             )}
+            <button
+              type="button"
+              className="d-theme"
+              onClick={toggleTheme}
+              aria-label="Switch light or dark theme"
+              title="Switch light or dark theme"
+            >
+              <Icon name="sun" />
+            </button>
             {user && (
               <>
                 <Link
