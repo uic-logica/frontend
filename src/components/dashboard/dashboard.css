@@ -4003,3 +4003,7 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 .d-email-log td:first-child { white-space: nowrap; }
 .d-email-log td small { display: block; margin-top: 4px; font-size: 12px; color: var(--d-muted); }
 .d-email-log .d-empty, .d-email-log > p { padding: 24px 16px; }
+
+/* Applications: the times an applicant shared for their interview. */
+.d-interview-times { margin: 0 0 6px; padding-left: 18px; }
+.d-interview-times li { margin: 2px 0; }

@@ -605,3 +605,7 @@ body:has(> .site) { background: var(--d-bg); }
 .home-building span { font-size: 14px; color: var(--d-muted); }
 @media (max-width: 999px) { .home-building { grid-template-columns: 1fr 1fr; } .projects-facts { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 599px) { .home-building, .projects-facts { grid-template-columns: 1fr; } .projects-item { padding: 24px 20px; } .projects-top { flex-wrap: wrap; } }
+
+/* Interview availability (app/interview/[token]): the dashboard's week grid on a site card. */
+.interview-card { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.interview-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
