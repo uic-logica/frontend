@@ -518,3 +518,42 @@
 .speak-draft { max-width: 600px; }
 .speak-prefilled { padding: 10px 12px; border-radius: var(--d-radius-sm); background: var(--d-gold-soft); color: var(--d-gold-text) !important; font-size: 14px !important; }
 @media (max-width: 599px) { .speak-card { padding: 28px 20px; } }
+
+/* ── Forms/[slug] (V4 · Site · 15, 15b) ── */
+.forms-page { max-width: 640px; padding-top: 56px; display: flex; flex-direction: column; gap: 32px; }
+.forms-head { margin-bottom: 0; gap: 12px; }
+.forms-submit { align-self: flex-start; padding: 0 28px; }
+.forms-home { align-self: flex-start; }
+.forms-other { text-align: left; }
+.forms-summary { padding: 14px 16px; border: 1px solid var(--d-danger); border-radius: var(--d-radius-sm); background: var(--d-danger-soft); color: var(--d-danger); font-size: 14px; outline: none; }
+.forms-summary p { margin: 0 0 4px; }
+.forms-summary strong { font-size: 15px; }
+.forms-summary ul { margin: 6px 0 0; padding-left: 18px; }
+.site-field .forms-field-error { color: var(--d-danger); }
+.forms-unavailable { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 36px; border-radius: var(--d-radius); background: var(--d-sunken); }
+.forms-unavailable h2 { margin: 0; font-size: 26px; }
+.forms-unavailable p { margin: 0; font-size: 15px; color: var(--d-muted); }
+
+/* ── Feed (V4 · Site · 19, 19b) ── */
+.feed-page { display: flex; flex-direction: column; gap: 40px; }
+.feed-page .site-page-head { margin-bottom: 0; }
+.feed-composer { padding: 24px; gap: 12px; }
+.feed-actions { display: flex; align-items: center; gap: 16px; font-size: 14px; }
+.feed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin: 0; padding: 0; list-style: none; }
+.feed-post { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.feed-author { display: flex; align-items: center; gap: 10px; }
+.feed-author .speak-initials { width: 32px; height: 32px; font-size: 12px; }
+.feed-author > span:last-child { display: flex; flex-direction: column; }
+.feed-author strong { font-size: 15px; font-weight: 600; }
+.feed-author small { font-size: 13px; color: var(--d-faint); }
+.feed-post p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--d-muted); overflow-wrap: anywhere; }
+@media (max-width: 999px) { .feed-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 599px) { .feed-grid { grid-template-columns: 1fr; } }
+
+/* ── 404 and the error page (V4 · Site · 20) ── */
+.status-page { max-width: 560px; padding-top: 140px; display: flex; flex-direction: column; gap: 16px; }
+.status-page .status-code { margin: 0; font-size: 120px; line-height: 1; color: var(--d-ink); }
+.status-page h1 { margin: 0; font-size: 40px; line-height: 1.3; }
+.status-page > p { margin: 0; font-size: 18px; }
+.status-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 16px; }
+@media (max-width: 599px) { .status-page { padding-top: 64px; } .status-page .status-code { font-size: 88px; } .status-page h1 { font-size: 30px; } }
