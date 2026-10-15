@@ -8,6 +8,8 @@ import { LegalPage, LSection, LList, contactLine } from "@/components/legal/Lega
 export default function TermsPage() {
   return (
     <LegalPage
+      eyebrow="LEGAL"
+      numbered
       title="Terms of Use"
       dek="The basic rules for using this site and being part of LOGICA @ UIC."
       updated="September 2026"
@@ -15,7 +17,7 @@ export default function TermsPage() {
       <LSection title="Acceptance">
         <p>
           By using this site, you agree to these terms. If you don&apos;t agree, please
-          don&apos;t use it — and email us if something here doesn&apos;t sit right, we&apos;re
+          don&apos;t use it, and email us if something here doesn&apos;t sit right. We&apos;re
           reasonable people.
         </p>
       </LSection>
@@ -23,7 +25,7 @@ export default function TermsPage() {
       <LSection title="Who this is for">
         <p>
           LOGICA @ UIC is a registered student organization at the University of Illinois
-          Chicago. This site is for UIC students, faculty, staff, alumni, and guests we invite —
+          Chicago. This site is for UIC students, faculty, staff, alumni, and guests we invite:
           speakers, partners, and prospective members. We&apos;re a student org, not a university
           department; nothing here is an official statement from UIC.
         </p>
@@ -54,14 +56,14 @@ export default function TermsPage() {
         <p>
           RSVPing to an event helps us plan, but doesn&apos;t guarantee a seat if a venue or
           workshop has limited capacity. Be respectful of speakers, sponsors, and fellow members
-          at events — we can remove attendees who aren&apos;t.
+          at events. We can remove attendees who aren&apos;t.
         </p>
       </LSection>
 
       <LSection title="Content you submit">
         <p>
-          If you submit content through a form — a speaker application, an event write-up, a
-          testimonial — you&apos;re confirming it&apos;s yours to share and you&apos;re giving us
+          If you submit content through a form (a speaker application, an event write-up, a
+          testimonial), you&apos;re confirming it&apos;s yours to share and you&apos;re giving us
           permission to use it for LOGICA purposes (event pages, promotion, our records). You
           keep ownership of it.
         </p>
@@ -76,7 +78,7 @@ export default function TermsPage() {
 
       <LSection title="Third-party links">
         <p>
-          We link to things we don&apos;t control — sponsor sites, event pages, Discord, forms
+          We link to things we don&apos;t control: sponsor sites, event pages, Discord, forms
           hosted elsewhere. We&apos;re not responsible for what happens once you leave our site.
         </p>
       </LSection>

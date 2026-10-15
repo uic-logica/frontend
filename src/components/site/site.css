@@ -437,3 +437,33 @@
 .auth-steps li[aria-current] { color: var(--d-ink); font-weight: 500; }
 .auth-steps li[aria-current] span { background: var(--d-primary); color: var(--d-on-primary); }
 .auth-steps li[data-done] span { background: var(--d-success-soft); color: var(--d-success); }
+
+/* ── Support, Privacy, Terms (V4 · Site · 16–18) ── */
+.legal-page .site-page-head { padding-bottom: 32px; margin-bottom: 48px; }
+.site-page-head .legal-updated { font-size: 13px !important; color: var(--d-faint) !important; }
+.legal-columns { display: grid; grid-template-columns: 240px minmax(0, 800px); gap: 80px; align-items: start; }
+.legal-toc { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.legal-toc h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--d-faint); }
+.legal-toc ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; border-left: 1px solid var(--d-rule); }
+.legal-toc a { display: block; padding: 2px 0 2px 12px; font-size: 14px; color: var(--d-muted); text-decoration: none; }
+.legal-toc a:hover { color: var(--d-ink); }
+.legal-content { display: flex; flex-direction: column; gap: 56px; max-width: 760px; counter-reset: legal; }
+.legal-content.numbered { gap: 40px; }
+.legal-section { display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 24px; font-size: 17px; line-height: 1.65; color: var(--d-muted); }
+.legal-section > h2 { margin: 0; font-size: 32px; line-height: 1.35; color: var(--d-ink); }
+.legal-content.numbered .legal-section > h2 { font-size: 26px; }
+.legal-content.numbered .legal-section::before { counter-increment: legal; content: counter(legal, decimal-leading-zero); font-size: 13px; font-weight: 600; color: var(--d-gold-text); margin-bottom: -8px; }
+.legal-section p { margin: 0; }
+.legal-section a { color: var(--d-ink); text-underline-offset: 3px; }
+.legal-section strong { color: var(--d-ink); font-weight: 600; }
+.legal-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+.legal-contact { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.legal-contact p { font-size: 15px; }
+.legal-contact .legal-contact-line { font-size: 17px; color: var(--d-ink); }
+.legal-contact .site-btn { margin-top: 10px; }
+.legal-section .site-faq p { font-size: 16px; }
+.legal-section .site-faq summary { font-size: 17px; color: var(--d-ink); }
+@media (max-width: 899px) {
+  .legal-columns { grid-template-columns: 1fr; gap: 32px; }
+  .legal-toc { position: static; }
+}

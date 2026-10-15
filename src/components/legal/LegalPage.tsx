@@ -1,49 +1,66 @@
-import type { ReactNode } from "react";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { Children, isValidElement, type ReactNode } from "react";
+import { ClubShell } from "@/components/club/ClubShell";
 
-/** Shared shell for the three legal/utility pages — a paper well for dense
- * reading text, instead of white-on-wallpaper for paragraphs of fine print. */
+const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+/** Support, Privacy and Terms (logica.pen V4 16–18): header, an "On this page" list, the sections. */
 export function LegalPage({
+  eyebrow,
   title,
   dek,
   updated,
+  numbered = false,
   children,
 }: {
+  eyebrow: string;
   title: string;
   dek?: string;
   updated: string;
+  /** Privacy and Terms number their sections 01, 02, …; Support doesn't. */
+  numbered?: boolean;
   children: ReactNode;
 }) {
+  // The "On this page" list is read straight off the sections, so it can't drift from them.
+  const toc = Children.toArray(children).flatMap((child) =>
+    isValidElement<{ title?: string }>(child) && child.props.title ? [child.props.title] : [],
+  );
   return (
     <ClubShell>
-      <PageContainer>
-        <SectionContainer>
-          <h1 className="type-h1 text-white">{title}</h1>
-          {dek && <p className="mt-3 max-w-2xl text-body-lg text-white/70">{dek}</p>}
-          <p className="mt-4 text-caption uppercase tracking-[0.2em] text-white/40">
-            Last updated {updated}
-          </p>
-        </SectionContainer>
-        <SectionContainer>
-          <div className="max-w-measure rounded-2xl bg-paper p-8 text-ink sm:p-12">{children}</div>
-        </SectionContainer>
-      </PageContainer>
+      <main className="site-page legal-page">
+        <header className="site-page-head">
+          <p className="site-kicker">{eyebrow}</p>
+          <h1 className="serif">{title}</h1>
+          {dek && <p>{dek}</p>}
+          <p className="legal-updated">Last updated {updated}</p>
+        </header>
+        <div className="legal-columns">
+          <nav className="legal-toc" aria-label="On this page">
+            <h2>ON THIS PAGE</h2>
+            <ul>
+              {toc.map((t) => (
+                <li key={t}><a href={`#${slug(t)}`}>{t}</a></li>
+              ))}
+            </ul>
+          </nav>
+          <div className={`legal-content${numbered ? " numbered" : ""}`}>{children}</div>
+        </div>
+      </main>
     </ClubShell>
   );
 }
 
 export function LSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mt-10 first:mt-0">
-      <h2 className="text-xl font-bold text-ink">{title}</h2>
-      <div className="mt-3 space-y-3 text-body text-ink/80">{children}</div>
+    <section id={slug(title)} className="legal-section">
+      <h2 className="serif">{title}</h2>
+      {children}
     </section>
   );
 }
 
 export function LList({ items }: { items: ReactNode[] }) {
   return (
-    <ul className="list-disc space-y-2 pl-5">
+    <ul className="legal-list">
       {items.map((item, i) => (
         <li key={i}>{item}</li>
       ))}
@@ -51,20 +68,14 @@ export function LList({ items }: { items: ReactNode[] }) {
   );
 }
 
-/** Native <details>/<summary> accordion — no JS, no library, works with
- * find-in-page and screen readers for free. */
+/** Native <details>/<summary> accordion: no JS, works with find-in-page and screen readers. */
 export function Faq({ items }: { items: { q: string; a: ReactNode }[] }) {
   return (
-    <div className="divide-y divide-ink/10 border-y border-ink/10">
+    <div className="site-faq">
       {items.map((item) => (
-        <details key={item.q} className="group py-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink marker:content-none">
-            {item.q}
-            <span className="shrink-0 text-ink/40 transition-transform group-open:rotate-45" aria-hidden>
-              +
-            </span>
-          </summary>
-          <div className="mt-3 text-body text-ink/80">{item.a}</div>
+        <details key={item.q}>
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
         </details>
       ))}
     </div>
@@ -73,10 +84,6 @@ export function Faq({ items }: { items: { q: string; a: ReactNode }[] }) {
 
 export const contactLine = (
   <>
-    Questions? Email{" "}
-    <a href="mailto:logica@uic.edu" className="font-semibold text-ink underline underline-offset-2">
-      logica@uic.edu
-    </a>
-    .
+    Questions? Email <a href="mailto:logica@uic.edu">logica@uic.edu</a>.
   </>
 );
