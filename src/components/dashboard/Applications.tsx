@@ -6,6 +6,7 @@ import { Empty, Heading } from "./Overview";
 import { useConfirm } from "./useConfirm";
 import { useUrlState } from "./useUrlState";
 import { type Application, date, initials } from "./types";
+import { Arrow } from "./Icon";
 
 const STATUSES = ["PENDING", "INTERVIEW", "NEEDS_INFO", "ACCEPTED", "DECLINED"] as const;
 const LABEL = {
@@ -177,7 +178,7 @@ export function Applications() {
             {saved}{" "}
             {next && (
               <button className="d-text-button" onClick={() => { setSaved(""); setOpen(next.id); }}>
-                Next: {next.name} →
+                Next: {next.name} <Arrow />
               </button>
             )}
           </p>
@@ -193,7 +194,7 @@ export function Applications() {
             <div><dt>Resume</dt><dd>
               {detail.resumeOnFile && detail.userId && <a href={`/api/resume/${detail.userId}`}>Download PDF</a>}
               {detail.resumeOnFile && detail.resumeUrl && " · "}
-              {detail.resumeUrl && <a href={detail.resumeUrl} target="_blank" rel="noreferrer">Open link ↗</a>}
+              {detail.resumeUrl && <a href={detail.resumeUrl} target="_blank" rel="noreferrer">Open link <Arrow /></a>}
               {!detail.resumeOnFile && !detail.resumeUrl && "Not provided"}
             </dd></div>
           </>}

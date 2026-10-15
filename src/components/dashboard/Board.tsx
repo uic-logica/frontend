@@ -4,7 +4,7 @@ import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { useConfirm } from "./useConfirm";
 import { useUrlState } from "./useUrlState";
-import { Icon } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 import {
   type BoardItem,
   type BoardKind,
@@ -977,7 +977,7 @@ function Detail({
                 <input name="receiptUrl" type="url" defaultValue={item.receiptUrl ?? ""} placeholder="https://drive.google.com/…" />
                 {item.receiptUrl && (
                   <a href={item.receiptUrl} target="_blank" rel="noreferrer noopener">
-                    Open receipt ↗
+                    Open receipt <Arrow />
                   </a>
                 )}
               </label>

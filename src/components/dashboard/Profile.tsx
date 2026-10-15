@@ -7,6 +7,7 @@ import { ResumeUpload } from "@/components/shell/ResumeUpload";
 import { AvailabilityGrid } from "./AvailabilityGrid";
 import { Heading } from "./Overview";
 import { Avatar } from "./Avatar";
+import { Arrow } from "./Icon";
 import {
   type Profile,
   type SessionUser,
@@ -372,7 +373,7 @@ export function ProfileEditor({
                 target="_blank"
                 rel="noreferrer"
               >
-                Download resume ↗
+                Download resume <Arrow />
               </a>
             )}
           </section>

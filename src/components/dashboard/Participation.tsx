@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { linkParts } from "@/lib/linkify";
 import { api, peek } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
-import { Icon } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 import { useUrlState } from "./useUrlState";
 import { PartnerAccess } from "./Partners";
 import {
@@ -183,13 +183,13 @@ export function Events({
                       <>
                         {" · "}
                         <a href={e.link} target="_blank" rel="noopener noreferrer">
-                          Event page ↗
+                          Event page <Arrow />
                         </a>
                       </>
                     )}
                     {" · "}
                     <a href={`/events/${e.id}`} target="_blank" rel="noopener noreferrer">
-                      Public page ↗
+                      Public page <Arrow />
                     </a>
                   </small>
                 </div>
@@ -504,7 +504,7 @@ function EventDetails({
           >
             {m.filename}
             <span>
-              {m.visibility === "INTERNAL" ? "Board only" : "Download"} ↗
+              {m.visibility === "INTERNAL" ? "Board only" : "Download"} <Arrow />
             </span>
           </a>
         ))}

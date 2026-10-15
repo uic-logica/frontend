@@ -2169,6 +2169,22 @@
   border-top: 1px solid var(--d-rule);
   font-size: 13px;
 }
+/* Scheduling sits in its own box, then the decisions, then the thread: three steps, not one stack. */
+.d-speaker-schedule {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 28px 0 24px;
+  padding: 20px;
+  border: 1px solid var(--d-rule);
+  border-radius: var(--d-radius);
+  background: var(--d-sunken);
+}
+.d-speaker-schedule > * { width: 100%; }
+.d-speaker-schedule > .d-button { width: auto; }
+.d-speaker-actions { gap: 10px; }
+.d-speaker-actions + .d-thread { margin-top: 32px; }
 .d-link-event {
   display: block;
   margin: 16px 0 4px;
@@ -3956,3 +3972,11 @@ tr:has(.d-row-link[aria-current]) > td {
 .d-partner-access {
   margin-top: 18px;
 }
+
+.d-speaker-schedule .d-link-event { margin: 0; }
+
+/* Trailing arrow on text links (Icon.tsx Arrow). */
+.d-arrow { display: inline-flex; vertical-align: -0.12em; margin-left: 2px; }
+.d-arrow svg { width: 0.95em; height: 0.95em; transition: transform 0.15s ease; }
+a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px); }
+@media (prefers-reduced-motion: reduce) { .d-arrow svg { transition: none; } }
