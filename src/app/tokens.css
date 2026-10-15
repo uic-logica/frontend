@@ -3,6 +3,7 @@
    layout sets that attribute before first paint. Spec: "V4 ·" frames in logica.pen. */
 .dash, .site, body:has(> .site) {
   --d-bg: #faf9f5;
+  --d-logo-tile: #ffffff; /* company logos keep brand colours, so their tile stays light */
   --d-sidebar: #f3f1ea;
   --d-surface: #ffffff;
   --d-sunken: #f0eee6;
@@ -34,6 +35,7 @@
 }
 [data-theme="dark"] .dash, [data-theme="dark"] .site, [data-theme="dark"] body:has(> .site) {
   --d-bg: #262624;
+  --d-logo-tile: #d8d5cc; /* dimmed warm off-white: navy logos still read, less glare */
   --d-sidebar: #1f1e1d;
   --d-surface: #30302e;
   --d-sunken: #2b2a28;
@@ -61,6 +63,8 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .dash, :root:not([data-theme="light"]) .site, :root:not([data-theme="light"]) body:has(> .site) {
     --d-bg: #262624;
+    --d-logo-tile: #d8d5cc;
+  --d-logo-tile: #d8d5cc; /* dimmed warm off-white: navy logos still read, less glare */
     --d-sidebar: #1f1e1d;
     --d-surface: #30302e;
     --d-sunken: #2b2a28;
