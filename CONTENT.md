@@ -10,7 +10,7 @@ This is an inventory of the checked-in pages, not a specification for pages to b
 
 `src/app/page.tsx` renders, in order:
 
-1. Hero: logo, "LOGICA @ UIC", "The Latinx computing community at UIC.", Join LOGICA (`/signup`), See upcoming events, and the next event from `/api/events` (hidden when there is none).
+1. Hero: logo beside a large "LOGICA at UIC" (the h1) with "Latinx computing and academics community" under it, Join LOGICA (`/signup`), See upcoming events, and the next event from `/api/events` (hidden when there is none).
 2. "Coming up": the next three events from `/api/events`, or "No upcoming events scheduled".
 3. "Where our members land": the logo slider.
 4. "What you get": Get hired, Learn by building, Find your people.
