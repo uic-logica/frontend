@@ -213,7 +213,7 @@ function overdue(value: string) {
 
 function upcoming(events: Event[] | null) {
   const now = Date.now();
-  return (events ?? []).filter((e) => new Date(e.startsAt).getTime() >= now);
+  return (events ?? []).filter((e) => !e.startsAt || new Date(e.startsAt).getTime() >= now);
 }
 
 type Pin = {

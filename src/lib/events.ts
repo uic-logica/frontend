@@ -2,7 +2,8 @@ export type ClubEvent = {
   id: string;
   title: string;
   location: string | null;
-  startsAt: string;
+  /** Null = date TBD. */
+  startsAt: string | null;
   description?: string | null;
   link: string | null;
 };
@@ -18,7 +19,8 @@ const REVALIDATE_SECONDS = 300;
 // browser: comparing against Date.now() during hydration would read a
 // different clock than the prerender did and React would flag a mismatch.
 export function splitEvents(events: ClubEvent[], error: string | null, now = Date.now()): EventsData {
-  const at = (e: ClubEvent) => new Date(e.startsAt).getTime();
+  // A TBD event (no date yet) is upcoming, after everything that has a date.
+  const at = (e: ClubEvent) => (e.startsAt ? new Date(e.startsAt).getTime() : Infinity);
   return {
     upcoming: events.filter((e) => at(e) >= now).sort((a, b) => at(a) - at(b)),
     past: events.filter((e) => at(e) < now),
@@ -53,7 +55,9 @@ const time = new Intl.DateTimeFormat("en-US", { ...zone, hour: "numeric", minute
 const full = new Intl.DateTimeFormat("en-US", { ...zone, weekday: "long", month: "long", day: "numeric", hour: "numeric", minute: "2-digit" });
 
 /** The pieces the event cards show: "OCT" / "21" / "Tue 6:00 PM" / "6:00 PM" / "Tuesday, October 21, 6:00 PM". */
-export function eventDate(startsAt: string) {
+export function eventDate(startsAt: string | null) {
+  // Date TBD: the cards show "TBD" where the day would be.
+  if (!startsAt) return { month: "", day: "TBD", weekdayTime: "Date TBD", time: "Time TBD", full: "Date and time TBD" };
   const d = new Date(startsAt);
   return {
     month: month.format(d).toUpperCase(),

@@ -13,6 +13,8 @@ import {
   roleName,
   runsWorkspace,
   date,
+  isUpcoming,
+  when,
 } from "./types";
 
 export function Heading({
@@ -91,7 +93,7 @@ export function Overview({
   // Speakers never reach this — they get SpeakerHome instead.
   const board = runsWorkspace(user);
   const upcoming = events
-    ?.filter((e) => new Date(e.startsAt) >= new Date())
+    ?.filter((e) => isUpcoming(e.startsAt))
     .slice(0, 3);
   const pending = speakers?.filter((s) => s.status === "PENDING");
   const checks = profile
@@ -146,7 +148,7 @@ export function Overview({
           <div className="d-section-head"><h2>Coming up</h2><span className="d-muted">{coming.length} RSVPs</span></div>
           {(coming.length ? coming : upcoming)?.map((event) => (
             <Link className="d-compact-row" href={`/dashboard/events?id=${event.id}`} key={event.id}>
-              <span className="d-live-dot" /><span><strong>{event.title}</strong><small>{date(event.startsAt, { month: "short", day: "numeric" })} · {new Date(event.startsAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</small></span>
+              <span className="d-live-dot" /><span><strong>{event.title}</strong><small>{when(event.startsAt)}</small></span>
               <span className="d-badge">{goingIds.has(event.id) ? "Going" : "Open"}</span>
             </Link>
           ))}

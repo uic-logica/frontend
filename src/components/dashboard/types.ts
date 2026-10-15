@@ -16,7 +16,7 @@ export type Window = {
 export type TalkEvent = {
   id: string;
   title: string;
-  startsAt: string;
+  startsAt: string | null;
   location: string | null;
 };
 /** Null until the talk has an event — there is nothing to count before that. */
@@ -79,7 +79,8 @@ export type Event = {
   description: string | null;
   location: string | null;
   link: string | null;
-  startsAt: string;
+  /** Null = date TBD. */
+  startsAt: string | null;
 };
 export type Post = {
   id: string;
@@ -189,7 +190,7 @@ export type BoardItem = {
   paidBy: BoardPerson | null;
   stageChangedBy: BoardPerson | null;
   createdBy: BoardPerson | null;
-  event: { id: string; title: string; startsAt: string } | null;
+  event: { id: string; title: string; startsAt: string | null } | null;
   budget: { id: string; label: string } | null;
 };
 
@@ -281,7 +282,7 @@ export type ClubInsights = {
   events: {
     id: string;
     title: string;
-    startsAt: string;
+    startsAt: string | null;
     location: string | null;
     going: number;
     attended: number;
@@ -514,11 +515,29 @@ export function roleName(user: SessionUser, profile?: Profile | null) {
   if (user.accountKind === "PARTNER") return "Partner club";
   return STAGE_LABELS[stageOf(user, profile)];
 }
+/** A short date, or "Date TBD" for an event whose date isn't set. */
 export function date(
-  value: string,
+  value: string | null,
   options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" },
 ) {
+  if (!value) {
+    // Date tiles ask for the month and the day separately: show "TBD" once, in the day.
+    if (options.day && !options.month && !options.weekday) return "TBD";
+    if (options.month && !options.day) return "";
+    return "Date TBD";
+  }
   return new Date(value).toLocaleDateString("en-US", options);
+}
+
+/** "Tuesday, October 21 · 6:00 PM", or "Date TBD". */
+export function when(value: string | null, options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }) {
+  if (!value) return "Date TBD";
+  return `${date(value, options)} · ${new Date(value).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`;
+}
+
+/** Still ahead, or not dated yet (TBD counts as upcoming). */
+export function isUpcoming(value: string | null) {
+  return !value || new Date(value).getTime() >= new Date().getTime();
 }
 export function initials(name: string | null) {
   return (name || "LOGICA")

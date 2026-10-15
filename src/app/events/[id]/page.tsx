@@ -43,7 +43,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
               {event.link && (
                 <a href={event.link} target="_blank" rel="noopener noreferrer" className="site-btn">RSVP</a>
               )}
-              <button type="button" className="site-btn secondary" onClick={() => downloadIcs(event)}>Add to calendar</button>
+              {event.startsAt && <button type="button" className="site-btn secondary" onClick={() => event.startsAt && downloadIcs({ ...event, startsAt: event.startsAt })}>Add to calendar</button>}
             </div>
             {event.description && (
               <section className="event-about" aria-labelledby="about-event">

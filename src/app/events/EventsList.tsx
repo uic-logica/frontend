@@ -40,7 +40,7 @@ export function EventsList({ upcoming, past, error }: { upcoming: ClubEvent[]; p
                   <p>{[d.weekdayTime, e.location].filter(Boolean).join(" · ")}</p>
                 </div>
                 <div className="events-item-actions">
-                  <button type="button" className="site-btn secondary sm" onClick={() => downloadIcs(e)}>Add to calendar</button>
+                  {e.startsAt && <button type="button" className="site-btn secondary sm" onClick={() => e.startsAt && downloadIcs({ ...e, startsAt: e.startsAt })}>Add to calendar</button>}
                   {e.link && (
                     <a href={e.link} target="_blank" rel="noopener noreferrer" className="site-btn secondary sm">RSVP</a>
                   )}

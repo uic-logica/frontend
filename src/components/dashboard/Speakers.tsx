@@ -96,6 +96,29 @@ export function Speakers({
         .toLowerCase()
         .includes(query.toLowerCase()),
   );
+  async function remove(s: Speaker) {
+    const ok = await confirm({
+      title: `Delete ${s.name || "this guest"}?`,
+      body: "Their details, thread and speaker sign-in are gone for good. A linked event stays on the calendar.",
+      action: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}`, { method: "DELETE" });
+      setOpen(null);
+      onChange(await api<Speaker[]>("/api/speakers"));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function status(s: Speaker, value: string) {
     setBusy(s.id);
     setScope(s.id);
@@ -500,6 +523,11 @@ export function Speakers({
               title={`Thread with ${detail.name || "this speaker"}`}
               description="Shared with every board member"
             />
+            <div className="d-delete-row">
+              <button className="d-button secondary danger" disabled={!!busy} onClick={() => remove(detail)}>
+                Delete guest
+              </button>
+            </div>
           </section>
         ) : (
           !!filtered?.length && (
