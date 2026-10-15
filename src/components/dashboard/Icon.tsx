@@ -1,6 +1,6 @@
 import type { Section } from "./types";
 const paths: Record<
-  Section | "arrow" | "exit" | "check" | "menu" | "clock" | "search" | "chevron" | "sun" | "moon",
+  Section | "arrow" | "exit" | "check" | "menu" | "clock" | "search" | "chevron" | "sun" | "moon" | "home",
   string
 > = {
   overview: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
@@ -25,6 +25,7 @@ const paths: Record<
   connections:
     "M6.5 8.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5 M17.5 20.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5 M17.5 8.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5 M9 6h5.5 M6.5 8.5v6a3.5 3.5 0 0 0 3.5 3.5h5",
   settings: "M4 7h16 M4 17h16 M8 4v6 M16 14v6",
+  home: "M3 11 12 3l9 8 M5 9.5V21h14V9.5 M10 21v-6h4v6",
   arrow: "M5 12h14 M13 6l6 6-6 6",
   exit: "M9 3H3v18h6 M10 12h11 M17 8l4 4-4 4",
   check: "m5 12 4 4 10-10",

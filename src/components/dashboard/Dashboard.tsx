@@ -146,7 +146,6 @@ export function Dashboard() {
   const searchInput = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const isMac = useSyncExternalStore(noSubscribe, () => /Mac|iPhone|iPad/.test(navigator.userAgent), () => false);
-  const accountMenu = useRef<HTMLDetailsElement>(null);
   const sideMenu = useRef<HTMLDetailsElement>(null);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
@@ -398,9 +397,8 @@ export function Dashboard() {
     // <details> has no light dismiss; a click anywhere else closes the menus,
     // and the phone menu sheet, unless the click is on the sheet or its tab bar.
     const closeMenus = (event: PointerEvent) => {
-      for (const menu of [accountMenu.current, sideMenu.current]) {
-        if (menu?.open && !menu.contains(event.target as Node)) menu.removeAttribute("open");
-      }
+      const menu = sideMenu.current;
+      if (menu?.open && !menu.contains(event.target as Node)) menu.removeAttribute("open");
       if (!(event.target as Element).closest?.(".d-sidebar, .d-tabbar")) setMenu(false);
     };
     window.addEventListener("keydown", openSearch);
@@ -489,8 +487,13 @@ export function Dashboard() {
                 things that need a record. Hidden until the URL is set
                 rather than guessed at. Profile, notifications and settings
                 live in the account menus, not the rail. */}
-            {process.env.NEXT_PUBLIC_DISCORD_URL && (
-              <nav aria-label="Community">
+            <nav aria-label="Elsewhere">
+              {/* Spelled out, not just the logo up top: not everyone knows the logo goes home. */}
+              <Link href="/" onClick={() => setMenu(false)}>
+                <Icon name="home" />
+                Main site
+              </Link>
+              {process.env.NEXT_PUBLIC_DISCORD_URL && (
                 <a
                   href={process.env.NEXT_PUBLIC_DISCORD_URL}
                   target="_blank"
@@ -499,8 +502,8 @@ export function Dashboard() {
                   <Icon name="community" />
                   Discord
                 </a>
-              </nav>
-            )}
+              )}
+            </nav>
             {user && (
               <div className="d-account">
                 <details ref={sideMenu} className="d-account-menu d-side-menu">
@@ -572,27 +575,16 @@ export function Dashboard() {
                 {runsWorkspace(user) ? "+ New event" : "Find an event"}
               </Link>
             )}
+            {/* Profile and prefs live in the rail's account menu only (and in More on phones). */}
             {user && !partner && (
-              <>
-                <Link
-                  aria-label={`${unread} unread notifications`}
-                  href="/dashboard/notifications"
-                  className="d-bell"
-                >
-                  <Icon name="notifications" />
-                  {unread > 0 && <i />}
-                </Link>
-                <details ref={accountMenu} className="d-account-menu">
-                  <summary>
-                    <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-small" />
-                    <span>Profile &amp; prefs</span>
-                    <Icon name="chevron" />
-                  </summary>
-                  <nav aria-label="Profile and preferences" onClick={() => accountMenu.current?.removeAttribute("open")}>
-                    {accountLinks}
-                  </nav>
-                </details>
-              </>
+              <Link
+                aria-label={`${unread} unread notifications`}
+                href="/dashboard/notifications"
+                className="d-bell"
+              >
+                <Icon name="notifications" />
+                {unread > 0 && <i />}
+              </Link>
             )}
           </div>
         </header>
