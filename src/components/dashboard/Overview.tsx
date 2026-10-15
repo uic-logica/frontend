@@ -274,6 +274,17 @@ export function Notifications({
       <Heading
         title="Notifications"
         description="Choose what needs your attention and where it should reach you."
+        action={
+          unread.length > 0 && (
+            <button
+              className="d-button secondary"
+              disabled={!!busy}
+              onClick={() => read(unread.map((n) => n.id))}
+            >
+              {busy === "all" ? "Saving…" : "Mark all read"}
+            </button>
+          )
+        }
       />
       {error && (
         <p role="alert" className="d-error">
@@ -281,65 +292,62 @@ export function Notifications({
         </p>
       )}
       {unread.length > 0 && (
-        <section className="d-panel">
-          <div className="d-section-head">
-            <h2>Unread</h2>
-            <button
-              className="d-text-button"
-              disabled={!!busy}
-              onClick={() => read(unread.map((n) => n.id))}
-            >
-              Mark all read
-            </button>
-          </div>
-          {unread.map((n) => (
-            <div className="d-notification is-unread" key={n.id}>
-              <span className="d-live-dot" />
-              <div>
-                <p>{n.message}</p>
-                <small>{date(n.createdAt)}</small>
+        <section aria-labelledby="notices-unread">
+          <h2 className="d-group-label" id="notices-unread">
+            Unread
+          </h2>
+          <div className="d-panel d-notice-list">
+            {unread.map((n) => (
+              <div className="d-notification is-unread" key={n.id}>
+                <span className="d-live-dot" />
+                <div>
+                  <p>{n.message}</p>
+                  <small>{date(n.createdAt)}</small>
+                </div>
+                <button
+                  disabled={!!busy}
+                  className="d-text-button"
+                  onClick={() => read([n.id])}
+                >
+                  {busy === n.id ? "Saving…" : "Mark read"}
+                </button>
               </div>
-              <button
-                disabled={!!busy}
-                className="d-text-button"
-                onClick={() => read([n.id])}
-              >
-                {busy === n.id ? "Saving…" : "Mark read"}
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </section>
       )}
       {/* Read notices move down here, which is the point of marking one —
           the list you're working through gets shorter. */}
       {earlier.length > 0 && (
-        <section className="d-panel">
-          <div className="d-section-head">
-            <h2>Earlier</h2>
-            <span className="d-muted">Already read</span>
-          </div>
-          {earlier.map((n) => (
-            <div className="d-notification" key={n.id}>
-              <span className="d-read-dot" />
-              <div>
-                <p>{n.message}</p>
-                <small>{date(n.createdAt)}</small>
+        <section aria-labelledby="notices-earlier">
+          <h2 className="d-group-label" id="notices-earlier">
+            Earlier
+          </h2>
+          <div className="d-panel d-notice-list">
+            {earlier.map((n) => (
+              <div className="d-notification" key={n.id}>
+                <span className="d-read-dot" />
+                <div>
+                  <p>{n.message}</p>
+                  <small>{date(n.createdAt)}</small>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </section>
       )}
-      <section className="d-panel">
-        {notices?.length === 0 && (
-          <Empty title="All caught up">
-            We’ll put club updates and reminders here when there’s something for
-            you.
-          </Empty>
-        )}
-        {!notices && (
-          <p className="d-muted">Notifications are not available yet.</p>
-        )}
-      </section>
+      {(!notices || notices.length === 0) && (
+        <section className="d-panel">
+          {notices ? (
+            <Empty title="All caught up">
+              We’ll put club updates and reminders here when there’s something
+              for you.
+            </Empty>
+          ) : (
+            <p className="d-muted">Notifications are not available yet.</p>
+          )}
+        </section>
+      )}
     </>
   );
 }

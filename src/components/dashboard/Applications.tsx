@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
-import { type Application, date } from "./types";
+import { type Application, date, initials } from "./types";
 
 const STATUSES = ["PENDING", "INTERVIEW", "NEEDS_INFO", "ACCEPTED", "DECLINED"] as const;
 const LABEL = {
@@ -73,13 +73,9 @@ export function Applications() {
     [item.name, item.email, TRACK[item.track], item.major, item.gradYear, item.why, item.github, projects(item), item.skills, item.reviewNote]
       .filter(Boolean).join(" ").toLowerCase().includes(needle),
   );
-  const detail = items?.find((item) => item.id === open);
-  const summary = [
-    ["Total", items?.length ?? "—"],
-    ["Awaiting a decision", items ? count("PENDING") + count("INTERVIEW") + count("NEEDS_INFO") : "—"],
-    ["Interviewing", items ? count("INTERVIEW") : "—"],
-    ["Accepted", items ? count("ACCEPTED") : "—"],
-  ] as const;
+  // The first match stays selected until you pick another, so the detail
+  // pane is never empty while there is something to read.
+  const detail = filtered?.find((item) => item.id === open) ?? filtered?.[0];
 
   async function changeStatus(item: Application, next: Application["status"], extra: Record<string, unknown> = {}) {
     setBusy(true);
@@ -104,61 +100,68 @@ export function Applications() {
   return (
     <>
       <Heading title="Applications" description="Review membership applications and record the next decision." />
-      <div className="d-directory-summary">
-        {summary.map(([label, value]) => (
-          <div key={label}><strong>{value}</strong><span>{label}</span></div>
-        ))}
-      </div>
       {error && <p className="d-error" role="alert">{error}{" "}
         {!items && <button className="d-text-button" onClick={() => setReload((value) => value + 1)}>Retry loading</button>}
       </p>}
       {saved && <p className="d-muted" role="status">{saved}</p>}
-      <div className="d-tabs d-stage-tabs" aria-label="Filter applications by status">
-        {(["ALL", ...STATUSES] as const).map((value) => (
-          <button key={value} aria-pressed={status === value} onClick={() => setStatus(value)}>
-            {LABEL[value]} <span>{items ? value === "ALL" ? items.length : count(value) : "—"}</span>
-          </button>
-        ))}
+      <div className="d-split-toolbar">
+        <div className="d-tabs d-stage-tabs" aria-label="Filter applications by status">
+          {(["ALL", ...STATUSES] as const).map((value) => (
+            <button key={value} aria-pressed={status === value} onClick={() => setStatus(value)}>
+              {LABEL[value]} <span>{items ? value === "ALL" ? items.length : count(value) : "—"}</span>
+            </button>
+          ))}
+        </div>
+        <label className="d-search">
+          <span className="sr-only">Search applications</span>
+          <input type="search" placeholder="Search name, email, track, project, skills…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        </label>
       </div>
-      <section className="d-panel d-directory" aria-label="Membership applications">
-        <div className="d-directory-toolbar">
-          <label className="d-search">
-            <span className="sr-only">Search applications</span>
-            <input type="search" placeholder="Search name, email, track, project, skills…" value={query} onChange={(e) => setQuery(e.target.value)} />
-          </label>
-        </div>
-        <div className="d-table-scroll" tabIndex={0} role="region" aria-label="Applications table">
-          <table>
-            <thead><tr>
-              <th scope="col">Applicant</th><th scope="col">Track</th><th scope="col">Major / graduation</th><th scope="col">Applied</th><th scope="col">Status</th><th scope="col"><span className="sr-only">Actions</span></th>
-            </tr></thead>
-            <tbody>{filtered?.map((item) => (
-              <tr key={item.id}>
-                <td><strong>{item.name}</strong><small>{item.email}</small></td>
-                <td>{TRACK[item.track]}{item.projects?.length ? <small>{projects(item)}</small> : null}</td>
-                <td>{item.major || "—"}<small>{item.gradYear ?? "Graduation year not provided"}</small></td>
-                <td>{date(item.createdAt, { month: "short", day: "numeric", year: "numeric" })}</td>
-                <td><span className={`d-badge ${tone(item.status)}`}>{LABEL[item.status]}</span></td>
-                <td><button className="d-text-button" aria-expanded={open === item.id} aria-controls={open === item.id ? "application-detail" : undefined} onClick={() => setOpen(open === item.id ? null : item.id)}>
-                  {open === item.id ? "Close" : "Open"}<span className="sr-only"> {item.name}&apos;s application</span> ↗
-                </button></td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-        {filtered?.length === 0 && <Empty title={items?.length ? "No matching applications" : "No applications yet"}>
-          {items?.length ? "Try another status or a different search." : "Applications submitted through the join page will appear here."}
-        </Empty>}
-        {!items && !error && <p className="d-muted" role="status">Loading applications…</p>}
-      </section>
-      {detail && <section id="application-detail" className="d-panel d-speaker-detail" aria-labelledby="application-detail-title">
-        <div className="d-section-head">
-          <h2 id="application-detail-title">{detail.name}</h2>
-          <button className="d-text-button" onClick={() => setOpen(null)}>Close details</button>
+      {(items || !error) && <div className="d-split">
+        <section className="d-panel d-split-list" aria-label="Membership applications">
+          {!items && !error && <p className="d-muted" role="status">Loading applications…</p>}
+          {filtered?.length === 0 && <Empty title={items?.length ? "No matching applications" : "No applications yet"}>
+            {items?.length ? "Try another status or a different search." : "Applications submitted through the join page will appear here."}
+          </Empty>}
+          {!!filtered?.length && <ul>
+            {filtered.map((item) => (
+              <li key={item.id}>
+                <button
+                  aria-current={detail?.id === item.id ? "true" : undefined}
+                  aria-controls="application-detail"
+                  onClick={() => {
+                    setOpen(item.id);
+                    setAsking(false);
+                    setNote("");
+                    // Stacked on narrow screens: bring the detail into view.
+                    if (matchMedia("(max-width: 900px)").matches)
+                      requestAnimationFrame(() => document.getElementById("application-detail")?.scrollIntoView());
+                  }}
+                >
+                  <span className="d-avatar">{initials(item.name)}</span>
+                  <span>
+                    <strong>{item.name}</strong>
+                    <small>{TRACK[item.track]}{item.major ? ` · ${item.major}` : ""}{item.gradYear ? ` ’${String(item.gradYear).slice(-2)}` : ""}</small>
+                  </span>
+                  <span className="d-split-meta">
+                    <time dateTime={item.createdAt}>{date(item.createdAt)}</time>
+                    {status === "ALL" && <span className={`d-badge ${tone(item.status)}`}>{LABEL[item.status]}</span>}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>}
+        </section>
+      {detail && <section id="application-detail" className="d-panel d-speaker-detail d-split-detail" aria-labelledby="application-detail-title">
+        <div className="d-split-head">
+          <span className="d-avatar d-avatar-large">{initials(detail.name)}</span>
+          <div>
+            <h2 id="application-detail-title">{detail.name}</h2>
+            <a href={`mailto:${detail.email}`}>{detail.email}</a>
+          </div>
+          <span className={`d-badge ${tone(detail.status)}`}>{LABEL[detail.status]}</span>
         </div>
         <dl>
-          <div><dt>Email</dt><dd><a href={`mailto:${detail.email}`}>{detail.email}</a></dd></div>
-          <div><dt>Status</dt><dd><span className={`d-badge ${tone(detail.status)}`}>{LABEL[detail.status]}</span></dd></div>
           <div><dt>Track</dt><dd>{TRACK[detail.track]}</dd></div>
           {detail.track === "SOFTWARE_ENGINEER" && detail.github && <>
             <div><dt>GitHub</dt><dd><a href={githubUrl(detail.github)} target="_blank" rel="noreferrer">{detail.github}</a></dd></div>
@@ -178,7 +181,7 @@ export function Applications() {
           {detail.reviewedAt && <div><dt>Info requested</dt><dd>{date(detail.reviewedAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>}
           {detail.decidedAt && <div><dt>Decision recorded</dt><dd>{date(detail.decidedAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>}
           {detail.status === "DECLINED" && <div><dt>May reapply</dt><dd>{detail.canReapply ? "Yes, after the waiting period" : "No"}</dd></div>}
-          <div><dt>{detail.track === "SOFTWARE_ENGINEER" ? "Why are you special?" : "Why do you want to join?"}</dt><dd>{detail.why || "No answer provided"}</dd></div>
+          <div className="d-split-wide"><dt>{detail.track === "SOFTWARE_ENGINEER" ? "Why are you special?" : "Why do you want to join?"}</dt><dd>{detail.why || "No answer provided"}</dd></div>
         </dl>
         {asking && <form className="d-review-form" onSubmit={(event) => { event.preventDefault(); void changeStatus(detail, "NEEDS_INFO", { note: note.trim() }); }}>
           <label htmlFor="application-review-note">What should the applicant add?</label>
@@ -194,6 +197,7 @@ export function Applications() {
         </form>
         {busy && <p className="d-muted" role="status">Saving status…</p>}
       </section>}
+      </div>}
     </>
   );
 }
