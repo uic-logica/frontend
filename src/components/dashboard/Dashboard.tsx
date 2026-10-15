@@ -767,6 +767,7 @@ export function Dashboard() {
                     user={user}
                     speakers={speakers}
                     events={events}
+                    onEvents={setEvents}
                     onChange={setSpeakers}
                   />
                 ) : (

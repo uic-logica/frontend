@@ -84,13 +84,7 @@ export function Events({
     try {
       await api(event ? `/api/events/${event.id}` : "/api/events", {
         method: event ? "PATCH" : "POST",
-        body: JSON.stringify({
-          title: data.get("title"),
-          description: data.get("description"),
-          location: data.get("location"),
-          link: data.get("link"),
-          startsAt: new Date(String(data.get("startsAt"))).toISOString(),
-        }),
+        body: JSON.stringify(eventBody(data)),
       });
       onEvents(await api<Event[]>("/api/events"));
       if (event) setEditing(null);
@@ -279,8 +273,19 @@ function localInput(iso: string) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+/** What the backend takes from an EventForm: `startsAt` as ISO, the rest as typed. */
+export function eventBody(data: FormData) {
+  return {
+    title: data.get("title"),
+    description: data.get("description"),
+    location: data.get("location"),
+    link: data.get("link"),
+    startsAt: new Date(String(data.get("startsAt"))).toISOString(),
+  };
+}
+
 /** The one form for creating and editing an event. Empty fields clear on save. */
-function EventForm({
+export function EventForm({
   event,
   heading,
   busy,
@@ -288,7 +293,8 @@ function EventForm({
   onSubmit,
   onCancel,
 }: {
-  event?: Event;
+  /** Partial when prefilling a new event, e.g. from a speaker's talk. */
+  event?: Partial<Event>;
   heading: string;
   busy: boolean;
   submitLabel: string;
@@ -305,7 +311,7 @@ function EventForm({
         </label>
         <label>
           Date and time (your local time)
-          <input name="startsAt" type="datetime-local" required defaultValue={event ? localInput(event.startsAt) : undefined} />
+          <input name="startsAt" type="datetime-local" required defaultValue={event?.startsAt ? localInput(event.startsAt) : undefined} />
         </label>
       </div>
       <label>

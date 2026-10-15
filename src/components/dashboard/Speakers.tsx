@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
+import { EventForm, eventBody } from "./Participation";
 import { Thread } from "./Thread";
 import { useConfirm } from "./useConfirm";
 import { useUrlState } from "./useUrlState";
@@ -19,11 +20,13 @@ export function Speakers({
   user,
   speakers,
   events,
+  onEvents,
   onChange,
 }: {
   user: SessionUser;
   speakers: Speaker[] | null;
   events: Event[] | null;
+  onEvents: (e: Event[]) => void;
   onChange: (s: Speaker[]) => void;
 }) {
   // In the URL, so refresh, Back and a pasted link keep the open guest and filters.
@@ -36,6 +39,7 @@ export function Speakers({
   const [scope, setScope] = useState<string>("top");
   const [confirm, confirmDialog] = useConfirm();
   const [adding, setAdding] = useState(false);
+  const [creatingEvent, setCreatingEvent] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -136,6 +140,29 @@ export function Speakers({
           ? `Linked ${s.name || "speaker"} to their event.`
           : `Unlinked ${s.name || "speaker"} from their event.`,
       );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+  /** Creates the talk's event and links it in one call, so it's on the speaker's dashboard at once. */
+  async function createEvent(e: React.FormEvent<HTMLFormElement>, s: Speaker) {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ newEvent: eventBody(data) }),
+      });
+      onChange(await api<Speaker[]>("/api/speakers"));
+      onEvents(await api<Event[]>("/api/events"));
+      setCreatingEvent(null);
+      setMessage(`Event created and linked. ${s.name || "The speaker"} can see it on their dashboard.`);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -364,6 +391,27 @@ export function Speakers({
               </select>
               <small>Links this speaker to the event so their dashboard can show RSVPs and check-ins.</small>
             </label>
+            {!detail.event &&
+              (creatingEvent === detail.id ? (
+                <EventForm
+                  event={{
+                    title: detail.talkTitle ?? "",
+                    // The first window they offered, as a starting point; datetime-local reads it as local time.
+                    startsAt: detail.availability?.[0]
+                      ? `${detail.availability[0].startDate}T${detail.availability[0].startTime}`
+                      : undefined,
+                  }}
+                  heading={`New event for ${detail.name || "this guest"}`}
+                  busy={busy === detail.id}
+                  submitLabel="Create and link"
+                  onSubmit={(e) => createEvent(e, detail)}
+                  onCancel={() => setCreatingEvent(null)}
+                />
+              ) : (
+                <button className="d-text-button" onClick={() => setCreatingEvent(detail.id)}>
+                  Create an event for this talk
+                </button>
+              ))}
             <div className="d-actions">
               {detail.user?.resumeFilename && (
                 <a className="d-button secondary" href={`/api/resume/${detail.user.id}`} target="_blank" rel="noreferrer">
