@@ -37,7 +37,7 @@ export function pageMetadata(title: string, description: string, path: string): 
   };
 }
 
-export const publicPaths = ["/", "/about", "/blog", "/events", "/join", "/partner", "/privacy", "/speak", "/support", "/team", "/terms"];
+export const publicPaths = ["/", "/about", "/blog", "/events", "/join", "/partner", "/privacy", "/projects", "/speak", "/support", "/team", "/terms"];
 
 export const noIndexMetadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },

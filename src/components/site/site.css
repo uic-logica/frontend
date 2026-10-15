@@ -584,3 +584,23 @@ body:has(> .site) { background: var(--d-bg); }
 
 .auth-arrow { display: inline-flex; align-items: center; gap: 4px; }
 .status-actions { justify-content: center; }
+
+/* ── Projects (/projects, and the Home strip) ── */
+.projects-list { display: flex; flex-direction: column; gap: 20px; margin: 0; padding: 0; list-style: none; }
+.projects-item { display: flex; flex-direction: column; gap: 16px; padding: 32px; scroll-margin-top: 24px; }
+.projects-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.projects-top h2 { margin: 0; font-size: 30px; line-height: 1.3; }
+.projects-status.focus { background: var(--d-gold-soft); color: var(--d-gold-text); }
+.projects-status.live { background: var(--d-success-soft); color: var(--d-success); }
+.projects-line { margin: 0; max-width: 760px; font-size: 18px; line-height: 1.55; color: var(--d-muted); }
+.projects-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 32px; margin: 0; padding-top: 16px; border-top: 1px solid var(--d-rule); }
+.projects-facts dt { font-size: 13px; font-weight: 600; color: var(--d-muted); }
+.projects-facts dd { margin: 4px 0 0; font-size: 15px; line-height: 1.5; }
+.projects-cta-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.home-building { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.home-building a { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 20px 22px; border: 1px solid var(--d-rule); border-radius: var(--d-radius); background: var(--d-surface); text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.home-building a:hover { border-color: var(--d-rule-strong); box-shadow: var(--d-pop); }
+.home-building strong { font-family: var(--d-serif); font-size: 20px; font-weight: 400; }
+.home-building span { font-size: 14px; color: var(--d-muted); }
+@media (max-width: 999px) { .home-building { grid-template-columns: 1fr 1fr; } .projects-facts { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 599px) { .home-building, .projects-facts { grid-template-columns: 1fr; } .projects-item { padding: 24px 20px; } .projects-top { flex-wrap: wrap; } }
