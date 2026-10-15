@@ -110,7 +110,7 @@ export default async function Home() {
           <Painting name="hero" sizes="100vw" className="home-hero-art" high />
           <div className="home-hero-copy site-wrap">
             <div className="home-hero-brand">
-              <Logo size={96} priority />
+              <Logo size={116} priority />
               <div>
                 <h1 className="serif">LOGICA at UIC</h1>
                 <p>Latinx computing and academics community</p>
@@ -133,6 +133,9 @@ export default async function Home() {
           </div>
           <a href="#coming-up" className="home-peek"><SiteIcon name="chevronDown" /> Coming up this month</a>
         </section>
+
+        {/* Slides up over the pinned hero (site.css, .home-rest). */}
+        <div className="home-rest">
 
         <section id="coming-up" className="site-wrap home-block" aria-labelledby="coming-up-title">
           <div className="site-head">
@@ -213,6 +216,7 @@ export default async function Home() {
             ))}
           </dl>
         </section>
+        </div>
       </main>
     </ClubShell>
   );
