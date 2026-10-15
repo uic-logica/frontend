@@ -18,6 +18,7 @@ import { BoardHome } from "./BoardHome";
 import { Insights } from "./Insights";
 import { Documents } from "./Documents";
 import { Applications } from "./Applications";
+import { Blog } from "./Blog";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
 import { Avatar } from "./Avatar";
@@ -38,7 +39,7 @@ import {
   runsWorkspace,
   PERSONAL_SECTIONS,
 } from "./types";
-import { BuildTeams, retireTeamsHint, snoozeTeamsHint, teamsHintHidden } from "./BuildTeams";
+import { BuildTeams } from "./BuildTeams";
 import "./dashboard.css";
 
 /** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
@@ -137,22 +138,6 @@ export function Dashboard() {
     setOpened((prev) => (prev.includes(section) ? prev : [...prev, section]));
   }, [section]);
   const [menu, setMenu] = useState(false);
-  // The nav (and so the pointer) only renders client-side after the session
-  // loads, so reading localStorage in the initializer can't mismatch the server.
-  const [hintOff, setHintOff] = useState(() => typeof window === "undefined" || teamsHintHidden());
-  // Applied on another device? The server knows; this browser doesn't yet.
-  const hintAccount = user?.accountKind === "MEMBER" ? user.id : null;
-  useEffect(() => {
-    if (hintOff || !hintAccount) return;
-    api<{ track: string }[]>("/api/join/mine")
-      .then((rows) => {
-        if (rows.some((r) => r.track === "SOFTWARE_ENGINEER")) {
-          retireTeamsHint();
-          setHintOff(true);
-        }
-      })
-      .catch(() => {});
-  }, [hintOff, hintAccount]);
   const [leaving, setLeaving] = useState(false);
   const leavingRef = useRef(false);
   const confirmOut = useRef<HTMLDialogElement>(null);
@@ -434,19 +419,7 @@ export function Dashboard() {
         document.documentElement.dataset.theme = saved;
     } catch {}
   }, []);
-  function toggleTheme() {
-    const root = document.documentElement;
-    const dark =
-      root.dataset.theme === "dark" ||
-      (!root.dataset.theme &&
-        matchMedia("(prefers-color-scheme: dark)").matches);
-    root.dataset.theme = dark ? "light" : "dark";
-    try {
-      localStorage.setItem("logica-theme", root.dataset.theme);
-    } catch {}
-    // Lets Settings → Appearance follow along while it is open.
-    window.dispatchEvent(new StorageEvent("storage", { key: "logica-theme" }));
-  }
+
   return (
     <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
       <a href="#dashboard-content" className="d-skip">
@@ -502,12 +475,6 @@ export function Dashboard() {
                       </span>
                     )}
                 </Link>
-                {item === "teams" && !hintOff && !seen("teams") && (
-                  <div className="d-callout" role="note">
-                    <span>Apply for the software role here!</span>
-                    <button type="button" aria-label="Dismiss" onClick={() => { snoozeTeamsHint(); setHintOff(true); }}>×</button>
-                  </div>
-                )}
               </Fragment>
             ))}
           </nav>
@@ -599,15 +566,6 @@ export function Dashboard() {
                 {runsWorkspace(user) ? "+ New event" : "Find an event"}
               </Link>
             )}
-            <button
-              type="button"
-              className="d-theme"
-              onClick={toggleTheme}
-              aria-label="Switch light or dark theme"
-              title="Switch light or dark theme"
-            >
-              <Icon name="sun" />
-            </button>
             {user && (
               <>
                 <Link
@@ -786,6 +744,7 @@ export function Dashboard() {
                   <Activity engagement={engagement} />
                 </Pane>
               )}
+              {/* Not in the sidebar: members reach it from /projects and /join. */}
               {seen("teams") && user && (
                 <Pane active={section === "teams"}>
                   <BuildTeams user={user} profile={profile} />
@@ -794,6 +753,11 @@ export function Dashboard() {
               {seen("community") && (
                 <Pane active={section === "community"}>
                   <Community user={user} />
+                </Pane>
+              )}
+              {seen("blog") && user && (
+                <Pane active={section === "blog"}>
+                  <Blog user={user} />
                 </Pane>
               )}
               {seen("speakers") && (
