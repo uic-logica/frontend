@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { useConfirm } from "./useConfirm";
 import { useUrlState } from "./useUrlState";
@@ -31,6 +31,9 @@ export function Members({
   onChange: (roster?: Member[]) => void;
 }) {
   const [confirm, confirmDialog] = useConfirm();
+  // A rare action, so it's a dialog from the header instead of a panel that
+  // takes over the top of the roster.
+  const passwordDialog = useRef<HTMLDialogElement>(null);
   const isExec = user.role === "EXEC_BOARD";
   const [credentialEmail, setCredentialEmail] = useState("");
   const [issued, setIssued] = useState<{ email: string; password: string } | null>(null);
@@ -119,6 +122,13 @@ export function Members({
             ? "Find people quickly, understand engagement, and update member access."
             : "Find people quickly and understand how they participate."
         }
+        action={
+          isExec && (
+            <button className="d-button secondary" onClick={() => passwordDialog.current?.showModal()}>
+              Issue a password
+            </button>
+          )
+        }
       />
 
       <div className="d-directory-summary">
@@ -147,7 +157,15 @@ export function Members({
       )}
 
       {isExec && (
-        <section className="d-panel" aria-labelledby="password-heading">
+        <dialog
+          ref={passwordDialog}
+          className="d-confirm d-password-dialog"
+          aria-labelledby="password-heading"
+          onClose={() => {
+            setIssued(null);
+            setConfirmed(false);
+          }}
+        >
           <h2 id="password-heading">Issue a member password</h2>
           <p>Creates a member account or replaces an existing member or board password. Existing roles stay the same. A reset signs the person out everywhere and revokes their MCP connections.</p>
           <form onSubmit={issuePassword} className="d-form" aria-busy={issuing}>
@@ -164,10 +182,15 @@ export function Members({
               <p>Password for <strong>{issued.email}</strong>. Deliver it privately now; it cannot be retrieved later.</p>
               <label htmlFor="issued-password">Generated password</label>
               <input id="issued-password" readOnly autoComplete="off" value={issued.password} onFocus={(e) => e.target.select()} />
-              <button type="button" className="d-button secondary" onClick={() => setIssued(null)}>Dismiss password</button>
+              <button type="button" className="d-button secondary" onClick={() => passwordDialog.current?.close()}>Done, I&apos;ve delivered it</button>
             </div>
           )}
-        </section>
+          {!issued && (
+            <form method="dialog" className="d-actions">
+              <button className="d-text-button">Cancel</button>
+            </form>
+          )}
+        </dialog>
       )}
 
       <section className="d-panel d-directory">

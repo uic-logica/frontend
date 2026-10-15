@@ -4024,3 +4024,10 @@ tr:has(.d-row-link[aria-current]) > td {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+.d-tile-grid[data-stale] {
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+.d-password-dialog {
+  max-width: min(460px, calc(100vw - 32px));
+}
