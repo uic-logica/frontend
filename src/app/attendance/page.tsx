@@ -7,8 +7,9 @@ import { redirect } from "next/navigation";
  * work". The dashboard's Participation section sends both and works.
  *
  * Redirecting rather than fixing: two check-in surfaces is the actual bug.
+ * It lands on the check-in dialog, so a QR code at the door is one step.
  * Same treatment as /members, /profile and /speaker-portal.
  */
 export default function Page() {
-  redirect("/dashboard/events");
+  redirect("/dashboard/events?checkin=1");
 }

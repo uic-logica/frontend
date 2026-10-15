@@ -595,8 +595,8 @@ export function Dashboard() {
               </button>
             )}
             {user?.accountKind === "MEMBER" && (
-              <Link className="d-button d-top-action" href="/dashboard/events">
-                {runsWorkspace(user) ? "+ New" : "Find an event"}
+              <Link className="d-button d-top-action" href={runsWorkspace(user) ? "/dashboard/events?new=1" : "/dashboard/events"}>
+                {runsWorkspace(user) ? "+ New event" : "Find an event"}
               </Link>
             )}
             <button

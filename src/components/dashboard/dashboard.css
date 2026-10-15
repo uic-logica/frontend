@@ -4003,3 +4003,11 @@ tr:has(.d-row-link[aria-current]) > td {
 .d-kanban-card[aria-current] {
   outline: 2px solid var(--d-gold);
 }
+/* The event a link pointed at. */
+.d-event-item[aria-current] {
+  box-shadow: inset 3px 0 0 var(--d-gold);
+  scroll-margin-top: 72px;
+}
+.d-checkin {
+  width: min(420px, calc(100vw - 32px));
+}
