@@ -14,21 +14,23 @@ type Connection = {
 type Overview = {
   role: string;
   tokens: Connection[];
-  tools: { name: string; description: string }[];
+  /** Plain lines for this person's own tools; never names or agent text. */
+  tools: string[];
+  example: string;
 };
 
 /**
  * The MCP Connections section — mints a token so someone can just tell
- * their assistant when they're free (or, for exec, what to approve)
- * instead of filling in the form themselves.
+ * their assistant what they want instead of filling in the form themselves.
  *
  * Its own section rather than a panel buried in Settings: what an agent
  * can do as you is worth a page you can read before you hand it over,
  * not a box under your email preferences.
  *
  * The token is shown once and never again — the server keeps only a hash.
- * Which tools it gets is derived from the person's role at call time, so
- * the list here is what they would actually be handing over.
+ * Which tools it gets is derived from the person's role at call time, and
+ * the server sends only that role's lines, so nobody reads what another
+ * role's agent could do.
  */
 export function AgentAccess() {
   const [confirm, confirmDialog] = useConfirm();
@@ -117,15 +119,15 @@ export function AgentAccess() {
       {confirmDialog}
       <Heading
         title="MCP Connections"
-        description={data ? `Let trusted agents work with only the LOGICA tools approved for your ${data.role.toLowerCase()} role.` : "Let trusted agents work with only the LOGICA tools you approve."}
+        description="Connect an AI assistant to your LOGICA account."
       />
 
       <section className="d-panel d-settings">
         <h2>How to connect</h2>
         <p>
           Point your assistant at the server below and give it a token. Then you
-          can just tell it what you want — &ldquo;I&apos;m free Tuesday and
-          Thursday afternoon&rdquo; — instead of filling in the form yourself.
+          can just tell it what you want{data && <>, like &ldquo;{data.example}&rdquo;,</>} instead
+          of filling in the form yourself.
         </p>
 
         <div className="d-agent-url">
@@ -215,7 +217,7 @@ export function AgentAccess() {
       {!!data?.tools.length && (
         <section className="d-panel">
           <div className="d-section-head">
-            <h2>What your assistant could do</h2>
+            <h2>What your assistant can do</h2>
             <button
               className="d-text-button"
               aria-expanded={showTools}
@@ -225,17 +227,12 @@ export function AgentAccess() {
             </button>
           </div>
           <p className="d-footnote">
-            Exactly this, and nothing else. Your role decides the list, and
-            it&apos;s re-checked on every single call — so if your role changes,
-            what your assistant can do changes with it.
+            Exactly this, and nothing else. It&apos;s checked on every call.
           </p>
           {showTools && (
             <ul className="d-tool-list">
               {data.tools.map((t) => (
-                <li key={t.name}>
-                  <code>{t.name}</code>
-                  <span>{t.description}</span>
-                </li>
+                <li key={t}>{t}</li>
               ))}
             </ul>
           )}
