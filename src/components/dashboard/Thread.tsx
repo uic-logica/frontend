@@ -149,8 +149,18 @@ export function Thread({
   title = "Messages",
   description = "You and the LOGICA board",
   full = false,
+  endpoint = `/api/speakers/${submissionId}/messages`,
+  placeholder = "Message — type [[ to reference an event or a time",
+  empty = "Nothing here yet. Ask a question, or tell the board what you need.",
+  onSent,
 }: {
   submissionId: string;
+  /** Where the thread lives. Guest threads by default; member threads pass theirs. */
+  endpoint?: string;
+  placeholder?: string;
+  empty?: string;
+  /** After a message is sent, e.g. so an inbox list can re-sort. */
+  onSent?: () => void;
   user: SessionUser;
   events: Event[] | null;
   /** The candidate's own availability, so the two sides can point at a slot. */
@@ -160,7 +170,7 @@ export function Thread({
   /** Fills the work area instead of sitting in a boxed panel. */
   full?: boolean;
 }) {
-  const [messages, setMessages] = useState<SpeakerMessage[] | null>(() => peek<SpeakerMessage[]>(`/api/speakers/${submissionId}/messages`) ?? null);
+  const [messages, setMessages] = useState<SpeakerMessage[] | null>(() => peek<SpeakerMessage[]>(endpoint) ?? null);
   const [draft, setDraft] = useState("");
   const [picker, setPicker] = useState<{ start: number; query: string } | null>(
     null,
@@ -173,7 +183,7 @@ export function Thread({
 
   useEffect(() => {
     let alive = true;
-    api<SpeakerMessage[]>(`/api/speakers/${submissionId}/messages`)
+    api<SpeakerMessage[]>(endpoint)
       .then((m) => alive && setMessages(m))
       .catch((e: Error) => {
         if (!alive) return;
@@ -183,14 +193,14 @@ export function Thread({
     return () => {
       alive = false;
     };
-  }, [submissionId]);
+  }, [endpoint]);
 
   // Replies show up without a reload: re-read when the tab comes back into
   // focus, and every 30s while it's open and visible.
   useEffect(() => {
     const read = () => {
       if (document.visibilityState !== "visible") return;
-      api<SpeakerMessage[]>(`/api/speakers/${submissionId}/messages`).then(setMessages).catch(() => {});
+      api<SpeakerMessage[]>(endpoint).then(setMessages).catch(() => {});
     };
     const timer = window.setInterval(read, 30_000);
     window.addEventListener("focus", read);
@@ -198,7 +208,7 @@ export function Thread({
       window.clearInterval(timer);
       window.removeEventListener("focus", read);
     };
-  }, [submissionId]);
+  }, [endpoint]);
 
   useEffect(() => {
     if (log.current) log.current.scrollTop = log.current.scrollHeight;
@@ -285,11 +295,12 @@ export function Thread({
     setError("");
     try {
       const created = await api<SpeakerMessage>(
-        `/api/speakers/${submissionId}/messages`,
+        endpoint,
         { method: "POST", body: JSON.stringify({ body: draft.trim() }) },
       );
       setMessages((prev) => [...(prev ?? []), created]);
       setDraft("");
+      onSent?.();
       setPicker(null);
     } catch (err) {
       setError((err as Error).message);
@@ -310,7 +321,7 @@ export function Thread({
         {messages === null && <p className="d-muted">Loading the thread…</p>}
         {messages?.length === 0 && (
           <p className="d-muted d-thread-empty">
-            Nothing here yet. Ask a question, or tell the board what you need.
+            {empty}
           </p>
         )}
         {messages?.map((m, i) => {
@@ -348,7 +359,9 @@ export function Thread({
                       <small>
                         {m.author.accountKind === "SPEAKER"
                           ? "Speaker"
-                          : "Board"}
+                          : m.author.role === "EXEC_BOARD"
+                            ? "Board"
+                            : "Member"}
                       </small>
                     </span>
                   )}
@@ -376,7 +389,7 @@ export function Thread({
             rows={1}
             maxLength={2000}
             value={draft}
-            placeholder="Message — type [[ to reference an event or a time"
+            placeholder={placeholder}
             onKeyDown={keys}
             onChange={(e) => sync(e.target.value, e.target.selectionStart)}
             onClick={(e) =>

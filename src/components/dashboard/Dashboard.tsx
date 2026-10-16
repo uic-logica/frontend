@@ -22,6 +22,7 @@ import { Emails } from "./Emails";
 import { Blog } from "./Blog";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
+import { Inbox } from "./Inbox";
 import { PartnerHome } from "./Partners";
 import { Avatar } from "./Avatar";
 import {
@@ -315,7 +316,7 @@ export function Dashboard() {
   const submissionId = profile?.speakerSubmission?.id;
   // The standalone thread is the whole page, so the work area gives up its
   // padding and max-width for it.
-  const chatFull = section === "messages" && !!submissionId;
+  const chatFull = section === "messages" && (!!submissionId || (!!user && user.accountKind === "MEMBER" && !runsWorkspace(user)));
   async function logout() {
     if (leavingRef.current) return;
     leavingRef.current = true;
@@ -692,6 +693,19 @@ export function Dashboard() {
                     user={user}
                     events={events}
                     windows={profile?.speakerSubmission?.availability ?? []}
+                  />
+                ) : user && runsWorkspace(user) ? (
+                  <Inbox user={user} events={events} members={members} />
+                ) : user?.accountKind === "MEMBER" ? (
+                  <Thread
+                    full
+                    submissionId={user.id}
+                    user={user}
+                    events={events}
+                    endpoint="/api/messages"
+                    description="You and the LOGICA exec board"
+                    placeholder="Message the board — type [[ to reference an event"
+                    empty="Questions about events, teams or your application? Write to the board here. They reply in this thread and you get an email."
                   />
                 ) : (
                   <div className="d-empty">

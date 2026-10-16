@@ -452,6 +452,7 @@ export function navFor(
     // like something you can scan.
     return [
       "overview",
+      "messages",
       "insights",
       "money",
       "pipeline",
@@ -481,6 +482,7 @@ const MEMBER_NAV: Section[] = [
   "activity",
   "community",
   "blog",
+  "messages",
 ];
 
 /**
