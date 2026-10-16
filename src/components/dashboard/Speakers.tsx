@@ -1,8 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Heading, Empty } from "./Overview";
+import { EventForm, eventBody } from "./Participation";
 import { Thread } from "./Thread";
+import { useConfirm } from "./useConfirm";
+import { useUrlState } from "./useUrlState";
+import { Arrow } from "./Icon";
 import {
   type Event,
   type Speaker,
@@ -11,23 +15,34 @@ import {
   initials,
   inviteUrl,
   VISIT_LABEL,
+  requestRange,
 } from "./types";
 
 export function Speakers({
   user,
   speakers,
   events,
+  onEvents,
   onChange,
 }: {
   user: SessionUser;
   speakers: Speaker[] | null;
   events: Event[] | null;
+  onEvents: (e: Event[]) => void;
   onChange: (s: Speaker[]) => void;
 }) {
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("ALL");
-  const [open, setOpen] = useState<string | null>(null);
+  // In the URL, so refresh, Back and a pasted link keep the open guest and filters.
+  const [query, setQuery] = useUrlState("q");
+  const [filter, setFilter] = useUrlState("status", "ALL");
+  const [openId, setOpenId] = useUrlState("id");
+  const open = openId || null;
+  const setOpen = (id: string | null) => setOpenId(id ?? "", { push: !!id });
+  // Which surface a message belongs to: the open guest's detail, or the page top.
+  const [scope, setScope] = useState<string>("top");
+  const [confirm, confirmDialog] = useConfirm();
+  const [asking, setAsking] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [creatingEvent, setCreatingEvent] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -44,6 +59,7 @@ export function Speakers({
    */
   async function newLink(s: Speaker) {
     setBusy(s.id);
+    setScope(s.id);
     setError("");
     setMessage("");
     try {
@@ -73,18 +89,116 @@ export function Speakers({
       setCopied(false);
     }
   }
+  const inTab = (s: Speaker, tab: string) =>
+    tab === "ALL" || (tab === "DRAFT" ? !s.submittedAt : s.status === tab && !!s.submittedAt);
   const filtered = speakers?.filter(
     (s) =>
-      (filter === "ALL" ||
-        (filter === "DRAFT"
-          ? !s.submittedAt
-          : s.status === filter && s.submittedAt)) &&
+      inTab(s, filter) &&
       `${s.name} ${s.email} ${s.organization}`
         .toLowerCase()
         .includes(query.toLowerCase()),
   );
+  // Linked guests share one thread and one event; the lead is whoever the others point at.
+  const leadOf = (s: Speaker) => s.threadId ?? s.id;
+  const groupOf = (s: Speaker) => speakers?.filter((x) => x.id !== s.id && leadOf(x) === leadOf(s)) ?? [];
+
+  async function linkWith(s: Speaker, other: Speaker) {
+    const ok = await confirm({
+      title: `Link ${other.name || "this guest"} with ${s.name || "this guest"}?`,
+      body: `They'll share one thread and one event, and both get the board's messages. ${other.name || "Their"}'s messages so far move into this thread.`,
+      action: "Link",
+    });
+    if (!ok) return;
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}/link`, { method: "POST", body: JSON.stringify({ withId: other.id }) });
+      onChange(await api<Speaker[]>("/api/speakers"));
+      setMessage(`${other.name || "They"} and ${s.name || "this guest"} now share a thread.`);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function separate(s: Speaker) {
+    const lead = !s.threadId;
+    const ok = await confirm({
+      title: lead ? `Separate everyone from ${s.name || "this guest"}'s thread?` : `Separate ${s.name || "this guest"}?`,
+      body: "From now on they each have their own thread. Messages so far stay in the shared one.",
+      action: "Separate",
+    });
+    if (!ok) return;
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}/link`, { method: "DELETE" });
+      onChange(await api<Speaker[]>("/api/speakers"));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function askAvailability(s: Speaker, form: FormData) {
+    const from = String(form.get("from") ?? "");
+    const to = String(form.get("to") ?? "") || from;
+    const note = String(form.get("note") ?? "").trim();
+    const names = groupOf(s).length ? [s, ...groupOf(s)].map((g) => g.name || "a guest").join(" and ") : s.name || "this guest";
+    const ok = await confirm({
+      title: `Ask ${names} for new availability?`,
+      body: `They get a message in their thread (and by email) asking for times between ${from} and ${to}. Their current availability stays, but it's no longer marked confirmed.`,
+      action: "Send the ask",
+    });
+    if (!ok) return;
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}/availability-request`, { method: "POST", body: JSON.stringify({ from, to, note }) });
+      onChange(await api<Speaker[]>("/api/speakers"));
+      setAsking(null);
+      setMessage(`Asked ${names} for new availability.`);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function remove(s: Speaker) {
+    const ok = await confirm({
+      title: `Delete ${s.name || "this guest"}?`,
+      body: "Their details, thread and speaker sign-in are gone for good. A linked event stays on the calendar.",
+      action: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}`, { method: "DELETE" });
+      setOpen(null);
+      onChange(await api<Speaker[]>("/api/speakers"));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function status(s: Speaker, value: string) {
     setBusy(s.id);
+    setScope(s.id);
     setError("");
     setMessage("");
     try {
@@ -95,7 +209,7 @@ export function Speakers({
       onChange(await api<Speaker[]>("/api/speakers"));
       setMessage(
         value === "CONFIRMED"
-          ? `${s.name || "Candidate"} is now a speaker — their talk details and event numbers are unlocked.`
+          ? `${s.name || "Candidate"} is now a speaker. Their talk details and event numbers are unlocked.`
           : value === "PENDING"
             ? `${s.name || "Speaker"} moved back to candidate.`
             : `${s.name || "Speaker"} declined.`,
@@ -113,6 +227,7 @@ export function Speakers({
    */
   async function link(s: Speaker, eventId: string) {
     setBusy(s.id);
+    setScope(s.id);
     setError("");
     setMessage("");
     try {
@@ -132,8 +247,32 @@ export function Speakers({
       setBusy(null);
     }
   }
+  /** Creates the talk's event and links it in one call, so it's on the speaker's dashboard at once. */
+  async function createEvent(e: React.FormEvent<HTMLFormElement>, s: Speaker) {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ newEvent: eventBody(data) }),
+      });
+      onChange(await api<Speaker[]>("/api/speakers"));
+      onEvents(await api<Event[]>("/api/events"));
+      setCreatingEvent(null);
+      setMessage(`Event created and linked. ${s.name || "The speaker"} can see it on their dashboard.`);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
   async function invite(s: Speaker) {
     setBusy(s.id);
+    setScope(s.id);
     setError("");
     setCredentials(null);
     try {
@@ -153,6 +292,7 @@ export function Speakers({
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     setBusy("draft");
+    setScope("top");
     setError("");
     try {
       const result = await api<{ id: string; inviteToken: string }>(
@@ -173,50 +313,72 @@ export function Speakers({
       setBusy(null);
     }
   }
+  const detail = speakers?.find((s) => s.id === open) ?? null;
+  const hasDetail = !!detail;
+  // On a narrow screen the detail stacks under the list: bring it into view.
+  useEffect(() => {
+    if (open && matchMedia("(max-width: 900px)").matches)
+      requestAnimationFrame(() => document.getElementById("speaker-detail")?.scrollIntoView());
+  }, [open, hasDetail]);
+  const stage = (s: Speaker) =>
+    !s.submittedAt ? "Draft" : s.status === "PENDING" ? "Candidate" : s.status === "CONFIRMED" ? "Speaker" : "Declined";
+  const banners = (
+    <>
+      {error && <p className="d-error" role="alert">{error}</p>}
+      {message && <p className="d-success" role="status">{message}</p>}
+      {draftLink && (
+        <div className="d-invite-link" role="status">
+          <div>
+            <strong>Send them this.</strong>
+            <small>
+              Works once, expires in 14 days, and won&apos;t be shown again. Copy it now. They set their own email
+              and password on it.
+            </small>
+          </div>
+          <code>{draftLink}</code>
+          <div className="d-actions">
+            <button className="d-button" onClick={copyLink}>{copied ? "Copied" : "Copy link"}</button>
+            <button className="d-text-button" onClick={() => setDraftLink("")}>Done</button>
+          </div>
+        </div>
+      )}
+      {credentials && (
+        <div className="d-success" role="status">
+          <strong>Portal account created.</strong>
+          <p>
+            Username: <code>{credentials.username}</code> · Temporary password: <code>{credentials.tempPassword}</code>
+          </p>
+          <p>The speaker must change this password on first sign-in. Save these details before dismissing.</p>
+          <button className="d-text-button" onClick={() => setCredentials(null)}>Dismiss credentials</button>
+        </div>
+      )}
+    </>
+  );
+  const TABS: [string, string][] = [
+    ["ALL", "All"],
+    ["PENDING", "Candidates"],
+    ["CONFIRMED", "Confirmed"],
+    ["DECLINED", "Declined"],
+    ["DRAFT", "Drafts"],
+  ];
   return (
     <>
+      {confirmDialog}
       <Heading
         title="Speakers"
-        description="Compare fit, availability, and readiness without losing the human story."
+        description="The people coming to speak or run a workshop: their invite, availability, thread and event."
         action={
           <button className="d-button" onClick={() => setAdding(!adding)}>
-            {adding ? "Close draft form" : "+ Add speaker"}
+            {adding ? "Close draft form" : "+ Invite a guest"}
           </button>
         }
       />
-      <div className="d-directory-summary">
-        {[
-          ["Submissions", speakers?.length],
-          [
-            "Candidates",
-            speakers?.filter((s) => s.status === "PENDING" && s.submittedAt)
-              .length,
-          ],
-          [
-            "Ready to decide",
-            speakers?.filter(
-              (s) => s.status === "PENDING" && s.availabilityConfirmedAt,
-            ).length,
-          ],
-          [
-            "Confirmed speakers",
-            speakers?.filter((s) => s.status === "CONFIRMED").length,
-          ],
-          ["Portal accounts", speakers?.filter((s) => s.user).length],
-        ].map(([label, count]) => (
-          <div key={label}>
-            <strong>{count ?? "—"}</strong>
-            <span>{label}</span>
-          </div>
-        ))}
-      </div>
       {adding && (
         <form onSubmit={draft} className="d-panel d-form">
           <h2>Invite a guest</h2>
           <p>
-            Add what you know — all of it optional. You get one link to send
-            them; they pick a password and they&apos;re set up, no second step
-            from you.
+            Add what you know, all of it optional. You get one link to send them; they pick a password and
+            they&apos;re set up, no second step from you.
           </p>
           <div className="d-form-grid">
             <label>
@@ -249,250 +411,151 @@ export function Speakers({
           </button>
         </form>
       )}
-      {draftLink && (
-        <div className="d-invite-link" role="status">
-          <div>
-            <strong>Send them this.</strong>
-            <small>
-              Works once, expires in 14 days, and won&apos;t be shown again —
-              copy it now. They set their own email and password on it.
-            </small>
-          </div>
-          <code>{draftLink}</code>
-          <div className="d-actions">
-            <button className="d-button" onClick={copyLink}>
-              {copied ? "Copied" : "Copy link"}
+      {scope === "top" && banners}
+      <div className="d-split-toolbar">
+        <div className="d-tabs d-stage-tabs" role="group" aria-label="Filter speakers by stage">
+          {TABS.map(([value, label]) => (
+            <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>
+              {label} <span>{speakers ? speakers.filter((s) => inTab(s, value)).length : "—"}</span>
             </button>
-            <button className="d-text-button" onClick={() => setDraftLink("")}>
-              Done
-            </button>
-          </div>
+          ))}
         </div>
-      )}
-      {error && (
-        <p className="d-error" role="alert">
-          {error}
-        </p>
-      )}
-      {message && (
-        <p className="d-success" role="status">
-          {message}
-        </p>
-      )}
-      {credentials && (
-        <div className="d-success" role="status">
-          <strong>Portal account created.</strong>
-          <p>
-            Username: <code>{credentials.username}</code> · Temporary password:{" "}
-            <code>{credentials.tempPassword}</code>
-          </p>
-          <p>
-            The speaker must change this password on first sign-in. Save these
-            details before dismissing.
-          </p>
-          <button
-            className="d-text-button"
-            onClick={() => setCredentials(null)}
-          >
-            Dismiss credentials
-          </button>
-        </div>
-      )}
-      <section className="d-panel d-directory">
-        <div className="d-directory-toolbar">
-          <label className="d-search">
-            <span className="sr-only">Search speakers</span>
-            <input
-              placeholder="Search name, email, or organization…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </label>
-          <label className="d-filter">
-            <span>Status</span>
-            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-              <option value="ALL">All speakers</option>
-              <option value="PENDING">Pending review</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="DECLINED">Declined</option>
-              <option value="DRAFT">Drafts</option>
-            </select>
-          </label>
-        </div>
-        {/* Focusable: below ~680px this scrolls sideways, and a scroll
-            container a keyboard can't reach is a WCAG 2.1.1 failure. */}
-        <div className="d-table-scroll" tabIndex={0} role="region" aria-label="Speaker directory">
-          <table>
-            <thead>
-              <tr>
-                <th>Speaker</th>
-                <th>Organization</th>
-                <th>Status</th>
-                <th>Portal</th>
-                <th>
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered?.map((s) => (
-                <tr key={s.id}>
-                  <td>
-                    <div className="d-table-person">
-                      <span className="d-avatar">{initials(s.name)}</span>
-                      <span>
-                        <strong>{s.name || "Untitled draft"}</strong>
-                        <small>{s.email || "No email yet"}</small>
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    {s.organization || "Not provided"}
-                    <small>{VISIT_LABEL[s.kind ?? "TALK"]}</small>
-                  </td>
-                  <td>
-                    <span className={`d-badge ${s.status.toLowerCase()}`}>
-                      {!s.submittedAt
-                        ? "Draft"
-                        : s.status === "PENDING"
-                          ? "Candidate"
-                          : s.status === "CONFIRMED"
-                            ? "Speaker"
-                            : "Declined"}
+        <label className="d-search">
+          <span className="sr-only">Search speakers</span>
+          <input type="search" placeholder="Search name, email, or organization…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        </label>
+      </div>
+      <div className="d-split">
+        <section className="d-panel d-split-list" aria-label="Speakers">
+          {!speakers && <p className="d-muted">Speaker submissions are not available yet.</p>}
+          {filtered?.length === 0 && (
+            <Empty title={speakers?.length ? "No matching speakers" : "Your next guest starts here"}>
+              {speakers?.length
+                ? "Try a different search or stage."
+                : "Invite a guest, or share the public speaker application."}
+            </Empty>
+          )}
+          {!!filtered?.length && (
+            <ul>
+              {filtered.map((s) => (
+                <li key={s.id}>
+                  <button
+                    aria-current={open === s.id ? "true" : undefined}
+                    aria-controls="speaker-detail"
+                    onClick={() => {
+                      setOpen(s.id);
+                      setScope(s.id);
+                      setMessage("");
+                      setError("");
+                    }}
+                  >
+                    <span className="d-avatar">{initials(s.name)}</span>
+                    <span>
+                      <strong>{s.name || "Untitled draft"}</strong>
+                      <small>
+                        {s.organization || s.email || "No details yet"} · {VISIT_LABEL[s.kind ?? "TALK"]}
+                      </small>
                     </span>
-                  </td>
-                  <td>
-                    {s.user ? (
-                      "Active"
-                    ) : s.inviteLive ? (
-                      <span className="d-badge pending">Link sent</span>
-                    ) : (
-                      "No account"
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      className="d-text-button"
-                      aria-expanded={open === s.id}
-                      onClick={() => setOpen(open === s.id ? null : s.id)}
-                    >
-                      {open === s.id ? "Close" : "Review"}
-                      <span className="sr-only"> {s.name || "draft"}</span> ↗
-                    </button>
-                  </td>
-                </tr>
+                    <span className="d-split-meta">
+                      <span className={`d-badge ${s.submittedAt ? s.status.toLowerCase() : "pending"}`}>{stage(s)}</span>
+                    </span>
+                  </button>
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
-        {filtered?.length === 0 && (
-          <Empty
-            title={
-              speakers?.length
-                ? "No matching speakers"
-                : "Your next guest starts here"
-            }
-          >
-            {speakers?.length
-              ? "Try a different search or status filter."
-              : "Add a speaker draft or share the public speaker application."}
-          </Empty>
-        )}
-        {!speakers && (
-          <p className="d-muted">Speaker submissions are not available yet.</p>
-        )}
-      </section>
-      {speakers
-        ?.filter((s) => s.id === open)
-        .map((s) => (
-          <section className="d-panel d-speaker-detail" key={s.id}>
-            <div className="d-section-head">
-              <h2>{s.name || "Speaker draft"}</h2>
-              <button className="d-text-button" onClick={() => setOpen(null)}>
-                Close details
-              </button>
+            </ul>
+          )}
+        </section>
+        {detail ? (
+          <section id="speaker-detail" className="d-panel d-speaker-detail d-split-detail" aria-labelledby="speaker-detail-title">
+            <button className="d-text-button d-split-back" onClick={() => setOpen(null)}>
+              ← All speakers
+            </button>
+            <div className="d-split-head">
+              <span className="d-avatar d-avatar-large">{initials(detail.name)}</span>
+              <div>
+                <h2 id="speaker-detail-title">{detail.name || "Speaker draft"}</h2>
+                {detail.email ? <a href={`mailto:${detail.email}`}>{detail.email}</a> : <small>No email yet</small>}
+              </div>
+              <span className={`d-badge ${detail.submittedAt ? detail.status.toLowerCase() : "pending"}`}>{stage(detail)}</span>
             </div>
-            <dl>
-              <div>
-                <dt>Stage</dt>
-                <dd>
-                  {!s.submittedAt
-                    ? "Draft — not submitted"
-                    : s.status === "PENDING"
-                      ? "Candidate — deciding whether a date works"
-                      : s.status === "CONFIRMED"
-                        ? "Speaker — talk details unlocked"
-                        : "Declined"}
-                </dd>
-              </div>
-              <div>
-                <dt>Talk</dt>
-                <dd>
-                  {s.status === "CONFIRMED"
-                    ? s.talkTitle || "Not named yet"
-                    : "Unlocks when confirmed"}
-                </dd>
-              </div>
-              <div>
-                <dt>Slides</dt>
-                <dd>
-                  {s.status !== "CONFIRMED" ? (
-                    "Unlocks when confirmed"
-                  ) : s.slidesUrl ? (
-                    <a href={s.slidesUrl} target="_blank" rel="noreferrer">
-                      Open slides ↗
-                    </a>
-                  ) : (
-                    "Not shared yet"
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt>Contact</dt>
-                <dd>{s.email || "Not provided"}</dd>
-              </div>
-              <div>
-                <dt>Referred by</dt>
-                <dd>{s.referredBy || "Not provided"}</dd>
-              </div>
-              <div>
-                <dt>Equipment & needs</dt>
-                <dd>{s.needs || "None specified"}</dd>
-              </div>
-              <div>
-                <dt>Notes</dt>
-                <dd>{s.note || "No notes yet"}</dd>
-              </div>
-              <div>
-                <dt>
-                  Availability
-                  {s.availabilityConfirmedAt ? (
-                    <span className="d-badge confirmed">
-                      Confirmed {date(s.availabilityConfirmedAt)}
-                    </span>
-                  ) : s.availability?.length ? (
-                    <span className="d-badge pending">Still editing</span>
-                  ) : null}
-                </dt>
-                <dd>
-                  {s.availability?.length
-                    ? s.availability.map((w, i) => (
-                        <p key={i}>
-                          {w.startDate} to {w.endDate}, {w.startTime}–
-                          {w.endTime}
-                        </p>
-                      ))
-                    : "Not shared yet"}
-                </dd>
-              </div>
-            </dl>
+            {scope === detail.id && banners}
+            <SpeakerFacts s={detail} />
+            <div className="d-speaker-link">
+              {groupOf(detail).length ? (
+                <>
+                  <p>
+                    Shares a thread and event with <strong>{groupOf(detail).map((g) => g.name || "a guest").join(", ")}</strong>.
+                  </p>
+                  <button className="d-text-button" disabled={!!busy} onClick={() => separate(detail)}>Separate</button>
+                </>
+              ) : (
+                <label className="d-link-event">
+                  Link with another guest
+                  <select
+                    value=""
+                    disabled={!!busy}
+                    onChange={(e) => {
+                      const other = speakers?.find((x) => x.id === e.target.value);
+                      if (other) void linkWith(detail, other);
+                    }}
+                  >
+                    <option value="">Pick a guest (co-founders, a panel)…</option>
+                    {speakers
+                      ?.filter((x) => x.id !== detail.id && !x.threadId && !speakers.some((y) => y.threadId === x.id))
+                      .map((x) => (
+                        <option key={x.id} value={x.id}>
+                          {x.name || "Unnamed guest"}{x.organization ? ` · ${x.organization}` : ""}
+                        </option>
+                      ))}
+                  </select>
+                  <small>They share one thread and one event; the board&apos;s messages reach both.</small>
+                </label>
+              )}
+            </div>
+            <div className="d-speaker-ask">
+              {detail.availabilityRequest ? (
+                <p>
+                  <strong>Waiting on new availability</strong> for {requestRange(detail.availabilityRequest)}, asked{" "}
+                  {date(detail.availabilityRequest.at)}.
+                </p>
+              ) : null}
+              {asking === detail.id ? (
+                <form
+                  className="d-form d-ask-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void askAvailability(detail, new FormData(e.currentTarget));
+                  }}
+                >
+                  <div className="d-form-grid">
+                    <label>
+                      From
+                      <input name="from" type="date" required />
+                    </label>
+                    <label>
+                      To
+                      <input name="to" type="date" />
+                    </label>
+                  </div>
+                  <label>
+                    Note for them (optional)
+                    <textarea name="note" rows={2} maxLength={1000} placeholder="The first week fell through on our side, sorry about that." />
+                  </label>
+                  <div className="d-actions">
+                    <button className="d-button" disabled={!!busy}>Ask for these dates</button>
+                    <button type="button" className="d-button secondary" onClick={() => setAsking(null)}>Cancel</button>
+                  </div>
+                </form>
+              ) : (
+                <button className="d-text-button" disabled={!!busy} onClick={() => setAsking(detail.id)}>
+                  {detail.availabilityRequest ? "Ask again for different dates" : "Ask for new availability"}
+                </button>
+              )}
+            </div>
+            <div className="d-speaker-schedule">
             <label className="d-link-event">
               Scheduled event
-              <select
-                value={s.event?.id ?? ""}
-                disabled={busy === s.id}
-                onChange={(e) => link(s, e.target.value)}
-              >
+              <select value={detail.event?.id ?? ""} disabled={busy === detail.id} onChange={(e) => link(detail, e.target.value)}>
                 <option value="">Not scheduled yet</option>
                 {events?.map((e) => (
                   <option key={e.id} value={e.id}>
@@ -500,108 +563,206 @@ export function Speakers({
                   </option>
                 ))}
               </select>
-              <small>
-                Links this speaker to the event so their dashboard can show
-                RSVPs and check-ins.
-              </small>
+              <small>Links this speaker to the event so their dashboard can show RSVPs and check-ins.</small>
             </label>
-            <div className="d-actions">
-              {s.user?.resumeFilename && (
-                <a
-                  className="d-button secondary"
-                  href={`/api/resume/${s.user.id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Download resume ↗
+            {!detail.event &&
+              (creatingEvent === detail.id ? (
+                <EventForm
+                  event={{
+                    title: detail.talkTitle ?? "",
+                    // The first window they offered, as a starting point; datetime-local reads it as local time.
+                    startsAt: detail.availability?.[0]
+                      ? `${detail.availability[0].startDate}T${detail.availability[0].startTime}`
+                      : undefined,
+                  }}
+                  heading={`New event for ${detail.name || "this guest"}`}
+                  busy={busy === detail.id}
+                  submitLabel="Create and link"
+                  onSubmit={(e) => createEvent(e, detail)}
+                  onCancel={() => setCreatingEvent(null)}
+                />
+              ) : (
+                <button className="d-button secondary" onClick={() => setCreatingEvent(detail.id)}>
+                  + Create an event for this talk
+                </button>
+              ))}
+            </div>
+            <div className="d-actions d-speaker-actions">
+              {detail.user?.resumeFilename && (
+                <a className="d-button secondary" href={`/api/resume/${detail.user.id}`} target="_blank" rel="noreferrer">
+                  Download resume <Arrow />
                 </a>
               )}
-              {s.user?.linkedin && /^https?:\/\//i.test(s.user.linkedin) && (
-                <a
-                  className="d-button secondary"
-                  href={s.user.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  LinkedIn ↗
+              {detail.user?.linkedin && /^https?:\/\//i.test(detail.user.linkedin) && (
+                <a className="d-button secondary" href={detail.user.linkedin} target="_blank" rel="noreferrer">
+                  LinkedIn <Arrow />
                 </a>
               )}
-              {/* The link itself is unrecoverable by design, so the only
-                  honest affordance is "make a new one" — which kills the
-                  old. Board-wide, not exec: sending someone a link is not
-                  the same power as handing out an account by email. */}
-              {!s.user && (
+              {/* The link itself is unrecoverable by design, so the only honest
+                  affordance is "make a new one", which kills the old. */}
+              {!detail.user && (
                 <button
                   className="d-button secondary"
                   disabled={!!busy}
-                  onClick={() => newLink(s)}
+                  onClick={async () => {
+                    if (
+                      !detail.inviteLive ||
+                      (await confirm({
+                        title: "Replace their link?",
+                        body: "The link they already have stops working. You'll get a new one to send.",
+                        action: "Replace link",
+                        danger: true,
+                      }))
+                    )
+                      void newLink(detail);
+                  }}
                 >
-                  {busy === s.id
-                    ? "Making a link…"
-                    : s.inviteLive
-                      ? "Replace their link"
-                      : "Make a sign-up link"}
+                  {busy === detail.id ? "Making a link…" : detail.inviteLive ? "Replace their link" : "Make a sign-up link"}
                 </button>
               )}
-              {s.submittedAt && s.status !== "CONFIRMED" && (
+              {detail.submittedAt && detail.status !== "CONFIRMED" && (
                 <button
                   className="d-button"
                   disabled={!!busy}
-                  title={
-                    s.availabilityConfirmedAt
-                      ? undefined
-                      : "They haven't confirmed their availability yet."
-                  }
-                  onClick={() => status(s, "CONFIRMED")}
+                  title={detail.availabilityConfirmedAt ? undefined : "They haven't confirmed their availability yet."}
+                  onClick={() => status(detail, "CONFIRMED")}
                 >
                   Confirm as speaker
                 </button>
               )}
-              {s.status === "CONFIRMED" && (
-                <button
-                  className="d-button secondary"
-                  disabled={!!busy}
-                  onClick={() => status(s, "PENDING")}
-                >
+              {detail.status === "CONFIRMED" && (
+                <button className="d-button secondary" disabled={!!busy} onClick={() => status(detail, "PENDING")}>
                   Move back to candidate
                 </button>
               )}
-              {s.submittedAt && s.status !== "DECLINED" && (
+              {detail.submittedAt && detail.status !== "DECLINED" && (
                 <button
                   className="d-button secondary"
                   disabled={!!busy}
-                  onClick={() => status(s, "DECLINED")}
+                  onClick={async () => {
+                    if (
+                      await confirm({
+                        title: `Decline ${detail.name || "this guest"}?`,
+                        body: "They'll see they weren't picked this time. You can move them back later.",
+                        action: "Decline",
+                        danger: true,
+                      })
+                    )
+                      void status(detail, "DECLINED");
+                  }}
                 >
                   Decline
                 </button>
               )}
-              {s.submittedAt &&
-                s.status !== "DECLINED" &&
-                !s.user &&
-                user.role === "EXEC_BOARD" && (
-                  <button
-                    className="d-button"
-                    disabled={!!busy}
-                    onClick={() => invite(s)}
-                  >
-                    {busy === s.id
-                      ? "Inviting…"
-                      : s.status === "CONFIRMED"
-                        ? "Create account & email invite"
-                        : "Invite as candidate"}
-                  </button>
-                )}
+              {detail.submittedAt && detail.status !== "DECLINED" && !detail.user && user.role === "EXEC_BOARD" && (
+                <button className="d-button" disabled={!!busy} onClick={() => invite(detail)}>
+                  {busy === detail.id
+                    ? "Inviting…"
+                    : detail.status === "CONFIRMED"
+                      ? "Create account & email invite"
+                      : "Invite as candidate"}
+                </button>
+              )}
             </div>
             <Thread
-              submissionId={s.id}
+              submissionId={detail.id}
               user={user}
               events={events}
-              windows={s.availability ?? []}
-              title={`Thread with ${s.name || "this speaker"}`}
+              windows={detail.availability ?? []}
+              title={`Thread with ${detail.name || "this speaker"}`}
               description="Shared with every board member"
             />
+            <div className="d-delete-row">
+              <button className="d-button secondary danger" disabled={!!busy} onClick={() => remove(detail)}>
+                Delete guest
+              </button>
+            </div>
           </section>
-        ))}
+        ) : (
+          !!filtered?.length && (
+            <section className="d-panel d-split-detail d-split-empty">
+              <p className="d-muted">Pick a guest to see their details, availability and thread.</p>
+            </section>
+          )
+        )}
+      </div>
     </>
+  );
+}
+
+/** What we know about a guest so far; talk details unlock once they're confirmed. */
+function SpeakerFacts({ s }: { s: Speaker }) {
+  return (
+    <dl>
+      <div>
+        <dt>Stage</dt>
+        <dd>
+          {!s.submittedAt
+            ? "Draft, not submitted"
+            : s.status === "PENDING"
+              ? "Candidate, deciding whether a date works"
+              : s.status === "CONFIRMED"
+                ? "Speaker, talk details unlocked"
+                : "Declined"}
+        </dd>
+      </div>
+      <div>
+        <dt>Asking for</dt>
+        <dd>{VISIT_LABEL[s.kind ?? "TALK"]}{s.organization ? ` · ${s.organization}` : ""}</dd>
+      </div>
+      <div>
+        <dt>Talk</dt>
+        <dd>{s.status === "CONFIRMED" ? s.talkTitle || "Not named yet" : "Unlocks when confirmed"}</dd>
+      </div>
+      <div>
+        <dt>Slides</dt>
+        <dd>
+          {s.status !== "CONFIRMED" ? (
+            "Unlocks when confirmed"
+          ) : s.slidesUrl ? (
+            <a href={s.slidesUrl} target="_blank" rel="noreferrer">
+              Open slides <Arrow />
+            </a>
+          ) : (
+            "Not shared yet"
+          )}
+        </dd>
+      </div>
+      <div>
+        <dt>Referred by</dt>
+        <dd>{s.referredBy || "Not provided"}</dd>
+      </div>
+      <div>
+        <dt>Portal</dt>
+        <dd>{s.user ? "Account active" : s.inviteLive ? "Sign-up link sent" : "No account yet"}</dd>
+      </div>
+      <div>
+        <dt>Equipment & needs</dt>
+        <dd>{s.needs || "None specified"}</dd>
+      </div>
+      <div>
+        <dt>Notes</dt>
+        <dd>{s.note || "No notes yet"}</dd>
+      </div>
+      <div className="d-split-wide">
+        <dt>
+          Availability
+          {s.availabilityConfirmedAt ? (
+            <span className="d-badge confirmed">Confirmed {date(s.availabilityConfirmedAt)}</span>
+          ) : s.availability?.length ? (
+            <span className="d-badge pending">Still editing</span>
+          ) : null}
+        </dt>
+        <dd>
+          {s.availability?.length
+            ? s.availability.map((w, i) => (
+                <p key={i}>
+                  {w.startDate} to {w.endDate}, {w.startTime} to {w.endTime}
+                </p>
+              ))
+            : "Not shared yet"}
+        </dd>
+      </div>
+    </dl>
   );
 }

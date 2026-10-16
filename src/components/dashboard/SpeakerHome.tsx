@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { Icon } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 import { Avatar } from "./Avatar";
 import { Heading } from "./Overview";
-import { type Profile, type SessionUser, date } from "./types";
+import { type Profile, type SessionUser, when, requestRange } from "./types";
 
 /**
  * A confirmed speaker's landing page: their talk, their slides, and how
@@ -80,6 +80,13 @@ export function SpeakerHome({
         title="My talk"
         description="Everything the club and audience need for your visit, in one place."
       />
+      {submission?.availabilityRequest && (
+        <p className="d-callout" role="note">
+          <strong>The board asked for your availability for {requestRange(submission.availabilityRequest)}.</strong>{" "}
+          {submission.availabilityRequest.note}{" "}
+          <Link href="/dashboard/profile#availability">Update your availability</Link>
+        </p>
+      )}
 
       <section className="d-talk">
         <div className="d-talk-main">
@@ -90,14 +97,7 @@ export function SpeakerHome({
           <h2>{submission?.talkTitle || "Your talk needs a name."}</h2>
           <p>
             {event
-              ? `${date(event.startsAt, {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                })} · ${new Date(event.startsAt).toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "2-digit",
-                })}${event.location ? ` · ${event.location}` : ""}`
+              ? `${when(event.startsAt, { weekday: "long", month: "long", day: "numeric" })}${event.location ? ` · ${event.location}` : ""}`
               : "You're confirmed. The board will lock in the exact date and room with you."}
           </p>
           <div className="d-actions">
@@ -111,7 +111,7 @@ export function SpeakerHome({
                 target="_blank"
                 rel="noreferrer"
               >
-                Open slides ↗
+                Open slides <Arrow />
               </a>
             ) : (
               <Link

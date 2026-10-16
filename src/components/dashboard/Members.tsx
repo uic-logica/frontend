@@ -1,6 +1,8 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { api } from "@/lib/api";
+import { useConfirm } from "./useConfirm";
+import { useUrlState } from "./useUrlState";
 import { Empty, Heading } from "./Overview";
 import {
   type Member,
@@ -25,14 +27,20 @@ export function Members({
 }: {
   user: SessionUser;
   members: Member[] | null;
-  onChange: () => void;
+  /** The new roster, or nothing when your own access changed and the whole session must reload. */
+  onChange: (roster?: Member[]) => void;
 }) {
+  const [confirm, confirmDialog] = useConfirm();
+  // A rare action, so it's a dialog from the header instead of a panel that
+  // takes over the top of the roster.
+  const passwordDialog = useRef<HTMLDialogElement>(null);
   const isExec = user.role === "EXEC_BOARD";
   const [credentialEmail, setCredentialEmail] = useState("");
   const [issued, setIssued] = useState<{ email: string; password: string } | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [issuing, setIssuing] = useState(false);
-  const [query, setQuery] = useState("");
+  // In the URL, so a search result or a pasted link lands on that member.
+  const [query, setQuery] = useUrlState("q");
   const [filter, setFilter] = useState("ALL");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -50,11 +58,33 @@ export function Members({
   }, [members, query, filter]);
 
   async function update(id: string, body: Record<string, unknown>) {
+    const person = members?.find((m) => m.id === id);
+    const who = person?.name || person?.email || "this member";
+    // Exec means the club's money and everyone's access: confirm going to or
+    // from it, and any change to your own role.
+    if (
+      typeof body.role === "string" &&
+      (body.role === "EXEC_BOARD" || person?.role === "EXEC_BOARD" || id === user.id) &&
+      !(await confirm({
+        title: id === user.id ? "Change your own role?" : `Make ${who} ${body.role === "EXEC_BOARD" ? "exec" : body.role === "BOARD" ? "board" : "a member"}?`,
+        body:
+          id === user.id
+            ? "You may lose access to this page right away."
+            : body.role === "EXEC_BOARD"
+              ? "Exec can see and change the club's money, applications and everyone's access."
+              : "They lose exec access (money, applications, member roles) right away.",
+        action: "Change role",
+        danger: true,
+      }))
+    )
+      return;
     setBusy(id);
     setError("");
     try {
       await api("/api/board/members", { method: "PATCH", body: JSON.stringify({ id, ...body }) });
-      onChange();
+      // Only the roster changed, unless it was you: then the session did too.
+      if (id === user.id) onChange();
+      else onChange(await api<Member[]>("/api/board/members"));
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -74,7 +104,7 @@ export function Members({
       });
       setIssued(result);
       setConfirmed(false);
-      onChange();
+      onChange(await api<Member[]>("/api/board/members"));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not issue password.");
     } finally {
@@ -84,12 +114,20 @@ export function Members({
 
   return (
     <>
+      {confirmDialog}
       <Heading
         title="Members"
         description={
           isExec
             ? "Find people quickly, understand engagement, and update member access."
             : "Find people quickly and understand how they participate."
+        }
+        action={
+          isExec && (
+            <button className="d-button secondary" onClick={() => passwordDialog.current?.showModal()}>
+              Issue a password
+            </button>
+          )
         }
       />
 
@@ -119,7 +157,15 @@ export function Members({
       )}
 
       {isExec && (
-        <section className="d-panel" aria-labelledby="password-heading">
+        <dialog
+          ref={passwordDialog}
+          className="d-confirm d-password-dialog"
+          aria-labelledby="password-heading"
+          onClose={() => {
+            setIssued(null);
+            setConfirmed(false);
+          }}
+        >
           <h2 id="password-heading">Issue a member password</h2>
           <p>Creates a member account or replaces an existing member or board password. Existing roles stay the same. A reset signs the person out everywhere and revokes their MCP connections.</p>
           <form onSubmit={issuePassword} className="d-form" aria-busy={issuing}>
@@ -136,10 +182,15 @@ export function Members({
               <p>Password for <strong>{issued.email}</strong>. Deliver it privately now; it cannot be retrieved later.</p>
               <label htmlFor="issued-password">Generated password</label>
               <input id="issued-password" readOnly autoComplete="off" value={issued.password} onFocus={(e) => e.target.select()} />
-              <button type="button" className="d-button secondary" onClick={() => setIssued(null)}>Dismiss password</button>
+              <button type="button" className="d-button secondary" onClick={() => passwordDialog.current?.close()}>Done, I&apos;ve delivered it</button>
             </div>
           )}
-        </section>
+          {!issued && (
+            <form method="dialog" className="d-actions">
+              <button className="d-text-button">Cancel</button>
+            </form>
+          )}
+        </dialog>
       )}
 
       <section className="d-panel d-directory">

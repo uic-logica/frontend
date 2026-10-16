@@ -1,41 +1,42 @@
 # LOGICA website content
 
-> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Frontend members · **Type:** Reference
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Oct 15, 2026 · **Audience:** Frontend members · **Type:** Reference
 
 This is an inventory of the checked-in pages, not a specification for pages to build. Copy lives in the named source files. Static marketing claims below describe what the page displays; they are not verified club statistics.
 
 ## Public shell and home
 
-`src/components/club/ClubShell.tsx` supplies About, Events, Team, Blog, and Sign in navigation. Footer actions are email (`logica@uic.edu`), Join, Sign in, Privacy, Terms, and Support. There is no Products link in this navigation.
+`src/components/club/ClubShell.tsx`: nav with About, Events, Team, Projects, Blog, Sign in (Dashboard when signed in) and Join. Footer columns: Explore (About, Events, Team, Blog), Get involved (Join LOGICA, Partner with us, Speak at LOGICA, Sign in), Contact (`logica@uic.edu`, Support, GitHub), then Privacy and Terms.
 
 `src/app/page.tsx` renders, in order:
 
-1. “We are” and the “LOGICA @ UIC” character reveal, mission paragraph, and animated circuit-tree logo.
-2. “By the numbers”: the static values 100+, 20+, and 1.
-3. “Where Our Members Land” with employer logos.
-4. Development, Mentorship, Events, and Community pathway cards.
-5. “Our Partners”: company visits, talks, workshops, partners, and a separate DPI entry. Talks currently says “Coming soon — Fall '26.” The partnership action opens email.
-6. Join LOGICA and Attend an Event actions.
-
-There is no fetched upcoming-event list, featured-post feed, product directory, or rotating slogan in the homepage implementation. `Typewriter.tsx` renders one fixed string.
+1. Hero: logo beside a large "LOGICA at UIC" (the h1) with "Latinx computing and academics community" under it, Join LOGICA (`/signup`), See upcoming events, and the next event from `/api/events` (hidden when there is none).
+2. "Coming up": the next three events from `/api/events`, or "No upcoming events scheduled".
+3. "Where our members land": the logo slider.
+4. "What you get": Get hired, Learn by building, Find your people.
+5. "What we're building": the four products from `src/lib/projects.ts`, linking to /projects.
+6. Join card: Join LOGICA and Attend an event first.
+7. "Supported by": partner logos in four rows (Company visits, Talks "Coming soon", Workshops, Partners) and Partner with us.
 
 ## Public pages
 
 | Route and source under `src/app/` | Current content and action |
 | --- | --- |
-| `/about` — `about/page.tsx` | Mission, what the club does, who attends, three values, a Started/Since/Now timeline, and a Team link. |
+| `/about` — `about/page.tsx` | Mission, what the club does, who attends, three values, the groups we work with (WiCyS, SHPE, ACM, LUG), and links to Projects and the Team. |
 | `/team` — `team/page.tsx` | Four static exec profiles with photos, titles and LinkedIn links: Diego Flores, Nicolas Rufino Pinto, Dylan Cervantes, Angelo Moises Guerrero. Join CTA below. No fetched member directory or missing-photo fallback. |
-| `/blog` — `blog/page.tsx` | “No posts yet” and an Events link. It does not fetch the community feed. |
-| `/join` — `join/page.tsx` | General Member, Software Engineer, and Mentorship track copy; three application steps; FAQs. “Apply to Join” opens a membership-interest email. It does not create an application or account through the API. |
-| `/events` — `events/page.tsx` | Fetches `/api/events`, switches upcoming/past, shows loading/error/empty states, and links event detail and member sign-in. “Add to Calendar (soon)” is text. Upcoming Speakers is “To be announced.” “Subscribe” links to `/join`, not a newsletter form. |
-| `/events/[id]` — `events/[id]/page.tsx` | Event details, downloadable materials, board upload controls, and a signed-in event note feed. These panels make separate API requests. |
+| `/projects` — `projects/page.tsx`, `lib/projects.ts` | The five projects (what it is, the hard part, what you learn, status, demo day), each linking to its team page in the `.github` repo, and Apply to a Software Team (`/signin?next=/dashboard/teams`). |
+| `/blog` — `blog/page.tsx` | Published posts from `/api/blog` (title, excerpt, author, date), newest first, plus a Write a post link. Empty: “No posts yet” with Write a post and See events. |
+| `/blog/[slug]` — `blog/[slug]/page.tsx` | One published post from `/api/blog/:slug`; unknown slugs 404. |
+| `/join` — `join/page.tsx`, `join/JoinForm.tsx` | Create your account / Attend an event first, Software Engineer and Board Member roles, three application steps, FAQs, and the application form: Board Member posts to `/api/join`; Software Engineer sends people to the dashboard's Software Teams. |
+| `/events` — `events/page.tsx` | Fetches `/api/events` on the server, switches upcoming/past, shows error/empty states, links event detail, and offers a per-event .ics download and RSVP link. “Never miss one” posts to `/api/subscribe`. |
+| `/events/[id]` — `events/[id]/page.tsx` | Title, date, location, RSVP link, .ics download and the description. Materials and check-in live in the dashboard. |
 | `/speak` — `speak/page.tsx`, `speak/SpeakerForm.tsx` | Public guest intake plus the backend public speaker list. A role-based draft panel still creates the older `/speak/[id]` completion link. |
 | `/speak/[id]` — `speak/[id]/page.tsx` | Loads a draft, pre-fills `SpeakerForm`, and posts completion. Shows loading, invalid-link and already-submitted states. This is not an account-claim page. |
 | `/privacy`, `/terms`, `/support` | Static pages in their respective `page.tsx` files, using `components/legal/LegalPage.tsx`. These are published text, not evidence that a backend feature exists. |
 
 ## Authentication and invitations
 
-`src/app/signin/page.tsx` collects a university email and a password and posts them to `/api/auth/member-login`. Members create their own account at `/signup` with a @uic.edu email; execs can also issue or reset a password from the Members section. The old email → code screen is archived and inactive under `archive/passwordless/`. Do not promise code delivery, passkeys, or self-service reset here — a forgotten password goes through the exec board via `/support`.
+`src/app/signin/page.tsx` collects a university email and a password and posts them to `/api/auth/member-login`. Members create their own account at `/signup` with a @uic.edu email; execs can also issue or reset a password from the Members section. The old email → code screen is archived and inactive under `archive/passwordless/`. Do not promise code delivery, passkeys, or self-service reset here: a forgotten password goes through the exec board via `/support`.
 
 `src/app/speaker-signin/page.tsx` sends username/password to `/api/auth/speaker-login`. It routes temporary-password accounts to `/speaker-signin/set-password` and other guests through `/speaker-portal` to the dashboard. Its copy still says “confirmed speakers” and “invite email,” although the backend also permits candidates and accounts claimed from a link.
 

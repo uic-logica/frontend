@@ -16,7 +16,7 @@ export type Window = {
 export type TalkEvent = {
   id: string;
   title: string;
-  startsAt: string;
+  startsAt: string | null;
   location: string | null;
 };
 /** Null until the talk has an event — there is nothing to count before that. */
@@ -45,6 +45,7 @@ export type Profile = {
     status: string;
     submittedAt: string | null;
     availabilityConfirmedAt: string | null;
+    availabilityRequest?: AvailabilityRequest | null;
     talkTitle: string | null;
     slidesUrl: string | null;
     event: TalkEvent | null;
@@ -79,7 +80,8 @@ export type Event = {
   description: string | null;
   location: string | null;
   link: string | null;
-  startsAt: string;
+  /** Null = date TBD. */
+  startsAt: string | null;
 };
 export type Post = {
   id: string;
@@ -92,7 +94,24 @@ export type Notice = {
   message: string;
   createdAt: string;
   readAt: string | null;
+  /** Where it goes (a site path). Older notices have none; see noticeLink. */
+  link?: string | null;
 };
+
+/**
+ * Where clicking a notice goes: its stored link, or for notices from
+ * before links existed, the section the message is about.
+ */
+export function noticeLink(n: Notice): string | null {
+  if (n.link) return n.link;
+  const m = n.message;
+  if (/speaker thread|replied in their thread/i.test(m)) return "/dashboard/speakers";
+  if (/about your talk|your speaker submission|to speak at LOGICA/i.test(m)) return "/dashboard/messages";
+  if (/interview availability/i.test(m)) return "/dashboard/applications";
+  if (/^Reminder:|posted on |New material posted/i.test(m)) return "/dashboard/events";
+  if (/blog post/i.test(m)) return "/dashboard/blog";
+  return null;
+}
 export type Engagement = {
   involvement: {
     eventsAttended: number;
@@ -141,9 +160,12 @@ export type Speaker = {
   availability: Window[] | null;
   referredBy: string | null;
   availabilityConfirmedAt: string | null;
+  availabilityRequest?: AvailabilityRequest | null;
   talkTitle: string | null;
   slidesUrl: string | null;
   event: TalkEvent | null;
+  /** Set on a guest linked into another guest's thread (co-founders, a panel): the lead's id. */
+  threadId: string | null;
   user: {
     id: string;
     username: string | null;
@@ -189,7 +211,7 @@ export type BoardItem = {
   paidBy: BoardPerson | null;
   stageChangedBy: BoardPerson | null;
   createdBy: BoardPerson | null;
-  event: { id: string; title: string; startsAt: string } | null;
+  event: { id: string; title: string; startsAt: string | null } | null;
   budget: { id: string; label: string } | null;
 };
 
@@ -281,7 +303,7 @@ export type ClubInsights = {
   events: {
     id: string;
     title: string;
-    startsAt: string;
+    startsAt: string | null;
     location: string | null;
     going: number;
     attended: number;
@@ -350,6 +372,7 @@ export const sections = [
   "events",
   "activity",
   "community",
+  "blog",
   "teams",
   "speakers",
   "insights",
@@ -358,6 +381,7 @@ export const sections = [
   "documents",
   "members",
   "applications",
+  "emails",
   "messages",
   "notifications",
   "connections",
@@ -370,12 +394,14 @@ export const titles: Record<Section, string> = {
   events: "Events",
   activity: "My engagement",
   community: "Community",
+  blog: "Blog",
   teams: "Software Teams",
   speakers: "Speaker directory",
   insights: "Insights",
   money: "Money",
   pipeline: "Pipeline",
   documents: "Documents",
+  emails: "Emails",
   members: "Members",
   applications: "Applications",
   messages: "Messages",
@@ -393,6 +419,7 @@ export function titleFor(
   user: SessionUser | null,
   profile?: Profile | null,
 ) {
+  if (section === "overview" && user?.accountKind === "PARTNER") return "Our events";
   if (section === "overview" && user?.accountKind === "SPEAKER") {
     // A workshop host should not be reading the word "talk" all week.
     const noun = VISIT_NOUN[profile?.speakerSubmission?.kind ?? "TALK"];
@@ -412,7 +439,8 @@ export function navFor(
   user: SessionUser | null,
   profile?: Profile | null,
 ): Section[] {
-  if (!user) return ["overview"];
+  // A partner club sees the events it was granted and nothing else.
+  if (!user || user.accountKind === "PARTNER") return ["overview"];
   if (user.accountKind === "SPEAKER") {
     return isConfirmedSpeaker(profile ?? null)
       ? ["profile", "overview", "messages"]
@@ -430,10 +458,11 @@ export function navFor(
       "speakers",
       "members",
       "applications",
+      "blog",
       "documents",
+      "emails",
       "events",
       "community",
-      "teams",
       "profile",
     ];
   }
@@ -451,7 +480,7 @@ const MEMBER_NAV: Section[] = [
   "events",
   "activity",
   "community",
-  "teams",
+  "blog",
 ];
 
 /**
@@ -463,7 +492,6 @@ export const PERSONAL_SECTIONS: Section[] = [
   "community",
   "profile",
   "activity",
-  "teams",
 ];
 
 /**
@@ -508,13 +536,32 @@ const STAGE_LABELS: Record<Stage, string> = {
 };
 
 export function roleName(user: SessionUser, profile?: Profile | null) {
+  if (user.accountKind === "PARTNER") return "Partner club";
   return STAGE_LABELS[stageOf(user, profile)];
 }
+/** A short date, or "Date TBD" for an event whose date isn't set. */
 export function date(
-  value: string,
+  value: string | null,
   options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" },
 ) {
+  if (!value) {
+    // Date tiles ask for the month and the day separately: show "TBD" once, in the day.
+    if (options.day && !options.month && !options.weekday) return "TBD";
+    if (options.month && !options.day) return "";
+    return "Date TBD";
+  }
   return new Date(value).toLocaleDateString("en-US", options);
+}
+
+/** "Tuesday, October 21 · 6:00 PM", or "Date TBD". */
+export function when(value: string | null, options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }) {
+  if (!value) return "Date TBD";
+  return `${date(value, options)} · ${new Date(value).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`;
+}
+
+/** Still ahead, or not dated yet (TBD counts as upcoming). */
+export function isUpcoming(value: string | null) {
+  return !value || new Date(value).getTime() >= new Date().getTime();
 }
 export function initials(name: string | null) {
   return (name || "LOGICA")
@@ -583,4 +630,32 @@ export type Application = {
   reviewedAt: string | null;
   canReapply: boolean;
   decidedAt: string | null;
+  /** Times the applicant shared from their interview link (status INTERVIEW). */
+  interviewAvailability?: Window[] | null;
+  interviewAvailabilityAt?: string | null;
 };
+
+/** Mirrors backend BlogPost. Members write and submit; exec publishes or sends back. */
+export type BlogPost = {
+  id: string;
+  authorId: string;
+  title: string;
+  body: string;
+  status: "DRAFT" | "SUBMITTED" | "PUBLISHED" | "REJECTED";
+  slug: string | null;
+  reviewNote: string | null;
+  submittedAt: string | null;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  author?: { id: string; name: string | null; photoUrl: string | null };
+};
+
+/** The board asked a guest for their availability again, for this range (YYYY-MM-DD). */
+export type AvailabilityRequest = { from: string; to: string; note: string | null; at: string };
+
+/** "Mon, Nov 9 to Fri, Nov 13" for an availability request. */
+export function requestRange(r: AvailabilityRequest) {
+  const day = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "short", month: "short", day: "numeric" });
+  return r.from === r.to ? day(r.from) : `${day(r.from)} to ${day(r.to)}`;
+}

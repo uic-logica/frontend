@@ -1,26 +1,28 @@
-# LOGICA @ UIC — frontend
+# LOGICA @ UIC · frontend
 
-> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Sep 29, 2026 · **Audience:** Members and recruiters · **Type:** Landing page
+> **Owner:** [@nicolasrufino](https://github.com/nicolasrufino) · **Last reviewed:** Oct 15, 2026 · **Audience:** Members and recruiters · **Type:** Landing page
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=000)](https://react.dev/) [![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=fff)](https://tailwindcss.com/) [![Vercel](https://img.shields.io/badge/Vercel-live-000000?logo=vercel)](https://logicauic.org)
 
-The club website for [LOGICA @ UIC](https://github.com/uic-logica) — Latinx and underrepresented students in computing at the University of Illinois Chicago. **[Live site →](https://logicauic.org)**
+The club website for [LOGICA @ UIC](https://github.com/uic-logica): Latinx and underrepresented students in computing at the University of Illinois Chicago. **[Live site →](https://logicauic.org)**
 
-**Software lead:** Nicolas Rufino ([@nicolasrufino](https://github.com/nicolasrufino)) — owns every product, sets deadlines, reviews and merges. Public repo, **members-only contributions** ([how we work](https://github.com/uic-logica/.github/blob/main/CONTRIBUTING.md)).
+**Software lead:** Nicolas Rufino ([@nicolasrufino](https://github.com/nicolasrufino)). Owns every product, sets deadlines, reviews and merges. Public repo, **members-only contributions** ([how we work](https://github.com/uic-logica/.github/blob/main/CONTRIBUTING.md)).
 
-<img src="docs/screenshots/home-desktop.jpg" alt="Home page: night painting of the Chicago skyline" width="70%"> <img src="docs/screenshots/home-phone.jpg" alt="Home page on a phone" width="24%">
+<img src="docs/screenshots/home-desktop.jpg" alt="Home page: a warm painting of the Chicago skyline fading into the page" width="70%"> <img src="docs/screenshots/home-phone.jpg" alt="Home page on a phone" width="24%">
 
 ## What's live
 
 | Area | What it does |
 |---|---|
-| Public site | Home, About, Events, Team, Blog, Join, Partner, legal pages — one night painting of Chicago per page |
+| Public site | Home, About, Events, Team, Projects, Blog (members write in the dashboard, the exec board publishes), Join, Partner, Speak, legal pages. Light and dark (follows your computer; switch it in dashboard Settings), a Chicago painting on Home and in every footer |
 | Accounts | Sign up with @uic.edu, password sign-in, 30-day sessions |
-| Member dashboard | Overview, profile (resume + LinkedIn), events and check-in, engagement, community, **Software Teams** application |
-| Exec workspace | Money, outreach pipeline, insights, documents, members, applications |
+| Member dashboard | Overview, profile (resume + LinkedIn), events and one-step check-in, engagement, community. The **Software Teams** application opens from [/projects](https://logicauic.org/projects) |
+| Exec workspace | Money, outreach pipeline, insights, documents, members, applications, speakers; the board edits events in place |
 | Speakers & guests | `/speak` intake, guest portal, availability calendar |
 
-<img src="docs/screenshots/events-desktop.jpg" alt="Events page" width="49%"> <img src="docs/screenshots/join-desktop.jpg" alt="Join page" width="49%">
+<img src="docs/screenshots/events-desktop.jpg" alt="Events page" width="49%"> <img src="docs/screenshots/projects-desktop.jpg" alt="Projects page" width="49%">
+
+What members are building next (opportunity board, resume builder, 3D event replays, mock interviewer) is on [logicauic.org/projects](https://logicauic.org/projects) and in the [roadmap](https://github.com/uic-logica/.github/blob/main/ROADMAP.md).
 
 ## How it fits together
 
@@ -50,19 +52,18 @@ Run the [backend](https://github.com/uic-logica/backend#readme) on port 3001 at 
 
 | Path | What |
 |---|---|
-| `src/app/` | Routes: public pages, `signin`, `signup`, `dashboard/[section]`, `speak`, `invite` |
-| `src/components/club/` | Public shell, nav, night backdrop (`JourneyBackdrop.tsx`) |
-| `src/components/dashboard/` | Dashboard shell and every section (`Dashboard.tsx`, `BuildTeams.tsx`, `Board.tsx`, …) |
+| `src/app/` | Routes: public pages (including `projects`), `signin`, `signup`, `dashboard/[section]`, `speak`, `invite` |
+| `src/components/club/` | Public shell: nav, footer (`ClubShell.tsx`), the logo slider (`LogoMarquee.tsx`) |
+| `src/components/site/` | Public site styles (`site.css`), paintings, icons |
+| `src/lib/projects.ts` | The project list behind /projects and Home's "What we're building" |
+| `src/components/dashboard/` | Dashboard shell and every section (`Dashboard.tsx`, `Board.tsx`, `Speakers.tsx`, …) |
+| `src/app/tokens.css` | The `d-*` color tokens, light and dark, shared by the site and the dashboard |
 | `src/lib/` | API client and pure helpers (with vitest tests) |
-| `design/logica.pen` | The design — "Variant E (night)" frames, open in [Pencil](https://pen.dev) |
+| `design/logica.pen` | The design. V4 frames ("V4 · Site" and "V4 ·" dashboard), open in [Pencil](https://pen.dev) |
 | `docs/screenshots/` | Live screenshots used here |
 
 ## Design
 
-The night design in [`design/logica.pen`](design/logica.pen) and [DESIGN.md](DESIGN.md) is the only spec. New screens get designed there first.
-
-## Known gap
-
-`/events` still shows "Add to Calendar (soon)" as text.
+The V4 design in [`design/logica.pen`](design/logica.pen) (Stage 9 for the site) and [DESIGN.md](DESIGN.md) is the spec. New screens get designed there first. How dashboard items open (split views, links that keep your place, confirms, the read cache) is in [DASHBOARD.md](DASHBOARD.md).
 
 Docs for contributors: [AGENTS.md](AGENTS.md) (rules for code changes) · [PRODUCT.md](PRODUCT.md) · [DASHBOARD.md](DASHBOARD.md) · [CONTENT.md](CONTENT.md) · [roadmap](https://github.com/uic-logica/.github/blob/main/ROADMAP.md).

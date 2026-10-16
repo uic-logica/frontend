@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
-import { Icon } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 import {
   type BoardItem,
   type Budgets,
@@ -101,7 +101,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
           <div className="d-section-head">
             <h2>Needs attention</h2>
             <Link className="d-text-link" href="/dashboard/pipeline">
-              All of it ↗
+              All of it <Arrow />
             </Link>
           </div>
           {items === null ? (
@@ -114,7 +114,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
             <ul className="d-waiting">
               {mine.map((item) => (
                 <li key={item.id}>
-                  <Link href={item.kind === "MONEY" ? "/dashboard/money" : "/dashboard/pipeline"}>
+                  <Link href={`/dashboard/${item.kind === "MONEY" ? "money" : "pipeline"}?id=${item.id}`}>
                     <span className="d-task-circle gold">
                       <Icon name={item.kind === "MONEY" ? "money" : "pipeline"} />
                     </span>
@@ -145,7 +145,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
             <div className="d-section-head">
               <h2>Club pulse</h2>
               <Link className="d-text-link" href="/dashboard/insights">
-                Insights ↗
+                Insights <Arrow />
               </Link>
             </div>
             {insights ? (
@@ -175,7 +175,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
             <div className="d-section-head">
               <h2>Next up</h2>
               <Link className="d-text-link" href="/dashboard/events">
-                Calendar ↗
+                Calendar <Arrow />
               </Link>
             </div>
             {upcoming(events).length === 0 ? (
@@ -186,6 +186,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
                   .slice(0, 3)
                   .map((event) => (
                     <li className="d-event-row" key={event.id}>
+                      <Link className="d-event-row-link" href={`/dashboard/events?id=${event.id}`}>
                       <span className="d-date-tile">
                         <small>{date(event.startsAt, { month: "short" })}</small>
                         <strong>{date(event.startsAt, { day: "numeric" })}</strong>
@@ -194,6 +195,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
                         <strong>{event.title}</strong>
                         <small>{event.location || "Location to come"}</small>
                       </span>
+                      </Link>
                     </li>
                   ))}
               </ul>
@@ -211,7 +213,7 @@ function overdue(value: string) {
 
 function upcoming(events: Event[] | null) {
   const now = Date.now();
-  return (events ?? []).filter((e) => new Date(e.startsAt).getTime() >= now);
+  return (events ?? []).filter((e) => !e.startsAt || new Date(e.startsAt).getTime() >= now);
 }
 
 type Pin = {
@@ -252,19 +254,19 @@ function pinsFor(
   const approvals: Pin = {
     label: awaiting === 1 ? "cost to approve" : "costs to approve",
     value: awaiting,
-    href: "/dashboard/money",
+    href: "/dashboard/money?stage=REQUESTED",
     icon: "money",
   };
   const replies: Pin = {
     label: needsReply === 1 ? "conversation needs a reply" : "conversations need a reply",
     value: needsReply,
-    href: "/dashboard/pipeline",
+    href: "/dashboard/pipeline?stage=NEEDS_REPLY",
     icon: "pipeline",
   };
   const guests: Pin = {
     label: toDecide === 1 ? "guest to decide on" : "guests to decide on",
     value: toDecide,
-    href: "/dashboard/speakers",
+    href: "/dashboard/speakers?status=PENDING",
     icon: "speakers",
   };
   const active: Pin = {

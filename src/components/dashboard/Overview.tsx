@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "@/lib/api";
-import { Icon } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 import {
   type SessionUser,
   type Profile,
@@ -13,6 +13,9 @@ import {
   roleName,
   runsWorkspace,
   date,
+  isUpcoming,
+  noticeLink,
+  when,
 } from "./types";
 
 export function Heading({
@@ -91,7 +94,7 @@ export function Overview({
   // Speakers never reach this — they get SpeakerHome instead.
   const board = runsWorkspace(user);
   const upcoming = events
-    ?.filter((e) => new Date(e.startsAt) >= new Date())
+    ?.filter((e) => isUpcoming(e.startsAt))
     .slice(0, 3);
   const pending = speakers?.filter((s) => s.status === "PENDING");
   const checks = profile
@@ -145,8 +148,8 @@ export function Overview({
         <section className="d-panel">
           <div className="d-section-head"><h2>Coming up</h2><span className="d-muted">{coming.length} RSVPs</span></div>
           {(coming.length ? coming : upcoming)?.map((event) => (
-            <Link className="d-compact-row" href="/dashboard/events" key={event.id}>
-              <span className="d-live-dot" /><span><strong>{event.title}</strong><small>{date(event.startsAt, { month: "short", day: "numeric" })} · {new Date(event.startsAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</small></span>
+            <Link className="d-compact-row" href={`/dashboard/events?id=${event.id}`} key={event.id}>
+              <span className="d-live-dot" /><span><strong>{event.title}</strong><small>{when(event.startsAt)}</small></span>
               <span className="d-badge">{goingIds.has(event.id) ? "Going" : "Open"}</span>
             </Link>
           ))}
@@ -229,7 +232,7 @@ export function Activity({ engagement }: { engagement: Engagement | null }) {
         {engagement && !items.length && (
           <Empty title="Your story starts with showing up">
             Join an event or post in the community. Your activity will appear
-            here. <Link href="/dashboard/events">Explore events →</Link>
+            here. <Link href="/dashboard/events">Explore events <Arrow /></Link>
           </Empty>
         )}
         {!engagement && (
@@ -274,6 +277,17 @@ export function Notifications({
       <Heading
         title="Notifications"
         description="Choose what needs your attention and where it should reach you."
+        action={
+          unread.length > 0 && (
+            <button
+              className="d-button secondary"
+              disabled={!!busy}
+              onClick={() => read(unread.map((n) => n.id))}
+            >
+              {busy === "all" ? "Saving…" : "Mark all read"}
+            </button>
+          )
+        }
       />
       {error && (
         <p role="alert" className="d-error">
@@ -281,65 +295,74 @@ export function Notifications({
         </p>
       )}
       {unread.length > 0 && (
-        <section className="d-panel">
-          <div className="d-section-head">
-            <h2>Unread</h2>
-            <button
-              className="d-text-button"
-              disabled={!!busy}
-              onClick={() => read(unread.map((n) => n.id))}
-            >
-              Mark all read
-            </button>
-          </div>
-          {unread.map((n) => (
-            <div className="d-notification is-unread" key={n.id}>
-              <span className="d-live-dot" />
-              <div>
-                <p>{n.message}</p>
-                <small>{date(n.createdAt)}</small>
+        <section aria-labelledby="notices-unread">
+          <h2 className="d-group-label" id="notices-unread">
+            Unread
+          </h2>
+          <div className="d-panel d-notice-list">
+            {unread.map((n) => (
+              <div className="d-notification is-unread" key={n.id}>
+                <span className="d-live-dot" />
+                <NoticeText n={n} onOpen={() => void read([n.id])} />
+                <button
+                  disabled={!!busy}
+                  className="d-text-button"
+                  onClick={() => read([n.id])}
+                >
+                  {busy === n.id ? "Saving…" : "Mark read"}
+                </button>
               </div>
-              <button
-                disabled={!!busy}
-                className="d-text-button"
-                onClick={() => read([n.id])}
-              >
-                {busy === n.id ? "Saving…" : "Mark read"}
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </section>
       )}
       {/* Read notices move down here, which is the point of marking one —
           the list you're working through gets shorter. */}
       {earlier.length > 0 && (
-        <section className="d-panel">
-          <div className="d-section-head">
-            <h2>Earlier</h2>
-            <span className="d-muted">Already read</span>
-          </div>
-          {earlier.map((n) => (
-            <div className="d-notification" key={n.id}>
-              <span className="d-read-dot" />
-              <div>
-                <p>{n.message}</p>
-                <small>{date(n.createdAt)}</small>
+        <section aria-labelledby="notices-earlier">
+          <h2 className="d-group-label" id="notices-earlier">
+            Earlier
+          </h2>
+          <div className="d-panel d-notice-list">
+            {earlier.map((n) => (
+              <div className="d-notification" key={n.id}>
+                <span className="d-read-dot" />
+                <NoticeText n={n} />
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </section>
       )}
-      <section className="d-panel">
-        {notices?.length === 0 && (
-          <Empty title="All caught up">
-            We’ll put club updates and reminders here when there’s something for
-            you.
-          </Empty>
-        )}
-        {!notices && (
-          <p className="d-muted">Notifications are not available yet.</p>
-        )}
-      </section>
+      {(!notices || notices.length === 0) && (
+        <section className="d-panel">
+          {notices ? (
+            <Empty title="All caught up">
+              We’ll put club updates and reminders here when there’s something
+              for you.
+            </Empty>
+          ) : (
+            <p className="d-muted">Notifications are not available yet.</p>
+          )}
+        </section>
+      )}
     </>
+  );
+}
+
+/** A notice's text: a link to what it's about when there is one (opening it marks it read). */
+function NoticeText({ n, onOpen }: { n: Notice; onOpen?: () => void }) {
+  const href = noticeLink(n);
+  return href ? (
+    <Link href={href} className="d-notice-link" onClick={onOpen}>
+      <p>
+        {n.message} <Arrow />
+      </p>
+      <small>{date(n.createdAt)}</small>
+    </Link>
+  ) : (
+    <div>
+      <p>{n.message}</p>
+      <small>{date(n.createdAt)}</small>
+    </div>
   );
 }

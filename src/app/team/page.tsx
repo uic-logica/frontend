@@ -45,35 +45,48 @@ const exec: Person[] = [
   },
 ];
 
-/** Team card: round portrait linking to LinkedIn. */
+/** Team card: portrait on top, name and role under it, linking to LinkedIn. */
 function PersonCard({ person }: { person: Person }) {
   return (
-    <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="person-card">
-      <span className="person-photo">
-        <Image src={person.image} alt="" fill sizes="(max-width: 799px) 76px, 160px" className="object-cover" />
+    <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="site-card team-person">
+      <span className="team-photo">
+        <Image src={person.image} alt="" fill sizes="(max-width: 599px) 50vw, 240px" className="object-cover" />
       </span>
-      <h3>{person.name}</h3>
-      <p className="person-role">{person.role}</p>
+      <span className="team-info">
+        <span>
+          <strong>{person.name}</strong>
+          <small>{person.role}</small>
+        </span>
+        <LinkedInIcon />
+        <span className="sr-only">(LinkedIn, opens in a new tab)</span>
+      </span>
     </a>
   );
 }
 
-/** Layout is logica.pen V3 "04 · Team" (desktop and mobile). */
+function LinkedInIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+    </svg>
+  );
+}
+
+/** Layout is logica.pen V4 "05 Team". */
 export default function TeamPage() {
   return (
     <ClubShell>
       <main className="site-page">
-        <header className="page-head">
-          <h1>Our Team</h1>
+        <header className="site-page-head">
+          <h1 className="serif">Our team</h1>
         </header>
 
-        <section className="team-board" aria-labelledby="exec-board">
-          <div className="team-board-head">
-            <h2 id="exec-board">Executive Board</h2>
-            <p>
-              <span className="only-d">The leadership team that guides LOGICA strategy and operations</span>
-              <span className="only-m">The students guiding LOGICA strategy and operations.</span>
-            </p>
+        <section className="site-section" aria-labelledby="exec-board">
+          <div className="site-head">
+            <div>
+              <h2 id="exec-board" className="serif">Executive board</h2>
+              <p className="site-head-sub">Elected each spring.</p>
+            </div>
           </div>
           <div className="team-people">
             {exec.map((m) => (
@@ -82,13 +95,12 @@ export default function TeamPage() {
           </div>
         </section>
 
-        <section className="team-cta glass" aria-labelledby="join-board">
-          <h2 id="join-board">Interested in joining the board?</h2>
-          <p>
-            <span className="only-d">Board applications open each semester.</span>
-            <span className="only-m">Applications open each semester.</span>
-          </p>
-          <Link href="/join" className="site-button">Join LOGICA</Link>
+        <section className="site-section site-cta" aria-labelledby="join-board">
+          <div>
+            <h2 id="join-board" className="serif">Interested in joining the board?</h2>
+            <p>Applications open each semester.</p>
+          </div>
+          <Link href="/join" className="site-btn">Join LOGICA</Link>
         </section>
       </main>
     </ClubShell>

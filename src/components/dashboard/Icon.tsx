@@ -1,6 +1,6 @@
 import type { Section } from "./types";
 const paths: Record<
-  Section | "arrow" | "exit" | "check" | "menu" | "clock" | "search" | "chevron",
+  Section | "arrow" | "exit" | "check" | "menu" | "clock" | "search" | "chevron" | "sun" | "moon" | "home",
   string
 > = {
   overview: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
@@ -8,6 +8,7 @@ const paths: Record<
   events: "M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2 M7 2v6 M17 2v6 M3 11h18",
   activity: "M3 20h18 M6 16v-5 M12 16V4 M18 16V8",
   teams: "M16 18l6-6-6-6 M8 6l-6 6 6 6",
+  blog: "M4 20h4L19 9l-4-4L4 16z M13.5 6.5l4 4",
   community: "M21 11a8 8 0 0 1-8 8H7l-5 3 1-6a8 8 0 1 1 18-5",
   speakers: "M9 3h6v11H9z M5 10v3a7 7 0 0 0 14 0v-3 M12 20v3 M8 23h8",
   insights: "M21 8a9 9 0 1 1-6-5 M12 12V3a9 9 0 0 1 9 9z",
@@ -19,17 +20,21 @@ const paths: Record<
     "M14 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0 M3 20v-1.5A5.5 5.5 0 0 1 8.5 13h5a5.5 5.5 0 0 1 5.5 5.5V20 M18 4a3 3 0 0 1 0 6",
   applications: "M8 4H5v17h14V4h-3 M8 3h8v4H8z M8 11h8 M8 15h5",
   messages: "M4 4h16v12H8l-4 4z M8 9h8 M8 12h5",
+  emails: "M3 5h18v14H3z M3 6l9 7 9-7",
   clock: "M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18 M12 7v5l3.5 2",
   notifications: "M5 9a7 7 0 0 1 14 0v6l2 3H3l2-3z M9 21h6",
   connections:
     "M6.5 8.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5 M17.5 20.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5 M17.5 8.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5 M9 6h5.5 M6.5 8.5v6a3.5 3.5 0 0 0 3.5 3.5h5",
   settings: "M4 7h16 M4 17h16 M8 4v6 M16 14v6",
+  home: "M3 11 12 3l9 8 M5 9.5V21h14V9.5 M10 21v-6h4v6",
   arrow: "M5 12h14 M13 6l6 6-6 6",
   exit: "M9 3H3v18h6 M10 12h11 M17 8l4 4-4 4",
   check: "m5 12 4 4 10-10",
   menu: "M3 6h18 M3 12h18 M3 18h18",
   search: "m21 21-4.35-4.35 M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
   chevron: "m9 18 6-6-6-6",
+  sun: "M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8 M12 2v2 M12 20v2 M4.9 4.9l1.4 1.4 M17.7 17.7l1.4 1.4 M2 12h2 M20 12h2 M4.9 19.1l1.4-1.4 M17.7 6.3l1.4-1.4",
+  moon: "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5",
 };
 export function Icon({ name }: { name: keyof typeof paths }) {
   return (
@@ -46,5 +51,14 @@ export function Icon({ name }: { name: keyof typeof paths }) {
     >
       <path d={paths[name]} />
     </svg>
+  );
+}
+
+/** The trailing arrow on a text link, sized to the text (replaces the old ↗ and → characters). */
+export function Arrow() {
+  return (
+    <span className="d-arrow" aria-hidden="true">
+      <Icon name="arrow" />
+    </span>
   );
 }

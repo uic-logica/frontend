@@ -9,54 +9,114 @@ export class ApiError extends Error {
 }
 
 /**
- * Last successful GET responses, per browser tab (sessionStorage), so the
- * dashboard can paint what you saw last time instantly and refresh behind
- * it instead of showing a skeleton on every load. Any write — a save, a
- * sign-in, a sign-out — clears the whole cache, so a change is never hidden
- * behind an old copy and nothing outlives the account that read it.
- * ponytail: clear-everything-on-write, per-path invalidation if writes get frequent enough to matter.
+ * Last successful GET responses, so the dashboard paints what you saw last
+ * time at once and refreshes behind it, instead of "Loading…" on every visit.
+ *
+ * - Kept in localStorage, so a new tab or a reload starts warm too.
+ * - Tagged with the account that read it: a different account (or none)
+ *   drops everything first, and sign-out clears it.
+ * - A write only drops the reads under the same resource (a PATCH to
+ *   /api/events/x forgets /api/events*), plus the two summaries that echo
+ *   almost every change: /api/dashboard and /api/notifications.
+ * - Identical GETs in flight at the same time share one request.
+ *
+ * Every cached read is refreshed from the server as soon as it's shown, so
+ * the worst case is a stale first frame, never a stale page.
+ * ponytail: localStorage size cap (~5MB) — the dashboard reads are small JSON; if
+ * documents listings ever grow, cap or skip them in remember().
  */
 const CACHE = "api-cache:";
+const OWNER = "api-cache-owner";
+
+function store(): Storage | null {
+  try {
+    return typeof window === "undefined" ? null : window.localStorage;
+  } catch {
+    return null;
+  }
+}
 
 /** The last good response for a GET path, or undefined. Browser-only. */
 export function peek<T>(path: string): T | undefined {
   try {
-    const raw = sessionStorage.getItem(CACHE + path);
+    const raw = store()?.getItem(CACHE + path);
     return raw ? (JSON.parse(raw) as T) : undefined;
   } catch {
     return undefined;
   }
 }
 
-export function clearApiCache() {
+/** Forget cached reads: all of them, or only those whose path starts with `prefix`. */
+export function clearApiCache(prefix = "") {
+  const s = store();
+  if (!s) return;
   try {
-    for (const key of Object.keys(sessionStorage)) if (key.startsWith(CACHE)) sessionStorage.removeItem(key);
+    for (const key of Object.keys(s)) if (key.startsWith(CACHE + prefix)) s.removeItem(key);
+    if (!prefix) s.removeItem(OWNER);
   } catch {}
 }
 
 function remember(path: string, body: unknown) {
   try {
-    sessionStorage.setItem(CACHE + path, JSON.stringify(body));
+    store()?.setItem(CACHE + path, JSON.stringify(body));
   } catch {}
 }
+
+/** "/api/events/abc/rsvp?x=1" → "/api/events": the resource a write touches. */
+export function resourceOf(path: string) {
+  return path.split("?")[0].split("/").slice(0, 3).join("/");
+}
+
+const inFlight = new Map<string, Promise<unknown>>();
 
 // Same-origin — next.config.ts rewrites /api/* to the backend, so the
 // session cookie stays first-party and `credentials` doesn't need "include".
 export async function api<T = unknown>(path: string, init?: RequestInit): Promise<T> {
   const read = !init?.method || init.method.toUpperCase() === "GET";
+  if (read && !init?.body) {
+    const pending = inFlight.get(path);
+    if (pending) return pending as Promise<T>;
+    const request = send<T>(path, init, true).finally(() => inFlight.delete(path));
+    inFlight.set(path, request);
+    return request;
+  }
+  return send<T>(path, init, read);
+}
+
+async function send<T>(path: string, init: RequestInit | undefined, read: boolean): Promise<T> {
   const res = await fetch(path, {
     ...init,
     headers: { "Content-Type": "application/json", ...init?.headers },
   });
   const body = await res.json().catch(() => null);
-  if (!read) clearApiCache();
+  if (!read) {
+    // Signing in or out changes whose data this is: start clean.
+    if (path.startsWith("/api/auth")) clearApiCache();
+    else for (const prefix of [resourceOf(path), "/api/dashboard", "/api/notifications"]) clearApiCache(prefix);
+  }
   if (!res.ok) throw new ApiError(body?.error ?? `Request failed: ${res.status}`, res.status);
   if (read && typeof window !== "undefined") {
-    // A different (or no) account in this tab: drop everything read before.
-    if (path === "/api/auth/session" && peek<{ user?: { id?: string } }>(path)?.user?.id !== (body as { user?: { id?: string } } | null)?.user?.id) clearApiCache();
+    if (path === "/api/auth/session") {
+      // A different (or no) account in this browser: drop everything read before.
+      const id = (body as { user?: { id?: string } } | null)?.user?.id ?? "";
+      if (store()?.getItem(OWNER) !== id) {
+        clearApiCache();
+        try {
+          if (id) store()?.setItem(OWNER, id);
+        } catch {}
+      }
+    }
     remember(path, body);
   }
   return body as T;
+}
+
+/** Warm the cache for reads a section will need, when the browser is idle. */
+export function prefetch(paths: string[]) {
+  if (typeof window === "undefined") return;
+  const run = () => paths.forEach((path) => void api(path).catch(() => {}));
+  if ("requestIdleCallback" in window) window.requestIdleCallback(run, { timeout: 3000 });
+  else setTimeout(run, 1500);
 }
 
 /**

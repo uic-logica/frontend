@@ -42,13 +42,16 @@ const readableDay = (date: string, opts: Intl.DateTimeFormatOptions) =>
 export function AvailabilityGrid({
   windows,
   onChange,
+  startAt,
 }: {
   windows: Window[];
   onChange: (windows: Window[]) => void;
+  /** Open on this date's week (YYYY-MM-DD), e.g. the week the board asked about. */
+  startAt?: string;
 }) {
   const [slots, setSlots] = useState(() => windowsToSlots(windows));
   const [week, setWeek] = useState(() =>
-    weekStart([...windowsToSlots(windows)].sort()[0]?.slice(0, 10) ?? today()),
+    weekStart(startAt ?? [...windowsToSlots(windows)].sort()[0]?.slice(0, 10) ?? today()),
   );
   const [focus, setFocus] = useState<string | null>(null);
   // An in-progress drag: where it started, whether it fills or erases (decided

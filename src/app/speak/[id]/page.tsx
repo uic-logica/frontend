@@ -1,7 +1,8 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
+import { ClubShell } from "@/components/club/ClubShell";
+import { SiteIcon } from "@/components/site/icons";
 import { ApiError, api } from "@/lib/api";
 import { AvailabilityWindow, SpeakerForm, SpeakerFormValues } from "../SpeakerForm";
 
@@ -19,7 +20,7 @@ type Draft = {
 
 type LoadState = { kind: "loading" } | { kind: "invalid" } | { kind: "submitted" } | { kind: "ready"; draft: Draft };
 
-/** Private link a board member sends a specific speaker — pre-filled with whatever's already known. */
+/** Private link a board member sends a specific speaker, pre-filled with whatever's already known. */
 export default function SpeakerDraftPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [state, setState] = useState<LoadState>({ kind: "loading" });
@@ -38,23 +39,21 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
 
   let body: React.ReactNode;
   if (state.kind === "loading") {
-    body = <p className="text-body-sm text-white">Loading…</p>;
+    body = <p className="site-muted" role="status">Loading…</p>;
   } else if (state.kind === "invalid") {
     body = (
-      <div className="club-card w-fit max-w-xl bg-white/[0.02] p-8">
-        <h2 className="type-h2 text-white">This link isn&apos;t valid</h2>
-        <p className="mt-3 text-body text-white">
-          Double check the link, or ask whoever sent it to you for a new one.
-        </p>
+      <div className="site-card speak-card">
+        <span className="site-check bad" aria-hidden="true"><SiteIcon name="close" size={20} /></span>
+        <h2 className="serif">This link isn&apos;t valid</h2>
+        <p className="site-muted">Double check the link, or ask whoever sent it to you for a new one.</p>
       </div>
     );
   } else if (state.kind === "submitted") {
     body = (
-      <div className="club-card w-fit max-w-xl bg-white/[0.02] p-8">
-        <h2 className="type-h2 text-white">Already submitted</h2>
-        <p className="mt-3 text-body text-white">
-          This was already filled out. Reach out if anything needs to change.
-        </p>
+      <div className="site-card speak-card">
+        <span className="site-check info" aria-hidden="true"><SiteIcon name="check" size={20} /></span>
+        <h2 className="serif">Already submitted</h2>
+        <p className="site-muted">This was already filled out. Reach out if anything needs to change.</p>
       </div>
     );
   } else {
@@ -74,20 +73,16 @@ export default function SpeakerDraftPage({ params }: { params: Promise<{ id: str
 
   return (
     <ClubShell>
-      <PageContainer>
-        <SectionContainer>
-          <div className="mx-auto max-w-md">
-            <h1 className="type-title text-3xl md:text-4xl text-white">Confirm your details</h1>
-            <p className="mt-3 text-xl text-signal md:text-2xl">
-              We&apos;ve got some of this already — just fill in what&apos;s left.
-            </p>
-          </div>
-        </SectionContainer>
-
-        <SectionContainer>
-          <div className="mx-auto max-w-md">{body}</div>
-        </SectionContainer>
-      </PageContainer>
+      <main className="site-page speak-draft">
+        <header className="site-page-head">
+          <h1 className="serif">Confirm your details</h1>
+          <p className="speak-lead serif">We&apos;ve got some of this already. Just fill in what&apos;s left.</p>
+          {state.kind === "ready" && (
+            <p className="speak-prefilled">Some details are filled in. The form below is the same as /speak.</p>
+          )}
+        </header>
+        {body}
+      </main>
     </ClubShell>
   );
 }

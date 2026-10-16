@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ClubShell, PageContainer, SectionContainer } from "@/components/club/ClubShell";
-import { darkButtonClass, darkInputClass } from "@/components/ui/darkForm";
+import { ClubShell } from "@/components/club/ClubShell";
 import { api } from "@/lib/api";
 import { SpeakerForm } from "./SpeakerForm";
 
 type PublicSpeaker = { id: string; name: string; organization: string | null };
 type Profile = { role: string; name: string | null };
 
-/** Speaker/guest intake — public, no sign-in. Send this link to a prospective speaker. */
+/** Speaker/guest intake: public, no sign-in. Send this link to a prospective speaker. */
 export default function SpeakPage() {
   const [speakers, setSpeakers] = useState<PublicSpeaker[] | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -27,59 +26,50 @@ export default function SpeakPage() {
 
   return (
     <ClubShell>
-      <PageContainer>
-        <SectionContainer>
-          <div className="mx-auto max-w-md">
-            <h1 className="type-title text-3xl md:text-4xl text-white">Speak at LOGICA</h1>
-            <p className="mt-3 text-xl text-signal md:text-2xl">
-              Tell us you&apos;re interested — we&apos;ll follow up to confirm details.
+      <main className="site-page partner-page">
+        <div className="speak-intro">
+          <header className="site-page-head">
+            <p className="site-kicker">SPEAKERS</p>
+            <h1 className="serif">Speak at LOGICA</h1>
+            <p className="speak-lead serif">Tell us you&apos;re interested and we&apos;ll follow up to confirm details.</p>
+            <p>
+              If someone from LOGICA reached out to you about speaking, RSVP here with your availability and what
+              you&apos;ll need. No account required.
             </p>
-            <p className="mt-6 text-body text-white">
-              If someone from LOGICA reached out to you about speaking, RSVP here with your
-              availability and what you&apos;ll need. No account required.
-            </p>
-          </div>
-        </SectionContainer>
-
-        <SectionContainer>
-          <div className="mx-auto max-w-md">
-            <h2 className="type-h3 text-white">Confirmed speakers</h2>
-            {speakers === null && <p className="mt-3 text-body-sm text-white">Loading…</p>}
-            {speakers?.length === 0 && (
-              <p className="mt-3 text-body-sm text-white">Nobody confirmed yet — check back soon.</p>
-            )}
+          </header>
+          <section aria-labelledby="confirmed" className="speak-confirmed">
+            <h2 id="confirmed" className="serif">Confirmed speakers</h2>
+            {speakers === null && <p className="site-muted" role="status">Loading…</p>}
+            {speakers?.length === 0 && <p className="site-muted">Nobody confirmed yet. Check back soon.</p>}
             {speakers && speakers.length > 0 && (
-              <ul className="mt-4 flex flex-col gap-2">
+              <ul>
                 {speakers.map((s) => (
-                  <li key={s.id} className="rounded-lg border border-white/15 px-4 py-2 text-body-sm text-white">
-                    {s.name}
-                    {s.organization ? ` · ${s.organization}` : ""}
+                  <li key={s.id}>
+                    <span className="speak-initials" aria-hidden="true">{initials(s.name)}</span>
+                    <span>
+                      <strong>{s.name}</strong>
+                      {s.organization && <small>{s.organization}</small>}
+                    </span>
                   </li>
                 ))}
               </ul>
             )}
-          </div>
-        </SectionContainer>
+          </section>
+        </div>
 
-        {isBoard && (
-          <SectionContainer>
-            <div className="mx-auto max-w-md">
-              <DraftPanel />
-            </div>
-          </SectionContainer>
-        )}
-
-        <SectionContainer>
-          <div className="mx-auto max-w-md">
-            <SpeakerForm submitPath="/api/speakers" />
-          </div>
-        </SectionContainer>
-      </PageContainer>
+        <div className="speak-forms">
+          {isBoard && <DraftPanel />}
+          <SpeakerForm submitPath="/api/speakers" />
+        </div>
+      </main>
     </ClubShell>
   );
 }
 
-/** Board+ only — pre-fill what you already know, get a private link to send. */
+const initials = (name: string) =>
+  name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+
+/** Board+ only: pre-fill what you already know, get a private link to send. */
 function DraftPanel() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -114,27 +104,20 @@ function DraftPanel() {
   }
 
   return (
-    <div className="club-card p-6">
-      <h2 className="type-h4 text-white">Create a private link (board only)</h2>
-      <p className="mt-2 text-body-sm text-white">
-        Fill in whatever you already know — the speaker only fills in the rest.
-      </p>
-
+    <div className="site-card speak-card">
+      <span className="site-badge auth-tag">Board only</span>
+      <h2 className="serif">{link ? "Link ready" : "Create a private link"}</h2>
       {link ? (
-        <div className="mt-4 flex flex-col gap-2">
-          <input readOnly value={link} onFocus={(e) => e.target.select()} className={darkInputClass} />
+        <>
+          <div className="speak-link-row">
+            <input readOnly value={link} aria-label="Private link" onFocus={(e) => e.target.select()} />
+            <button type="button" className="site-btn" onClick={() => navigator.clipboard?.writeText(link).catch(() => {})}>
+              Copy link
+            </button>
+          </div>
           <button
             type="button"
-            className="type-label self-start text-signal underline-offset-4 hover:underline"
-            onClick={() => {
-              navigator.clipboard?.writeText(link).catch(() => {});
-            }}
-          >
-            Copy link
-          </button>
-          <button
-            type="button"
-            className="type-label self-start text-white hover:text-white"
+            className="speak-another"
             onClick={() => {
               setLink(null);
               setName("");
@@ -146,44 +129,17 @@ function DraftPanel() {
           >
             Create another
           </button>
-        </div>
+        </>
       ) : (
-        <form onSubmit={create} className="mt-4 flex flex-col gap-3">
-          {error && <p className="text-body-sm text-signal">{error}</p>}
-          <input
-            placeholder="Name (optional)"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={darkInputClass}
-          />
-          <input
-            placeholder="Email (optional)"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={darkInputClass}
-          />
-          <input
-            placeholder="Organization (optional)"
-            value={organization}
-            onChange={(e) => setOrganization(e.target.value)}
-            className={darkInputClass}
-          />
-          <input
-            placeholder="Referred by (optional)"
-            value={referredBy}
-            onChange={(e) => setReferredBy(e.target.value)}
-            className={darkInputClass}
-          />
-          <textarea
-            placeholder="Note — visible to the speaker too (optional)"
-            rows={2}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            className={`${darkInputClass} min-h-[3.5rem] py-3`}
-          />
-          <button type="submit" disabled={busy} className={darkButtonClass}>
-            {busy ? "Creating…" : "Create link"}
-          </button>
+        <form onSubmit={create} className="site-form">
+          <p className="site-muted">Fill in whatever you already know. The speaker only fills in the rest.</p>
+          {error && <p className="site-error" role="alert">{error}</p>}
+          <input aria-label="Name" placeholder="Name (optional)" value={name} onChange={(e) => setName(e.target.value)} />
+          <input aria-label="Email" placeholder="Email (optional)" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input aria-label="Organization" placeholder="Organization (optional)" value={organization} onChange={(e) => setOrganization(e.target.value)} />
+          <input aria-label="Referred by" placeholder="Referred by (optional)" value={referredBy} onChange={(e) => setReferredBy(e.target.value)} />
+          <textarea aria-label="Note" placeholder="Note, visible to the speaker too (optional)" rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
+          <button type="submit" disabled={busy} className="site-btn block">{busy ? "Creating…" : "Create link"}</button>
         </form>
       )}
     </div>

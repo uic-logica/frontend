@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { api, clearApiCache, peek, signOut } from "@/lib/api";
+import { api, clearApiCache, peek, prefetch, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
 import { ProfileEditor, Settings } from "./Profile";
@@ -18,8 +18,11 @@ import { BoardHome } from "./BoardHome";
 import { Insights } from "./Insights";
 import { Documents } from "./Documents";
 import { Applications } from "./Applications";
+import { Emails } from "./Emails";
+import { Blog } from "./Blog";
 import { Members } from "./Members";
 import { AgentAccess } from "./AgentAccess";
+import { PartnerHome } from "./Partners";
 import { Avatar } from "./Avatar";
 import {
   type SessionUser,
@@ -38,7 +41,7 @@ import {
   runsWorkspace,
   PERSONAL_SECTIONS,
 } from "./types";
-import { BuildTeams, retireTeamsHint, snoozeTeamsHint, teamsHintHidden } from "./BuildTeams";
+import { BuildTeams } from "./BuildTeams";
 import "./dashboard.css";
 
 /** logica.pen "35 Dashboard — Variant E (night) · C clouds + city lights": one painting behind every section. */
@@ -66,6 +69,7 @@ const EXEC_SECTIONS = [
   "pipeline",
   "applications",
   "documents",
+  "emails",
   "members",
 ] as const satisfies readonly Section[];
 
@@ -137,22 +141,6 @@ export function Dashboard() {
     setOpened((prev) => (prev.includes(section) ? prev : [...prev, section]));
   }, [section]);
   const [menu, setMenu] = useState(false);
-  // The nav (and so the pointer) only renders client-side after the session
-  // loads, so reading localStorage in the initializer can't mismatch the server.
-  const [hintOff, setHintOff] = useState(() => typeof window === "undefined" || teamsHintHidden());
-  // Applied on another device? The server knows; this browser doesn't yet.
-  const hintAccount = user?.accountKind === "MEMBER" ? user.id : null;
-  useEffect(() => {
-    if (hintOff || !hintAccount) return;
-    api<{ track: string }[]>("/api/join/mine")
-      .then((rows) => {
-        if (rows.some((r) => r.track === "SOFTWARE_ENGINEER")) {
-          retireTeamsHint();
-          setHintOff(true);
-        }
-      })
-      .catch(() => {});
-  }, [hintOff, hintAccount]);
   const [leaving, setLeaving] = useState(false);
   const leavingRef = useRef(false);
   const confirmOut = useRef<HTMLDialogElement>(null);
@@ -160,7 +148,6 @@ export function Dashboard() {
   const searchInput = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const isMac = useSyncExternalStore(noSubscribe, () => /Mac|iPhone|iPad/.test(navigator.userAgent), () => false);
-  const accountMenu = useRef<HTMLDetailsElement>(null);
   const sideMenu = useRef<HTMLDetailsElement>(null);
   const sidebar = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
@@ -245,6 +232,8 @@ export function Dashboard() {
         }
         setUser(current);
         setAuthState("ready");
+        // A partner club's page loads its own events; nothing else is theirs to read.
+        if (current.accountKind === "PARTNER") return;
         async function read<T>(
           path: string,
           label: string,
@@ -288,6 +277,23 @@ export function Dashboard() {
               ]
             : []),
         ]);
+        // Warm what the other sections read, so their first visit paints
+        // at once instead of "Loading…". Idle-time, and only what this
+        // account is allowed to open.
+        if (alive)
+          prefetch([
+            ...(current.accountKind === "SPEAKER" ? [] : ["/api/posts", "/api/email-preferences", "/api/mcp-tokens"]),
+            ...(runsWorkspace(current)
+              ? [
+                  "/api/board/items",
+                  "/api/board/items?kind=MONEY",
+                  "/api/board/items?kind=OUTREACH",
+                  "/api/board/budgets",
+                  "/api/board/insights",
+                  "/api/join",
+                ]
+              : []),
+          ]);
       } catch {
         if (alive && !leavingRef.current) setAuthState("error");
       }
@@ -298,10 +304,14 @@ export function Dashboard() {
     };
   }, [reload, router]);
 
+  // The query changes (?id=, ?status=) re-apply the route's metadata title,
+  // so this runs on those too.
+  const search = useSearchParams();
   useEffect(() => {
-    document.title = `${titleFor(section, user, profile)} · LOGICA`;
-  }, [section, user, profile]);
+    document.title = `${titleFor(user?.accountKind === "PARTNER" ? "overview" : section, user, profile)} · LOGICA`;
+  }, [section, user, profile, search]);
   const speaker = user?.accountKind === "SPEAKER";
+  const partner = user?.accountKind === "PARTNER";
   const submissionId = profile?.speakerSubmission?.id;
   // The standalone thread is the whole page, so the work area gives up its
   // padding and max-width for it.
@@ -311,7 +321,7 @@ export function Dashboard() {
     leavingRef.current = true;
     setLeaving(true);
     const destination =
-      user?.accountKind === "SPEAKER" ? "/speaker-signin" : "/signin";
+      speaker || partner ? "/speaker-signin" : "/signin";
     try {
       await signOut(destination);
       forgetSession();
@@ -329,7 +339,9 @@ export function Dashboard() {
   // A speaker's profile is their visit form, so it stays in their rail.
   // Everyone else reaches it from the account menus.
   const sideNav = user?.accountKind === "SPEAKER" ? nav : nav.filter((item) => item !== "profile");
-  const accountLinks = (
+  const accountLinks = partner ? (
+    <Link href="/speaker-signin/set-password">Change password</Link>
+  ) : (
     <>
       <Link href="/dashboard/profile">My profile</Link>
       <Link href="/dashboard/notifications">
@@ -353,18 +365,18 @@ export function Dashboard() {
     for (const event of events ?? []) rows.push({
       label: event.title,
       detail: `Event${event.location ? ` · ${event.location}` : ""}`,
-      href: "/dashboard/events",
+      href: `/dashboard/events?id=${event.id}`,
     });
     if (user && runsWorkspace(user)) {
       for (const member of members ?? []) rows.push({
         label: member.name || member.email,
         detail: `Member · ${member.major || member.email}`,
-        href: "/dashboard/members",
+        href: `/dashboard/members?q=${encodeURIComponent(member.email)}`,
       });
       for (const guest of speakers ?? []) rows.push({
         label: guest.name || guest.email || "Speaker",
         detail: `Speaker${guest.organization ? ` · ${guest.organization}` : ""}`,
-        href: "/dashboard/speakers",
+        href: `/dashboard/speakers?id=${guest.id}`,
       });
     }
     for (const notice of notices ?? []) rows.push({
@@ -387,9 +399,8 @@ export function Dashboard() {
     // <details> has no light dismiss; a click anywhere else closes the menus,
     // and the phone menu sheet, unless the click is on the sheet or its tab bar.
     const closeMenus = (event: PointerEvent) => {
-      for (const menu of [accountMenu.current, sideMenu.current]) {
-        if (menu?.open && !menu.contains(event.target as Node)) menu.removeAttribute("open");
-      }
+      const menu = sideMenu.current;
+      if (menu?.open && !menu.contains(event.target as Node)) menu.removeAttribute("open");
       if (!(event.target as Element).closest?.(".d-sidebar, .d-tabbar")) setMenu(false);
     };
     window.addEventListener("keydown", openSearch);
@@ -404,6 +415,17 @@ export function Dashboard() {
     searchDialog.current?.close();
     setQuery("");
   };
+  // The saved choice is applied to <html> before paint by the root layout's
+  // script; that only runs on a full load, so arriving here by client-side
+  // navigation re-applies it. Unset means "follow the system".
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("logica-theme");
+      if (saved === "light" || saved === "dark")
+        document.documentElement.dataset.theme = saved;
+    } catch {}
+  }, []);
+
   return (
     <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
       <a href="#dashboard-content" className="d-skip">
@@ -459,12 +481,6 @@ export function Dashboard() {
                       </span>
                     )}
                 </Link>
-                {item === "teams" && !hintOff && !seen("teams") && (
-                  <div className="d-callout" role="note">
-                    <span>Apply for the software role here!</span>
-                    <button type="button" aria-label="Dismiss" onClick={() => { snoozeTeamsHint(); setHintOff(true); }}>×</button>
-                  </div>
-                )}
               </Fragment>
             ))}
           </nav>
@@ -473,8 +489,13 @@ export function Dashboard() {
                 things that need a record. Hidden until the URL is set
                 rather than guessed at. Profile, notifications and settings
                 live in the account menus, not the rail. */}
-            {process.env.NEXT_PUBLIC_DISCORD_URL && (
-              <nav aria-label="Community">
+            <nav aria-label="Elsewhere">
+              {/* Spelled out, not just the logo up top: not everyone knows the logo goes home. */}
+              <Link href="/" onClick={() => setMenu(false)}>
+                <Icon name="home" />
+                Main site
+              </Link>
+              {process.env.NEXT_PUBLIC_DISCORD_URL && (
                 <a
                   href={process.env.NEXT_PUBLIC_DISCORD_URL}
                   target="_blank"
@@ -483,8 +504,8 @@ export function Dashboard() {
                   <Icon name="community" />
                   Discord
                 </a>
-              </nav>
-            )}
+              )}
+            </nav>
             {user && (
               <div className="d-account">
                 <details ref={sideMenu} className="d-account-menu d-side-menu">
@@ -539,12 +560,12 @@ export function Dashboard() {
             <span className="d-logo-chip" aria-hidden="true"><Image src="/logica-logo-black.png" alt="" width={26} height={26} /></span>
           </Link>
           <span className="d-crumbs">
-            <span>{speaker ? "Your visit" : user && runsWorkspace(user) ? "Workspace" : "Member home"}</span>
+            <span>{partner ? "Partner club" : speaker ? "Your visit" : user && runsWorkspace(user) ? "Workspace" : "Member home"}</span>
             <span aria-hidden="true">›</span>
-            <strong>{titleFor(section, user, profile)}</strong>
+            <strong>{titleFor(partner ? "overview" : section, user, profile)}</strong>
           </span>
           <div>
-            {user?.accountKind !== "SPEAKER" && (
+            {user?.accountKind === "MEMBER" && (
               <button className="d-global-search" type="button" onClick={() => { searchDialog.current?.showModal(); requestAnimationFrame(() => searchInput.current?.focus()); }}>
                 <Icon name="search" />
                 <span>Search…</span>
@@ -552,31 +573,20 @@ export function Dashboard() {
               </button>
             )}
             {user?.accountKind === "MEMBER" && (
-              <Link className="d-button d-top-action" href="/dashboard/events">
-                {runsWorkspace(user) ? "+ New" : "Find an event"}
+              <Link className="d-button d-top-action" href={runsWorkspace(user) ? "/dashboard/events?new=1" : "/dashboard/events"}>
+                {runsWorkspace(user) ? "+ New event" : "Find an event"}
               </Link>
             )}
-            {user && (
-              <>
-                <Link
-                  aria-label={`${unread} unread notifications`}
-                  href="/dashboard/notifications"
-                  className="d-bell"
-                >
-                  <Icon name="notifications" />
-                  {unread > 0 && <i />}
-                </Link>
-                <details ref={accountMenu} className="d-account-menu">
-                  <summary>
-                    <Avatar name={profile?.name || user.name} photoUrl={profile?.photoUrl} className="d-avatar d-avatar-small" />
-                    <span>Profile &amp; prefs</span>
-                    <Icon name="chevron" />
-                  </summary>
-                  <nav aria-label="Profile and preferences" onClick={() => accountMenu.current?.removeAttribute("open")}>
-                    {accountLinks}
-                  </nav>
-                </details>
-              </>
+            {/* Profile and prefs live in the rail's account menu only (and in More on phones). */}
+            {user && !partner && (
+              <Link
+                aria-label={`${unread} unread notifications`}
+                href="/dashboard/notifications"
+                className="d-bell"
+              >
+                <Icon name="notifications" />
+                {unread > 0 && <i />}
+              </Link>
             )}
           </div>
         </header>
@@ -637,7 +647,9 @@ export function Dashboard() {
               </button>
             </div>
           )}
-          {user && authState === "ready" && (
+          {/* A partner club gets one page whatever the URL; no other section is theirs. */}
+          {partner && authState === "ready" && <PartnerHome />}
+          {user && !partner && authState === "ready" && (
             <>
               {seen("overview") && (
               <Pane active={section === "overview"}>
@@ -706,7 +718,19 @@ export function Dashboard() {
                 )}
               </Pane>
               )}
-              {seen("events") && (
+              {/* Only for accounts whose nav has Events: a guest typing the URL
+                  (or following an old link) shouldn't land in a half-working
+                  member view. */}
+              {section === "events" && user && !nav.includes("events") && (
+                <section className="d-panel d-note-panel">
+                  <div>
+                    <h2>Your event is on your home page</h2>
+                    <p>The date, room and who&apos;s coming are on your overview.</p>
+                    <Link className="d-button" href="/dashboard">Go to my overview</Link>
+                  </div>
+                </section>
+              )}
+              {seen("events") && nav.includes("events") && (
                 <Pane active={section === "events"}>
                   <Events
                     user={user}
@@ -722,6 +746,7 @@ export function Dashboard() {
                   <Activity engagement={engagement} />
                 </Pane>
               )}
+              {/* Not in the sidebar: members reach it from /projects and /join. */}
               {seen("teams") && user && (
                 <Pane active={section === "teams"}>
                   <BuildTeams user={user} profile={profile} />
@@ -732,6 +757,11 @@ export function Dashboard() {
                   <Community user={user} />
                 </Pane>
               )}
+              {seen("blog") && user && (
+                <Pane active={section === "blog"}>
+                  <Blog user={user} />
+                </Pane>
+              )}
               {seen("speakers") && (
               <Pane active={section === "speakers"}>
                 {runsWorkspace(user) ? (
@@ -739,6 +769,7 @@ export function Dashboard() {
                     user={user}
                     speakers={speakers}
                     events={events}
+                    onEvents={setEvents}
                     onChange={setSpeakers}
                   />
                 ) : (
@@ -773,11 +804,13 @@ export function Dashboard() {
                     <Applications />
                   ) : item === "documents" ? (
                     <Documents />
+                  ) : item === "emails" ? (
+                    <Emails />
                   ) : (
                     <Members
                       user={user}
                       members={members}
-                      onChange={() => setReload((v) => v + 1)}
+                      onChange={(roster) => (roster ? setMembers(roster) : setReload((v) => v + 1))}
                     />
                   )}
                 </Pane>
@@ -795,7 +828,7 @@ export function Dashboard() {
               )}
               {seen("settings") && (
                 <Pane active={section === "settings"}>
-                  <Settings user={user} />
+                  <Settings user={user} profile={profile} />
                 </Pane>
               )}
             </>

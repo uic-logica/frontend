@@ -8,6 +8,8 @@ import { LegalPage, LSection, LList, contactLine } from "@/components/legal/Lega
 export default function PrivacyPage() {
   return (
     <LegalPage
+      eyebrow="LEGAL"
+      numbered
       title="Privacy Policy"
       dek="What we collect when you use this site, why, and how to ask us to change or delete it."
       updated="September 2026"
@@ -26,24 +28,24 @@ export default function PrivacyPage() {
         <LList
           items={[
             <>
-              <strong>Account and membership details</strong> — name, email, and any other fields
+              <strong>Account and membership details</strong>: name, email, and any other fields
               you fill in when you join, sign in, or update your profile.
             </>,
             <>
-              <strong>Event and attendance data</strong> — which events you RSVP to or check in
+              <strong>Event and attendance data</strong>: which events you RSVP to or check in
               to, so we can plan capacity and follow up.
             </>,
             <>
-              <strong>Form and speaker submissions</strong> — anything you submit through our
+              <strong>Form and speaker submissions</strong>: anything you submit through our
               intake forms, including speaker/guest applications.
             </>,
             <>
-              <strong>Resumes</strong> — if you choose to upload one to your member profile. This
+              <strong>Resumes</strong>: if you choose to upload one to your member profile. This
               is optional and only used to share with partners you&apos;ve consented to share it
               with (e.g., a company visit or recruiting event).
             </>,
             <>
-              <strong>Messages you send us</strong> — if you email us or fill out a contact form.
+              <strong>Messages you send us</strong>: if you email us or fill out a contact form.
             </>,
           ]}
         />
@@ -68,8 +70,8 @@ export default function PrivacyPage() {
       <LSection title="Sharing">
         <p>
           We don&apos;t sell your information. We share it only when it&apos;s the point of the
-          feature you used — for example, sharing your resume with a company visiting for a
-          recruiting event, only if you opted into that — or when required by law.
+          feature you used (for example, sharing your resume with a company visiting for a
+          recruiting event, only if you opted into that) or when required by law.
         </p>
       </LSection>
 
