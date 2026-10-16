@@ -47,6 +47,10 @@ export function Emails() {
   const [query, setQuery] = useUrlState("q");
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
+  const [usage, setUsage] = useState<{ month: number; monthLimit: number; day: number; dayLimit: number } | null>(null);
+  useEffect(() => {
+    api<{ month: number; monthLimit: number; day: number; dayLimit: number }>("/api/board/emails/usage").then(setUsage).catch(() => {});
+  }, [reload]);
   // The open email, in the URL like every other detail, so a link to it works.
   const [openId, setOpenId] = useUrlState("id");
 
@@ -84,6 +88,13 @@ export function Emails() {
             Retry
           </button>
         </p>
+      )}
+      {usage && (
+        <div className="d-email-usage" aria-label="Email allowance">
+          <Meter label="This month" used={usage.month} limit={usage.monthLimit} />
+          <Meter label="Today" used={usage.day} limit={usage.dayLimit} />
+          <small className="d-muted">Resend free plan. Months and days reset at midnight UTC (7 PM Chicago).</small>
+        </div>
       )}
       <div className="d-split-toolbar">
         <div className="d-tabs d-stage-tabs" aria-label="Filter emails">
@@ -143,6 +154,25 @@ export function Emails() {
       </section>
       {openId && <EmailViewer id={openId} onClose={() => setOpenId("")} />}
     </>
+  );
+}
+
+/** Emails left out of an allowance, with a bar that turns warm near the cap. */
+function Meter({ label, used, limit }: { label: string; used: number; limit: number }) {
+  const left = Math.max(0, limit - used);
+  const share = Math.min(1, used / limit);
+  return (
+    <div className={`d-meter${share >= 0.9 ? " is-high" : share >= 0.7 ? " is-mid" : ""}`}>
+      <span>
+        <strong>{left.toLocaleString("en-US")}</strong> left {label.toLowerCase()}
+      </span>
+      <span className="d-meter-bar" aria-hidden="true">
+        <i style={{ width: `${share * 100}%` }} />
+      </span>
+      <small className="d-muted">
+        {used.toLocaleString("en-US")} of {limit.toLocaleString("en-US")} sent
+      </small>
+    </div>
   );
 }
 

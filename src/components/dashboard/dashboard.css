@@ -4023,3 +4023,14 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 .d-email-viewer .d-tabs { margin-bottom: 12px; }
 .d-email-frame { width: 100%; height: min(620px, 60vh); border: 1px solid var(--d-rule); border-radius: var(--d-radius-sm); background: #f0eee6; }
 .d-email-text { margin: 0; max-height: 60vh; overflow: auto; padding: 16px; border: 1px solid var(--d-rule); border-radius: var(--d-radius-sm); background: var(--d-sunken); white-space: pre-wrap; font: 14px/1.6 var(--d-font, inherit); }
+
+/* Emails: how much of the Resend allowance is left. */
+.d-email-usage { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 32px; margin: 0 0 20px; }
+.d-email-usage > small { flex-basis: 100%; }
+.d-meter { display: flex; flex-direction: column; gap: 6px; min-width: 200px; font-size: 14px; }
+.d-meter strong { font-size: 20px; font-weight: 600; }
+.d-meter-bar { display: block; height: 6px; border-radius: 999px; background: var(--d-sunken); overflow: hidden; }
+.d-meter-bar i { display: block; height: 100%; background: var(--d-success, #3f8f5a); }
+.d-meter.is-mid .d-meter-bar i { background: var(--d-gold); }
+.d-meter.is-high .d-meter-bar i { background: var(--d-danger, #c0392b); }
+.d-meter small { font-size: 12px; }
