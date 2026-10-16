@@ -15,6 +15,7 @@ import {
   initials,
   inviteUrl,
   VISIT_LABEL,
+  requestRange,
 } from "./types";
 
 export function Speakers({
@@ -39,6 +40,7 @@ export function Speakers({
   // Which surface a message belongs to: the open guest's detail, or the page top.
   const [scope, setScope] = useState<string>("top");
   const [confirm, confirmDialog] = useConfirm();
+  const [asking, setAsking] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [creatingEvent, setCreatingEvent] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -137,6 +139,33 @@ export function Speakers({
     try {
       await api(`/api/speakers/${s.id}/link`, { method: "DELETE" });
       onChange(await api<Speaker[]>("/api/speakers"));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function askAvailability(s: Speaker, form: FormData) {
+    const from = String(form.get("from") ?? "");
+    const to = String(form.get("to") ?? "") || from;
+    const note = String(form.get("note") ?? "").trim();
+    const names = groupOf(s).length ? [s, ...groupOf(s)].map((g) => g.name || "a guest").join(" and ") : s.name || "this guest";
+    const ok = await confirm({
+      title: `Ask ${names} for new availability?`,
+      body: `They get a message in their thread (and by email) asking for times between ${from} and ${to}. Their current availability stays, but it's no longer marked confirmed.`,
+      action: "Send the ask",
+    });
+    if (!ok) return;
+    setBusy(s.id);
+    setScope(s.id);
+    setError("");
+    setMessage("");
+    try {
+      await api(`/api/speakers/${s.id}/availability-request`, { method: "POST", body: JSON.stringify({ from, to, note }) });
+      onChange(await api<Speaker[]>("/api/speakers"));
+      setAsking(null);
+      setMessage(`Asked ${names} for new availability.`);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -481,6 +510,46 @@ export function Speakers({
                   </select>
                   <small>They share one thread and one event; the board&apos;s messages reach both.</small>
                 </label>
+              )}
+            </div>
+            <div className="d-speaker-ask">
+              {detail.availabilityRequest ? (
+                <p>
+                  <strong>Waiting on new availability</strong> for {requestRange(detail.availabilityRequest)}, asked{" "}
+                  {date(detail.availabilityRequest.at)}.
+                </p>
+              ) : null}
+              {asking === detail.id ? (
+                <form
+                  className="d-form d-ask-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void askAvailability(detail, new FormData(e.currentTarget));
+                  }}
+                >
+                  <div className="d-form-grid">
+                    <label>
+                      From
+                      <input name="from" type="date" required />
+                    </label>
+                    <label>
+                      To
+                      <input name="to" type="date" />
+                    </label>
+                  </div>
+                  <label>
+                    Note for them (optional)
+                    <textarea name="note" rows={2} maxLength={1000} placeholder="The first week fell through on our side, sorry about that." />
+                  </label>
+                  <div className="d-actions">
+                    <button className="d-button" disabled={!!busy}>Ask for these dates</button>
+                    <button type="button" className="d-button secondary" onClick={() => setAsking(null)}>Cancel</button>
+                  </div>
+                </form>
+              ) : (
+                <button className="d-text-button" disabled={!!busy} onClick={() => setAsking(detail.id)}>
+                  {detail.availabilityRequest ? "Ask again for different dates" : "Ask for new availability"}
+                </button>
               )}
             </div>
             <div className="d-speaker-schedule">
