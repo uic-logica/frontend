@@ -4041,3 +4041,7 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 .d-receipt-scan p { margin: 0; }
 .d-receipt-scan details { width: 100%; font-size: 13px; }
 .d-receipt-scan pre { max-height: 200px; overflow: auto; white-space: pre-wrap; font-size: 12px; padding: 10px; background: var(--d-sunken); border-radius: var(--d-radius-sm); }
+.d-receipt-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.d-receipt-buttons label { cursor: pointer; }
+/* No camera to point on a mouse-and-keyboard computer: only Upload shows there. */
+@media (hover: hover) and (pointer: fine) { .d-receipt-camera { display: none; } }
