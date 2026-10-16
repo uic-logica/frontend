@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
+import { ReceiptScan, type ScannedReceipt } from "./ReceiptScan";
 import { useConfirm } from "./useConfirm";
 import { useUrlState } from "./useUrlState";
 import { Arrow, Icon } from "./Icon";
@@ -181,6 +182,21 @@ export function Board({ kind, members, events }: Props) {
     ] as const;
   }, [items, budgets, kind]);
 
+  const addForm = useRef<HTMLFormElement>(null);
+  /** Fill the empty fields of the new cost from a scanned receipt; anything typed already stays. */
+  function fillFromReceipt(r: ScannedReceipt) {
+    const f = addForm.current;
+    if (!f) return;
+    const set = (name: string, value: string | null | undefined, always = false) => {
+      const el = f.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | null;
+      if (el && value && (always || !el.value)) el.value = value;
+    };
+    set("title", r.vendor);
+    set("amount", r.total != null ? r.total.toFixed(2) : null);
+    set("receiptUrl", r.url, true);
+    set("detail", [r.date && `Receipt dated ${r.date}`, r.vendor && `from ${r.vendor}`].filter(Boolean).join(" ") || null);
+  }
+
   async function create(form: FormData) {
     setBusy("create");
     setError("");
@@ -197,6 +213,7 @@ export function Board({ kind, members, events }: Props) {
       if (form.get("paidByUserId"))
         body.paidByUserId = form.get("paidByUserId");
       if (budgets?.budgets[0]) body.budgetId = budgets.budgets[0].id;
+      if (form.get("receiptUrl")) body.receiptUrl = form.get("receiptUrl");
     } else {
       body.org = String(form.get("org") ?? "");
       body.contactName = String(form.get("contactName") ?? "");
@@ -463,6 +480,7 @@ export function Board({ kind, members, events }: Props) {
 
       {adding && (
         <form
+          ref={addForm}
           className="d-panel d-form"
           onSubmit={(e) => {
             e.preventDefault();
@@ -471,6 +489,12 @@ export function Board({ kind, members, events }: Props) {
         >
           <h2>{copy.formTitle}</h2>
           <p>{copy.formHelp}</p>
+          {kind === "MONEY" && (
+            <>
+              <ReceiptScan onScanned={fillFromReceipt} />
+              <input type="hidden" name="receiptUrl" />
+            </>
+          )}
           <div className="d-form-grid">
             <label>
               {kind === "MONEY" ? "What's it for" : "What is this"}
