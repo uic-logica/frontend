@@ -45,6 +45,7 @@ export type Profile = {
     status: string;
     submittedAt: string | null;
     availabilityConfirmedAt: string | null;
+    availabilityRequest?: AvailabilityRequest | null;
     talkTitle: string | null;
     slidesUrl: string | null;
     event: TalkEvent | null;
@@ -159,6 +160,7 @@ export type Speaker = {
   availability: Window[] | null;
   referredBy: string | null;
   availabilityConfirmedAt: string | null;
+  availabilityRequest?: AvailabilityRequest | null;
   talkTitle: string | null;
   slidesUrl: string | null;
   event: TalkEvent | null;
@@ -648,3 +650,12 @@ export type BlogPost = {
   updatedAt: string;
   author?: { id: string; name: string | null; photoUrl: string | null };
 };
+
+/** The board asked a guest for their availability again, for this range (YYYY-MM-DD). */
+export type AvailabilityRequest = { from: string; to: string; note: string | null; at: string };
+
+/** "Mon, Nov 9 to Fri, Nov 13" for an availability request. */
+export function requestRange(r: AvailabilityRequest) {
+  const day = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "short", month: "short", day: "numeric" });
+  return r.from === r.to ? day(r.from) : `${day(r.from)} to ${day(r.to)}`;
+}

@@ -5,7 +5,7 @@ import { api } from "@/lib/api";
 import { AvailabilityGrid } from "./AvailabilityGrid";
 import { Icon } from "./Icon";
 import { Heading } from "./Overview";
-import { type Profile, type SessionUser, type Window, date } from "./types";
+import { type Profile, type SessionUser, type Window, date, requestRange } from "./types";
 
 const EMPTY: Window = {
   startDate: "",
@@ -132,6 +132,13 @@ export function CandidateHome({
         title="Share your availability"
         description="Choose every time that could work. More options make it easier to find a date."
       />
+      {submission?.availabilityRequest && (
+        <p className="d-callout" role="note">
+          <strong>The board asked for your availability for {requestRange(submission.availabilityRequest)}.</strong>{" "}
+          {submission.availabilityRequest.note}{" "}
+          Mark those days below, then confirm.
+        </p>
+      )}
 
       <section className="d-panel d-availability">
         <div className="d-section-head">
@@ -161,6 +168,7 @@ export function CandidateHome({
             </p>
             {picker === "grid" && (
               <AvailabilityGrid
+                startAt={submission?.availabilityRequest?.from}
                 windows={usable}
                 onChange={(next) => {
                   setWindows(next.length ? next : [EMPTY]);
