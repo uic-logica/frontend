@@ -337,7 +337,7 @@ export function Speakers({
       {confirmDialog}
       <Heading
         title="Speakers"
-        description="Guests we've invited, and where each one stands."
+        description="The people coming to speak or run a workshop: their invite, availability, thread and event."
         action={
           <button className="d-button" onClick={() => setAdding(!adding)}>
             {adding ? "Close draft form" : "+ Invite a guest"}

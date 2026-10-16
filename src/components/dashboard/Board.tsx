@@ -57,7 +57,7 @@ const COPY = {
   },
   OUTREACH: {
     title: "Pipeline",
-    description: "Move conversations forward with an owner, a next step, and a date.",
+    description: "Companies, sponsors and partner clubs we're talking to. Once someone's coming to speak, turn their card into a guest.",
     add: "+ Add a contact",
     formTitle: "Add a contact",
     formHelp:
@@ -238,6 +238,40 @@ export function Board({ kind, members, events }: Props) {
       setError((e as Error).message);
       return false;
     } finally {
+      setBusy(null);
+    }
+  }
+
+  // Pipeline is for organizations; a person who'll speak belongs in the
+  // Speaker directory. This starts their guest entry from the card.
+  async function toGuest(item: BoardItem) {
+    const kind = item.category === "Workshop" ? "WORKSHOP" : item.category === "Company visit" ? "COMPANY_VISIT" : "TALK";
+    if (
+      !(await confirm({
+        title: `Start a guest entry for ${item.contactName || item.org || item.title}?`,
+        body: "It goes into the Speaker directory as a draft with this card's contact and company, so you can send them an invite link and track the visit there. This card stays here.",
+        action: "Create guest",
+      }))
+    )
+      return;
+    setBusy(item.id);
+    setError("");
+    try {
+      const draft = await api<{ id: string }>("/api/speakers/drafts", {
+        method: "POST",
+        body: JSON.stringify({
+          kind,
+          ...(item.contactName ? { name: item.contactName } : {}),
+          ...(item.contactEmail ? { email: item.contactEmail } : {}),
+          organization: item.org || item.title,
+        }),
+      });
+      // A full load on purpose: the Speaker directory's list is loaded once and
+      // kept, so a client-side push would open it without the new guest in it.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = `/dashboard/speakers?id=${draft.id}`;
+    } catch (e) {
+      setError((e as Error).message);
       setBusy(null);
     }
   }
@@ -752,6 +786,7 @@ export function Board({ kind, members, events }: Props) {
           budgets={budgets}
           onPatch={(body, note) => patch(detail.id, body, note)}
           onArchive={() => archive(detail.id)}
+          onToGuest={() => toGuest(detail)}
         />
       )}
       </div>
@@ -834,6 +869,7 @@ function Detail({
   onClose,
   onPatch,
   onArchive,
+  onToGuest,
 }: {
   item: BoardItem;
   kind: BoardKind;
@@ -846,6 +882,7 @@ function Detail({
   onClose: () => void;
   onPatch: (body: Record<string, unknown>, note?: string) => Promise<boolean>;
   onArchive: () => void;
+  onToGuest: () => void;
 }) {
   const stages = STAGES[kind];
   let next: string | undefined = stages[stages.indexOf(item.stage) + 1];
@@ -1074,6 +1111,11 @@ function Detail({
               }}
             >
               Cancel
+            </button>
+          )}
+          {item.kind === "OUTREACH" && ["Talk", "Workshop", "Company visit"].includes(item.category ?? "") && (
+            <button type="button" className="d-button secondary" disabled={busy} onClick={onToGuest}>
+              Turn into a guest <Arrow />
             </button>
           )}
           <button type="button" className="d-text-button d-push-right" disabled={busy} onClick={onArchive}>
