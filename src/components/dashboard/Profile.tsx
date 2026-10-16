@@ -14,6 +14,7 @@ import {
   type Window,
   isConfirmedSpeaker,
   roleName,
+  requestRange,
 } from "./types";
 
 export function ProfileEditor({
@@ -386,6 +387,12 @@ export function ProfileEditor({
                 >
                   <h2>Your availability</h2>
                   <p>Windows that work for you, in Chicago local time.</p>
+                  {profile.speakerSubmission?.availabilityRequest && (
+                    <p className="d-callout" role="note">
+                      <strong>The board asked for your availability for {requestRange(profile.speakerSubmission.availabilityRequest)}.</strong>{" "}
+                      {profile.speakerSubmission.availabilityRequest.note} Add those times and save.
+                    </p>
+                  )}
                   <button
                     type="button"
                     className="d-text-button"
@@ -399,6 +406,7 @@ export function ProfileEditor({
                   </button>
                   {picker === "grid" && (
                     <AvailabilityGrid
+                      startAt={profile.speakerSubmission?.availabilityRequest?.from}
                       windows={windows}
                       onChange={(next) => {
                         setWindows(next);

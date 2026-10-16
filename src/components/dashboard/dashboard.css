@@ -4045,3 +4045,9 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 .d-receipt-buttons label { cursor: pointer; }
 /* No camera to point on a mouse-and-keyboard computer: only Upload shows there. */
 @media (hover: hover) and (pointer: fine) { .d-receipt-camera { display: none; } }
+
+/* Speakers: ask a guest for new availability. */
+.d-speaker-ask { margin-top: 16px; font-size: 14px; }
+.d-speaker-ask p { margin: 0 0 6px; }
+.d-ask-form { margin-top: 8px; padding: 16px; border: 1px solid var(--d-rule); border-radius: var(--d-radius); }
+.d-ask-form label { margin: 0 0 12px; }

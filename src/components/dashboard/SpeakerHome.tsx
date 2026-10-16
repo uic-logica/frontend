@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Arrow, Icon } from "./Icon";
 import { Avatar } from "./Avatar";
 import { Heading } from "./Overview";
-import { type Profile, type SessionUser, when } from "./types";
+import { type Profile, type SessionUser, when, requestRange } from "./types";
 
 /**
  * A confirmed speaker's landing page: their talk, their slides, and how
@@ -80,6 +80,13 @@ export function SpeakerHome({
         title="My talk"
         description="Everything the club and audience need for your visit, in one place."
       />
+      {submission?.availabilityRequest && (
+        <p className="d-callout" role="note">
+          <strong>The board asked for your availability for {requestRange(submission.availabilityRequest)}.</strong>{" "}
+          {submission.availabilityRequest.note}{" "}
+          <Link href="/dashboard/profile#availability">Update your availability</Link>
+        </p>
+      )}
 
       <section className="d-talk">
         <div className="d-talk-main">
