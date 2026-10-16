@@ -636,25 +636,30 @@ function Appearance() {
     </div>
   );
 }
+type EmailMode = "INSTANT" | "SUMMARY" | "OFF";
+/** Mirrors backend /api/email-preferences. */
+type EmailPrefs = { modes: EmailMode[]; categories: { key: string; label: string; description: string; mode: EmailMode }[] };
+const MODE_LABEL: Record<EmailMode, string> = { INSTANT: "Instant", SUMMARY: "9 AM summary", OFF: "Off" };
+
 export function Settings({ user, profile }: { user: SessionUser; profile?: Profile | null }) {
-  const [prefs, setPrefs] = useState<{
-    eventReminders: boolean;
-    announcements: boolean;
-  } | null>(() => peek("/api/email-preferences") ?? null);
+  const [prefs, setPrefs] = useState<EmailPrefs | null>(() => {
+    const cached = peek<EmailPrefs>("/api/email-preferences");
+    // An older cached shape (before categories) is ignored rather than rendered.
+    return cached && Array.isArray(cached.categories) ? cached : null;
+  });
   const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState("");
   const [saved, setSaved] = useState(false);
   const [retry, setRetry] = useState(0);
   useEffect(() => {
     let alive = true;
-    api<{ eventReminders: boolean; announcements: boolean }>(
-      "/api/email-preferences",
-    )
+    api<EmailPrefs>("/api/email-preferences")
       .then((p) => {
-        if (alive) {
-          setPrefs(p);
-          setError("");
-        }
+        if (!alive) return;
+        // The site can briefly be ahead of the API during a deploy.
+        if (!Array.isArray(p.categories)) return setError("Email settings are updating. Try again in a few minutes.");
+        setPrefs(p);
+        setError("");
       })
       .catch((e) => {
         if (alive) setError(e.message);
@@ -663,23 +668,17 @@ export function Settings({ user, profile }: { user: SessionUser; profile?: Profi
       alive = false;
     };
   }, [retry]);
-  async function toggle(key: "eventReminders" | "announcements") {
-    if (!prefs) return;
-    setBusy(true);
+  async function choose(category: string, mode: EmailMode) {
+    setBusy(category);
     setError("");
     setSaved(false);
     try {
-      const next = { ...prefs, [key]: !prefs[key] };
-      await api("/api/email-preferences", {
-        method: "PATCH",
-        body: JSON.stringify(next),
-      });
-      setPrefs(next);
+      setPrefs(await api<EmailPrefs>("/api/email-preferences", { method: "PATCH", body: JSON.stringify({ category, mode }) }));
       setSaved(true);
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setBusy(false);
+      setBusy("");
     }
   }
   return (
@@ -695,8 +694,11 @@ export function Settings({ user, profile }: { user: SessionUser; profile?: Profi
       <section className="d-panel d-settings">
         <h2>Email preferences</h2>
         <p>
-          Notifications remain available in your dashboard even when email is
-          off.
+          Everything still shows up in your dashboard notifications. Decisions
+          about your application, your talk or an interview always come by
+          email.
+          {prefs?.modes.includes("SUMMARY") &&
+            " The 9 AM summary is one email each morning with what happened since the last one, and none if nothing did."}
         </p>
         {error && (
           <p className="d-error" role="alert">
@@ -705,27 +707,28 @@ export function Settings({ user, profile }: { user: SessionUser; profile?: Profi
           </p>
         )}
         {prefs
-          ? (["eventReminders", "announcements"] as const).map((key) => (
-              <label className="d-setting-row" key={key}>
+          ? prefs.categories.map((c) => (
+              <div className="d-setting-row" key={c.key}>
                 <span>
-                  <strong>
-                    {key === "eventReminders"
-                      ? "Event reminders"
-                      : "Club announcements"}
-                  </strong>
-                  <small>
-                    {key === "eventReminders"
-                      ? "Updates about events you’ve signed up for."
-                      : "News and updates from the LOGICA board."}
-                  </small>
+                  <strong id={`email-${c.key}`}>{c.label}</strong>
+                  <small>{c.description}</small>
                 </span>
-                <input
-                  type="checkbox"
-                  checked={prefs[key]}
-                  disabled={busy}
-                  onChange={() => toggle(key)}
-                />
-              </label>
+                <div className="d-segmented" role="radiogroup" aria-labelledby={`email-${c.key}`}>
+                  {prefs.modes.map((mode) => (
+                    <label key={mode}>
+                      <input
+                        type="radio"
+                        name={`email-${c.key}`}
+                        value={mode}
+                        checked={c.mode === mode}
+                        disabled={busy === c.key}
+                        onChange={() => choose(c.key, mode)}
+                      />
+                      {MODE_LABEL[mode]}
+                    </label>
+                  ))}
+                </div>
+              </div>
             ))
           : !error && <p role="status">Loading preferences…</p>}
         <p role="status">{saved ? "Preferences saved." : ""}</p>
