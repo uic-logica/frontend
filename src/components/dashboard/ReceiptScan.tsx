@@ -46,6 +46,14 @@ export function ReceiptScan({ onScanned }: { onScanned: (receipt: ScannedReceipt
   const [error, setError] = useState("");
   const [text, setText] = useState("");
 
+  const [camera, setCamera] = useState(false);
+  function pick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    setCamera(e.target.hasAttribute("capture"));
+    e.target.value = "";
+    if (file) void scan(file);
+  }
+
   async function scan(file: File) {
     setError("");
     setNote("");
@@ -75,28 +83,23 @@ export function ReceiptScan({ onScanned }: { onScanned: (receipt: ScannedReceipt
       setError(`Couldn't read that receipt (${(e as Error).message}). You can still fill the form in by hand.`);
     } finally {
       setStep("");
-      if (input.current) input.current.value = "";
     }
   }
 
   return (
     <div className="d-receipt-scan">
-      <label className="d-button secondary">
-        {step === "reading" ? "Reading the receipt…" : step === "saving" ? "Saving to Drive…" : "Scan a receipt"}
-        <input
-          ref={input}
-          type="file"
-          accept="image/*,application/pdf"
-          capture="environment"
-          className="d-sr"
-          disabled={!!step}
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) void scan(file);
-          }}
-        />
-      </label>
-      <small className="d-muted">Take a photo or pick one. It&apos;s read here in your browser and saved to the club Drive.</small>
+      <div className="d-receipt-buttons">
+        {/* Phones: opens the camera right away. Hidden where there's no camera to point (desktop). */}
+        <label className="d-button d-receipt-camera">
+          {step === "reading" ? "Reading the receipt…" : step === "saving" ? "Saving to Drive…" : "Take a photo"}
+          <input type="file" accept="image/*" capture="environment" className="d-sr" disabled={!!step} onChange={pick} />
+        </label>
+        <label className="d-button secondary">
+          {step && !camera ? (step === "reading" ? "Reading the receipt…" : "Saving to Drive…") : "Upload a photo or PDF"}
+          <input ref={input} type="file" accept="image/*,application/pdf" className="d-sr" disabled={!!step} onChange={pick} />
+        </label>
+      </div>
+      <small className="d-muted">Take a photo of the receipt or upload one you already have. It&apos;s read here in your browser and saved to the club Drive.</small>
       {note && <p className="d-success" role="status">{note}</p>}
       {error && <p className="d-error" role="alert">{error}</p>}
       {text && (
