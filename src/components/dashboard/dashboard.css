@@ -4051,3 +4051,10 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 .d-speaker-ask p { margin: 0 0 6px; }
 .d-ask-form { margin-top: 8px; padding: 16px; border: 1px solid var(--d-rule); border-radius: var(--d-radius); }
 .d-ask-form label { margin: 0 0 12px; }
+
+/* Agent activity: plain sentences grouped by day. */
+.d-agent-log h3 { margin: 18px 0 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--d-muted); }
+.d-agent-log ul { list-style: none; margin: 0; padding: 0; }
+.d-agent-log li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid var(--d-rule); }
+.d-agent-log li small { flex: none; color: var(--d-muted); }
+@media (max-width: 640px) { .d-agent-log li { flex-direction: column; gap: 2px; } }

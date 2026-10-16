@@ -211,6 +211,8 @@ export function AgentAccess() {
         </form>
       </section>
 
+      <AgentActivity />
+
       {/* Its own panel now this is a page of its own, and open by default:
           the whole reason to come here is to see what you'd be handing
           over before you hand it over. */}
@@ -239,5 +241,55 @@ export function AgentAccess() {
         </section>
       )}
     </>
+  );
+}
+
+type Activity = { id: string; summary: string; tool: string | null; via: string | null; createdAt: string };
+
+const dayOf = (iso: string) => {
+  const d = new Date(iso);
+  const days = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(iso).setHours(0, 0, 0, 0)) / 864e5);
+  return days === 0 ? "Today" : days === 1 ? "Yesterday" : d.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+};
+
+/** What your agents did as you, one plain sentence each, grouped by day. Only yours. */
+function AgentActivity() {
+  const [rows, setRows] = useState<Activity[] | null>(() => peek<Activity[]>("/api/agent-activity") ?? null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    api<Activity[]>("/api/agent-activity").then(setRows).catch((e: Error) => setError(e.message));
+  }, []);
+
+  const days: [string, Activity[]][] = [];
+  for (const r of rows ?? []) {
+    const day = dayOf(r.createdAt);
+    if (days.at(-1)?.[0] === day) days.at(-1)![1].push(r);
+    else days.push([day, [r]]);
+  }
+
+  return (
+    <section className="d-panel d-agent-log" aria-label="What your agent did">
+      <h2>What your agent did</h2>
+      <p className="d-footnote">Every change an agent made as you, newest first. Only you see this.</p>
+      {error && <p className="d-error" role="alert">{error}</p>}
+      {!rows && !error && <p className="d-muted" role="status">Loading…</p>}
+      {rows?.length === 0 && <p className="d-muted">Nothing yet. Changes your agent makes show up here.</p>}
+      {days.map(([day, items]) => (
+        <div key={day}>
+          <h3>{day}</h3>
+          <ul>
+            {items.map((a) => (
+              <li key={a.id}>
+                <span>Your agent {a.summary}</span>
+                <small>
+                  <time dateTime={a.createdAt}>{new Date(a.createdAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</time>
+                  {a.via ? ` · via ${a.via}` : " · via MCP"}
+                </small>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
   );
 }
