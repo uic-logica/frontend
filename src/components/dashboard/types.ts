@@ -93,7 +93,24 @@ export type Notice = {
   message: string;
   createdAt: string;
   readAt: string | null;
+  /** Where it goes (a site path). Older notices have none; see noticeLink. */
+  link?: string | null;
 };
+
+/**
+ * Where clicking a notice goes: its stored link, or for notices from
+ * before links existed, the section the message is about.
+ */
+export function noticeLink(n: Notice): string | null {
+  if (n.link) return n.link;
+  const m = n.message;
+  if (/speaker thread|replied in their thread/i.test(m)) return "/dashboard/speakers";
+  if (/about your talk|your speaker submission|to speak at LOGICA/i.test(m)) return "/dashboard/messages";
+  if (/interview availability/i.test(m)) return "/dashboard/applications";
+  if (/^Reminder:|posted on |New material posted/i.test(m)) return "/dashboard/events";
+  if (/blog post/i.test(m)) return "/dashboard/blog";
+  return null;
+}
 export type Engagement = {
   involvement: {
     eventsAttended: number;

@@ -14,6 +14,7 @@ import {
   runsWorkspace,
   date,
   isUpcoming,
+  noticeLink,
   when,
 } from "./types";
 
@@ -302,10 +303,7 @@ export function Notifications({
             {unread.map((n) => (
               <div className="d-notification is-unread" key={n.id}>
                 <span className="d-live-dot" />
-                <div>
-                  <p>{n.message}</p>
-                  <small>{date(n.createdAt)}</small>
-                </div>
+                <NoticeText n={n} onOpen={() => void read([n.id])} />
                 <button
                   disabled={!!busy}
                   className="d-text-button"
@@ -329,10 +327,7 @@ export function Notifications({
             {earlier.map((n) => (
               <div className="d-notification" key={n.id}>
                 <span className="d-read-dot" />
-                <div>
-                  <p>{n.message}</p>
-                  <small>{date(n.createdAt)}</small>
-                </div>
+                <NoticeText n={n} />
               </div>
             ))}
           </div>
@@ -351,5 +346,23 @@ export function Notifications({
         </section>
       )}
     </>
+  );
+}
+
+/** A notice's text: a link to what it's about when there is one (opening it marks it read). */
+function NoticeText({ n, onOpen }: { n: Notice; onOpen?: () => void }) {
+  const href = noticeLink(n);
+  return href ? (
+    <Link href={href} className="d-notice-link" onClick={onOpen}>
+      <p>
+        {n.message} <Arrow />
+      </p>
+      <small>{date(n.createdAt)}</small>
+    </Link>
+  ) : (
+    <div>
+      <p>{n.message}</p>
+      <small>{date(n.createdAt)}</small>
+    </div>
   );
 }

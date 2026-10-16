@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { useUrlState } from "./useUrlState";
@@ -47,6 +47,8 @@ export function Emails() {
   const [query, setQuery] = useUrlState("q");
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
+  // The open email, in the URL like every other detail, so a link to it works.
+  const [openId, setOpenId] = useUrlState("id");
 
   useEffect(() => {
     let alive = true;
@@ -118,12 +120,16 @@ export function Emails() {
                 const o = outcome(r);
                 const note = r.error ?? (r.delivery ? why[r.delivery] : undefined);
                 return (
-                  <tr key={r.id}>
+                  <tr key={r.id} className="d-email-row" onClick={() => setOpenId(r.id, { push: true })}>
                     <td className="d-muted">
                       <time dateTime={r.createdAt}>{when(r.createdAt)}</time>
                     </td>
                     <td>{r.to}</td>
-                    <td>{r.subject}</td>
+                    <td>
+                      <button type="button" className="d-text-button" onClick={(e) => { e.stopPropagation(); setOpenId(r.id, { push: true }); }}>
+                        {r.subject}
+                      </button>
+                    </td>
                     <td>
                       <span className={`d-badge ${tone(o)}`}>{o}</span>
                       {note && <small>{note}</small>}
@@ -135,6 +141,65 @@ export function Emails() {
           </table>
         )}
       </section>
+      {openId && <EmailViewer id={openId} onClose={() => setOpenId("")} />}
     </>
+  );
+}
+
+type FullEmail = EmailRow & { html: string | null; text: string | null };
+
+/** One logged email, exactly as it went out: the HTML in a locked-down frame, or the plain text. */
+function EmailViewer({ id, onClose }: { id: string; onClose: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [email, setEmail] = useState<FullEmail | null>(null);
+  const [error, setError] = useState("");
+  const [plain, setPlain] = useState(false);
+
+  useEffect(() => {
+    dialog.current?.showModal();
+    let alive = true;
+    api<FullEmail>(`/api/board/emails/${id}`)
+      .then((e) => alive && setEmail(e))
+      .catch((e: Error) => alive && setError(e.message));
+    return () => {
+      alive = false;
+    };
+  }, [id]);
+
+  const o = email && outcome(email);
+  return (
+    <dialog ref={dialog} className="d-email-viewer" aria-labelledby="email-viewer-title" onClose={onClose} onClick={(e) => e.target === e.currentTarget && dialog.current?.close()}>
+      <header>
+        <div>
+          <h2 id="email-viewer-title">{email?.subject ?? "Email"}</h2>
+          {email && (
+            <p className="d-muted">
+              To {email.to} · {when(email.createdAt)} · <span className={`d-badge ${tone(o!)}`}>{o}</span>
+              {(email.error ?? (email.delivery ? why[email.delivery] : null)) && <> · {email.error ?? why[email.delivery!]}</>}
+            </p>
+          )}
+        </div>
+        <button className="d-button secondary" onClick={() => dialog.current?.close()}>Close</button>
+      </header>
+      {error && <p className="d-error" role="alert">{error}</p>}
+      {!email && !error && <p className="d-muted" role="status">Loading the email…</p>}
+      {email && !email.html && !email.text && <p className="d-muted">This email was logged before the log kept copies, so only its status is saved.</p>}
+      {email && (email.html || email.text) && (
+        <>
+          <div className="d-tabs" aria-label="Email view">
+            <button aria-pressed={!plain} disabled={!email.html} onClick={() => setPlain(false)}>As sent</button>
+            <button aria-pressed={plain} disabled={!email.text} onClick={() => setPlain(true)}>Plain text</button>
+          </div>
+          {plain || !email.html ? (
+            <pre className="d-email-text">{email.text}</pre>
+          ) : (
+            // Sandboxed with scripts off, so the email's HTML can't run anything.
+            // allow-same-origin only lets it inherit the page's style rules (with an
+            // opaque origin the dashboard's CSP blanks it); with no scripts that's inert.
+            <iframe title={`Email: ${email.subject}`} sandbox="allow-same-origin allow-popups" srcDoc={email.html} className="d-email-frame" />
+          )}
+        </>
+      )}
+    </dialog>
   );
 }
