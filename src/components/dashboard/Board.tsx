@@ -245,7 +245,8 @@ export function Board({ kind, members, events }: Props) {
   // Pipeline is for organizations; a person who'll speak belongs in the
   // Speaker directory. This starts their guest entry from the card.
   async function toGuest(item: BoardItem) {
-    const kind = item.category === "Workshop" ? "WORKSHOP" : item.category === "Company visit" ? "COMPANY_VISIT" : "TALK";
+    const category = (item.category ?? "").toLowerCase();
+    const kind = category === "workshop" ? "WORKSHOP" : category === "company visit" ? "COMPANY_VISIT" : "TALK";
     if (
       !(await confirm({
         title: `Start a guest entry for ${item.contactName || item.org || item.title}?`,
@@ -1113,7 +1114,7 @@ function Detail({
               Cancel
             </button>
           )}
-          {item.kind === "OUTREACH" && ["Talk", "Workshop", "Company visit"].includes(item.category ?? "") && (
+          {item.kind === "OUTREACH" && ["talk", "workshop", "company visit"].includes((item.category ?? "").toLowerCase()) && (
             <button type="button" className="d-button secondary" disabled={busy} onClick={onToGuest}>
               Turn into a guest <Arrow />
             </button>
