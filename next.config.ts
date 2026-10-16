@@ -46,6 +46,14 @@ const nextConfig: NextConfig = {
       source: "/:path*",
       headers: securityHeaders,
     }, {
+      // The receipt reader (Tesseract) runs WebAssembly in a worker; only its
+      // own files get 'wasm-unsafe-eval', the pages keep the stricter policy.
+      source: "/tesseract/:file*",
+      headers: [
+        { key: "Content-Security-Policy", value: contentSecurityPolicy.replace("script-src 'self'", "script-src 'self' 'wasm-unsafe-eval'") },
+        { key: "Cache-Control", value: assetCache },
+      ],
+    }, {
       source: "/journey/:file*",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
     }, {
