@@ -12,16 +12,11 @@ const TRACKS = [
   { value: "BOARD_MEMBER", label: "Board Member" },
 ] as const;
 
-/** Signed out: make an account first. Signed in: skip straight to the application. */
+/** Always straight to the form: only Software Team applications need an account, and that branch asks for one itself. */
 export function JoinActions() {
-  const signedIn = useSignedIn();
   return (
     <div className="join-actions">
-      {signedIn ? (
-        <a href="#apply" className="site-btn">Apply</a>
-      ) : (
-        <Link href="/signup" className="site-btn">Create your account</Link>
-      )}
+      <a href="#apply" className="site-btn">Apply</a>
       <Link href="/events" className="site-btn secondary">Attend an event first</Link>
     </div>
   );

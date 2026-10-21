@@ -5,6 +5,7 @@ import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { Arrow, Icon } from "./Icon";
 import {
+  type Application,
   type BoardItem,
   type Budgets,
   type ClubInsights,
@@ -41,6 +42,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
   const [items, setItems] = useState<BoardItem[] | null>(() => peek<BoardItem[]>("/api/board/items") ?? null);
   const [budgets, setBudgets] = useState<Budgets | null>(() => peek<Budgets>("/api/board/budgets") ?? null);
   const [insights, setInsights] = useState<ClubInsights | null>(() => peek<ClubInsights>("/api/board/insights") ?? null);
+  const [applications, setApplications] = useState<Application[] | null>(() => peek<Application[]>("/api/join") ?? null);
 
   useEffect(() => {
     let alive = true;
@@ -49,6 +51,7 @@ export function BoardHome({ user, members, events, speakers }: Props) {
     api<BoardItem[]>("/api/board/items").then(soak(setItems)).catch(() => alive && setItems([]));
     api<Budgets>("/api/board/budgets").then(soak(setBudgets)).catch(() => {});
     api<ClubInsights>("/api/board/insights").then(soak(setInsights)).catch(() => {});
+    api<Application[]>("/api/join").then(soak(setApplications)).catch(() => {});
     return () => {
       alive = false;
     };
@@ -66,6 +69,8 @@ export function BoardHome({ user, members, events, speakers }: Props) {
   const awaiting = live.filter((i) => i.kind === "MONEY" && i.stage === "REQUESTED");
   const needsReply = live.filter((i) => i.stage === "NEEDS_REPLY");
   const toDecide = speakers?.filter((s) => s.status === "PENDING" && s.availabilityConfirmedAt) ?? [];
+  const toReview = applications?.filter((a) => a.status === "PENDING").length ?? null;
+  const timesShared = applications?.filter((a) => a.status === "INTERVIEW" && a.interviewAvailability?.length).length ?? 0;
 
   return (
     <>
@@ -80,6 +85,8 @@ export function BoardHome({ user, members, events, speakers }: Props) {
           awaiting: awaiting.length,
           needsReply: needsReply.length,
           toDecide: toDecide.length,
+          toReview,
+          timesShared,
           insights,
           live: live.length,
         }).map((pin) => (
@@ -226,7 +233,7 @@ type Pin = {
 };
 
 /**
- * Four tiles, ordered by what this person is responsible for. The set is
+ * Five tiles, ordered by what this person is responsible for. The set is
  * the same for everyone — only the order changes — so nobody has to learn
  * a different home when they swap jobs next year.
  */
@@ -237,11 +244,13 @@ function pinsFor(
     awaiting: number;
     needsReply: number;
     toDecide: number;
+    toReview: number | null;
+    timesShared: number;
     insights: ClubInsights | null;
     live: number;
   },
 ): Pin[] {
-  const { pot, awaiting, needsReply, toDecide, insights } = data;
+  const { pot, awaiting, needsReply, toDecide, toReview, timesShared, insights } = data;
 
   const budget: Pin = {
     label: pot ? `left of ${money(pot.amountCents)}` : "No budget set",
@@ -269,6 +278,13 @@ function pinsFor(
     href: "/dashboard/speakers?status=PENDING",
     icon: "speakers",
   };
+  const applicants: Pin = {
+    label: toReview === 1 ? "application to review" : "applications to review",
+    value: toReview ?? "—",
+    href: "/dashboard/applications?status=PENDING",
+    icon: "members",
+    note: timesShared ? `${timesShared} shared interview times` : undefined,
+  };
   const active: Pin = {
     label: "members still turning up",
     value: insights ? insights.members.active : "—",
@@ -283,12 +299,12 @@ function pinsFor(
     icon: "documents",
   };
 
-  if (officer === "TREASURER") return [budget, approvals, replies, active];
-  if (officer === "OUTREACH") return [replies, guests, budget, active];
-  if (officer === "SECRETARY") return [active, docs, guests, budget];
+  if (officer === "TREASURER") return [budget, approvals, replies, applicants, active];
+  if (officer === "OUTREACH") return [replies, guests, applicants, budget, active];
+  if (officer === "SECRETARY") return [applicants, active, docs, guests, budget];
   // The VP runs the club alongside the president, so they get the same
-  // four tiles rather than a set invented to make them look different.
+  // tiles rather than a set invented to make them look different.
   if (officer === "PRESIDENT" || officer === "VICE_PRESIDENT")
-    return [active, budget, replies, guests];
-  return [replies, budget, guests, active];
+    return [applicants, active, budget, replies, guests];
+  return [applicants, replies, budget, guests, active];
 }

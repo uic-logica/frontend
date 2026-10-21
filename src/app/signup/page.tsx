@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ClubShell } from "@/components/club/ClubShell";
 import { PasswordInput } from "@/components/site/PasswordInput";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -16,6 +16,14 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [exists, setExists] = useState(false);
+
+  // Sent here from a failed sign-in: keep the email they already typed.
+  useEffect(() => {
+    const sent = new URLSearchParams(window.location.search).get("email");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the URL only exists after hydration
+    if (sent) setEmail(sent);
+  }, []);
 
   useEffect(() => {
     document.title = error ? "Error: Create account · LOGICA @ UIC" : "Create account · LOGICA @ UIC";
@@ -25,6 +33,7 @@ export default function SignupPage() {
     e.preventDefault();
     if (busy) return;
     setError(null);
+    setExists(false);
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -40,6 +49,7 @@ export default function SignupPage() {
       const next = new URLSearchParams(window.location.search).get("next");
       router.replace(next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard");
     } catch (err) {
+      setExists(err instanceof ApiError && err.status === 409);
       setError(err instanceof Error ? err.message : "Could not create your account. Please try again.");
     } finally {
       setBusy(false);
@@ -54,7 +64,17 @@ export default function SignupPage() {
             <h1 className="serif">Create your LOGICA account</h1>
             <p>A UIC email address is required. You&apos;ll land in your member dashboard.</p>
           </header>
-          {error && <p id="signup-error" role="alert" className="site-error">{error}</p>}
+          {error && (
+            <p id="signup-error" role="alert" className="site-error">
+              {error}
+              {exists && (
+                <>
+                  {" "}
+                  <Link href={`/signin${typeof window === "undefined" ? "" : window.location.search}`}>Go to sign in</Link>
+                </>
+              )}
+            </p>
+          )}
           <form onSubmit={submit} className="site-form auth-form" aria-busy={busy} aria-describedby={error ? "signup-error" : undefined}>
             <label className="site-field" htmlFor="name">
               <span>Full name</span>

@@ -760,7 +760,6 @@ export function Dashboard() {
                   <Activity engagement={engagement} />
                 </Pane>
               )}
-              {/* Not in the sidebar: members reach it from /projects and /join. */}
               {seen("teams") && user && (
                 <Pane active={section === "teams"}>
                   <BuildTeams user={user} profile={profile} />

@@ -81,11 +81,9 @@ export function SiteNav() {
           <Link href={account.href} className="site-btn secondary sm site-nav-account" aria-current={pathname === account.href ? "page" : undefined}>
             {account.label}
           </Link>
-          {!signedIn && (
-            <Link href="/join" className="site-btn sm">
-              Join
-            </Link>
-          )}
+          <Link href="/join" className="site-btn sm">
+            Apply
+          </Link>
           <button type="button" className="site-menu-button" aria-expanded={open} aria-controls="site-menu" onClick={() => setOpen((v) => !v)}>
             <span className="sr-only">Menu</span>
             <SiteIcon name={open ? "close" : "menu"} size={20} />
@@ -99,6 +97,7 @@ export function SiteNav() {
               {item.label}
             </Link>
           ))}
+          <Link href="/join">Apply</Link>
           <Link href={account.href}>{account.label}</Link>
           {!signedIn && <Link href="/signup">Create account</Link>}
         </nav>
