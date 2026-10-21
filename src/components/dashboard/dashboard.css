@@ -4071,3 +4071,56 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 .d-inbox-list .d-split-meta { display: grid; justify-items: end; gap: 2px; }
 .d-unread-dot { display: inline-block; width: 8px; height: 8px; margin-left: 8px; border-radius: 50%; background: var(--d-gold); vertical-align: middle; }
 .d-inbox-thread { min-width: 0; }
+
+/* ---- Applicant tracker (MyApplication) ------------------------------------ */
+.d-my-application {
+  margin-bottom: 24px;
+}
+.d-tracker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 4px 0 16px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.d-tracker li {
+  counter-increment: step;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 3px solid var(--d-rule);
+  color: var(--d-faint);
+  font-size: 13px;
+  font-weight: 500;
+}
+.d-tracker li::before {
+  content: counter(step);
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--d-rule-strong);
+  font-size: 11px;
+}
+.d-tracker li.done {
+  border-top-color: var(--d-success);
+  color: var(--d-muted);
+}
+.d-tracker li.done::before {
+  content: "✓";
+  border-color: var(--d-success);
+  color: var(--d-success);
+}
+.d-tracker li.current {
+  border-top-color: var(--d-gold);
+  color: var(--d-ink);
+}
+.d-tracker li.current::before {
+  border-color: var(--d-gold);
+  background: var(--d-gold-soft);
+  color: var(--d-gold-text);
+}
