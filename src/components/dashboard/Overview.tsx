@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { Arrow, Icon } from "./Icon";
+import { ApplyNudge, MyApplication } from "./MyApplication";
 import {
   type SessionUser,
   type Profile,
@@ -131,6 +132,7 @@ export function Overview({
         title="Overview"
         description="Your club life at a glance, without the board's operational noise."
       />
+      <MyApplication />
       <section className="d-overview-hero">
         <div>
           <h2>Good {daypart()}, {name}.</h2>
@@ -159,6 +161,7 @@ export function Overview({
         <section className="d-panel">
           <div className="d-section-head"><h2>For you</h2><span className="d-muted">From your account</span></div>
           {board && pending && pending.length > 0 && <Link className="d-compact-row" href="/dashboard/speakers"><span className="d-live-dot" /><span><strong>Review {pending.length} speaker submission{pending.length === 1 ? "" : "s"}</strong><small>Confirm guests and prepare portal access.</small></span><span className="d-badge">Open</span></Link>}
+          <ApplyNudge />
           {notices?.slice(0, 1).map((notice) => <Link className="d-compact-row" href="/dashboard/notifications" key={notice.id}><span className={notice.readAt ? "d-read-dot" : "d-live-dot"} /><span><strong>{notice.message}</strong><small>{date(notice.createdAt)}</small></span><span className="d-badge">View</span></Link>)}
           {checks.filter((check) => !check.done).slice(0, 2).map((check) => <Link className="d-compact-row" href={check.href} key={check.label}><span className="d-live-dot" /><span><strong>{check.label}</strong><small>{check.note}</small></span><span className="d-badge">Open</span></Link>)}
           {checks.length > 0 && checks.every((check) => check.done) && <p className="d-muted d-notice-empty">Your profile essentials are complete. New suggestions will appear here.</p>}
