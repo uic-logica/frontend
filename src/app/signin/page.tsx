@@ -6,7 +6,11 @@ import { useEffect, useState } from "react";
 import { ClubShell } from "@/components/club/ClubShell";
 import { PasswordInput } from "@/components/site/PasswordInput";
 import { SiteIcon } from "@/components/site/icons";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
+
+function nextParam() {
+  return typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("next");
+}
 
 export default function SignInPage() {
   const router = useRouter();
@@ -15,6 +19,8 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Set when the email has no account at all, so the error can offer signup instead of a dead end.
+  const [noAccount, setNoAccount] = useState(false);
 
   // Already signed in (the session lasts 30 days): skip the form.
   useEffect(() => {
@@ -35,6 +41,7 @@ export default function SignInPage() {
     e.preventDefault();
     if (busy) return;
     setError(null);
+    setNoAccount(false);
     setBusy(true);
     try {
       await api("/api/auth/member-login", {
@@ -46,6 +53,7 @@ export default function SignInPage() {
       const next = new URLSearchParams(window.location.search).get("next");
       router.replace(next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard");
     } catch (err) {
+      setNoAccount(err instanceof ApiError && err.status === 404);
       setError(err instanceof Error ? err.message : "Could not sign in. Please try again.");
     } finally {
       setBusy(false);
@@ -61,7 +69,17 @@ export default function SignInPage() {
             <p>Members, board, and exec board</p>
           </header>
           <p className="auth-intro">New to LOGICA? <Link href="/signup">Create an account</Link> with your UIC email.</p>
-          {error && <p id="signin-error" role="alert" className="site-error">{error}</p>}
+          {error && (
+            <p id="signin-error" role="alert" className="site-error">
+              {error}
+              {noAccount && (
+                <>
+                  {" "}
+                  <Link href={`/signup?${new URLSearchParams({ email: email.trim().toLowerCase(), ...(nextParam() && { next: nextParam()! }) })}`}>Create your account</Link>
+                </>
+              )}
+            </p>
+          )}
           <form onSubmit={submit} className="site-form auth-form" aria-busy={busy} aria-describedby={error ? "signin-error" : undefined}>
             <label className="site-field" htmlFor="email">
               <span>UIC email</span>
