@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { api } from "@/lib/api";
 
-const MAX_BYTES = 5 * 1024 * 1024; // matches backend's cap
+const MAX_BYTES = 3 * 1024 * 1024; // matches backend's cap (Vercel's 4.5 MB body limit, base64)
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -37,7 +37,7 @@ export function ResumeUpload({
     e.target.value = "";
     if (!file) return;
     if (file.size > MAX_BYTES) {
-      setError("File too large — max 5MB.");
+      setError("File too large — max 3 MB.");
       return;
     }
 
