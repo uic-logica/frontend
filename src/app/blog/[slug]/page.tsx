@@ -16,6 +16,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMetadata(post.title, first.length > 160 ? `${first.slice(0, 157).trimEnd()}...` : first, `/blog/${post.slug}`);
 }
 
+// Each post renders on its first visit, then is cached and refreshed with
+// lib/blog.ts's revalidate, instead of rendering on every visit.
+export async function generateStaticParams() {
+  return [];
+}
+
 /** One published post. Same reading column as the rest of the site. */
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;

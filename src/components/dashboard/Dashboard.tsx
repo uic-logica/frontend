@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Fragment, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { Fragment, Suspense, type CSSProperties, type ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { api, clearApiCache, peek, prefetch, signOut } from "@/lib/api";
 import { Icon } from "./Icon";
 import { Overview, Activity, Notifications } from "./Overview";
@@ -73,6 +73,15 @@ const EXEC_SECTIONS = [
   "emails",
   "members",
 ] as const satisfies readonly Section[];
+
+/** Query changes (?id=, ?status=) re-apply the route's metadata title, so this runs on those too. */
+function DocumentTitle({ title }: { title: string }) {
+  const search = useSearchParams();
+  useEffect(() => {
+    document.title = title;
+  }, [title, search]);
+  return null;
+}
 
 function Pane({ active, children }: { active: boolean; children: ReactNode }) {
   // `hidden` rather than unmounting. dashboard.css forces display:none on it,
@@ -305,12 +314,7 @@ export function Dashboard() {
     };
   }, [reload, router]);
 
-  // The query changes (?id=, ?status=) re-apply the route's metadata title,
-  // so this runs on those too.
-  const search = useSearchParams();
-  useEffect(() => {
-    document.title = `${titleFor(user?.accountKind === "PARTNER" ? "overview" : section, user, profile)} · LOGICA`;
-  }, [section, user, profile, search]);
+  const title = `${titleFor(user?.accountKind === "PARTNER" ? "overview" : section, user, profile)} · LOGICA`;
   const speaker = user?.accountKind === "SPEAKER";
   const partner = user?.accountKind === "PARTNER";
   const submissionId = profile?.speakerSubmission?.id;
@@ -429,6 +433,10 @@ export function Dashboard() {
 
   return (
     <div className="dash" style={{ "--d-art": `url(/journey/${art}.webp?v=${process.env.NEXT_PUBLIC_ART_VERSION})` } as CSSProperties}>
+      {/* Its own boundary so reading the query doesn't stop the shell from prerendering. */}
+      <Suspense fallback={null}>
+        <DocumentTitle title={title} />
+      </Suspense>
       <a href="#dashboard-content" className="d-skip">
         Skip to content
       </a>
