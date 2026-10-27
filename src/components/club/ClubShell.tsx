@@ -4,7 +4,8 @@ import "@/components/site/site.css";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { api } from "@/lib/api";
 import { SiteIcon } from "@/components/site/icons";
 import { Painting } from "@/components/site/Painting";
 
@@ -16,22 +17,23 @@ const links = [
   { href: "/blog", label: "Blog" },
 ];
 
-/** Whether this visitor is signed in, checked once per page load. Every page renders its own
- * ClubShell, so the nav (and its phone menu) remounts closed on each navigation. */
-let knownSignedIn: boolean | null = null;
-
 /** The real logo: black on paper, white on charcoal. CSS shows the one for the current theme. */
 /**
  * Whether someone is signed in, for public pages that swap "Create account"
- * for what a member would do instead. Starts from the last answer so labels
- * don't flicker between pages, then re-checks (sign-out happens in the dashboard).
+ * for what a member would do instead. Starts from <html data-signed-in>, which
+ * the root layout sets before first paint from the last session this browser
+ * saw, then re-checks with the server and updates both.
  */
 export function useSignedIn() {
-  const [signedIn, setSignedIn] = useState(knownSignedIn ?? false);
-  useEffect(() => {
-    fetch("/api/auth/session")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((me) => setSignedIn((knownSignedIn = !!me?.user)))
+  const [signedIn, setSignedIn] = useState(false);
+  useLayoutEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- seeding from the pre-paint flag, re-checked below
+    setSignedIn("signedIn" in document.documentElement.dataset);
+    api<{ user?: unknown } | null>("/api/auth/session")
+      .then((me) => {
+        document.documentElement.toggleAttribute("data-signed-in", !!me?.user);
+        setSignedIn(!!me?.user);
+      })
       .catch(() => {});
   }, []);
   return signedIn;
@@ -61,6 +63,7 @@ export function SiteNav() {
   const [open, setOpen] = useState(false);
   const signedIn = useSignedIn();
   const account = signedIn ? { href: "/dashboard", label: "Dashboard" } : { href: "/signin", label: "Sign in" };
+  const accountClass = "site-btn secondary sm site-nav-account";
 
 
   return (
@@ -78,8 +81,13 @@ export function SiteNav() {
           ))}
         </nav>
         <div className="site-nav-actions">
-          <Link href={account.href} className="site-btn secondary sm site-nav-account" aria-current={pathname === account.href ? "page" : undefined}>
-            {account.label}
+          {/* Both are in the HTML; CSS shows one from <html data-signed-in> so the
+              prerendered page doesn't flash "Sign in" before the session check. */}
+          <Link href="/dashboard" className={`${accountClass} when-signed-in`} aria-current={pathname === "/dashboard" ? "page" : undefined}>
+            Dashboard
+          </Link>
+          <Link href="/signin" className={`${accountClass} when-signed-out`} aria-current={pathname === "/signin" ? "page" : undefined}>
+            Sign in
           </Link>
           <Link href="/join" className="site-btn sm">
             Apply
