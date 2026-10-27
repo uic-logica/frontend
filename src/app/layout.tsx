@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { connection } from "next/server";
-import { headers } from "next/headers";
 import { siteDescription, siteUrl } from "@/lib/seo";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -54,19 +52,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  await connection();
-  // proxy.ts issues a per-request CSP nonce; inline scripts need it to run.
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${archivoBlack.variable} ${sourceSerif.variable} h-full antialiased`}>
       <head>
         {/* The dashboard's saved light/dark choice, applied before first paint
             so it never flashes the system theme. .dash and .site read it. */}
         <script
-          nonce={nonce}
           dangerouslySetInnerHTML={{
             __html:
               'try{var t=localStorage.getItem("logica-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}',

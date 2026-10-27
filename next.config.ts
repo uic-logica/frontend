@@ -19,8 +19,15 @@ const assetCache = "public, max-age=86400, stale-while-revalidate=2592000";
 // config needed on either side.
 const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
+// No per-request nonce: a nonce forces every page to render on the server per
+// visit (no CDN cache, ~170 ms warm / 600+ ms cold TTFB). Pages are prerendered
+// instead, so Next's inline bootstrap scripts need 'unsafe-inline'. Injected
+// script still can't send anything off-site: connect-src, img-src, form-action
+// and base-uri stay 'self'. See Next's CSP guide, "Without Nonces".
 const contentSecurityPolicy = [
-  "default-src 'self'", "script-src 'self'", "style-src 'self' 'unsafe-inline'",
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:", "font-src 'self'", "connect-src 'self'", "object-src 'none'",
   "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'", "worker-src 'self' blob:",
   "manifest-src 'self'",
@@ -57,7 +64,7 @@ const nextConfig: NextConfig = {
       source: "/journey/:file*",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
     }, {
-      source: "/:dir(logos|art|team)/:file*",
+      source: "/:dir(logos|art|team)/:file+",
       headers: [{ key: "Cache-Control", value: assetCache }],
     }, {
       source: "/:file([^/]+\\.(?:png|svg|jpg|jpeg|webp|ico))",
