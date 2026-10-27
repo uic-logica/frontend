@@ -354,7 +354,7 @@ export function ProfileEditor({
           <section className="d-panel" id="resume">
             <div className="d-section-head">
               <h2>Resume</h2>
-              <span className="d-muted">PDF or Word, up to 5 MB</span>
+              <span className="d-muted">PDF or Word, up to 3 MB</span>
             </div>
             <p className="d-small">Available to you and the board.</p>
             <ResumeUpload
