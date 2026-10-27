@@ -59,11 +59,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${archivoBlack.variable} ${sourceSerif.variable} h-full antialiased`}>
       <head>
         {/* The dashboard's saved light/dark choice, applied before first paint
-            so it never flashes the system theme. .dash and .site read it. */}
+            so it never flashes the system theme. .dash and .site read it.
+            Same for "signed in": the last session the api cache saw (it's
+            cleared on sign-out), so the nav says Dashboard from the first frame. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              'try{var t=localStorage.getItem("logica-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}',
+              'try{var t=localStorage.getItem("logica-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;var s=JSON.parse(localStorage.getItem("api-cache:/api/auth/session")||"null");if(s&&s.user)document.documentElement.dataset.signedIn=""}catch(e){}',
           }}
         />
       </head>

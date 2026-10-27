@@ -24,6 +24,7 @@ body:has(> .site) { background: var(--d-bg); }
 
 /* Light/dark pairs (logo, paintings): show the one for the current theme. */
 .site .only-dark { display: none; }
+html:not([data-signed-in]) .when-signed-in, html[data-signed-in] .when-signed-out { display: none; }
 [data-theme="dark"] .site .only-dark { display: revert; }
 [data-theme="dark"] .site .only-light { display: none; }
 @media (prefers-color-scheme: dark) {
