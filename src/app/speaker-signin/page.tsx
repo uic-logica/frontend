@@ -55,6 +55,7 @@ export default function SpeakerSignInPage() {
             </label>
             <button type="submit" disabled={busy} className="site-btn block">{busy ? "Signing in…" : "Sign in"}</button>
           </form>
+          <p className="auth-alt">Forgot your password? <Link href="/reset-password">Reset it</Link></p>
           <p className="auth-alt">UIC student or board member? <Link href="/signin">Sign in here</Link></p>
         </div>
       </main>

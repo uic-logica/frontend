@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata("Support & Contact", "Get help with LOGICA membership, event RSVPs, your account, speaking opportunities, and partnerships at UIC.", "/support");
@@ -20,7 +21,7 @@ const faqs = [
   },
   {
     q: "I can't sign in, or forgot my password.",
-    a: <>Email us at <a href="mailto:logica@uic.edu">logica@uic.edu</a> with the address you signed up with and we&apos;ll help you get back in.</>,
+    a: <>Use <Link href="/reset-password">Reset password</Link> to get a link by email. Still stuck? Email us at <a href="mailto:logica@uic.edu">logica@uic.edu</a> with the address you signed up with and we&apos;ll help you get back in.</>,
   },
   {
     q: "How do I become a speaker or guest?",
