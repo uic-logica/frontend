@@ -4127,3 +4127,152 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
   background: var(--d-gold-soft);
   color: var(--d-gold-text);
 }
+
+/* ---- Software Teams ------------------------------------------------------ */
+.d-tracker-four {
+  grid-template-columns: repeat(4, 1fr);
+}
+/* The one thing to do at this step: a gold-tinted panel so it reads first. */
+.d-now {
+  display: grid;
+  gap: 6px;
+  background: var(--d-gold-soft);
+  border-color: transparent;
+}
+.d-now-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--d-gold-text);
+}
+.d-now h2 {
+  margin: 0;
+}
+.d-team-picks {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.d-team-picks legend {
+  padding: 0;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.d-team-picks > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.d-team-pick {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--d-rule);
+  border-radius: var(--d-radius-sm);
+  background: var(--d-surface);
+  color: var(--d-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.d-team-pick:hover {
+  border-color: var(--d-rule-strong);
+}
+.d-team-pick[aria-pressed="true"] {
+  border-color: var(--d-gold);
+  box-shadow: inset 0 0 0 1px var(--d-gold);
+}
+.d-team-pick small {
+  font-size: 13px;
+}
+.d-team-pick-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.d-first-week {
+  display: grid;
+  gap: 12px;
+  margin: 8px 0 0;
+  padding-left: 20px;
+  list-style: decimal;
+}
+.d-first-week li::marker {
+  color: var(--d-gold-text);
+  font-weight: 600;
+}
+.d-first-week li small {
+  display: block;
+  margin: 2px 0 0;
+  color: var(--d-muted);
+  font-size: 13px;
+}
+.d-task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.d-task-list a {
+  display: block;
+  padding: 8px 10px;
+  border: 1px solid var(--d-rule);
+  border-radius: var(--d-radius-sm);
+  font-size: 14px;
+}
+.d-task-list a:hover {
+  border-color: var(--d-rule-strong);
+}
+.d-panel .d-subhead {
+  margin: 20px 0 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--d-faint);
+}
+.d-team-board {
+  padding: 0 0 16px;
+  /* Five columns fit the content width at 1280+; narrower screens scroll the board, not the page. */
+  grid-auto-columns: minmax(180px, 1fr);
+}
+.d-team-board .d-team-unplaced {
+  background: var(--d-gold-soft);
+}
+.d-team-board .d-kanban-card {
+  min-width: 0;
+}
+.d-team-board .d-kanban-card select {
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  font: inherit;
+  font-size: 13px;
+}
+.d-team-board section > p {
+  margin: -4px 2px 8px;
+}
+.d-accept-team {
+  display: grid;
+  gap: 4px;
+  max-width: 320px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+@media (max-width: 680px) {
+  .d-tracker-four {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .d-team-picks > div {
+    grid-template-columns: 1fr;
+  }
+}
+/* .d-text-link sits below a block by default; inside these lines it's inline text. */
+.d-first-week .d-text-link,
+.d-team-board .d-text-link,
+.d-teams-inline .d-text-link {
+  margin-top: 0;
+}
