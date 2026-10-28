@@ -91,8 +91,7 @@ export default function SignInPage() {
             </div>
             <button type="submit" disabled={busy} className="site-btn block">{busy ? "Signing in…" : "Sign in"}</button>
           </form>
-          <p className="auth-alt">Forgot your password? <Link href="/support">Contact the exec board</Link></p>
-          <p className="auth-note">We&apos;ll verify your identity and send you a new one.</p>
+          <p className="auth-alt">Forgot your password? <Link href="/reset-password">Reset it</Link></p>
           <hr className="auth-rule" />
           <p className="auth-alt">Guest or speaker? <Link href="/speaker-signin" className="auth-arrow">Sign in here <SiteIcon name="arrow" size={14} /></Link></p>
         </div>
