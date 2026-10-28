@@ -399,7 +399,7 @@ export const titles: Record<Section, string> = {
   speakers: "Speaker directory",
   insights: "Insights",
   money: "Money",
-  pipeline: "Pipeline",
+  pipeline: "Outreach",
   documents: "Documents",
   emails: "Emails",
   members: "Members",
@@ -447,22 +447,21 @@ export function navFor(
       : ["overview", "messages", "profile"];
   }
   if (runsWorkspace(user)) {
-    // Running the club, then being in it. The divider in the sidebar falls
-    // between the two groups — ten flat items is where this stops feeling
-    // like something you can scan.
+    // Grouped in the sidebar by NAV_GROUPS — fourteen flat items is past
+    // what anyone scans. Each group leads with what most often needs action.
     return [
       "overview",
       "messages",
-      "insights",
-      "money",
+      "applications",
+      "members",
+      "teams",
       "pipeline",
       "speakers",
-      "members",
-      "applications",
-      "teams",
-      "blog",
+      "money",
+      "insights",
       "documents",
       "emails",
+      "blog",
       "events",
       "community",
       "profile",
@@ -487,16 +486,13 @@ const MEMBER_NAV: Section[] = [
   "messages",
 ];
 
-/**
- * Where the club's business ends and the member's own begins, for the
- * sidebar rule. Board nav only.
- */
-export const PERSONAL_SECTIONS: Section[] = [
-  "events",
-  "community",
-  "profile",
-  "activity",
-];
+/** Exec sidebar group labels, keyed by the first section of each group. */
+export const NAV_GROUPS: Partial<Record<Section, string>> = {
+  applications: "People",
+  pipeline: "Partners",
+  money: "Club",
+  events: "Yours",
+};
 
 /**
  * Who gets the board workspace — money, the pipeline, the roster, the

@@ -57,7 +57,7 @@ const COPY = {
     emptyBody: "Log the first cost and the budget starts keeping itself.",
   },
   OUTREACH: {
-    title: "Pipeline",
+    title: "Outreach",
     description: "Companies, sponsors and partner clubs we're talking to. Once someone's coming to speak, turn their card into a guest.",
     add: "+ Add a contact",
     formTitle: "Add a contact",
