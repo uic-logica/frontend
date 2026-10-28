@@ -178,8 +178,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 34px;
-  padding: 7px 10px;
+  /* 32px, not 34: with four group labels the exec rail has to fit a ~790px window. */
+  min-height: 32px;
+  padding: 6px 10px;
   margin-bottom: 1px;
   border-radius: var(--d-radius-sm);
   color: var(--d-muted);
@@ -209,15 +210,17 @@
 }
 .d-nav-divider {
   display: block;
-  margin: 18px 0 6px;
+  /* Four of these in the exec rail: kept tight so the account row stays above a laptop fold. */
+  margin: 12px 0 4px;
   padding: 0 10px;
   font-size: 12px;
+  line-height: 1;
   font-weight: 500;
   color: var(--d-faint);
 }
 .d-sidebar-bottom {
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: 8px;
 }
 .d-account {
   border-top: 1px solid var(--d-rule);

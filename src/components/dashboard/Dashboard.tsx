@@ -40,7 +40,7 @@ import {
   isConfirmedSpeaker,
   roleName,
   runsWorkspace,
-  PERSONAL_SECTIONS,
+  NAV_GROUPS,
 } from "./types";
 import { BuildTeams } from "./BuildTeams";
 import "./dashboard.css";
@@ -463,18 +463,14 @@ export function Dashboard() {
         >
           <span ref={bar} className="d-nav-bar" aria-hidden="true" />
           <nav aria-label="Dashboard">
-            {sideNav.map((item, index) => (
+            {sideNav.map((item) => (
               <Fragment key={item}>
-                {/* Board nav runs to ten items. A rule where the club's
-                    business ends and their own begins is the difference
-                    between a list you scan and one you read. */}
-                {isBoardNav &&
-                  PERSONAL_SECTIONS.includes(item) &&
-                  !PERSONAL_SECTIONS.includes(sideNav[index - 1]) && (
-                    <span className="d-nav-divider" aria-hidden="true">
-                      Yours
-                    </span>
-                  )}
+                {/* Exec nav runs to fourteen items; group labels make it a list you scan, not one you read. */}
+                {isBoardNav && NAV_GROUPS[item] && (
+                  <span className="d-nav-divider" aria-hidden="true">
+                    {NAV_GROUPS[item]}
+                  </span>
+                )}
                 <Link
                   onClick={() => setMenu(false)}
                   href={href(item)}
