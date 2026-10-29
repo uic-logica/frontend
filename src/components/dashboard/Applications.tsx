@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
@@ -7,7 +8,7 @@ import { useConfirm } from "./useConfirm";
 import { windowLabel } from "./Thread";
 import { useUrlState } from "./useUrlState";
 import { type Application, date, initials } from "./types";
-import { Arrow } from "./Icon";
+import { Arrow, Icon } from "./Icon";
 
 const STATUSES = ["PENDING", "INTERVIEW", "NEEDS_INFO", "ACCEPTED", "DECLINED"] as const;
 const LABEL = {
@@ -60,6 +61,8 @@ export function Applications() {
   const [note, setNote] = useState("");
   // The team an accepted Software Teams applicant goes on; defaults to their 1st pick.
   const [teamPick, setTeamPick] = useState<{ id: string; team: string } | null>(null);
+  // Accepted people's current teams, by user id.
+  const [teams, setTeams] = useState<Record<string, string> | null | "error">(null);
   const [asking, setAsking] = useState(false);
   const [canReapply, setCanReapply] = useState(true);
 
@@ -73,6 +76,9 @@ export function Applications() {
         }
       })
       .catch((e: Error) => alive && setError(e.message));
+    api<{ members: { id: string; team: string }[] }>("/api/board/teams")
+      .then((data) => alive && setTeams(Object.fromEntries(data.members.map((m) => [m.id, m.team]))))
+      .catch(() => alive && setTeams("error"));
     return () => { alive = false; };
   }, [reload]);
 
@@ -89,7 +95,24 @@ export function Applications() {
   // With nothing picked, the first match shows, so the pane is never empty.
   const detail = items?.find((item) => item.id === open) ?? filtered?.[0];
   const next = filtered?.find((item) => item.id !== detail?.id);
-  const team = detail && teamPick?.id === detail.id ? teamPick.team : detail?.projects?.[0] ?? "";
+  // Their current team, once accepted ("" = not placed; undefined = not loaded).
+  const current = detail?.userId && teams && teams !== "error" ? teams[detail.userId] ?? "" : undefined;
+  const team = detail && teamPick?.id === detail.id ? teamPick.team : current || detail?.projects?.[0] || "";
+
+  async function place(item: Application, next: string) {
+    setBusy(true);
+    setError("");
+    setSaved("");
+    try {
+      await api(`/api/board/teams/${item.userId}`, { method: "PUT", body: JSON.stringify({ team: next || null }) });
+      setReload((value) => value + 1);
+      setSaved(next ? `${item.name}: placed on ${PROJECT[next]}.` : `${item.name}: taken off their team.`);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function changeStatus(item: Application, next: Application["status"], extra: Record<string, unknown> = {}) {
     setBusy(true);
@@ -168,7 +191,7 @@ export function Applications() {
             ))}
           </ul>}
         </section>
-      {detail && <section id="application-detail" className="d-panel d-speaker-detail d-split-detail" aria-labelledby="application-detail-title">
+      {detail && <section id="application-detail" className="d-panel d-speaker-detail d-split-detail d-app-detail" aria-labelledby="application-detail-title">
         <div className="d-split-head">
           <span className="d-avatar d-avatar-large">{initials(detail.name)}</span>
           <div>
@@ -188,22 +211,37 @@ export function Applications() {
           </p>
         )}
         {error && items && <p className="d-error" role="alert">{error}</p>}
+        {detail.track === "SOFTWARE_ENGINEER" && detail.status === "ACCEPTED" && (
+          <section aria-labelledby="application-team">
+            <h3 id="application-team" className="d-subhead">Team</h3>
+            {!detail.userId ? <p className="d-muted">No account yet, so they can&apos;t be placed. They&apos;ll show up in Software Teams once they sign up.</p>
+              : teams === "error" ? <p className="d-muted">Couldn&apos;t load teams. Place them from <Link href="/dashboard/teams">Software Teams</Link>.</p>
+              : <form className="d-app-place" onSubmit={(event) => { event.preventDefault(); void place(detail, team); }}>
+                  <label className="sr-only" htmlFor="application-team-select">Team for {detail.name}</label>
+                  <select id="application-team-select" value={team} disabled={!teams} onChange={(event) => setTeamPick({ id: detail.id, team: event.target.value })}>
+                    <option value="">Not on a team</option>
+                    {Object.entries(PROJECT).map(([value, name]) => <option key={value} value={value}>{name}</option>)}
+                  </select>
+                  <button className="d-button secondary" type="submit" disabled={busy || !teams || team === current}>{current ? "Move" : "Place on team"}</button>
+                  <span className="d-muted">{!teams ? "Loading…" : current ? `On ${PROJECT[current]}` : "Not placed yet"}</span>
+                </form>}
+          </section>
+        )}
+        <p className="d-app-summary">
+          {[TRACK[detail.track], [detail.major, detail.gradYear && `’${String(detail.gradYear).slice(-2)}`].filter(Boolean).join(" "),
+            detail.hoursPerWeek != null && `${detail.hoursPerWeek} hrs/week`].filter(Boolean).join(" · ")}
+        </p>
+        {detail.track === "SOFTWARE_ENGINEER" && <dl className="d-app-facts">
+          <div><dt>Picks</dt><dd>{detail.projects?.length ? <ol>{detail.projects.map((p) => <li key={p}>{PROJECT[p] ?? p}</li>)}</ol> : "None picked"}</dd></div>
+          <div><dt>Skills</dt><dd>{detail.skills || "Not provided"}</dd></div>
+        </dl>}
+        {(detail.track === "SOFTWARE_ENGINEER" || detail.github || detail.resumeUrl) && <div className="d-actions d-app-links">
+          {detail.resumeOnFile && detail.userId && <a className="d-button secondary" href={`/api/resume/${detail.userId}`} download><Icon name="download" /> Download resume</a>}
+          {detail.resumeUrl && <a className="d-button secondary" href={detail.resumeUrl} target="_blank" rel="noreferrer">Resume link <Arrow /></a>}
+          {detail.github && <a className="d-button secondary" href={githubUrl(detail.github)} target="_blank" rel="noreferrer">GitHub · {detail.github} <Arrow /></a>}
+          {!detail.resumeOnFile && !detail.resumeUrl && <span className="d-muted">No resume provided</span>}
+        </div>}
         <dl>
-          <div><dt>Track</dt><dd>{TRACK[detail.track]}</dd></div>
-          {detail.track === "SOFTWARE_ENGINEER" && detail.github && <>
-            <div><dt>GitHub</dt><dd><a href={githubUrl(detail.github)} target="_blank" rel="noreferrer">{detail.github}</a></dd></div>
-            <div><dt>Hours a week</dt><dd>{detail.hoursPerWeek ?? "Not provided"}</dd></div>
-            <div><dt>Projects, ranked</dt><dd>{projects(detail) || "None picked"}</dd></div>
-            <div><dt>Skills</dt><dd>{detail.skills || "Not provided"}</dd></div>
-            <div><dt>Resume</dt><dd>
-              {detail.resumeOnFile && detail.userId && <a href={`/api/resume/${detail.userId}`}>Download PDF</a>}
-              {detail.resumeOnFile && detail.resumeUrl && " · "}
-              {detail.resumeUrl && <a href={detail.resumeUrl} target="_blank" rel="noreferrer">Open link <Arrow /></a>}
-              {!detail.resumeOnFile && !detail.resumeUrl && "Not provided"}
-            </dd></div>
-          </>}
-          <div><dt>Major / graduation</dt><dd>{detail.major || "Not provided"} · {detail.gradYear ?? "Year not provided"}</dd></div>
-          <div><dt>Applied</dt><dd>{date(detail.createdAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>
           {detail.reviewNote && <div><dt>Review note</dt><dd>{detail.reviewNote}</dd></div>}
           {detail.reviewedAt && <div><dt>Info requested</dt><dd>{date(detail.reviewedAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>}
           {detail.status === "INTERVIEW" && (
@@ -223,10 +261,14 @@ export function Applications() {
               </dd>
             </div>
           )}
-          {detail.decidedAt && <div><dt>Decision recorded</dt><dd>{date(detail.decidedAt, { month: "long", day: "numeric", year: "numeric" })}</dd></div>}
           {detail.status === "DECLINED" && <div><dt>May reapply</dt><dd>{detail.canReapply ? "Yes, after the waiting period" : "No"}</dd></div>}
-          <div className="d-split-wide"><dt>{detail.track === "SOFTWARE_ENGINEER" ? "Why are you special?" : "Why do you want to join?"}</dt><dd>{detail.why || "No answer provided"}</dd></div>
         </dl>
+        <h3 className="d-subhead">{detail.track === "SOFTWARE_ENGINEER" ? "Why are you special?" : "Why do you want to join?"}</h3>
+        <p className="d-app-why">{detail.why || "No answer provided"}</p>
+        <p className="d-muted d-app-dates">
+          Applied {date(detail.createdAt, { month: "short", day: "numeric", year: "numeric" })}
+          {detail.decidedAt && ` · Decided ${date(detail.decidedAt, { month: "short", day: "numeric", year: "numeric" })}`}
+        </p>
         {asking && <form className="d-review-form" onSubmit={(event) => { event.preventDefault(); void changeStatus(detail, "NEEDS_INFO", { note: note.trim() }); }}>
           <label htmlFor="application-review-note">What should the applicant add?</label>
           <textarea id="application-review-note" required minLength={10} maxLength={1000} rows={4} value={note} onChange={(event) => setNote(event.target.value)} />

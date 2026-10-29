@@ -563,12 +563,10 @@ export function when(value: string | null, options: Intl.DateTimeFormatOptions =
 export function isUpcoming(value: string | null) {
   return !value || new Date(value).getTime() >= new Date().getTime();
 }
+/** First and last name's first letters, skipping punctuation: "Khang (Dori) Le" → "KL". */
 export function initials(name: string | null) {
-  return (name || "LOGICA")
-    .split(" ")
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join("");
+  const words = (name || "LOGICA").match(/\p{L}+/gu) ?? ["?"];
+  return (words[0][0] + (words.length > 1 ? words[words.length - 1][0] : "")).toUpperCase();
 }
 
 /**
