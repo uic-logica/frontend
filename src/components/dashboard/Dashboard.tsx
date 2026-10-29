@@ -292,7 +292,7 @@ export function Dashboard() {
         // account is allowed to open.
         if (alive)
           prefetch([
-            ...(current.accountKind === "SPEAKER" ? [] : ["/api/posts", "/api/email-preferences", "/api/mcp-tokens"]),
+            ...(current.accountKind === "SPEAKER" ? [] : ["/api/posts", "/api/email-preferences", "/api/mcp-tokens", "/api/blog/mine"]),
             ...(runsWorkspace(current)
               ? [
                   "/api/board/items",
@@ -301,8 +301,16 @@ export function Dashboard() {
                   "/api/board/budgets",
                   "/api/board/insights",
                   "/api/join",
+                  // The slow ones: Drive, GitHub, the email log, every thread.
+                  "/api/board/inbox",
+                  "/api/board/teams",
+                  "/api/board/documents",
+                  "/api/board/emails",
+                  "/api/blog/review",
                 ]
-              : []),
+              : current.accountKind === "MEMBER"
+                ? ["/api/messages", "/api/teams/mine", "/api/join/mine"]
+                : []),
           ]);
       } catch {
         if (alive && !leavingRef.current) setAuthState("error");
