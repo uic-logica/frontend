@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { BlogBody } from "@/components/site/BlogBody";
+import { fileToBase64 } from "@/components/shell/ResumeUpload";
 import { api, peek } from "@/lib/api";
 import { Empty, Heading } from "./Overview";
 import { useConfirm } from "./useConfirm";
@@ -16,7 +18,6 @@ const LABEL: Record<BlogPost["status"], string> = {
 };
 const tone = (status: BlogPost["status"]) =>
   status === "PUBLISHED" ? "confirmed" : status === "REJECTED" ? "declined" : "pending";
-const paragraphs = (body: string) => body.split(/\n\s*\n/).filter((p) => p.trim());
 
 /**
  * Members write posts here and send them to the exec board; exec gets a
@@ -131,7 +132,31 @@ function Editor({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState("");
+  const [preview, setPreview] = useState(false);
+  const textarea = useRef<HTMLTextAreaElement>(null);
+  const picker = useRef<HTMLInputElement>(null);
   const live = post?.status === "PUBLISHED";
+
+  // Uploads the picture, then drops ![caption](url) in its own paragraph at the cursor.
+  async function addPicture(file: File) {
+    if (file.size > 3 * 1024 * 1024) return setError("Pictures are limited to 3 MB.");
+    setBusy(true);
+    setError("");
+    try {
+      const { url } = await api<{ url: string }>("/api/blog/images", {
+        method: "POST",
+        body: JSON.stringify({ filename: file.name, mimeType: file.type, data: await fileToBase64(file) }),
+      });
+      const at = textarea.current?.selectionStart ?? body.length;
+      const caption = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
+      setBody(`${body.slice(0, at).trimEnd()}\n\n![${caption}](${url})\n\n${body.slice(at).trimStart()}`.trim());
+      setPreview(false);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function save(submit?: boolean) {
     setBusy(true);
@@ -190,9 +215,22 @@ function Editor({
           Title
           <input value={title} onChange={(e) => setTitle(e.target.value)} required maxLength={120} disabled={live} />
         </label>
-        <label>
+        {!live && (
+          <div className="d-blog-tools">
+            <button className="d-button secondary" type="button" disabled={busy} onClick={() => picker.current?.click()}>Add picture</button>
+            <input ref={picker} type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden onChange={(e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (file) void addPicture(file);
+            }} />
+            <button className="d-button secondary" type="button" aria-pressed={preview} onClick={() => setPreview(!preview)}>{preview ? "Edit" : "Preview"}</button>
+          </div>
+        )}
+        {preview && <BlogBody body={body} className="d-blog-read d-blog-preview" />}
+        <label hidden={preview}>
           Post
           <textarea
+            ref={textarea}
             className="d-blog-body"
             value={body}
             onChange={(e) => setBody(e.target.value)}
@@ -203,7 +241,7 @@ function Editor({
             aria-describedby="blog-body-hint"
           />
         </label>
-        <p id="blog-body-hint" className="d-muted">Plain text. Leave a blank line between paragraphs.</p>
+        <p id="blog-body-hint" className="d-muted" hidden={preview}>Leave a blank line between paragraphs. <code>## </code> starts a heading, <code>- </code> a list item, <code>[words](https://…)</code> makes a link. Add picture puts an image where your cursor is; edit the words in <code>![…]</code> to change its caption.</p>
         {!live && (
           <div className="d-actions" aria-busy={busy}>
             <button className="d-button" type="submit" disabled={busy}>
@@ -338,7 +376,7 @@ function Review() {
               {error && items && <p className="d-error" role="alert">{error}</p>}
               <article className="d-blog-read">
                 <h2 id="blog-review-title">{detail.title}</h2>
-                {paragraphs(detail.body).map((p, i) => <p key={i}>{p}</p>)}
+                <BlogBody body={detail.body} />
               </article>
               {detail.reviewNote && detail.status === "REJECTED" && (
                 <p className="d-callout" role="note"><strong>Your note:</strong> {detail.reviewNote}</p>

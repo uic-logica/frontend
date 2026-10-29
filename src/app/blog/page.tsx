@@ -23,6 +23,8 @@ export default async function BlogPage() {
               {posts.map((post) => (
                 <li key={post.id}>
                   <Link href={`/blog/${post.slug}`} className="site-card blog-item">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- uploaded pictures have no known size */}
+                    {post.cover && <img className="blog-cover" src={post.cover} alt="" loading="lazy" />}
                     <h2 className="serif">{post.title}</h2>
                     {post.excerpt && <p>{post.excerpt}</p>}
                     <small>{post.author.name ?? "LOGICA member"} · <time dateTime={post.publishedAt}>{postDate(post.publishedAt)}</time></small>
