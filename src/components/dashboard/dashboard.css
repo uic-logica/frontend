@@ -3972,6 +3972,13 @@ tr:has(.d-row-link[aria-current]) > td {
 .d-blog-new { padding: 12px; border-bottom: 1px solid var(--d-rule); }
 .d-blog-new .d-button { width: 100%; }
 .d-blog-status { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font-size: 13px; }
+.d-blog-tools { display: flex; gap: 8px; }
+.d-blog-read figure { margin: 0 0 16px; }
+.d-blog-read img { display: block; max-width: 100%; height: auto; border-radius: var(--d-radius-sm); }
+.d-blog-read figcaption { margin-top: 6px; font-size: 13px; color: var(--d-muted); }
+.d-blog-read ul { margin: 0 0 14px; padding-left: 20px; list-style: disc; }
+.d-blog-read a { text-decoration: underline; }
+.d-blog-preview { min-height: 320px; padding: 16px; border: 1px solid var(--d-rule); border-radius: var(--d-radius-sm); }
 .d-blog-body { min-height: 320px !important; font-family: var(--d-serif); font-size: 16px !important; line-height: 1.65 !important; }
 .d-blog-read { margin: 20px 0; max-width: 68ch; }
 .d-blog-read h2 { font-family: var(--d-serif); font-size: 28px; font-weight: 500; line-height: 1.2; margin: 0 0 16px; }

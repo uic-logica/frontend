@@ -371,6 +371,15 @@ html:not([data-signed-in]) .when-signed-in, html[data-signed-in] .when-signed-ou
 .blog-byline { margin: 14px 0 0; }
 .blog-body { margin-top: 36px; font-size: 19px; line-height: 1.7; }
 .blog-body p { margin: 0 0 22px; white-space: pre-line; }
+.blog-body h2 { margin: 40px 0 14px; font-size: 28px; line-height: 1.25; }
+.blog-body ul { margin: 0 0 22px; padding-left: 24px; list-style: disc; }
+.blog-body li { margin-bottom: 8px; }
+.blog-body a { text-decoration: underline; text-underline-offset: 3px; }
+.blog-body figure { margin: 8px 0 30px; }
+.blog-body img { display: block; width: 100%; height: auto; border-radius: var(--d-radius); }
+.blog-body figcaption { margin-top: 10px; font-family: var(--d-sans, inherit); font-size: 14px; color: var(--d-muted); }
+.blog-cover { width: calc(100% + 64px); max-width: none; margin: -28px -32px 4px; aspect-ratio: 2 / 1; object-fit: cover; border-radius: var(--d-radius) var(--d-radius) 0 0; }
+@media (max-width: 599px) { .blog-cover { width: calc(100% + 44px); margin: -22px -22px 4px; } }
 @media (max-width: 599px) {
   .blog-item { padding: 22px; }
   .blog-item h2 { font-size: 24px; }
