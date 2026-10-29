@@ -13,7 +13,6 @@ export type Project = {
   /** What the team builds, in order (the milestones on its team page). */
   build: string[];
   learn: string;
-  demo: string | null;
 };
 
 export const ORG = "https://github.com/uic-logica";
@@ -38,7 +37,6 @@ export const projects: Project[] = [
       "The application tracker and reminders",
     ],
     learn: "Scraping, scheduled jobs, data pipelines, search.",
-    demo: "Thu, Nov 12",
   },
   {
     slug: "resume-builder",
@@ -57,7 +55,6 @@ export const projects: Project[] = [
       "A resume page: preview, one version per application, download",
     ],
     learn: "MCP servers, tool design for AI agents, PDF rendering.",
-    demo: "Thu, Nov 19",
   },
   {
     slug: "event-replays",
@@ -75,7 +72,6 @@ export const projects: Project[] = [
       "The 3D viewer on the event page, working on phones",
     ],
     learn: "Computer vision, GPU jobs, 3D on the web.",
-    demo: "Thu, Dec 3 (showcase)",
   },
   {
     slug: "mock-interviewer",
@@ -92,6 +88,5 @@ export const projects: Project[] = [
       "A scored transcript saved to your dashboard",
     ],
     learn: "Voice interfaces, prompt design, evaluation.",
-    demo: "Thu, Dec 3 (preview)",
   },
 ];

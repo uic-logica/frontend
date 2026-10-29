@@ -112,6 +112,9 @@ function Path({ at, team }: { at: number; team?: string }) {
 function MemberTeams({ user, profile }: { user: SessionUser; profile: Profile | null }) {
   const [team, setTeam] = useState<MyTeam | null>(() => peek<MyTeam>("/api/teams/mine") ?? null);
   const initial = loadDraft(user.id);
+  // "Apply to this team" on /projects lands here with ?pick=<TEAM>: rank it 1st on a fresh form.
+  const pick = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("pick");
+  if (pick && !initial.picks.some(Boolean) && PROJECTS.some((p) => p.value === pick)) initial.picks = [pick, "", ""];
   const [mine, setMine] = useState<Mine[] | null>(() => peek<Mine[]>("/api/join/mine")?.filter((row) => row.track === "SOFTWARE_ENGINEER") ?? null);
   const [draft, setDraft] = useState<Draft>({
     ...initial,
@@ -246,7 +249,7 @@ function MemberTeams({ user, profile }: { user: SessionUser; profile: Profile | 
               <button key={project.value} type="button" className="d-team-pick" aria-pressed={rank >= 0} onClick={() => toggle(project.value)}>
                 <span className="d-team-pick-head"><strong>{project.label}</strong>{rank >= 0 && <span className="d-badge confirmed">{RANKS[rank]}</span>}</span>
                 {info && <small>{info.line}</small>}
-                {info && <small className="d-muted">You learn: {info.learn}{info.demo ? ` · Demo ${info.demo}` : ""}</small>}
+                {info && <small className="d-muted">You learn: {info.learn}</small>}
               </button>
             );
           })}
@@ -269,7 +272,6 @@ function MemberTeams({ user, profile }: { user: SessionUser; profile: Profile | 
 
 /** A placed member's home: first-week steps, then their tasks and the team's open ones (GitHub issues). */
 function TeamHome({ team, mine }: { team: Team; mine: MyTeam }) {
-  const info = page(team);
   const discord = process.env.NEXT_PUBLIC_DISCORD_URL;
   const tasks = (list: Task[], empty: string) => list.length
     ? <ul className="d-task-list">{list.map((t) => <li key={t.url}><a href={t.url} target="_blank" rel="noopener noreferrer"><span className="d-muted">{t.repo}#{t.number}</span> {t.title}</a></li>)}</ul>
@@ -278,7 +280,6 @@ function TeamHome({ team, mine }: { team: Team; mine: MyTeam }) {
     <section className="d-panel d-now">
       <span className="d-now-label">Your first week</span>
       <h2>You&apos;re on the {label(team)} team</h2>
-      {info?.demo && <p className="d-small">Next demo day: {info.demo}.</p>}
       <ol className="d-first-week">
         <li><strong>Accept your GitHub invite to uic-logica</strong><small>{mine.github ? <>An exec sends it to <b>@{mine.github}</b>. <a className="d-text-link" href="https://github.com/orgs/uic-logica/invitation" target="_blank" rel="noopener noreferrer">Open the invite</a></> : <>Send the board your GitHub username in <Link className="d-text-link" href="/dashboard/messages">Messages</Link> so they can invite you.</>}</small></li>
         <li><strong>Join your team&apos;s standup</strong><small>Every 2 days, 15 minutes{discord ? <>, on <a className="d-text-link" href={discord} target="_blank" rel="noreferrer">Discord</a></> : " on Discord"}: what you did, what&apos;s next, what&apos;s blocking you.</small></li>
