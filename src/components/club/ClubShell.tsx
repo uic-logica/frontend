@@ -131,6 +131,9 @@ const footerColumns = [
       { href: "mailto:logica@uic.edu", label: "logica@uic.edu" },
       { href: "/support", label: "Support" },
       { href: "https://github.com/uic-logica", label: "GitHub" },
+      { href: "https://discord.gg/nRhY72ADNh", label: "Discord" },
+      { href: "https://www.instagram.com/logicaatuic/", label: "Instagram" },
+      { href: "https://www.linkedin.com/company/logicaatuic/", label: "LinkedIn" },
     ],
   },
 ];
