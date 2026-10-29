@@ -636,3 +636,66 @@ html:not([data-signed-in]) .when-signed-in, html[data-signed-in] .when-signed-ou
 /* Interview availability (app/interview/[token]): the dashboard's week grid on a site card. */
 .interview-card { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
 .interview-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+/* ── Phones: one compact scale for every public page, so headings and buttons
+   stop filling the screen. Desktop sizes above stay as designed. ── */
+@media (max-width: 599px) {
+  .site-nav { height: 56px; }
+  .site-menu { inset: 56px 0 auto; }
+  .site-wordmark { font-size: 16px; }
+  .site-nav .site-btn { height: 34px; padding: 0 12px; font-size: 14px; }
+  .site-btn { height: 40px; padding: 0 16px; font-size: 14px; }
+  .site-kicker { font-size: 12px; }
+  .site-card, .site-features .site-card { padding: 20px; }
+  .site-empty { padding: 20px; }
+
+  .site-page { width: calc(100% - 40px); padding-top: 24px; }
+  .site-page-head { gap: 10px; margin-bottom: 32px; }
+  .site-page-head h1 { font-size: 30px; letter-spacing: -0.5px; }
+  .site-page-head p:not(.site-kicker) { font-size: 16px; line-height: 1.5; }
+  .site-page-head .speak-lead { font-size: 18px !important; }
+  .site-head { margin-bottom: 20px; }
+  .site-head h2 { font-size: 22px; }
+  .site-head-sub { font-size: 15px; line-height: 1.5; }
+  .site-feature-icon { width: 36px; height: 36px; }
+  .site-date { width: 44px; height: 48px; }
+  .site-date span { font-size: 18px; }
+  .site-section { margin-top: 48px; }
+
+  .home-hero { margin-top: -56px; padding-top: 84px; padding-bottom: 48px; }
+  .home-hero h1 { font-size: 34px; }
+  .home-hero-brand { gap: 14px; }
+  .home-hero-brand .site-logo { width: 44px !important; height: 44px !important; }
+  .home-hero-brand p { font-size: 15px; }
+  .home-hero-copy { gap: 20px; }
+  .home-block { margin-top: 32px; }
+  .home-block + .home-block { margin-top: 56px; }
+  .home-event h3 { font-size: 17px; }
+  .site-features h3 { font-size: 18px; }
+  .site-features p, .home-join p { font-size: 15px; }
+  .home-join { padding: 28px 20px; gap: 12px; }
+  .home-join h2 { font-size: 22px; }
+  .home-partners { margin-top: 56px; }
+  .home-building strong { font-size: 18px; }
+
+  .about-values h3, .about-allies strong { font-size: 20px; }
+  .event-page { padding-top: 24px; gap: 14px; }
+  .event-head { gap: 12px; }
+  .event-date { width: 48px; height: 54px; }
+  .event-head h1 { font-size: 24px; line-height: 1.25; }
+  .event-meta { font-size: 14px; gap: 6px 20px; }
+  .event-about { margin-top: 36px; gap: 12px; }
+  .event-description { font-size: 15px; line-height: 1.6; }
+  .event-about h2 { font-size: 20px; }
+  .site-cta { padding: 24px 20px; }
+  .site-cta h2, .blog-empty h2, .join-form h2, .partner-card h2, .speak-card h2 { font-size: 22px; }
+  .speak-confirmed h2, .forms-unavailable h2 { font-size: 20px; }
+  .auth-head h1 { font-size: 24px; }
+  .legal-section > h2 { font-size: 22px; }
+  .legal-content.numbered .legal-section > h2 { font-size: 20px; }
+  .projects-item { padding: 20px; gap: 12px; }
+  .projects-top h2 { font-size: 22px; }
+  .projects-line { font-size: 15px; }
+
+  .site-footer { margin-top: 64px; }
+}
