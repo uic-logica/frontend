@@ -43,16 +43,20 @@ export default function ProjectsPage() {
                   <dt>You learn</dt>
                   <dd>{p.learn}</dd>
                 </div>
-                {p.demo && (
-                  <div>
-                    <dt>Demo day</dt>
-                    <dd>{p.demo}</dd>
-                  </div>
-                )}
+                <div>
+                  <dt>Demo day</dt>
+                  <dd>TBD, set once the team starts</dd>
+                </div>
               </dl>
-              <a className="site-link" href={teamPage(p.slug)} target="_blank" rel="noopener noreferrer">
-                Plan, timeline and demos on GitHub <SiteIcon name="external" />
-              </a>
+              <div className="projects-foot">
+                <a className="site-link" href={teamPage(p.slug)} target="_blank" rel="noopener noreferrer">
+                  The team&apos;s plan on GitHub <SiteIcon name="external" />
+                </a>
+                {/* Signs in if needed, then opens the application with this project ranked 1st. */}
+                <Link className="site-btn" href={`/signin?next=${encodeURIComponent(`/dashboard/teams?pick=${p.slug.toUpperCase().replace(/-/g, "_")}`)}`}>
+                  Apply to this team
+                </Link>
+              </div>
             </li>
           ))}
         </ol>

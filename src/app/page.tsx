@@ -179,7 +179,6 @@ export default async function Home() {
               <li key={p.slug}>
                 <Link href={`/projects#${p.slug}`}>
                   <strong>{p.name}</strong>
-                  <span>Demo {p.demo}</span>
                 </Link>
               </li>
             ))}
