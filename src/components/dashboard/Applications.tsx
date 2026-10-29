@@ -58,6 +58,8 @@ export function Applications() {
   const [saved, setSaved] = useState("");
   const [reload, setReload] = useState(0);
   const [note, setNote] = useState("");
+  // The team an accepted Software Teams applicant goes on; defaults to their 1st pick.
+  const [teamPick, setTeamPick] = useState<{ id: string; team: string } | null>(null);
   const [asking, setAsking] = useState(false);
   const [canReapply, setCanReapply] = useState(true);
 
@@ -87,6 +89,7 @@ export function Applications() {
   // With nothing picked, the first match shows, so the pane is never empty.
   const detail = items?.find((item) => item.id === open) ?? filtered?.[0];
   const next = filtered?.find((item) => item.id !== detail?.id);
+  const team = detail && teamPick?.id === detail.id ? teamPick.team : detail?.projects?.[0] ?? "";
 
   async function changeStatus(item: Application, next: Application["status"], extra: Record<string, unknown> = {}) {
     setBusy(true);
@@ -229,8 +232,16 @@ export function Applications() {
           <textarea id="application-review-note" required minLength={10} maxLength={1000} rows={4} value={note} onChange={(event) => setNote(event.target.value)} />
           <div className="d-actions"><button className="d-button" type="submit" disabled={busy}>Send request</button><button className="d-button secondary" type="button" onClick={() => setAsking(false)}>Cancel</button></div>
         </form>}
+        {detail.track === "SOFTWARE_ENGINEER" && detail.status !== "ACCEPTED" && (
+          <label className="d-accept-team">Team when accepted
+            <select value={team} onChange={(event) => setTeamPick({ id: detail.id, team: event.target.value })}>
+              <option value="">Decide later (Software Teams tab)</option>
+              {Object.entries(PROJECT).map(([value, name]) => <option key={value} value={value}>{name}</option>)}
+            </select>
+          </label>
+        )}
         <div className="d-actions" aria-busy={busy}>
-          {STATUSES.filter((value) => value !== "DECLINED").map((value) => <button key={value} className="d-button secondary" disabled={busy || detail.status === value} onClick={() => value === "NEEDS_INFO" ? setAsking(true) : changeStatus(detail, value)}>{ACTION[value]}</button>)}
+          {STATUSES.filter((value) => value !== "DECLINED").map((value) => <button key={value} className="d-button secondary" disabled={busy || detail.status === value} onClick={() => value === "NEEDS_INFO" ? setAsking(true) : changeStatus(detail, value, value === "ACCEPTED" && detail.track === "SOFTWARE_ENGINEER" && team ? { team } : {})}>{ACTION[value]}</button>)}
         </div>
         <form className="d-decline-action" onSubmit={async (event) => {
           event.preventDefault();

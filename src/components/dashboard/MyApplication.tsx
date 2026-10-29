@@ -65,14 +65,15 @@ export function ApplyNudge() {
  * week grid, the same save as the emailed link, so losing the email
  * doesn't lose the way in. Nothing to show without an application.
  */
-export function MyApplication() {
+export function MyApplication({ track, path = true }: { track?: Application["track"]; path?: boolean } = {}) {
   const [mine, setMine] = useMine();
   const [windows, setWindows] = useState<Window[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [now] = useState(() => Date.now());
 
-  const app = mine?.[0];
+  // Software Teams shows its own four-step path, so it asks for this card without the tracker.
+  const app = track ? mine?.find((a) => a.track === track) : mine?.[0];
   if (!app) return null;
   const decided = app.decidedAt && now - new Date(app.decidedAt).getTime() > DECIDED_DAYS * 864e5;
   if (decided) return null;
@@ -107,13 +108,13 @@ export function MyApplication() {
         <span className="d-muted">Sent {date(app.createdAt)}</span>
       </div>
 
-      <ol className="d-tracker">
+      {path && <ol className="d-tracker">
         {STEPS.map((label, i) => (
           <li key={label} className={i < step ? "done" : i === step ? "current" : undefined} aria-current={i === step ? "step" : undefined}>
             {i === 2 && app.status === "ACCEPTED" ? "Accepted" : i === 2 && app.status === "DECLINED" ? "Decided" : label}
           </li>
         ))}
-      </ol>
+      </ol>}
 
       {app.status === "PENDING" && (
         <p className="d-small">The board is reading your application. You&apos;ll get an email and a notification here when it moves.</p>
@@ -166,7 +167,11 @@ export function MyApplication() {
           </>
         ))}
 
-      {app.status === "ACCEPTED" && <p className="d-small">You&apos;re in. Watch Events and Messages for what comes next.</p>}
+      {app.status === "ACCEPTED" && (app.track === "SOFTWARE_ENGINEER" ? (
+        <div className="d-availability-footer">
+          <Link className="d-button" href="/dashboard/teams">See your team and first steps</Link>
+        </div>
+      ) : <p className="d-small">You&apos;re in. Watch Events and Messages for what comes next.</p>)}
 
       {app.status === "DECLINED" && (
         <>
