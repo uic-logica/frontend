@@ -9,7 +9,7 @@ import { JoinActions, JoinForm } from "./JoinForm";
 const roles: { title: string; body: string; note: string; icon: SiteIconName }[] = [
   {
     title: "Software Engineer",
-    body: "Build open-source products that help students get hired, on a team with check-ins every two days.",
+    body: "Build open-source products for UIC students, on a team with check-ins every two days.",
     note: "Needs a @uic.edu account",
     icon: "code",
   },

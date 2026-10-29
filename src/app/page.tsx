@@ -175,11 +175,11 @@ export default async function Home() {
             <Link href="/projects" className="site-link">All projects <SiteIcon name="arrow" /></Link>
           </div>
           <ul className="home-building">
-            {projects.filter((p) => p.slug !== "site").map((p) => (
+            {projects.map((p) => (
               <li key={p.slug}>
                 <Link href={`/projects#${p.slug}`}>
                   <strong>{p.name}</strong>
-                  <span>{p.status === "Main focus" ? `Demo ${p.demo}` : p.status}</span>
+                  <span>Demo {p.demo}</span>
                 </Link>
               </li>
             ))}

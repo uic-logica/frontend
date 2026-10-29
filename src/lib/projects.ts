@@ -6,10 +6,13 @@
 export type Project = {
   slug: string;
   name: string;
+  /** What it is, in one or two sentences. */
   line: string;
-  hard: string;
+  /** How it works, step by step, as a member would use it. */
+  how: string[];
+  /** What the team builds, in order (the milestones on its team page). */
+  build: string[];
   learn: string;
-  status: "Main focus" | "Next" | "Later" | "Live";
   demo: string | null;
 };
 
@@ -20,46 +23,75 @@ export const projects: Project[] = [
   {
     slug: "opportunity-board",
     name: "Opportunity board",
-    line: "Every internship and new-grad role worth applying to, always current, filtered to what each member can actually get, with a tracker for every application.",
-    hard: "Daily jobs that pull public job boards into one deduped feed, matched to class year.",
+    line: "One feed of the internships and new-grad roles UIC students can actually apply to, plus a tracker for every application you send.",
+    how: [
+      "Every day, a job collects open roles from public job boards (Greenhouse, Lever, Ashby) and partner companies.",
+      "Duplicates merge, closed roles drop off, and each role is tagged by class year, location and visa sponsorship.",
+      "Your dashboard shows the roles that fit your year.",
+      "Save a role and move it from Applied to OA, Interview and Offer, with a reminder before its deadline.",
+    ],
+    build: [
+      "A scraper for one company's job board",
+      "The roles database, with tags",
+      "The daily refresh",
+      "The feed in the dashboard",
+      "The application tracker and reminders",
+    ],
     learn: "Scraping, scheduled jobs, data pipelines, search.",
-    status: "Main focus",
     demo: "Thu, Nov 12",
   },
   {
     slug: "resume-builder",
     name: "Resume builder",
-    line: "A resume tailored to each posting from one proven template. Members' own AI does the writing through our MCP tools, so the club pays for no tokens.",
-    hard: "MCP tools that hand an AI the profile, the posting and the template, then render a PDF.",
+    line: "A one-page resume tailored to each posting, written by your own AI (Claude, ChatGPT or a local model), so the club pays for no AI.",
+    how: [
+      "Connect your AI to LOGICA's MCP tools once.",
+      "Your AI reads your profile, the posting you picked and our one proven template.",
+      "It rewrites your bullets for that posting: did X, measured by Y, by doing Z.",
+      "LOGICA renders the PDF and lists the posting's keywords your resume is missing.",
+    ],
+    build: [
+      "One template rendered to PDF from your data",
+      "The MCP tools your AI uses",
+      "A keyword check (plain code, no AI)",
+      "A resume page: preview, one version per application, download",
+    ],
     learn: "MCP servers, tool design for AI agents, PDF rendering.",
-    status: "Main focus",
     demo: "Thu, Nov 19",
   },
   {
     slug: "event-replays",
     name: "Event replays in 3D",
-    line: "Film an event on a phone, and anyone can walk through it later on the event page. Every face is blurred before anything is published.",
-    hard: "Phone video to a Gaussian-splat scene in the browser, with face blurring first.",
+    line: "Film a LOGICA event on a phone, and anyone can walk through it in 3D later on the event page. Every face is blurred before anything is published.",
+    how: [
+      "Someone films the room on a phone.",
+      "The video is split into frames and every face is blurred.",
+      "A rented GPU rebuilds the room as a 3D scene (a Gaussian splat).",
+      "The event page opens the scene in your browser, on a laptop or a phone.",
+    ],
+    build: [
+      "One empty room you can walk through in the browser",
+      "Upload, GPU job, and the scene saved with its event",
+      "The 3D viewer on the event page, working on phones",
+    ],
     learn: "Computer vision, GPU jobs, 3D on the web.",
-    status: "Next",
     demo: "Thu, Dec 3 (showcase)",
   },
   {
     slug: "mock-interviewer",
     name: "Mock interviewer",
-    line: "Practice interviews for roles in your tracker, then get a transcript with feedback through your own AI account.",
-    hard: "Role-aware questions and useful, scored feedback.",
+    line: "Practice an interview for a role you're applying to, then get a transcript with feedback. Text first, voice later.",
+    how: [
+      "Pick a role from your application tracker.",
+      "Your own AI interviews you with questions for that role, through LOGICA's MCP tools.",
+      "You get a scored transcript with feedback, saved to your dashboard.",
+    ],
+    build: [
+      "One 10-minute behavioral interview, end to end",
+      "Questions drawn from a role in your tracker",
+      "A scored transcript saved to your dashboard",
+    ],
     learn: "Voice interfaces, prompt design, evaluation.",
-    status: "Later",
     demo: "Thu, Dec 3 (preview)",
-  },
-  {
-    slug: "site",
-    name: "This site",
-    line: "The public site, member accounts, the member dashboard, the exec workspace and speaker intake. Built by members, from kickoff to live in five weeks.",
-    hard: "One app for members, guests and the exec board, each seeing only what's theirs.",
-    learn: "Next.js, APIs, auth, design systems.",
-    status: "Live",
-    demo: null,
   },
 ];
