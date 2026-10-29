@@ -236,6 +236,7 @@ export function Events({
               {selected === e.id && (
                 <EventDetails event={e} onCheckedIn={onEngagement} />
               )}
+              {selected === e.id && board && <Going event={e} />}
               {selected === e.id && runsWorkspace(user) && <PartnerAccess event={e} />}
             </article>
           );
@@ -438,6 +439,36 @@ function CheckInDialog({
         </form>
       )}
     </dialog>
+  );
+}
+
+type Person = { id: string; name: string | null; email: string };
+
+/** Board: who RSVP'd going on the site, for the headcount. */
+function Going({ event }: { event: Event }) {
+  const [people, setPeople] = useState<Person[] | null>(() => peek<Person[]>(`/api/events/${event.id}/going`) ?? null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let alive = true;
+    api<Person[]>(`/api/events/${event.id}/going`)
+      .then((p) => alive && setPeople(p))
+      .catch((e: Error) => alive && setError(e.message));
+    return () => {
+      alive = false;
+    };
+  }, [event.id]);
+  return (
+    <div className="d-event-going">
+      <h3>Going{people ? ` · ${people.length}` : ""}</h3>
+      {error && <p className="d-error" role="alert">{error}</p>}
+      {!people && !error && <p className="d-muted">Loading RSVPs…</p>}
+      {people?.length === 0 && <p className="d-muted">No RSVPs yet. They come from the RSVP button on the event&apos;s public page.</p>}
+      {!!people?.length && (
+        <ul className="d-going-list">
+          {people.map((p) => <li key={p.id}>{p.name ?? p.email} <span className="d-muted">{p.email}</span></li>)}
+        </ul>
+      )}
+    </div>
   );
 }
 
