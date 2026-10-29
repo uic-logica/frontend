@@ -1,6 +1,6 @@
 import type { Section } from "./types";
 const paths: Record<
-  Section | "arrow" | "exit" | "check" | "menu" | "clock" | "search" | "chevron" | "sun" | "moon" | "home",
+  Section | "arrow" | "exit" | "check" | "menu" | "clock" | "search" | "chevron" | "sun" | "moon" | "home" | "download",
   string
 > = {
   overview: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
@@ -34,6 +34,7 @@ const paths: Record<
   search: "m21 21-4.35-4.35 M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
   chevron: "m9 18 6-6-6-6",
   sun: "M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8 M12 2v2 M12 20v2 M4.9 4.9l1.4 1.4 M17.7 17.7l1.4 1.4 M2 12h2 M20 12h2 M4.9 19.1l1.4-1.4 M17.7 6.3l1.4-1.4",
+  download: "M12 3v12 M7 10l5 5 5-5 M5 21h14",
   moon: "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5",
 };
 export function Icon({ name }: { name: keyof typeof paths }) {
