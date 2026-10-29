@@ -369,7 +369,8 @@ html:not([data-signed-in]) .when-signed-in, html[data-signed-in] .when-signed-ou
 .blog-item p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--d-muted); }
 .blog-item small, .blog-byline { font-size: 14px; color: var(--d-muted); }
 .blog-write { margin: 28px 0 0; font-size: 15px; color: var(--d-muted); }
-.blog-post article { max-width: 680px; margin-top: 32px; }
+.blog-post { width: min(680px, 100% - 48px); }
+.blog-post article { margin-top: 32px; }
 .blog-post h1 { margin: 0; font-size: 48px; line-height: 1.1; letter-spacing: -0.5px; }
 .blog-byline { margin: 14px 0 0; }
 .blog-body { margin-top: 36px; font-size: 19px; line-height: 1.7; }
