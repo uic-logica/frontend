@@ -4276,3 +4276,59 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 .d-teams-inline .d-text-link {
   margin-top: 0;
 }
+/* ---- Applications detail: team, summary, links, answer, top to bottom -- */
+.d-speaker-detail.d-app-detail dl {
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin: 16px 0;
+}
+.d-app-detail dl:empty {
+  display: none;
+}
+.d-app-place {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.d-app-place select {
+  min-height: 36px;
+  font: inherit;
+  font-size: 14px;
+}
+.d-app-detail .d-app-summary {
+  margin: 22px 0 12px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.d-speaker-detail .d-app-facts {
+  gap: 8px;
+  margin: 0;
+}
+.d-app-facts > div {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+}
+.d-app-facts dt {
+  margin: 2px 0 0;
+}
+.d-app-facts ol {
+  margin: 0;
+  padding: 0;
+  list-style: decimal inside;
+}
+.d-app-links {
+  margin-top: 18px;
+}
+.d-app-detail .d-app-why {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.d-app-detail .d-app-dates {
+  margin: 14px 0 22px;
+  font-size: 13px;
+}
