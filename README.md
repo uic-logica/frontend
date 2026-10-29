@@ -6,7 +6,7 @@
 
 The club website for [LOGICA @ UIC](https://github.com/uic-logica): Latinx and underrepresented students in computing at the University of Illinois Chicago. **[Live site →](https://logicauic.org)**
 
-**Software lead:** Nicolas Rufino ([@nicolasrufino](https://github.com/nicolasrufino)). Owns every product, sets deadlines, reviews and merges. Public repo, **members-only contributions** ([how we work](https://github.com/uic-logica/.github/blob/main/CONTRIBUTING.md)).
+Public repo, **members-only contributions** ([how we work](https://github.com/uic-logica/.github/blob/main/CONTRIBUTING.md)).
 
 <img src="docs/screenshots/home-desktop.jpg" alt="Home page: a warm painting of the Chicago skyline fading into the page" width="70%"> <img src="docs/screenshots/home-phone.jpg" alt="Home page on a phone" width="24%">
 
