@@ -4339,3 +4339,25 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
   margin: 14px 0 22px;
   font-size: 13px;
 }
+/* ---- Events: who's going (board) ------------------------------------- */
+.d-event-going {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--d-rule);
+}
+.d-event-going h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.d-going-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+.d-going-list .d-muted {
+  font-size: 13px;
+}

@@ -315,7 +315,10 @@ html:not([data-signed-in]) .when-signed-in, html[data-signed-in] .when-signed-ou
 .event-meta { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 0; padding: 0; list-style: none; font-size: 15px; color: var(--d-muted); }
 .event-meta li { display: inline-flex; align-items: center; gap: 8px; }
 .event-meta svg { color: var(--d-muted); }
-.event-actions { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 6px; }
+.event-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding-top: 6px; }
+.event-going { padding: 8px 14px; background: var(--d-success-soft); color: var(--d-success); font-size: 14px; }
+.event-going svg { width: 16px; height: 16px; }
+.event-rsvp-note { flex-basis: 100%; margin: 0; font-size: 14px; color: var(--d-muted); }
 .event-about { max-width: 712px; margin-top: 72px; display: flex; flex-direction: column; gap: 28px; }
 .event-about h2 { margin: 0; font-size: 28px; }
 .event-description { margin: 0; font-size: 18px; line-height: 1.65; color: var(--d-muted); white-space: pre-line; overflow-wrap: anywhere; }
