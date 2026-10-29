@@ -244,7 +244,7 @@ function MemberTeams({ user, profile }: { user: SessionUser; profile: Profile | 
             const info = page(project.value);
             return (
               <button key={project.value} type="button" className="d-team-pick" aria-pressed={rank >= 0} onClick={() => toggle(project.value)}>
-                <span className="d-team-pick-head"><strong>{project.label}</strong>{rank >= 0 ? <span className="d-badge confirmed">{RANKS[rank]}</span> : info && <span className="d-badge">{info.status}</span>}</span>
+                <span className="d-team-pick-head"><strong>{project.label}</strong>{rank >= 0 && <span className="d-badge confirmed">{RANKS[rank]}</span>}</span>
                 {info && <small>{info.line}</small>}
                 {info && <small className="d-muted">You learn: {info.learn}{info.demo ? ` · Demo ${info.demo}` : ""}</small>}
               </button>

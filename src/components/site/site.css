@@ -591,9 +591,10 @@ html:not([data-signed-in]) .when-signed-in, html[data-signed-in] .when-signed-ou
 .projects-item { display: flex; flex-direction: column; gap: 16px; padding: 32px; scroll-margin-top: 24px; }
 .projects-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .projects-top h2 { margin: 0; font-size: 30px; line-height: 1.3; }
-.projects-status.focus { background: var(--d-gold-soft); color: var(--d-gold-text); }
-.projects-status.live { background: var(--d-success-soft); color: var(--d-success); }
 .projects-line { margin: 0; max-width: 760px; font-size: 18px; line-height: 1.55; color: var(--d-muted); }
+.projects-how { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 32px; }
+.projects-how h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--d-muted); }
+.projects-how ol { display: flex; flex-direction: column; gap: 6px; margin: 0; padding-left: 20px; list-style: decimal; font-size: 15px; line-height: 1.5; }
 .projects-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 32px; margin: 0; padding-top: 16px; border-top: 1px solid var(--d-rule); }
 .projects-facts dt { font-size: 13px; font-weight: 600; color: var(--d-muted); }
 .projects-facts dd { margin: 4px 0 0; font-size: 15px; line-height: 1.5; }
@@ -605,7 +606,7 @@ html:not([data-signed-in]) .when-signed-in, html[data-signed-in] .when-signed-ou
 .home-building strong { font-family: var(--d-serif); font-size: 20px; font-weight: 400; }
 .home-building span { font-size: 14px; color: var(--d-muted); }
 @media (max-width: 999px) { .home-building { grid-template-columns: 1fr 1fr; } .projects-facts { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 599px) { .home-building, .projects-facts { grid-template-columns: 1fr; } .projects-item { padding: 24px 20px; } .projects-top { flex-wrap: wrap; } }
+@media (max-width: 599px) { .home-building, .projects-facts, .projects-how { grid-template-columns: 1fr; } .projects-item { padding: 24px 20px; } .projects-top { flex-wrap: wrap; } }
 
 /* Interview availability (app/interview/[token]): the dashboard's week grid on a site card. */
 .interview-card { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
