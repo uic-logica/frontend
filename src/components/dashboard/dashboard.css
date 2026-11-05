@@ -1851,6 +1851,10 @@
   border-radius: var(--d-radius-sm);
   text-align: left;
 }
+/* No avatar (Blog): text + meta, so the text column can shrink and ellipsize. */
+.d-split-list li button:not(:has(> .d-avatar)) {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
 .d-split-list li button:hover {
   background: var(--d-hover);
 }
