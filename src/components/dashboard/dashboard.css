@@ -64,6 +64,26 @@
   background: none;
   border: 0;
 }
+/* Safety net: a bare select/textarea anywhere in the workspace still looks
+   like a field. :where() keeps this at zero class weight, so any component
+   rule (.d-form select, .d-filter select, …) wins over it. */
+:where(.dash) :is(select, textarea) {
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--d-rule-strong);
+  border-radius: var(--d-radius-sm);
+  background-color: var(--d-surface);
+  color: var(--d-ink);
+  font: inherit;
+  font-size: 14px;
+}
+:where(.dash) select {
+  appearance: none;
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238c897f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5M7 9l5-5 5 5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
 .dash button,
 .dash a,
 .dash input,
@@ -3285,6 +3305,9 @@
   font-size: 13px;
   font-weight: 500;
 }
+.d-review-form .d-actions {
+  margin-top: 12px;
+}
 .d-review-form textarea {
   display: block;
   width: 100%;
@@ -4269,9 +4292,9 @@ a:hover > .d-arrow svg, button:hover > .d-arrow svg { transform: translateX(2px)
 }
 .d-accept-team {
   display: grid;
-  gap: 4px;
+  gap: 6px;
   max-width: 320px;
-  margin-bottom: 10px;
+  margin: 18px 0 12px;
   font-size: 13px;
 }
 @media (max-width: 680px) {
