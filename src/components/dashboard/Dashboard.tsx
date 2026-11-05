@@ -87,8 +87,14 @@ function Pane({ active, children }: { active: boolean; children: ReactNode }) {
   // `hidden` rather than unmounting. dashboard.css forces display:none on it,
   // which also takes the contents out of the accessibility tree and out of
   // the tab order — a hidden pane must not be reachable by keyboard.
+  const ref = useRef<HTMLDivElement>(null);
+  // A modal <dialog> left open in a hidden pane has no box but still blocks
+  // every click on the page. Close them when the section is left (Back, ⌘K).
+  useEffect(() => {
+    if (!active) ref.current?.querySelectorAll("dialog[open]").forEach((d) => (d as HTMLDialogElement).close());
+  }, [active]);
   return (
-    <div hidden={!active} className="d-pane">
+    <div ref={ref} hidden={!active} className="d-pane">
       {children}
     </div>
   );
