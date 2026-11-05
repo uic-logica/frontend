@@ -168,7 +168,7 @@ export function Events({
                 <div className="d-event-text">
                   <h2>{e.title}</h2>
                   <p>
-                    {when(e.startsAt, { weekday: "long", month: "long", day: "numeric" })}
+                    {when(e.startsAt, { weekday: "long", month: "long", day: "numeric" }, e.endsAt)}
                   </p>
                   <small>
                     {e.location || "Location to be announced"}
@@ -269,15 +269,25 @@ function localInput(iso: string) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-/** What the backend takes from an EventForm: `startsAt` as ISO, the rest as typed. */
+/** What the backend takes from an EventForm: `startsAt`/`endsAt` as ISO, the rest as typed. */
 export function eventBody(data: FormData) {
+  // "Date TBD" ticked, or left empty: the backend stores no date yet.
+  const start = data.get("dateTbd") || !data.get("startsAt") ? null : new Date(String(data.get("startsAt")));
+  // The end is a time on the start's day; an earlier time means it runs past midnight.
+  let end: Date | null = null;
+  if (start && data.get("endsAt")) {
+    const [h, m] = String(data.get("endsAt")).split(":").map(Number);
+    end = new Date(start);
+    end.setHours(h, m, 0, 0);
+    if (end <= start) end.setDate(end.getDate() + 1);
+  }
   return {
     title: data.get("title"),
     description: data.get("description"),
     location: data.get("location"),
     link: data.get("link"),
-    // "Date TBD" ticked, or left empty: the backend stores no date yet.
-    startsAt: data.get("dateTbd") || !data.get("startsAt") ? null : new Date(String(data.get("startsAt"))).toISOString(),
+    startsAt: start?.toISOString() ?? null,
+    endsAt: end?.toISOString() ?? null,
   };
 }
 
@@ -309,8 +319,12 @@ export function EventForm({
         </label>
         <div className="d-event-when">
           <label>
-            Date and time (your local time)
+            Date and start time (your local time)
             <input name="startsAt" type="datetime-local" required={!tbd} disabled={tbd} defaultValue={event?.startsAt ? localInput(event.startsAt) : undefined} />
+          </label>
+          <label>
+            End time (optional)
+            <input name="endsAt" type="time" disabled={tbd} defaultValue={event?.endsAt ? localInput(event.endsAt).slice(11) : undefined} />
           </label>
           <label className="d-event-tbd">
             <input type="checkbox" name="dateTbd" checked={tbd} onChange={(e) => setTbd(e.target.checked)} />

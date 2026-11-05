@@ -18,7 +18,7 @@ export default async function EventsPage() {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify({
             "@context": "https://schema.org", "@type": "Event", name: event.title,
-            startDate: event.startsAt, eventStatus: "https://schema.org/EventScheduled",
+            startDate: event.startsAt, ...(event.endsAt ? { endDate: event.endsAt } : {}), eventStatus: "https://schema.org/EventScheduled",
             eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
             ...(event.description ? { description: event.description } : {}),
             ...(event.location ? { location: { "@type": "Place", name: event.location } } : {}),

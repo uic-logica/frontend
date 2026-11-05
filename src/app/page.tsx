@@ -56,7 +56,7 @@ const benefits: { title: string; text: string; icon: SiteIconName; link: { href:
 ];
 
 function EventCard({ event }: { event: ClubEvent }) {
-  const d = eventDate(event.startsAt);
+  const d = eventDate(event.startsAt, event.endsAt);
   return (
     <li className="site-card home-event">
       <span className="site-date"><b>{d.month}</b><span>{d.day}</span></span>
@@ -124,7 +124,7 @@ export default async function Home() {
               <Link href={`/events/${next.id}`} className="home-next">
                 <span className="site-date"><b>{eventDate(next.startsAt).month}</b><span>{eventDate(next.startsAt).day}</span></span>
                 <span className="home-next-text">
-                  <small>Next up · {eventDate(next.startsAt).weekdayTime}</small>
+                  <small>Next up · {eventDate(next.startsAt, next.endsAt).weekdayTime}</small>
                   <strong>{next.title}</strong>
                 </span>
                 <SiteIcon name="arrow" />

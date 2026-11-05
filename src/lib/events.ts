@@ -4,6 +4,8 @@ export type ClubEvent = {
   location: string | null;
   /** Null = date TBD. */
   startsAt: string | null;
+  /** Optional end time; null = none given. */
+  endsAt?: string | null;
   description?: string | null;
   link: string | null;
 };
@@ -54,16 +56,17 @@ const weekdayTime = new Intl.DateTimeFormat("en-US", { ...zone, weekday: "short"
 const time = new Intl.DateTimeFormat("en-US", { ...zone, hour: "numeric", minute: "2-digit" });
 const full = new Intl.DateTimeFormat("en-US", { ...zone, weekday: "long", month: "long", day: "numeric", hour: "numeric", minute: "2-digit" });
 
-/** The pieces the event cards show: "OCT" / "21" / "Tue 6:00 PM" / "6:00 PM" / "Tuesday, October 21, 6:00 PM". */
-export function eventDate(startsAt: string | null) {
+/** The pieces the event cards show: "OCT" / "21" / "Tue 6:00 PM – 7:30 PM" / "6:00 PM – 7:30 PM" / "Tuesday, October 21, 6:00 PM – 7:30 PM". */
+export function eventDate(startsAt: string | null, endsAt?: string | null) {
   // Date TBD: the cards show "TBD" where the day would be.
   if (!startsAt) return { month: "", day: "TBD", weekdayTime: "Date TBD", time: "Time TBD", full: "Date and time TBD" };
   const d = new Date(startsAt);
+  const end = endsAt ? ` – ${time.format(new Date(endsAt))}` : "";
   return {
     month: month.format(d).toUpperCase(),
     day: day.format(d),
-    weekdayTime: weekdayTime.format(d).replace(",", ""),
-    time: time.format(d),
-    full: full.format(d),
+    weekdayTime: weekdayTime.format(d).replace(",", "") + end,
+    time: time.format(d) + end,
+    full: full.format(d) + end,
   };
 }

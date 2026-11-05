@@ -36,6 +36,9 @@ describe("toIcs", () => {
     expect(ics).not.toContain("LOCATION:");
     expect(ics).not.toContain("DESCRIPTION:");
   });
+  it("uses the real end time when there is one", () => {
+    expect(toIcs({ ...base, endsAt: "2026-10-04T00:30:00.000Z" })).toContain("DTEND:20261004T003000Z");
+  });
 });
 
 describe("icsFilename", () => {

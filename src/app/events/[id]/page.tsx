@@ -83,7 +83,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
       .catch((e: unknown) => setEventError(e instanceof ApiError && e.status === 404 ? "missing" : "failed"));
   }, [id]);
 
-  const d = event && eventDate(event.startsAt);
+  const d = event && eventDate(event.startsAt, event.endsAt);
 
   return (
     <ClubShell>

@@ -151,7 +151,7 @@ export function Overview({
           <div className="d-section-head"><h2>Coming up</h2><span className="d-muted">{coming.length} RSVPs</span></div>
           {(coming.length ? coming : upcoming)?.map((event) => (
             <Link className="d-compact-row" href={`/dashboard/events?id=${event.id}`} key={event.id}>
-              <span className="d-live-dot" /><span><strong>{event.title}</strong><small>{when(event.startsAt)}</small></span>
+              <span className="d-live-dot" /><span><strong>{event.title}</strong><small>{when(event.startsAt, undefined, event.endsAt)}</small></span>
               <span className="d-badge">{goingIds.has(event.id) ? "Going" : "Open"}</span>
             </Link>
           ))}
