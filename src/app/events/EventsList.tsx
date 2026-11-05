@@ -31,7 +31,7 @@ export function EventsList({ upcoming, past, error }: { upcoming: ClubEvent[]; p
       ) : (
         <ul className="events-list">
           {list.map((e) => {
-            const d = eventDate(e.startsAt);
+            const d = eventDate(e.startsAt, e.endsAt);
             return (
               <li key={e.id} id={e.id}>
                 <span className="site-date"><b>{d.month}</b><span>{d.day}</span></span>

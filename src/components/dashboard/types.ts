@@ -82,6 +82,8 @@ export type Event = {
   link: string | null;
   /** Null = date TBD. */
   startsAt: string | null;
+  /** Optional end time. */
+  endsAt?: string | null;
 };
 export type Post = {
   id: string;
@@ -554,9 +556,10 @@ export function date(
 }
 
 /** "Tuesday, October 21 · 6:00 PM", or "Date TBD". */
-export function when(value: string | null, options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }) {
+export function when(value: string | null, options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }, endsAt?: string | null) {
   if (!value) return "Date TBD";
-  return `${date(value, options)} · ${new Date(value).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`;
+  const time = (v: string) => new Date(v).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  return `${date(value, options)} · ${time(value)}${endsAt ? ` – ${time(endsAt)}` : ""}`;
 }
 
 /** Still ahead, or not dated yet (TBD counts as upcoming). */

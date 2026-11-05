@@ -866,6 +866,10 @@
   font-weight: 600;
   line-height: 1.15;
 }
+/* Date TBD: no month above, and "TBD" is wider than a day number. */
+.dash .d-date-tile small:empty + strong {
+  font-size: 13px;
+}
 .d-update {
   align-items: baseline;
   gap: 10px;
@@ -3942,6 +3946,7 @@ tr:has(.d-row-link[aria-current]) > td {
 /* The event a link pointed at. */
 .d-event-item[aria-current] {
   box-shadow: inset 3px 0 0 var(--d-gold);
+  padding-left: 16px; /* keep the date tile and form off the gold bar */
   scroll-margin-top: 72px;
 }
 .d-checkin {

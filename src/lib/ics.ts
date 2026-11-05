@@ -5,8 +5,7 @@
  * The spec is fussy about three things and forgiving about the rest: CRLF
  * line endings, escaped commas/semicolons/newlines in text, and a UID.
  *
- * Events have no end time in the schema, so we assume an hour. Swap in the
- * real value if `endsAt` is ever added.
+ * Events without an end time are assumed to last an hour.
  */
 
 const DEFAULT_MINUTES = 60;
@@ -22,13 +21,14 @@ export type IcsEvent = {
   id: string;
   title: string;
   startsAt: string;
+  endsAt?: string | null;
   location?: string | null;
   description?: string | null;
 };
 
 export function toIcs(event: IcsEvent): string {
   const start = new Date(event.startsAt);
-  const end = new Date(start.getTime() + DEFAULT_MINUTES * 60_000);
+  const end = event.endsAt ? new Date(event.endsAt) : new Date(start.getTime() + DEFAULT_MINUTES * 60_000);
 
   const lines = [
     "BEGIN:VCALENDAR",

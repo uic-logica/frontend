@@ -25,4 +25,9 @@ describe("eventDate", () => {
     expect(d.weekdayTime).toBe("Wed 6:00 PM");
     expect(d.time).toBe("6:00 PM");
   });
+  it("shows the end time when there is one", () => {
+    const d = eventDate("2026-11-23T23:00:00.000Z", "2026-11-24T00:30:00.000Z");
+    expect(d.time).toBe("5:00 PM – 6:30 PM");
+    expect(d.full).toMatch(/Monday, November 23.*5:00 PM – 6:30 PM$/);
+  });
 });
