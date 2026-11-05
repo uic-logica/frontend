@@ -51,8 +51,10 @@ export function Emails() {
   useEffect(() => {
     api<{ month: number; monthLimit: number; day: number; dayLimit: number }>("/api/board/emails/usage").then(setUsage).catch(() => {});
   }, [reload]);
-  // The open email, in the URL like every other detail, so a link to it works.
-  const [openId, setOpenId] = useUrlState("id");
+  // The open email, in the URL so a link to it works. Its own param, not the
+  // shared `?id=`: sections stay mounted while hidden, and another section's
+  // ?id= would otherwise open this viewer as an invisible modal and freeze clicks.
+  const [openId, setOpenId] = useUrlState("email");
 
   useEffect(() => {
     let alive = true;

@@ -3312,6 +3312,10 @@
 .d-review-form .d-actions {
   margin-top: 12px;
 }
+/* The status buttons below shouldn't touch the open request form. */
+.d-review-form {
+  margin-bottom: 18px;
+}
 .d-review-form textarea {
   display: block;
   width: 100%;

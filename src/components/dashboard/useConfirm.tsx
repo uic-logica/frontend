@@ -29,7 +29,7 @@ export function useConfirm(): [(ask: Ask) => Promise<boolean>, ReactNode] {
   }
 
   const dialog = (
-    <dialog ref={ref} className="d-confirm" aria-labelledby="d-ask-title" onCancel={() => close(false)}>
+    <dialog ref={ref} className="d-confirm" aria-labelledby="d-ask-title" onCancel={() => close(false)} onClose={() => { resolver.current?.(false); resolver.current = null; }}>
       <h2 id="d-ask-title">{ask?.title}</h2>
       {ask?.body && <p>{ask.body}</p>}
       <div className="d-actions">
