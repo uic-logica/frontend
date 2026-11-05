@@ -16,7 +16,7 @@ Read the affected page/component and its API calls before changing it. `PRODUCT.
 - Dashboard layout is persistent: `src/app/dashboard/layout.tsx` mounts `Dashboard.tsx`, which reads the section from the pathname. Reuse that shell rather than mounting a second dashboard in each page.
 - `src/components/dashboard/types.ts` mirrors backend stages and board shapes. `runsWorkspace()` is MEMBER + EXEC_BOARD only; BOARD receives member navigation. Backend checks remain authoritative.
 - Money and outreach share `Board.tsx`. Officer titles change home tiles in `BoardHome.tsx`, not access. Do not introduce duplicate pipelines or permission rules per officer.
-- Preserve loading, empty, signed-out, and error states. Keep labeled fields, keyboard access, focus indicators, and reduced-motion alternatives when modifying UI.
+- Follow `DESIGN.md` → "UI rules" for any screen you touch. Preserve loading, empty, signed-out, and error states. Keep labeled fields, keyboard access, focus indicators, and reduced-motion alternatives when modifying UI.
 - Reuse the route's existing shell and styles: `ClubShell`/`globals.css` for public pages, `dashboard.css` for the workspace, `AppShell` for standalone tools. Fonts are loaded in `src/app/layout.tsx`.
 - Operational data comes from the backend. Public home/team copy is currently authored in page arrays; do not describe it as live analytics or use it as an authenticated-data fallback.
 - Do not add credentials or env files to git. `.env.example` contains public frontend configuration only.

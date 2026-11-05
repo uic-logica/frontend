@@ -37,6 +37,20 @@ skyline footer (Explore, Get involved, Contact). Pages use `.site-page`, `.site-
 
 The public shell is not mounted around the dashboard.
 
+## UI rules (read before shipping a screen)
+
+Most visual bugs here are one of these four. Check each before opening a PR.
+
+| # | Rule | Why |
+|---|---|---|
+| 1 | **Fields go in `.d-form`** (workspace) or use `.site-field` (public). Don't style a lone `select`/`textarea` by hand. | A bare control renders as raw browser UI. `dashboard.css` has a `:where(.dash)` safety net, but it's a floor, not the design. |
+| 2 | **Space comes from the parent.** A stack of blocks (field → buttons → next section) gets `gap` or `margin-top` on each block. Never rely on the element above having a bottom margin. | Conditional blocks (`{asking && <form>}`) appear and disappear; whatever is next must already be spaced. |
+| 3 | **Nothing touches an accent bar or edge.** Selected rows (`inset` gold bar), cards and tiles get padding at least as wide as the bar + 12px. | The gold bar sat on the event date tile. |
+| 4 | **Test the longest and emptiest value.** `TBD`, no date, long names, 3-line titles, empty lists, the open form state. | Tiles and chips are sized for the happy path. |
+
+Before the PR: open the screen in both themes, at 1280px and ~390px, with every toggle on that screen opened once
+(edit forms, "Ask for more info", menus).
+
 ## Motion
 
 The "Where our members land" logo slider moves and pauses on hover; with reduced motion it becomes a scrollable row.
