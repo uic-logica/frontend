@@ -47,6 +47,28 @@ export async function getEvents(): Promise<EventsData> {
   }
 }
 
+/**
+ * One event, fetched on the server and cached like the list, so the page is
+ * in the HTML when the link is clicked (and prefetched before that).
+ */
+export async function getEvent(id: string): Promise<{ event: ClubEvent | null; error: "missing" | "failed" | null }> {
+  const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+  try {
+    const res = await fetch(`${base}/api/events/${encodeURIComponent(id)}`, { next: { revalidate: REVALIDATE_SECONDS }, signal: AbortSignal.timeout(8000) });
+    // A bad or stale URL is permanent; "try again later" would send them back to the same 404 forever.
+    if (res.status === 404) return { event: null, error: "missing" };
+    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+    return { event: (await res.json()) as ClubEvent, error: null };
+  } catch {
+    return { event: null, error: "failed" };
+  }
+}
+
+/** RSVPs stay open until two hours after the start, or always with no date yet. */
+export function rsvpWindowOpen(startsAt: string | null, now = Date.now()) {
+  return !startsAt || new Date(startsAt).getTime() > now - 2 * 3600_000;
+}
+
 // Fixed to Chicago rather than the viewer's locale: the events are in Chicago,
 // and a fixed zone keeps server and client output identical (no hydration mismatch).
 const zone = { timeZone: "America/Chicago" } as const;

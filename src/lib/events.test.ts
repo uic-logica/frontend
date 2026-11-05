@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { eventDate, splitEvents, type ClubEvent } from "./events";
+import { eventDate, rsvpWindowOpen, splitEvents, type ClubEvent } from "./events";
 
 const ev = (id: string, startsAt: string): ClubEvent => ({ id, title: id, location: null, startsAt, link: null });
 
@@ -29,5 +29,14 @@ describe("eventDate", () => {
     const d = eventDate("2026-11-23T23:00:00.000Z", "2026-11-24T00:30:00.000Z");
     expect(d.time).toBe("5:00 PM – 6:30 PM");
     expect(d.full).toMatch(/Monday, November 23.*5:00 PM – 6:30 PM$/);
+  });
+});
+
+describe("rsvpWindowOpen", () => {
+  const start = Date.parse("2026-11-10T22:00:00.000Z");
+  it("stays open until two hours after the start, and always for TBD", () => {
+    expect(rsvpWindowOpen("2026-11-10T22:00:00.000Z", start + 3600_000)).toBe(true);
+    expect(rsvpWindowOpen("2026-11-10T22:00:00.000Z", start + 3 * 3600_000)).toBe(false);
+    expect(rsvpWindowOpen(null)).toBe(true);
   });
 });
