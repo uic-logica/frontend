@@ -40,6 +40,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               <span className="site-date event-date"><b>{d.month}</b><span>{d.day}</span></span>
               <h1 className="serif">{event.title}</h1>
             </header>
+            {/* eslint-disable-next-line @next/next/no-img-element -- uploaded pictures have no known size */}
+            {event.image && <img className="event-image" src={event.image} alt="" />}
             <ul className="event-meta">
               <li><SiteIcon name="calendar" /> {d.full}</li>
               {event.location && <li><SiteIcon name="pin" /> {event.location}</li>}

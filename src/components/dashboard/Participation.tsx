@@ -6,6 +6,7 @@ import { Heading, Empty } from "./Overview";
 import { Arrow, Icon } from "./Icon";
 import { useUrlState } from "./useUrlState";
 import { PartnerAccess } from "./Partners";
+import { fileToBase64 } from "@/components/shell/ResumeUpload";
 import {
   type Event,
   type Engagement,
@@ -286,9 +287,46 @@ export function eventBody(data: FormData) {
     description: data.get("description"),
     location: data.get("location"),
     link: data.get("link"),
+    image: data.get("image"),
     startsAt: start?.toISOString() ?? null,
     endsAt: end?.toISOString() ?? null,
   };
+}
+
+/** A flyer or photo for the event page. Uploads like a blog picture; the form sends its URL. */
+function EventPicture({ initial }: { initial?: string | null }) {
+  const [image, setImage] = useState(initial ?? "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  async function upload(file: File) {
+    if (file.size > 3 * 1024 * 1024) return setError("Pictures are limited to 3 MB.");
+    setBusy(true);
+    setError("");
+    try {
+      const { url } = await api<{ url: string }>("/api/blog/images", {
+        method: "POST",
+        body: JSON.stringify({ filename: file.name, mimeType: file.type, data: await fileToBase64(file) }),
+      });
+      setImage(url);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="d-event-picture">
+      <input type="hidden" name="image" value={image} />
+      {/* eslint-disable-next-line @next/next/no-img-element -- uploaded pictures have no known size */}
+      {image && <img src={image} alt="" />}
+      <label>
+        {busy ? "Uploading…" : image ? "Replace picture" : "Picture (optional, up to 3 MB)"}
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={busy} onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
+      </label>
+      {image && <button type="button" className="d-button secondary" onClick={() => setImage("")}>Remove picture</button>}
+      {error && <p className="d-error" role="alert">{error}</p>}
+    </div>
+  );
 }
 
 /** The one form for creating and editing an event. Empty fields clear on save. */
@@ -344,6 +382,7 @@ export function EventForm({
         Event page URL (Luma, Discord, or flyer)
         <input name="link" type="url" defaultValue={event?.link ?? ""} />
       </label>
+      <EventPicture initial={event?.image} />
       <div className="d-actions">
         <button disabled={busy} className="d-button">
           {busy ? "Saving…" : submitLabel}

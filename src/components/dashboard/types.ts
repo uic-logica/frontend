@@ -84,6 +84,8 @@ export type Event = {
   startsAt: string | null;
   /** Optional end time. */
   endsAt?: string | null;
+  /** Optional picture: /api/blog/images/<id>. */
+  image?: string | null;
 };
 export type Post = {
   id: string;
