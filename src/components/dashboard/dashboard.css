@@ -1487,6 +1487,16 @@
 .d-event-details > .d-success {
   grid-column: 1/-1;
 }
+.d-event-picture {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  margin: 16px 0; /* same rhythm as the form's labels */
+}
+.d-event-picture img {
+  max-width: min(240px, 100%);
+  border-radius: 8px;
+}
 .d-file {
   display: flex;
   gap: 14px;

@@ -8,6 +8,8 @@ export type ClubEvent = {
   endsAt?: string | null;
   description?: string | null;
   link: string | null;
+  /** Optional picture: /api/blog/images/<id>. */
+  image?: string | null;
 };
 
 export type EventsData = { upcoming: ClubEvent[]; past: ClubEvent[]; error: string | null };
