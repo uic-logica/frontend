@@ -32,6 +32,9 @@ export async function getPost(slug: string): Promise<BlogPost | "missing" | null
   }
 }
 
+/** The post slug when an event's link points at one of our blog posts, else null. */
+export const blogSlug = (link?: string | null) => link?.match(/^(?:https:\/\/(?:www\.)?logicauic\.org)?\/blog\/([a-z0-9-]+)\/?$/)?.[1] ?? null;
+
 /** Blank line = new paragraph, as the dashboard editor says. */
 export const paragraphs = (body: string) => body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
