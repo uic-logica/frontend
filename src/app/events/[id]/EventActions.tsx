@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SiteIcon } from "@/components/site/icons";
 import { ApiError, api } from "@/lib/api";
+import { blogSlug } from "@/lib/blog";
 import type { ClubEvent } from "@/lib/events";
 import { downloadIcs } from "@/lib/ics";
 
@@ -67,7 +68,8 @@ export function EventActions({ event, rsvpOpen }: { event: ClubEvent; rsvpOpen: 
   return (
     <div className="event-actions">
       {rsvpOpen && <Rsvp id={event.id} />}
-      {event.link && (
+      {/* A link to one of our posts shows as a card under these buttons instead. */}
+      {event.link && !blogSlug(event.link) && (
         <a href={event.link} target="_blank" rel="noopener noreferrer" className="site-btn secondary">More info <SiteIcon name="external" /></a>
       )}
       {event.startsAt && <button type="button" className="site-btn secondary" onClick={() => event.startsAt && downloadIcs({ ...event, startsAt: event.startsAt })}>Add to calendar</button>}

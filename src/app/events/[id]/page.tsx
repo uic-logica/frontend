@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ClubShell } from "@/components/club/ClubShell";
 import { SiteIcon } from "@/components/site/icons";
+import { blogSlug, firstText, getPost } from "@/lib/blog";
 import { eventDate, getEvent, getEvents, rsvpWindowOpen } from "@/lib/events";
 import { pageMetadata } from "@/lib/seo";
 import { Description } from "../EventsList";
@@ -29,6 +30,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
   const { id } = await params;
   const { event, error } = await getEvent(id);
   const d = event && eventDate(event.startsAt, event.endsAt);
+  const slug = blogSlug(event?.link);
+  const post = slug ? await getPost(slug) : null;
 
   return (
     <ClubShell>
@@ -47,6 +50,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               {event.location && <li><SiteIcon name="pin" /> {event.location}</li>}
             </ul>
             <EventActions event={event} rsvpOpen={rsvpWindowOpen(event.startsAt)} />
+            {post && post !== "missing" && (
+              <Link href={`/blog/${post.slug}`} className="site-card blog-item event-post">
+                <small>From the blog</small>
+                <h2 className="serif">{post.title}</h2>
+                <p>{firstText(post.body)}</p>
+              </Link>
+            )}
             {event.description && (
               <section className="event-about" aria-labelledby="about-event">
                 <h2 id="about-event" className="serif">About this event</h2>

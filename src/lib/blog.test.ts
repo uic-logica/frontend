@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blocks, firstText, inline, paragraphs, postDate } from "./blog";
+import { blocks, blogSlug, firstText, inline, paragraphs, postDate } from "./blog";
 
 describe("blog helpers", () => {
   it("splits paragraphs on blank lines and keeps single line breaks", () => {
@@ -22,5 +22,12 @@ describe("blog helpers", () => {
   });
   it("describes a post by its first text paragraph", () => {
     expect(firstText("![a](/api/blog/images/c1)\n\n## Hi\n\nOn [Tuesday](https://x.io), pizza.")).toBe("On Tuesday, pizza.");
+  });
+  it("spots an event link that points at one of our posts", () => {
+    expect(blogSlug("https://logicauic.org/blog/how-to-win-9yal9p")).toBe("how-to-win-9yal9p");
+    expect(blogSlug("/blog/how-to-win-9yal9p/")).toBe("how-to-win-9yal9p");
+    expect(blogSlug("https://evil.example/blog/x")).toBeNull();
+    expect(blogSlug("https://forms.gle/abc")).toBeNull();
+    expect(blogSlug(null)).toBeNull();
   });
 });
