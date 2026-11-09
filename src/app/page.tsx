@@ -36,8 +36,7 @@ const partnerGroups: { label: string; logos: MarqueeLogo[] }[] = [
     label: "Company visits",
     logos: [logo("Aon", "aon", 798, 304), logo("Microsoft", "microsoft", 1000, 214), logo("Google", "google", 899, 297), logo("CDW", "cdw", 1000, 537), logo("84.51°", "8451", 600, 218)],
   },
-  // Talks have no partner yet: the row says so instead of showing an empty strip.
-  { label: "Talks", logos: [] },
+  { label: "Talks", logos: [logo("Rise Reforming", "rise-reforming", 488, 200)] },
   {
     label: "Workshops",
     // TODO: logo files for CAHSI and ThinkChicago ("World Think Chicago").
