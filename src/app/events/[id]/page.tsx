@@ -43,26 +43,31 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               <span className="site-date event-date"><b>{d.month}</b><span>{d.day}</span></span>
               <h1 className="serif">{event.title}</h1>
             </header>
-            {/* eslint-disable-next-line @next/next/no-img-element -- uploaded pictures have no known size */}
-            {event.image && <img className="event-image" src={event.image} alt="" />}
-            <ul className="event-meta">
-              <li><SiteIcon name="calendar" /> {d.full}</li>
-              {event.location && <li><SiteIcon name="pin" /> {event.location}</li>}
-            </ul>
-            <EventActions event={event} rsvpOpen={rsvpWindowOpen(event.startsAt)} />
-            {post && post !== "missing" && (
-              <Link href={`/blog/${post.slug}`} className="site-card blog-item event-post">
-                <small>From the blog</small>
-                <h2 className="serif">{post.title}</h2>
-                <p>{firstText(post.body)}</p>
-              </Link>
-            )}
-            {event.description && (
-              <section className="event-about" aria-labelledby="about-event">
-                <h2 id="about-event" className="serif">About this event</h2>
-                <Description text={event.description} className="event-description" />
-              </section>
-            )}
+            {/* Picture left, details right on desktop; stacked on phones (picture, details, about, blog). */}
+            <div className={event.image ? "event-body has-image" : "event-body"}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- uploaded pictures have no known size */}
+              {event.image && <img className="event-image" src={event.image} alt="" />}
+              <div className="event-main">
+                <ul className="event-meta">
+                  <li><SiteIcon name="calendar" /> {d.full}</li>
+                  {event.location && <li><SiteIcon name="pin" /> {event.location}</li>}
+                </ul>
+                <EventActions event={event} rsvpOpen={rsvpWindowOpen(event.startsAt)} />
+                {event.description && (
+                  <section className="event-about" aria-labelledby="about-event">
+                    <h2 id="about-event" className="serif">About this event</h2>
+                    <Description text={event.description} className="event-description" />
+                  </section>
+                )}
+                {post && post !== "missing" && (
+                  <Link href={`/blog/${post.slug}`} className="site-card blog-item event-post">
+                    <small>From the blog</small>
+                    <h2 className="serif">{post.title}</h2>
+                    <p>{firstText(post.body)}</p>
+                  </Link>
+                )}
+              </div>
+            </div>
           </>
         ) : (
           <header className="site-page-head event-missing">
